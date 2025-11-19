@@ -1,0 +1,92 @@
+/**
+ * Responsive Styles
+ * Mobile-first responsive design
+ */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        align-items: stretch;
+    }
+    
+    .nav {
+        flex-direction: column;
+    }
+    
+    .nav-btn {
+        text-align: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: stretch;
+    }
+    
+    .examples-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-table {
+        font-size: 0.875rem;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: var(--spacing-sm);
+    }
+    
+    .result-summary-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .analysis-table-container {
+        overflow-x: auto;
+    }
+    
+    .analysis-table thead th,
+    .analysis-table tbody td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.875rem;
+    }
+    
+    .row-label-cell {
+        min-width: 80px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .card {
+        padding: var(--spacing-lg);
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .result-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
