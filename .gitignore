@@ -2,5 +2,5 @@ client_secret.json
 *.log
 settings.py
 **/__pycache__/**
-
-
+venv/
+.venv/
