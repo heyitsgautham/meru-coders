@@ -13,7 +13,7 @@ from pathlib import Path
 import logging
 
 from backend.config import settings
-from backend.core import MeterAnalyzer
+from backend.core import Chanda
 from backend.ocr import TesseractOCR, GoogleOCR
 
 
@@ -29,7 +29,9 @@ def create_app():
                 template_folder=None)  # No templates in API
     
     # Load configuration
-    app.config.from_object(settings)
+    app.config['SECRET_KEY'] = settings.SECRET_KEY
+    app.config['MAX_CONTENT_LENGTH'] = settings.MAX_CONTENT_LENGTH
+    app.config['DEBUG'] = settings.DEBUG
     
     # Configure logging
     logging.basicConfig(
@@ -49,16 +51,22 @@ def create_app():
     })
     
     # Initialize core components
-    app.logger.info("Initializing Meter Analyzer...")
-    app.meter_analyzer = MeterAnalyzer(
-        data_path=str(settings.DATA_DIR)
+    app.logger.info("Initializing Chanda Analyzer...")
+    app.chanda = Chanda(
+        data_path=str(settings.DATA_DIR),
+        syllabization_method=settings.SYLLABIZATION_METHOD
     )
     
     # Initialize Tesseract OCR
     app.logger.info("Initializing Tesseract OCR...")
-    app.tesseract_ocr = TesseractOCR(
-        languages=settings.TESSERACT_LANGUAGES
-    )
+    try:
+        app.tesseract_ocr = TesseractOCR(
+            languages=settings.TESSERACT_LANGUAGES
+        )
+        app.logger.info("Tesseract OCR initialized successfully")
+    except Exception as e:
+        app.logger.warning(f"Tesseract OCR not available: {e}")
+        app.tesseract_ocr = None
     
     # Initialize Google OCR (optional)
     if settings.CLIENT_SECRET:
@@ -92,7 +100,7 @@ def create_app():
     def api_info():
         """API information endpoint."""
         return {
-            'name': 'Sanskrit Meter Identification API',
+            'name': 'Sanskrit Meter Identification API (Chandas-Integrated)',
             'version': '2.0.0',
             'api_prefix': settings.API_PREFIX,
             'endpoints': {
@@ -103,8 +111,14 @@ def create_app():
                 'examples': f'{settings.API_PREFIX}/examples'
             },
             'ocr_available': {
-                'tesseract': True,
+                'tesseract': app.tesseract_ocr is not None,
                 'google': app.google_ocr is not None
+            },
+            'features': {
+                'sandhi_splitting': True,
+                'fuzzy_matching': True,
+                'verse_mode': True,
+                'multiple_schemes': True
             }
         }
     

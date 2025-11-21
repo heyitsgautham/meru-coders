@@ -1,2 +1,7 @@
-"""Sanskrit Meter Identification System - Backend API"""
-__version__ = '2.0.0'
+"""
+Chandas-Integrated Backend
+
+Sanskrit meter (chanda) identification system backend API.
+"""
+
+__version__ = "2.0.0"

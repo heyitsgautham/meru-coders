@@ -1,4 +1,5 @@
-"""Core meter identification logic"""
-from .meter_analyzer import MeterAnalyzer
+"""Core meter identification engine."""
 
-__all__ = ['MeterAnalyzer']
+from .chanda import Chanda
+
+__all__ = ['Chanda']
