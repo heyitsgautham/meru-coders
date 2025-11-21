@@ -1,25 +1,25 @@
 सूर्याश्वैर्मसजस्तताः सगुरवः शार्दूलविक्रीडितम्
 	Syllables: ['सू', 'र्या', 'श्वै', 'र्म', 'स', 'ज', 'स्त', 'ताः', 'स', 'गु', 'र', 'वः', 'शा', 'र्दू', 'ल', 'वि', 'क्री', 'डि', 'त', 'म्']
-	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग', '']
-	Gana: मसजसततग
-	Counts: 19 letters, 30 morae
-	Chanda: शार्दूलविक्रीडित
-	Jaati: अतिधृतिः 
+	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग', 'ग']
+	Gana: मसजसततगग
+	Counts: 20 letters, 32 morae
+	Chanda: गीतिका / मत्तेभविक्रीडित / सुवदना / avandhyopacāraḥ / bhekālokaḥ / bhārāvatāraḥ / bhūriśobhā / gītikā / mattebhavikrīḍitam / saurabhaśobhāsāraḥ / saṃlakṣyalīlā / suvadanā / utpalamālikā / viṣvagvitānam / vāṇīvāṇaḥ / vīravimānam / vṛtta / īdṛṣam / śobhā / त्वरितगति (पाद 1-2) / पणव (पाद 1-2) / मत्ता (पाद 1-2) / मनोरमा (पाद 1-2) / मयूरसारिणी (पाद 1-2) / रुक्मवती (पाद 1-2) / चम्पकमाला (पाद 1-2) / शुद्धविराट् (पाद 1-2) / हंसी (पाद 1-2) / मणिराग (पाद 1-2) / मेघवितान (पाद 1-2) / दीपकमाला (पाद 1-2) / उपस्थिता (पाद 1-2) / acalapaṅktiḥ (पाद 1-2) / ahilā (पाद 1-2) / akṣarāvalī (पाद 1-2) / amṛtagatiḥ (पाद 1-2) / anucāyitā (पाद 1-2) / asitadhārā (पाद 1-2) / baladhārī (पाद 1-2) / bhinnapadam (पाद 1-2) / bodhāturā (पाद 1-2) / campakamālā (पाद 1-2) / rukmavatī (पाद 1-2) / carapadam (पाद 1-2) / chalitakam (पाद 1-2) / citibhṛtam (पाद 1-2) / cārucāraṇam (पाद 1-2) / dhamanikā (पाद 1-2) / dhūmrālī (पाद 1-2) / dvāravahā (पाद 1-2) / gahanā (पाद 1-2) / gaṇadehā (पाद 1-2) / hemahāsaḥ (पाद 1-2) / hīralambi (पाद 1-2) / hīrāṅgī (पाद 1-2) / paṇava (पाद 1-2) / indraḥ (पाद 1-2) / jarā (पाद 1-2) / kalāpāntaritā (पाद 1-2) / karṇapālikā (पाद 1-2) / keram (पाद 1-2) / khaurali (पाद 1-2) / kheṭakam (पाद 1-2) / kupyam (पाद 1-2) / kāmacāri (पाद 1-2) / kāmanibhā (पाद 1-2) / kāṇḍamukhī (पाद 1-2) / kīlālam (पाद 1-2) / kūlam (पाद 1-2) / kṛkapādi (पाद 1-2) / kṛtakavali (पाद 1-2) / kṛtamaṇitā (पाद 1-2) / lulitam (पाद 1-2) / madhyādhārā (पाद 1-2) / mahimāvasāyi (पाद 1-2) / makaramukhī (पाद 1-2) / manoramā (पाद 1-2) / mattā (पाद 1-2) / mayūrasāriṇī (पाद 1-2) / nameruḥ (पाद 1-2) / naragā (पाद 1-2) / nemadhāri (पाद 1-2) / nirmedhā (पाद 1-2) / nīranidhiḥ (पाद 1-2) / nīrohā (पाद 1-2) / nīrāñjaliḥ (पाद 1-2) / padmāvarttaḥ (पाद 1-2) / paricāravatī (पाद 1-2) / paṇavaḥ (पाद 1-2) / phaladharam (पाद 1-2) / phalinī (पाद 1-2) / prasarā (पाद 1-2) / pravādapadā (पाद 1-2) / rasabhūma (पाद 1-2) / sahajā (पाद 1-2) / sarasamukhī (पाद 1-2) / sarāvikā (पाद 1-2) / saṃhatikā (पाद 1-2) / sukhelā (पाद 1-2) / surayānavatī (पाद 1-2) / surākṣī (पाद 1-2) / suṣamā (पाद 1-2) / tanimā (पाद 1-2) / uditam (पाद 1-2) / unnālam (पाद 1-2) / upadhāyyā (पाद 1-2) / upasaṃkulā (पाद 1-2) / vanitāvinodi (पाद 1-2) / varhāturā (पाद 1-2) / varmitā (पाद 1-2) / vaḍiśabhedinī (पाद 1-2) / vaṃśāropī (पाद 1-2) / viralam (पाद 1-2) / vireki (पाद 1-2) / virāṭ (पाद 1-2) / śuddhavirāṭ (पाद 1-2) / visraṃsi (पाद 1-2) / viśadacchāyaḥ (पाद 1-2) / viśvamukhī (पाद 1-2) / viśālaprabham (पाद 1-2) / viśālāntikam (पाद 1-2) / vāravatī (पाद 1-2) / vīrāntā (पाद 1-2) / śarat (पाद 1-2) / śephālī (पाद 1-2) / ṛtam (पाद 1-2)
+	Jaati: कृतिः 
 
 विद्या नाम नरस्य रूपमधिकं प्रच्छन्नगुप्तं धनम्
 	Syllables: ['वि', 'द्या', 'ना', 'म', 'न', 'र', 'स्य', 'रू', 'प', 'म', 'धि', 'कं', 'प्र', 'च्छ', 'न्न', 'गु', 'प्तं', 'ध', 'न', 'म्']
-	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग', '']
-	Gana: मसजसततग
-	Counts: 19 letters, 30 morae
-	Chanda: शार्दूलविक्रीडित
-	Jaati: अतिधृतिः 
+	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग', 'ग']
+	Gana: मसजसततगग
+	Counts: 20 letters, 32 morae
+	Chanda: गीतिका / मत्तेभविक्रीडित / सुवदना / avandhyopacāraḥ / bhekālokaḥ / bhārāvatāraḥ / bhūriśobhā / gītikā / mattebhavikrīḍitam / saurabhaśobhāsāraḥ / saṃlakṣyalīlā / suvadanā / utpalamālikā / viṣvagvitānam / vāṇīvāṇaḥ / vīravimānam / vṛtta / īdṛṣam / śobhā / त्वरितगति (पाद 1-2) / पणव (पाद 1-2) / मत्ता (पाद 1-2) / मनोरमा (पाद 1-2) / मयूरसारिणी (पाद 1-2) / रुक्मवती (पाद 1-2) / चम्पकमाला (पाद 1-2) / शुद्धविराट् (पाद 1-2) / हंसी (पाद 1-2) / मणिराग (पाद 1-2) / मेघवितान (पाद 1-2) / दीपकमाला (पाद 1-2) / उपस्थिता (पाद 1-2) / acalapaṅktiḥ (पाद 1-2) / ahilā (पाद 1-2) / akṣarāvalī (पाद 1-2) / amṛtagatiḥ (पाद 1-2) / anucāyitā (पाद 1-2) / asitadhārā (पाद 1-2) / baladhārī (पाद 1-2) / bhinnapadam (पाद 1-2) / bodhāturā (पाद 1-2) / campakamālā (पाद 1-2) / rukmavatī (पाद 1-2) / carapadam (पाद 1-2) / chalitakam (पाद 1-2) / citibhṛtam (पाद 1-2) / cārucāraṇam (पाद 1-2) / dhamanikā (पाद 1-2) / dhūmrālī (पाद 1-2) / dvāravahā (पाद 1-2) / gahanā (पाद 1-2) / gaṇadehā (पाद 1-2) / hemahāsaḥ (पाद 1-2) / hīralambi (पाद 1-2) / hīrāṅgī (पाद 1-2) / paṇava (पाद 1-2) / indraḥ (पाद 1-2) / jarā (पाद 1-2) / kalāpāntaritā (पाद 1-2) / karṇapālikā (पाद 1-2) / keram (पाद 1-2) / khaurali (पाद 1-2) / kheṭakam (पाद 1-2) / kupyam (पाद 1-2) / kāmacāri (पाद 1-2) / kāmanibhā (पाद 1-2) / kāṇḍamukhī (पाद 1-2) / kīlālam (पाद 1-2) / kūlam (पाद 1-2) / kṛkapādi (पाद 1-2) / kṛtakavali (पाद 1-2) / kṛtamaṇitā (पाद 1-2) / lulitam (पाद 1-2) / madhyādhārā (पाद 1-2) / mahimāvasāyi (पाद 1-2) / makaramukhī (पाद 1-2) / manoramā (पाद 1-2) / mattā (पाद 1-2) / mayūrasāriṇī (पाद 1-2) / nameruḥ (पाद 1-2) / naragā (पाद 1-2) / nemadhāri (पाद 1-2) / nirmedhā (पाद 1-2) / nīranidhiḥ (पाद 1-2) / nīrohā (पाद 1-2) / nīrāñjaliḥ (पाद 1-2) / padmāvarttaḥ (पाद 1-2) / paricāravatī (पाद 1-2) / paṇavaḥ (पाद 1-2) / phaladharam (पाद 1-2) / phalinī (पाद 1-2) / prasarā (पाद 1-2) / pravādapadā (पाद 1-2) / rasabhūma (पाद 1-2) / sahajā (पाद 1-2) / sarasamukhī (पाद 1-2) / sarāvikā (पाद 1-2) / saṃhatikā (पाद 1-2) / sukhelā (पाद 1-2) / surayānavatī (पाद 1-2) / surākṣī (पाद 1-2) / suṣamā (पाद 1-2) / tanimā (पाद 1-2) / uditam (पाद 1-2) / unnālam (पाद 1-2) / upadhāyyā (पाद 1-2) / upasaṃkulā (पाद 1-2) / vanitāvinodi (पाद 1-2) / varhāturā (पाद 1-2) / varmitā (पाद 1-2) / vaḍiśabhedinī (पाद 1-2) / vaṃśāropī (पाद 1-2) / viralam (पाद 1-2) / vireki (पाद 1-2) / virāṭ (पाद 1-2) / śuddhavirāṭ (पाद 1-2) / visraṃsi (पाद 1-2) / viśadacchāyaḥ (पाद 1-2) / viśvamukhī (पाद 1-2) / viśālaprabham (पाद 1-2) / viśālāntikam (पाद 1-2) / vāravatī (पाद 1-2) / vīrāntā (पाद 1-2) / śarat (पाद 1-2) / śephālī (पाद 1-2) / ṛtam (पाद 1-2)
+	Jaati: कृतिः 
 
 विद्या भोगकरी यशः सुखकरी विद्या गुरूणां गुरुः
 	Syllables: ['वि', 'द्या', 'भो', 'ग', 'क', 'री', 'य', 'शः', 'सु', 'ख', 'क', 'री', 'वि', 'द्या', 'गु', 'रू', 'णां', 'गु', 'रुः']
 	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग']
 	Gana: मसजसततग
 	Counts: 19 letters, 30 morae
-	Chanda: शार्दूलविक्रीडित
+	Chanda: शार्दूलविक्रीडित / मेघविस्फूर्जिता / सुमधुरा / सुरसा / chāyā / dhavalam / grāvāstaraṇam / jhillīlīlā / kalpalatāpatākinī / kalāpadīpakam / kiraṇakīrttiḥ / lolalolambalīlam / meghavisphurjita / meghavisphūrjitā / mārābhisaraṇam / nirgalitamekhalā / phulladāma / prapañcacāmaram / surasā / vidhunidhuvanam / Śārdūlavikrīḍitam / śārdulavikrīḍita / śārdūlavikrīḍitam / śambhuḥ / śilīmukhojjṛmbhitam / ṭaṅkaṇam
 	Jaati: अतिधृतिः 
 
 विद्या बन्धुजनो विदेशगमने विद्या परा देवता
@@ -27,7 +27,7 @@
 	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग']
 	Gana: मसजसततग
 	Counts: 19 letters, 30 morae
-	Chanda: शार्दूलविक्रीडित
+	Chanda: शार्दूलविक्रीडित / मेघविस्फूर्जिता / सुमधुरा / सुरसा / chāyā / dhavalam / grāvāstaraṇam / jhillīlīlā / kalpalatāpatākinī / kalāpadīpakam / kiraṇakīrttiḥ / lolalolambalīlam / meghavisphurjita / meghavisphūrjitā / mārābhisaraṇam / nirgalitamekhalā / phulladāma / prapañcacāmaram / surasā / vidhunidhuvanam / Śārdūlavikrīḍitam / śārdulavikrīḍita / śārdūlavikrīḍitam / śambhuḥ / śilīmukhojjṛmbhitam / ṭaṅkaṇam
 	Jaati: अतिधृतिः 
 
 विद्या राजसु पूज्यते न हि धनं विद्याविहीनः पशुः
@@ -35,5 +35,5 @@
 	LG: ['ग', 'ग', 'ग', 'ल', 'ल', 'ग', 'ल', 'ग', 'ल', 'ल', 'ल', 'ग', 'ग', 'ग', 'ल', 'ग', 'ग', 'ल', 'ग']
 	Gana: मसजसततग
 	Counts: 19 letters, 30 morae
-	Chanda: शार्दूलविक्रीडित
+	Chanda: शार्दूलविक्रीडित / मेघविस्फूर्जिता / सुमधुरा / सुरसा / chāyā / dhavalam / grāvāstaraṇam / jhillīlīlā / kalpalatāpatākinī / kalāpadīpakam / kiraṇakīrttiḥ / lolalolambalīlam / meghavisphurjita / meghavisphūrjitā / mārābhisaraṇam / nirgalitamekhalā / phulladāma / prapañcacāmaram / surasā / vidhunidhuvanam / Śārdūlavikrīḍitam / śārdulavikrīḍita / śārdūlavikrīḍitam / śambhuḥ / śilīmukhojjṛmbhitam / ṭaṅkaṇam
 	Jaati: अतिधृतिः 

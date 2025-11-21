@@ -1,60 +1,69 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Backend Configuration
+Sample Settings
 
-Configuration settings for the Flask REST API backend.
+Copy this file to settings.py and customize as needed:
+    cp settings.sample.py settings.py
 """
 
 import os
+import tempfile
 from pathlib import Path
 
-# Base directory (backend folder)
-BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECT_ROOT = BASE_DIR.parent
 
-# Data directories
-DATA_DIR = BASE_DIR / "data"
-UPLOAD_FOLDER = BASE_DIR / "uploads"
-PHOTOS_PATH = UPLOAD_FOLDER / "photos"
-TEXTS_PATH = UPLOAD_FOLDER / "texts"
-RESULTS_PATH = UPLOAD_FOLDER / "results"
+class Settings:
+    """Application settings and configuration."""
+    
+    # Base paths
+    BASE_DIR = Path(__file__).resolve().parent.parent  # backend/
+    DATA_DIR = BASE_DIR / "data"
+    UPLOADS_DIR = BASE_DIR / "uploads"
+    PHOTOS_DIR = UPLOADS_DIR / "photos"
+    TEXTS_DIR = UPLOADS_DIR / "texts"
+    RESULTS_DIR = UPLOADS_DIR / "results"
+    TMP_PATH = Path(tempfile.gettempdir()) / "CHANDA_TMP"
+    
+    # Flask configuration
+    APPLICATION_NAME = "Sanskrit Meter Identification System"
+    SECRET_KEY = os.environ.get("SECRET_KEY", "super-secret-key")
+    DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max file upload
+    
+    # API configuration
+    API_PREFIX = "/api"
+    
+    # CORS configuration
+    # Set to "*" for development, restrict in production
+    CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
+    
+    # Logging
+    LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+    LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    
+    # OCR configuration
+    TESSERACT_LANGUAGES = ["san", "hin", "eng"]
+    CLIENT_SECRET = BASE_DIR / "client_secret.json"
+    
+    # Chanda configuration
+    # Options: "auto" (uses ICU if available), "icu", "sanskrit_text"
+    SYLLABIZATION_METHOD = "auto"
+    
+    # File upload restrictions
+    ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff'}
+    ALLOWED_TEXT_EXTENSIONS = {'txt', 'text'}
+    
+    def __init__(self):
+        """Initialize settings and create necessary directories."""
+        # Create upload directories if they don't exist
+        for directory in [self.UPLOADS_DIR, self.PHOTOS_DIR, self.TEXTS_DIR, self.RESULTS_DIR, self.TMP_PATH]:
+            directory.mkdir(parents=True, exist_ok=True)
 
-# Create directories if they don't exist
-for path in [PHOTOS_PATH, TEXTS_PATH, RESULTS_PATH]:
-    path.mkdir(parents=True, exist_ok=True)
 
-# Flask configuration
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
-MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
-
-# CORS configuration
-CORS_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:8080",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:8080",
-]
-
-# Google OCR configuration (optional)
-CLIENT_SECRET = PROJECT_ROOT / "client_secret.json"
-if not CLIENT_SECRET.exists():
-    CLIENT_SECRET = None
-
-# API configuration
-API_PREFIX = "/api"
-API_VERSION = "v1"
-
-# OCR configuration
-TESSERACT_LANGUAGES = "san+mar+hin+ben+tel+guj+tam+mal+kan"
-TESSERACT_CONFIG = "--psm 6"
-
-# Meter identification configuration
-FUZZY_MATCHING = True
-DEFAULT_OUTPUT_SCHEME = "devanagari"
-
-# Logging configuration
-LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
-LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+# Legacy module-level variables for backwards compatibility
+BASE_DIR = Settings.BASE_DIR
+DATA_PATH = Settings.DATA_DIR
+TMP_PATH = Settings.TMP_PATH
+APPLICATION_NAME = Settings.APPLICATION_NAME
+SECRET_KEY = Settings.SECRET_KEY
+CLIENT_SECRET = Settings.CLIENT_SECRET

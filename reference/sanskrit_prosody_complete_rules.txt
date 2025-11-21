@@ -1,0 +1,573 @@
+
+╔═════════════════════════════════════════════════════════════════════════════════════════════╗
+║        COMPLETE RULES & EXCEPTIONS FOR SANSKRIT PROSODY (CHANDAS) - EXTRACTED              ║
+║                          From Wikipedia Sanskrit Prosody Article                            ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════╝
+
+FUNDAMENTAL DEFINITIONS
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Term: LAGHU (Light Syllable)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: A "light" syllable marked as "L"
+Devanagari: लघु
+In morae: 1 mora unit
+
+Term: GURU (Heavy Syllable)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: A "heavy" syllable marked as "H"
+Devanagari: गुरु
+In morae: 2 mora units
+
+Term: PADA (Foot/Quarter-verse)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: One quarter of a stanza/verse
+Devanagari: पाद
+Standard Structure: Most Sanskrit poetry has 4 padas per stanza (shloka)
+
+Term: GANA (Metrical group)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: A sequence of exactly 3 syllables (trisyllabic feet)
+Devanagari: गण
+Total Possible: 8 combinations (2^3)
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+CORE RULE 1: VOWEL QUANTITY CLASSIFICATION
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+The Hrasva (Short) Vowels → Laghu (if followed by at most 1 consonant):
+─────────────────────────────────────────────────────────────────────────────────────────────
+1. अ (a) - short 'a'
+2. इ (i) - short 'i'
+3. उ (u) - short 'u'
+4. ऋ (ri) - short 'ri'
+5. ऌ (li) - short 'li'
+
+The Dirgha (Long) Vowels → Always Guru:
+─────────────────────────────────────────────────────────────────────────────────────────────
+1. आ (ā) - long 'ā'
+2. ई (ī) - long 'ī'
+3. ऊ (ū) - long 'ū'
+4. ॠ (rī) - long 'rī'
+5. ॡ (lī) - long 'lī'
+6. ए (e) - long 'e' [morphologically diphthong 'ai']
+7. ऐ (ai) - long 'ai' [morphologically diphthong 'āi']
+8. ओ (o) - long 'o' [morphologically diphthong 'au']
+9. औ (au) - long 'au' [morphologically diphthong 'āu']
+
+Note: The last four vowels are morphologically diphthongs, but sandhi rules in Sanskrit make them long.
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+CORE RULE 2: CONSONANT CLUSTERING EFFECT
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Rule: A syllable with SHORT vowel + CONSONANT CLUSTER → Always GURU
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: "At most one consonant" means:
+  • Short vowel + 0 consonants = LAGHU ✓
+  • Short vowel + 1 consonant = LAGHU ✓
+  • Short vowel + 2+ consonants = GURU (consonant cluster)
+
+Example:
+  • क (ka) = short 'a' + 1 consonant = LAGHU
+  • कम (kam) = short 'a' + consonant 'm' = still followed by vowel? = depends on context
+  • कष्म = short 'a' + cluster 'ष्म' (two consonants) = GURU
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+CORE RULE 3: ANUSVARA & VISARGA RULE
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Rule: A syllable with ANUSVARA (ṃ) or VISARGA (ḥ) is ALWAYS GURU
+──────────────────────────────────────────────────────────────────────────────────────────────
+
+ANUSVARA (अनुस्वार):
+  • Symbol: ṃ or ं
+  • Sanskrit: अनुस्वार
+  • Function: Nasal sound marker
+  • Example: सं (sam) = GURU (even if 'a' is short)
+  • Details: Represents nasalization, counts as consonantal ending
+
+VISARGA (विसर्ग):
+  • Symbol: ḥ or ः
+  • Sanskrit: विसर्ग
+  • Function: Aspiration marker
+  • Example: नः (naḥ) = GURU (even if 'a' is short)
+  • Details: Represents h-sound at end of syllable
+
+Rule Implication:
+  Any short vowel ending in ṃ or ḥ becomes GURU, overriding the usual short vowel rule.
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+CORE RULE 4: HALANTA (VIRAMA) HANDLING
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+HALANTA (हलन्त / Virama) Symbol: ् (्)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: A diacritic that removes the inherent 'a' vowel from a consonant
+Sanskrit: हलन्त (halant) or विराम (virama)
+Purpose: Allows consonant clusters and final consonants
+
+Interpretation for Laghu-Guru:
+  HALANTA indicates the consonant is part of a cluster and does NOT end the syllable
+  • The syllable continues to the next vowel
+  • Count consonants until next vowel appears
+
+Example:
+  • क् (k with halanta) = consonant waiting for next vowel
+  • क्त (k-halanta-t cluster) = need to look at next vowel to determine syllable type
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+COMPOUND CLASSIFICATION RULE
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Complete Algorithm to Classify Any Syllable:
+──────────────────────────────────────────────────────────────────────────────────────────────
+
+STEP 1: Check the vowel
+  IF vowel ∈ {DIRGHA: आ, ई, ऊ, ॠ, ॡ, ए, ऐ, ओ, औ}
+    → Result: GURU ✓ (STOP - no further checks needed)
+
+STEP 2: Check for Anusvara or Visarga
+  IF syllable ends with ṃ or ḥ
+    → Result: GURU ✓ (STOP - overrides all other rules)
+
+STEP 3: For SHORT vowel syllables (if not guru yet)
+  Count consonants following the short vowel until next vowel appears:
+
+  IF consonant_count = 0 (vowel is final in syllable)
+    → Result: LAGHU ✓
+
+  IF consonant_count = 1 (only 1 consonant before next vowel)
+    → Result: LAGHU ✓
+
+  IF consonant_count ≥ 2 (consonant cluster)
+    → Result: GURU ✓
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+EXCEPTIONS AND SPECIAL CASES
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+EXCEPTION 1: SPECIAL CONSONANT CLUSTERS
+──────────────────────────────────────────────────────────────────────────────────────────────
+Source: "Exceptions also apply to special sounds, of the type प्र, ह्र, ब्र and क्र"
+
+Special Cluster List:
+  • प्र (pra) - P with R
+  • ह्र (hra) - H with R
+  • ब्र (bra) - B with R
+  • क्र (kra) - K with R
+
+Note: The Wikipedia article mentions these are exceptions but doesn't specify exact behavior.
+Scholarly interpretation: These clusters may be treated differently in syllabification,
+possibly counted as "less heavy" than typical consonant clusters, but still require consultation
+with Vedic Shiksha texts for authoritative treatment.
+
+
+EXCEPTION 2: FINAL SYLLABLE OF VERSE
+──────────────────────────────────────────────────────────────────────────────────────────────
+Rule: "The last syllable in each pāda may be considered guru"
+Source: Gangadasa Pandita
+
+Details:
+  • The final syllable of a quarter-verse (pada) has special handling
+  • Can be optionally treated as GURU regardless of natural classification
+  • BUT: "A guru at the end of a pāda is never counted as laghu"
+  • Meaning: A naturally-guru syllable stays guru, but a naturally-laghu can be treated as guru
+
+Implication for Meter Matching:
+  When matching verse patterns, the last syllable of each pada is flexible
+  Some meters explicitly require flexibility here
+
+
+EXCEPTION 3: VARIABLE FINAL VOWEL LENGTH
+──────────────────────────────────────────────────────────────────────────────────────────────
+Rule: "The last vowel of a verse, regardless of its natural length, may be considered 
+short or long according to the requirement of the metre"
+
+Context: This is used in poetic composition for flexibility
+Applies to: The very last syllable of entire verse (not just each pada)
+Constraint: Can be overridden by specific meter requirements
+
+
+EXCEPTION 4: SANDHI (VOWEL JUNCTION RULES)
+──────────────────────────────────────────────────────────────────────────────────────────────
+Context: "The rules of sandhi in Sanskrit make clear" vowel length classifications
+
+Sandhi Rules Affect:
+  • How two adjacent vowels merge
+  • How consonants at word/morpheme boundaries behave
+  • Whether vowels are counted as short or long after merger
+
+Application: When analyzing compound words or phrases in verse,
+apply Sanskrit sandhi rules before syllable classification
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+THE EIGHT GANAS (3-SYLLABLE METRICAL UNITS)
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Pingala's Eight Ganas (Triplet Combinations):
+──────────────────────────────────────────────────────────────────────────────────────────────
+
+1. YA-GANA (य)
+   Pattern: L-H-H | u — —
+   Devanagari: य
+   Mnemonic syllables: ya-mā-tā
+   Greek equivalent: Bacchius
+
+2. MA-GANA (म)
+   Pattern: H-H-H | — — —
+   Devanagari: म
+   Mnemonic syllables: mā-tā-rā
+   Greek equivalent: Molossus
+
+3. TA-GANA (त)
+   Pattern: H-H-L | — — u
+   Devanagari: त
+   Mnemonic syllables: tā-rā-ja
+   Greek equivalent: Antibacchius
+
+4. RA-GANA (र)
+   Pattern: H-L-H | — u —
+   Devanagari: र
+   Mnemonic syllables: rā-ja-bhā
+   Greek equivalent: Cretic
+
+5. JA-GANA (ज)
+   Pattern: L-H-L | u — u
+   Devanagari: ज
+   Mnemonic syllables: ja-bhā-na
+   Greek equivalent: Amphibrach
+
+6. BHA-GANA (भ)
+   Pattern: H-L-L | — u u
+   Devanagari: भ
+   Mnemonic syllables: bhā-na-sa
+   Greek equivalent: Dactyl
+
+7. NA-GANA (न)
+   Pattern: L-L-L | u u u
+   Devanagari: न
+   Mnemonic syllables: na-sa-la
+   Greek equivalent: Tribrach
+
+8. SA-GANA (स)
+   Pattern: L-L-H | u u —
+   Devanagari: स
+   Mnemonic syllables: sa-la-gā
+   Greek equivalent: Anapaest
+
+Pingala's Original Order: M-Y-R-S-T-J-BH-N
+Mnemonic: YAMĀTĀRĀJABHĀNASALAGĀ
+──────────────────────────────────────────────────────────────────────────────────────────────
+The mnemonic "yamātārājabhānasalagā" is self-descriptive:
+  • Each gana is found by taking 3 consecutive syllables starting with that gana's letter
+  • ya-mā-tā = YA gana (L-H-H)
+  • mā-tā-rā = MA gana (H-H-H)
+  • etc.
+
+Binary Mapping (Pingala's Insight):
+  • Pingala discovered H=0, L=1 in binary
+  • Reading each gana right-to-left yields standard binary enumeration
+  • This is Pingala's original binary system (circa 600-200 BCE)
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+MEASUREMENT BY MORAE (MATRA)
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Term: MATRA (मात्र) / MORA
+──────────────────────────────────────────────────────────────────────────────────────────────
+Definition: A unit of time/duration used for morae-based meters
+
+Counting Rules:
+  • 1 LAGHU syllable = 1 MATRA (1 time unit)
+  • 1 GURU syllable = 2 MATRAS (2 time units)
+
+Usage: In Matra-based meters (Gana-chandas), total morae per line is fixed,
+not syllable count.
+
+Example:
+  A line of 8 morae could be:
+  • 8 laghu syllables (8×1=8)
+  • 4 guru syllables (4×2=8)
+  • 3 guru + 2 laghu syllables (3×2 + 2×1 = 8)
+  • Any combination totaling 8 morae
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+THE SEVEN MAJOR VEDIC METERS
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+1. GAYATRI (गायत्री)
+   Structure: 24 syllables total / 3 padas of 8 syllables each
+   Pattern per pada: L-L-H-L-L-L-L-H (ललगललललग)
+   Morae: 11 morae per pada (typical)
+   Varieties: 11 different sub-patterns
+   Usage: Sacred meter, ~25% of Rigveda
+   Rarity: Never used to end hymns (special reverence)
+   Frequency: Most common in Vedic texts
+
+2. USHNIK (उष्णिक्)
+   Structure: 28 syllables total
+   Padas: 2 of 8 syllables + 1 of 12 syllables (mixed structure)
+   Mapped as: 7×4
+   Varieties: 8 different sub-patterns
+   Usage: Found in Vedas, uncommon
+   Example: Rigveda 1.8.23-26
+
+3. ANUSHTUBH (अनुष्टुभ्)
+   Structure: 32 syllables total / 4 padas of 8 syllables each
+   Pattern per pada: Variable (flexible via wildcard matching)
+   Pada 1&3 typical: L-G pattern flexible
+   Pada 2&4 typical: L-G-L pattern flexible
+   Morae: Typically 3-4 morae per pada
+   Varieties: 12 recognized sub-patterns
+   Usage: Most frequent in post-Vedic literature (92% of Bhagavad Gita)
+   Frequency: Embedded in epics, Puranas, scientific treatises
+   Features: Octosyllabic like Gayatri, but much more common in classical texts
+   Examples: Bhagavad Gita, Mahabharata, Ramayana
+
+4. BRIHATI (बृहती)
+   Structure: 36 syllables total
+   Padas: 2 of 8 syllables + 1 of 12 syllables + 1 of 8 syllables (mixed)
+   Mapped as: 9×4
+   Varieties: 12 different sub-patterns
+   Usage: Found in Vedas, rare
+   Example: Rigveda 5.1.36, 3.9.1-8
+
+5. PANKTI (पङ्क्ति)
+   Structure: 40 syllables total / 5 verses of 8 syllables each
+   Mapped as: 10×4
+   Varieties: 14 different sub-patterns
+   Usage: Uncommon, found with Trishtubh
+   Example: Rigveda 1.191.10-12
+   Note: Has 5 quarters instead of standard 4
+
+6. TRISHTUBH (त्रिष्टुभ्)
+   Structure: 44 syllables total / 4 padas of 11 syllables each
+   Pattern per pada: L-L-H-L-L-L-L-H-L-L-H (typical, varies)
+   Morae: 18 morae per pada (typical)
+   Varieties: 22 different sub-patterns
+   Usage: Second most common in post-Vedic literature
+   Frequency: Found in dramas, plays, parts of Mahabharata, classical Kavyas
+   Features: 11 syllables per quarter
+   Examples: Rigveda 4.50.4, 7.3.1-12
+
+7. JAGATI (जगती)
+   Structure: 48 syllables total / 4 padas of 12 syllables each
+   Pattern per pada: L-H-H-L-H-H-L-H-H-L-H-H (typical, varies)
+   Morae: 20 morae per pada (typical)
+   Varieties: 30 different sub-patterns (most variety!)
+   Usage: Third most common in post-Vedic literature
+   Frequency: Typically alternates with Trishtubh in same text
+   Features: 12 syllables per quarter
+   Examples: Rigveda 1.51.13, 9.110.4-12
+   Pattern: Often found in separate cantos
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+ADDITIONAL SYLLABLE-BASED METERS (Beyond the 7 Major)
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+ATIJAGATI (अतिजगती)
+  Structure: 13×4 syllables (52 syllables total, 13 per pada)
+  Varieties: 16 sub-patterns
+
+SHAKVARI (शक्वरी)
+  Structure: 14×4 syllables (56 syllables total, 14 per pada)
+  Varieties: 20 sub-patterns
+
+ATISHAKVARI (अतिशक्वरी)
+  Structure: 15×4 syllables (60 syllables total, 15 per pada)
+  Varieties: 18 sub-patterns
+
+ASHTI (अष्टि)
+  Structure: 16×4 syllables (64 syllables total, 16 per pada)
+  Varieties: 12 sub-patterns
+
+ATYASHTI (अत्यष्टि)
+  Structure: 17×4 syllables (68 syllables total, 17 per pada)
+  Varieties: 17 sub-patterns
+
+DHRITI (धृति)
+  Structure: 18×4 syllables (72 syllables total, 18 per pada)
+  Varieties: 17 sub-patterns
+
+ATIDHRITI (अतिधृति)
+  Structure: 19×4 syllables (76 syllables total, 19 per pada)
+  Varieties: 13 sub-patterns
+
+KRITI (कृति)
+  Structure: 20×4 syllables (80 syllables total, 20 per pada)
+  Varieties: 4 sub-patterns
+
+Regular vs Irregular Meters:
+  • REGULAR: Total syllables per line ≤ 26
+  • IRREGULAR: Total syllables per line > 26
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+MORAE-BASED METERS (Gana-Chandas / Gana-Vritta)
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Definition: Meters based on MATRAS (instants) rather than fixed syllable count
+
+16 Classes Enumerated: Each with 16 sub-species (total 256 varieties)
+
+Common Examples:
+
+1. ARYA (आर्य)
+   • Morae-based meter
+   • Variable syllable count (different from fixed syllable meters)
+   • Usage: Samkhyakarika (entire text in Arya)
+   • Mathematical treatises of Aryabhata (some chapters)
+   • Some works of Kalidasa
+
+2. UDGITI (उद्गीति)
+   • Morae-based
+
+3. UPAGITI (उपगीति)
+   • Morae-based
+
+4. GITI (गीति)
+   • Morae-based
+
+5. ARYAGITI (आर्यगीति)
+   • Morae-based
+
+General Rule:
+  • LAGHU = 1 mora
+  • GURU = 2 morae
+  • Fixed total morae per line (not syllable count)
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+HYBRID METERS (Matra-Chandas)
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Definition: Combine features of syllable-based and morae-based meters
+
+Common Examples:
+
+1. VAITALIYA (वैतालीय)
+   • Combined syllable and morae constraints
+
+2. MATRASAMAKA (मात्रसमक)
+   • Combined system
+
+3. GITYARYA (गित्यार्य)
+   • Combined system
+
+Notable Texts:
+  • Kirātārjunīya by Bharavi - complete cantos in Vaitaliya
+  • Naishadha Charita by Shriharsha - complete cantos in Vaitaliya
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+STANZA CLASSIFICATION RULES
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Definition of SHLOKA / STANZA:
+  A group of 4 quarters (padas) = 1 stanza
+
+THREE TYPES OF STANZAS:
+
+Type 1: SAMAVRITTA (समवृत्त) - All Similar
+────────────────────────────────────────────────────────────────────────────────────────────
+Rule: All 4 quarters have identical syllabic pattern
+Example: Anushtubh (all 4 padas = 8 syllables)
+Pattern Type: All padas follow same L-G pattern
+
+Type 2: ARDHASAMAVRITTA (अर्धसमवृत्त) - Half Similar (Alternate)
+────────────────────────────────────────────────────────────────────────────────────────────
+Rule: Alternate verses (padas 1&3) match, alternate verses (padas 2&4) match
+Pattern Type: Pada1 = Pada3 (pattern A)
+             Pada2 = Pada4 (pattern B)
+             Where A and B may differ
+Example: Some Vedic meters where odd and even padas differ
+
+Type 3: VISHAMAVRITTA (विषमवृत्त) - All Different
+────────────────────────────────────────────────────────────────────────────────────────────
+Rule: All 4 quarters have different syllabic patterns
+Pattern Type: Each pada follows its own unique L-G pattern
+Example: Some complex classical meters
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+GENERAL COMPOSITION RULES
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Rule 1: METER AS STRUCTURAL MARKER
+──────────────────────────────────────────────────────────────────────────────────────────
+Usage: Change in meter marks end of chapter/section
+Implementation: Each section uses identical meters throughout
+Purpose: Rhythmic presentation of ideas for memory and accuracy checking
+
+Rule 2: METER CHANGE INDICATES STRUCTURAL BOUNDARY
+──────────────────────────────────────────────────────────────────────────────────────────
+Pattern: Different meter = different section
+Example: When Anushtubh changes to Trishtubh, a section ends
+
+Rule 3: ENDING METER (CODA RULE)
+──────────────────────────────────────────────────────────────────────────────────────────
+Usage: Different meter often marks poem/hymn endings
+Exception: NEVER use Gayatri to end composition (special reverence)
+Pattern: Use different meter for final verse of work
+
+Rule 4: AESTHETIC PAIRING IN EPICS
+──────────────────────────────────────────────────────────────────────────────────────────
+Context: Pairs of padas may be scanned as hemistichs (couplets)
+Implementation: Two padas grouped together (forming hemistichs)
+Pattern: Different structures complement aesthetically
+Typical: First hemistich (2 padas) has pattern A
+        Second hemistich (2 padas) has pattern B
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+TEXT AUTHENTICITY AND METER ANALYSIS
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+Rule: METRI CAUSA - Using Meter to Detect Corruptions
+──────────────────────────────────────────────────────────────────────────────────────────
+Purpose: Identify suspect text that deviates from expected meter
+Method: Compare verse against expected meter pattern
+Marker: Off-meter lines indicate possible textual corruption
+Usage: 19th-20th century Indologists used this to identify suspect passages
+
+Controversy:
+  • Some editors conjecturally rewrote verses to restore meter
+  • This risks changing meaning and adding further corruption
+  • Modern scholars question this practice for:
+    - Ancient texts where pronunciation may have differed
+    - Buddhist manuscripts where author style changed over time
+    - Any compilation of different authors/periods
+
+Reliability:
+  • Large meter changes (successive sections) → probable interpolation
+  • Consistent meter does NOT guarantee authenticity (can be maintained despite changes)
+  • Metre consistency is not always reliable indicator of authenticity
+
+
+═════════════════════════════════════════════════════════════════════════════════════════════
+SUMMARY TABLE: ALL RULES AT A GLANCE
+═════════════════════════════════════════════════════════════════════════════════════════════
+
+RULE | CONDITION | RESULT | OVERRIDE? |
+|------|-----------|--------|-----------|
+| Dirgha vowel | Any long vowel (आ,ई,ऊ,ॠ,ॡ,ए,ऐ,ओ,औ) | GURU | No |
+| Anusvara/Visarga | Ends with ṃ or ḥ | GURU | Overrides short vowel |
+| Short vowel + 0 or 1 consonant | Hrasva vowel before next vowel | LAGHU | Unless anusvara/visarga |
+| Short vowel + 2+ consonants | Hrasva vowel + cluster | GURU | No |
+| Final syllable of pada | Last syllable of quarter | GURU (optional) | Can be treated as guru |
+| Final vowel of verse | Very last syllable | Variable | Can be short or long as needed |
+| Special clusters | {प्र, ह्र, ब्र, क्र} | Exceptions apply | See Vedic Shiksha texts |
+| Morae counting | Metrical measurement | L=1, G=2 | For matra-based meters only |
+
+═════════════════════════════════════════════════════════════════════════════════════════════

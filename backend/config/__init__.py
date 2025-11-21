@@ -1,1 +1,7 @@
-"""Backend configuration"""
+"""Configuration management."""
+
+from .settings import Settings
+
+settings = Settings()
+
+__all__ = ['settings']
