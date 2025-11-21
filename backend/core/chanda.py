@@ -207,57 +207,67 @@ class Chanda:
     # ----------------------------------------------------------------------- #
 
     def get_syllables_icu(self, in_string):
-        """Split devanagari string into syllables using ICU logic"""
+        """
+        Split devanagari string into syllables using ICU logic (ENHANCED)
+        
+        ENHANCEMENT: Preserves word boundaries during processing to prevent
+        visarga+consonant merging across words (e.g., "नः प्र" → "नःप्र")
+        This fixes critical syllabization accuracy issues.
+        """
         if not ICU_AVAILABLE:
             raise RuntimeError("ICU not available. Install with: pip install PyICU regex")
         
         dev_scheme = sanscript.SCHEMES[sanscript.DEVANAGARI]
-        cleaned_phrase = in_string
         
-        # Preprocess OM
-        cleaned_phrase = regex.sub("[%s]" % dev_scheme.PATTERN_OM, "ओम्", cleaned_phrase)
+        # ENHANCED: Process words separately to preserve boundaries
+        words = in_string.split()
+        all_syllables = []
         
-        # Remove non-letter characters
-        cleaned_phrase = regex.sub(r"([^%s%s%s%s%s%s])" % (
-            dev_scheme.PATTERN_INDEPENDENT_VOWEL, 
-            dev_scheme.PATTERN_VYANJANA, 
-            dev_scheme.PATTERN_DEPENDENT_VOWEL, 
-            dev_scheme.PATTERN_YOGAVAAHA, 
-            dev_scheme.PATTERN_ACCENT, 
-            dev_scheme.PATTERN_CONSONANT_MODIFIER
-        ), "", cleaned_phrase, flags=regex.UNICODE)
-        
-        cleaned_phrase = cleaned_phrase.replace(" ", "")
-        
-        # Join vyanjana + independent vowel
-        cleaned_phrase = regex.sub(
-            r"(%s)([%s])" % (dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL, dev_scheme.PATTERN_INDEPENDENT_VOWEL), 
-            lambda x: sanscript.SCHEMES[sanscript.DEVANAGARI].do_vyanjana_svara_join(x.group(1), x.group(2)), 
-            cleaned_phrase
-        )
-        
-        syllables = []
-        while len(cleaned_phrase) > 0:
-            match = regex.match(
-                (r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*" % (
-                    dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
-                    dev_scheme.PATTERN_INDEPENDENT_VOWEL, 
-                    dev_scheme.PATTERN_VYANJANA, 
-                    dev_scheme.PATTERN_DEPENDENT_VOWEL, 
-                    dev_scheme.PATTERN_YOGAVAAHA, 
-                    dev_scheme.PATTERN_ACCENT, 
-                    dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
-                )), 
+        for word in words:
+            cleaned_phrase = word
+            
+            # Preprocess OM
+            cleaned_phrase = regex.sub("[%s]" % dev_scheme.PATTERN_OM, "ओम्", cleaned_phrase)
+            
+            # Remove non-letter characters (but keep spaces between words)
+            cleaned_phrase = regex.sub(r"([^%s%s%s%s%s%s])" % (
+                dev_scheme.PATTERN_INDEPENDENT_VOWEL, 
+                dev_scheme.PATTERN_VYANJANA, 
+                dev_scheme.PATTERN_DEPENDENT_VOWEL, 
+                dev_scheme.PATTERN_YOGAVAAHA, 
+                dev_scheme.PATTERN_ACCENT, 
+                dev_scheme.PATTERN_CONSONANT_MODIFIER
+            ), "", cleaned_phrase, flags=regex.UNICODE)
+            
+            # Join vyanjana + independent vowel
+            cleaned_phrase = regex.sub(
+                r"(%s)([%s])" % (dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL, dev_scheme.PATTERN_INDEPENDENT_VOWEL), 
+                lambda x: sanscript.SCHEMES[sanscript.DEVANAGARI].do_vyanjana_svara_join(x.group(1), x.group(2)), 
                 cleaned_phrase
             )
-            if match is None:
-                break
-            current_syllable = match.group(0)
-            cleaned_phrase = cleaned_phrase.replace(match.group(0), "", 1)
-            if len(current_syllable) > 0:
-                syllables.append(current_syllable)
+            
+            # Extract syllables from this word
+            while len(cleaned_phrase) > 0:
+                match = regex.match(
+                    (r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*" % (
+                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+                        dev_scheme.PATTERN_INDEPENDENT_VOWEL, 
+                        dev_scheme.PATTERN_VYANJANA, 
+                        dev_scheme.PATTERN_DEPENDENT_VOWEL, 
+                        dev_scheme.PATTERN_YOGAVAAHA, 
+                        dev_scheme.PATTERN_ACCENT, 
+                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
+                    )), 
+                    cleaned_phrase
+                )
+                if match is None:
+                    break
+                current_syllable = match.group(0)
+                cleaned_phrase = cleaned_phrase.replace(match.group(0), "", 1)
+                if len(current_syllable) > 0:
+                    all_syllables.append(current_syllable)
         
-        return syllables
+        return all_syllables
     
     def get_syllable_weight_icu(self, syllable):
         """Get weight (L/G) of a syllable using ICU logic"""
