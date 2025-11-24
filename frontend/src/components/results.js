@@ -39,6 +39,34 @@ class Results {
     }
     
     /**
+     * Transliterate Devanagari to IAST (basic mapping)
+     */
+    transliterateToIAST(text) {
+        const devaToIAST = {
+            'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū', 
+            'ऋ': 'ṛ', 'ॠ': 'ṝ', 'ऌ': 'ḷ', 'ॡ': 'ḹ', 'ए': 'e', 'ऐ': 'ai', 
+            'ओ': 'o', 'औ': 'au',
+            'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'ṅa',
+            'च': 'ca', 'छ': 'cha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'ña',
+            'ट': 'ṭa', 'ठ': 'ṭha', 'ड': 'ḍa', 'ढ': 'ḍha', 'ण': 'ṇa',
+            'त': 'ta', 'थ': 'tha', 'द': 'da', 'ध': 'dha', 'न': 'na',
+            'प': 'pa', 'फ': 'pha', 'ब': 'ba', 'भ': 'bha', 'म': 'ma',
+            'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va',
+            'श': 'śa', 'ष': 'ṣa', 'स': 'sa', 'ह': 'ha',
+            'ा': 'ā', 'ि': 'i', 'ी': 'ī', 'ु': 'u', 'ू': 'ū',
+            'ृ': 'ṛ', 'ॄ': 'ṝ', 'ॢ': 'ḷ', 'ॣ': 'ḹ',
+            'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au',
+            'ं': 'ṃ', 'ः': 'ḥ', '्': '', 'ँ': 'm̐'
+        };
+        
+        let result = '';
+        for (let char of text) {
+            result += devaToIAST[char] || char;
+        }
+        return result;
+    }
+    
+    /**
      * Display results for different input types
      */
     displayResults(type, data) {
@@ -69,22 +97,102 @@ class Results {
         }
         html += '</div>';
         
-        // Meters Found - Show prominently first!
-        if (data.summary && data.summary.line && data.summary.line.match && data.summary.line.match.chanda) {
-            html += '<div class="meters-found-section">';
-            html += '<h3>Meters Identified</h3>';
-            html += '<div class="meters-list">';
-            const chandas = data.summary.line.match.chanda;
-            Object.entries(chandas).forEach(([meter, count]) => {
-                const englishName = this.getMeterEnglish(meter);
-                html += `<div class="meter-badge">
-                    <span class="meter-name-large" data-hindi="${meter}" data-english="${englishName}">${meter}</span>
-                    <span class="meter-count">${count} line${count > 1 ? 's' : ''}</span>
-                </div>`;
+        // Meters Found - Show ONLY top meters from each line
+        if (data.result && data.result.line) {
+            // Build our own summary showing only top meter per line
+            const topMeterCounts = {};
+            
+            data.result.line.forEach(lineItem => {
+                const result = lineItem.result;
+                if (!result) return;
+                
+                let topMeter = null;
+                
+                // Extract top meter from display_chanda_primary (new format)
+                if (result.display_chanda_primary && result.display_chanda_primary.trim()) {
+                    const primaryMeters = result.display_chanda_primary.split('|').map(m => m.trim());
+                    if (primaryMeters.length > 0) {
+                        // Extract meter name (before the bracket with confidence score)
+                        const meterMatch = primaryMeters[0].match(/^(.+?)\s*\[[\d.]+\]$/);
+                        topMeter = meterMatch ? meterMatch[1].trim() : primaryMeters[0];
+                        
+                        // Remove transliteration if present
+                        const parenMatch = topMeter.match(/^(.+?)\s*\([^)]+\)$/);
+                        if (parenMatch) {
+                            topMeter = parenMatch[1].trim();
+                        }
+                    }
+                } 
+                // Fallback to display_chanda (old format) - take first meter only
+                else if (result.found && result.display_chanda) {
+                    const meters = result.display_chanda.split('/').map(m => m.trim());
+                    if (meters.length > 0) {
+                        topMeter = meters[0];
+                        // Extract just the meter name, remove pada info
+                        const cleanMatch = topMeter.match(/^([^\(]+)/);
+                        if (cleanMatch) {
+                            topMeter = cleanMatch[1].trim();
+                        }
+                    }
+                }
+                
+                // Count this top meter
+                if (topMeter) {
+                    topMeterCounts[topMeter] = (topMeterCounts[topMeter] || 0) + 1;
+                }
             });
-            html += '</div>';
-            html += '<button class="language-toggle-btn" onclick="window.resultsComponent.toggleLanguage(event)">Change to English</button>';
-            html += '</div>';
+            
+            // Display the summary if we found any meters
+            if (Object.keys(topMeterCounts).length > 0) {
+                html += '<div class="meters-found-section">';
+                html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">';
+                html += '<h3 style="margin: 0;">Meters Identified</h3>';
+                html += '<button class="language-toggle-btn-compact" onclick="window.resultsComponent.toggleLanguage(event)">EN</button>';
+                html += '</div>';
+                html += '<div class="meters-list">';
+                
+                // Sort by count (highest to lowest)
+                const sortedMeters = Object.entries(topMeterCounts).sort((a, b) => b[1] - a[1]);
+                
+                sortedMeters.forEach(([meter, count]) => {
+                    // The meter name as is (in Devanagari)
+                    let devanagari = meter;
+                    let iast = '';
+                    
+                    // Check if there's a parenthetical note (like "पाद 1-2")
+                    const parenMatch = meter.match(/^(.+?)\s*\((.+?)\)$/);
+                    if (parenMatch) {
+                        // Full name with parentheses for Devanagari
+                        devanagari = meter;
+                        // Transliterate the main part, keep parenthetical as is
+                        const mainPart = parenMatch[1].trim();
+                        const parenPart = parenMatch[2].trim();
+                        // Try mapping first, fall back to transliteration
+                        let mainIAST = this.getMeterEnglish(mainPart);
+                        if (mainIAST === mainPart || mainIAST === this.transliterateToIAST(mainPart)) {
+                            // No mapping found, use transliteration
+                            mainIAST = this.transliterateToIAST(mainPart);
+                        }
+                        iast = `${mainIAST} (${parenPart})`;
+                    } else {
+                        // Simple meter name without parentheses
+                        // Try mapping first, fall back to transliteration
+                        iast = this.getMeterEnglish(meter);
+                        if (iast === meter || iast === this.transliterateToIAST(meter)) {
+                            // No mapping found, use transliteration
+                            iast = this.transliterateToIAST(meter);
+                        }
+                    }
+                    
+                    html += `<div class="meter-badge">
+                        <span class="meter-name-large meter-name-toggle" data-devanagari="${this.escapeHtml(devanagari)}" data-iast="${this.escapeHtml(iast)}">${this.escapeHtml(devanagari)}</span>
+                        <span class="meter-count">${count} line${count > 1 ? 's' : ''}</span>
+                    </div>`;
+                });
+                
+                html += '</div>';
+                html += '</div>';
+            }
         }
         
         // Summary - Collapsible
@@ -230,6 +338,9 @@ class Results {
                 });
                 
                 if (validSyllables.length > 0) {
+                    // Transliterate syllables to IAST for English display
+                    const syllablesIAST = validSyllables.map(syl => this.transliterateToIAST(syl));
+                    
                     // Create table structure
                     html += '<div class="analysis-table-container">';
                     html += '<table class="analysis-table">';
@@ -237,8 +348,9 @@ class Results {
                     // Header row - Syllables
                     html += '<thead><tr>';
                     html += '<th class="row-label-cell">Akṣarāṇi</th>';
-                    validSyllables.forEach((syllable) => {
-                        html += `<th>${this.escapeHtml(syllable)}</th>`;
+                    validSyllables.forEach((syllable, idx) => {
+                        const iast = syllablesIAST[idx];
+                        html += `<th class="syllable-cell table-content" data-sanskrit="${this.escapeHtml(syllable)}" data-english="${this.escapeHtml(iast)}">${this.escapeHtml(iast)}</th>`;
                     });
                     html += '</tr></thead>';
                     
@@ -296,12 +408,28 @@ class Results {
                     html += '</div>';
                 }
                 
-                // Identified Meter
+                // Identified Meter - Show only TOP MOST RELEVANT meter
                 html += '<div class="meter-result-row">';
-                if (result.found && result.display_chanda) {
-                    const englishName = this.getMeterEnglish(result.display_chanda);
-                    html += `<span class="meter-name-identified" data-hindi="${result.display_chanda}" data-english="${englishName}">${result.display_chanda}</span>`;
+                
+                // Use display_chanda_primary if available (high-confidence matches only)
+                if (result.display_chanda_primary && result.display_chanda_primary.trim()) {
+                    // Split multiple primary matches and SHOW ONLY THE FIRST ONE
+                    const primaryMeters = result.display_chanda_primary.split('|').map(m => m.trim());
+                    const firstMeter = primaryMeters[0];
+                    
+                    // Extract meter name (before the bracket with confidence score)
+                    const meterMatch = firstMeter.match(/^(.+?)\s*\[[\d.]+\]$/);
+                    const meterName = meterMatch ? meterMatch[1].trim() : firstMeter;
+                    
+                    html += `<span class="meter-name-identified">${this.escapeHtml(meterName)}</span>`;
                     html += `<span class="meter-match match-exact">Exact Match</span>`;
+                } else if (result.found && result.display_chanda) {
+                    // Fallback to old display_chanda field (show only first meter)
+                    const meters = result.display_chanda.split('/').map(m => m.trim());
+                    const firstMeter = meters[0];
+                    const englishName = this.getMeterEnglish(firstMeter);
+                    html += `<span class="meter-name-identified" data-hindi="${firstMeter}" data-english="${englishName}">${firstMeter}</span>`;
+                    html += `<span class="meter-match match-exact">Match Found</span>`;
                 } else if (result.fuzzy && result.fuzzy.length > 0) {
                     const firstFuzzy = result.fuzzy[0];
                     const fuzzyMeter = firstFuzzy.display_chanda || '-';
@@ -356,26 +484,67 @@ class Results {
      */
     toggleLanguage(event) {
         const button = event.target;
-        const meterNames = document.querySelectorAll('.meter-name-large, .meter-name-identified');
-        const isEnglish = button.textContent === 'Change to Sanskrit';
         
+        // Check if it's the compact button (shows "EN" or "हि")
+        const isCompact = button.classList.contains('language-toggle-btn-compact');
+        const isShowingDevanagari = isCompact ? (button.textContent === 'EN') : (button.textContent === 'Change to English');
+        
+        // Toggle meter names in the summary section
+        const meterToggles = document.querySelectorAll('.meter-name-toggle');
+        meterToggles.forEach(element => {
+            const devanagari = element.dataset.devanagari;
+            const iast = element.dataset.iast;
+            
+            if (devanagari && iast) {
+                element.textContent = isShowingDevanagari ? iast : devanagari;
+            }
+        });
+        
+        // Toggle meter names in line analysis
+        const meterNames = document.querySelectorAll('.meter-name-large:not(.meter-name-toggle), .meter-name-identified');
         meterNames.forEach(element => {
             const hindi = element.dataset.hindi || element.textContent;
             const english = element.dataset.english || element.textContent;
             
+            // Store both values if not already stored
             if (!element.dataset.hindi) {
                 element.dataset.hindi = hindi;
+            }
+            if (!element.dataset.english) {
                 element.dataset.english = english;
             }
             
-            element.textContent = isEnglish ? hindi : english;
+            element.textContent = isShowingDevanagari ? english : hindi;
         });
         
-        button.textContent = isEnglish ? 'Change to English' : 'Change to Sanskrit';
+        // Update button text
+        if (isCompact) {
+            button.textContent = isShowingDevanagari ? 'हि' : 'EN';
+        } else {
+            button.textContent = isShowingDevanagari ? 'Change to Sanskrit' : 'Change to English';
+        }
     }
     
     /**
-     * Toggle between Sanskrit and English table content (L/G and Gana values)
+     * Toggle display of alternate meter matches
+     */
+    toggleAlternates(event, lineIndex) {
+        const button = event.target;
+        const alternatesDiv = document.getElementById(`alternates-${lineIndex}`);
+        
+        if (alternatesDiv) {
+            if (alternatesDiv.style.display === 'none') {
+                alternatesDiv.style.display = 'block';
+                button.textContent = button.textContent.replace('+', '−');
+            } else {
+                alternatesDiv.style.display = 'none';
+                button.textContent = button.textContent.replace('−', '+');
+            }
+        }
+    }
+    
+    /**
+     * Toggle between Sanskrit and English table content (Syllables, L/G and Gana values)
      */
     toggleTableLanguage(event) {
         const button = event.target;
@@ -386,7 +555,9 @@ class Results {
             const sanskrit = element.dataset.sanskrit;
             const english = element.dataset.english;
             
-            element.textContent = isEnglish ? sanskrit : english;
+            if (sanskrit && english) {
+                element.textContent = isEnglish ? sanskrit : english;
+            }
         });
         
         button.textContent = isEnglish ? 'Change to English' : 'Change to Sanskrit';

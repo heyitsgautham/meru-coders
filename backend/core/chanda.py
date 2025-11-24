@@ -1467,12 +1467,19 @@ class Chanda:
         
         # Format chanda for display, handling both tuple and string formats
         display_chanda_parts = []
-        display_chanda_primary_parts = []  # High-confidence matches only (≥15.0)
-        display_chanda_alternate_parts = []  # Medium-confidence matches (≥50% of max)
+        display_chanda_primary_parts = []  # High-confidence matches (exact pattern matches)
+        display_chanda_alternate_parts = []  # Medium-confidence matches
         
-        # Find maximum confidence to calculate 50% threshold
+        # Find maximum confidence to calculate thresholds
         max_confidence = max((conf for meter, (conf, _) in confidence_map.items()), default=0)
-        confidence_threshold_alternate = max_confidence * 0.5  # 50% of max
+        
+        # Primary threshold: 80% of max confidence (for exact matches)
+        # This ensures exact matches (10.0) show as primary, but not syllable-only matches (5.0)
+        confidence_threshold_primary = max_confidence * 0.8
+        
+        # Alternate threshold: Only show if confidence is at least 7.0 (higher than syllable-only)
+        # This filters out the hundreds of syllable-count-only matches
+        confidence_threshold_alternate = 7.0
         
         for c in chanda:
             if isinstance(c, tuple) and len(c) >= 2:
@@ -1498,15 +1505,15 @@ class Chanda:
                         meter_display = f"{formatted} ({iast_name})"
                 
                 # Categorize by confidence
-                if meter_confidence >= 15.0:
-                    # Primary display: high-confidence with scores
+                if meter_confidence >= confidence_threshold_primary:
+                    # Primary display: high-confidence with scores (exact pattern matches)
                     formatted_with_conf = f"{meter_display} [{meter_confidence:.1f}]"
                     display_chanda_primary_parts.append(formatted_with_conf)
                 elif meter_confidence >= confidence_threshold_alternate:
-                    # Alternate display: medium-confidence (≥50% of max)
+                    # Alternate display: medium-confidence (pada matches, vedic, etc.)
                     display_chanda_alternate_parts.append(meter_display)
                 
-                # Always add to full list
+                # Always add to full list (for backwards compatibility)
                 display_chanda_parts.append(formatted)
         
         display_chanda = ' / '.join(display_chanda_parts)
