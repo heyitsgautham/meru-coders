@@ -199,3 +199,9 @@ if gcloud run services describe $FRONTEND_SERVICE_NAME --region=$REGION &>/dev/n
     echo "Frontend: $FRONTEND_URL"
 fi
 echo ""
+
+# Cleanup: Remove generated config.js so local dev uses localhost:5000
+if [ -f "$PROJECT_ROOT/frontend/config.js" ]; then
+    rm -f "$PROJECT_ROOT/frontend/config.js"
+    echo "🧹 Cleaned up frontend/config.js (local dev will use localhost:5000)"
+fi
