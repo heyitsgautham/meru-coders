@@ -3,7 +3,8 @@
  * Handles all communication with the backend REST API
  */
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// API_BASE_URL is loaded from config.js
+const API_BASE_URL = typeof Config !== 'undefined' ? Config.API_BASE_URL : 'http://localhost:5000/api';
 
 class APIService {
     /**

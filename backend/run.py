@@ -6,6 +6,7 @@ Backend API Server
 Entry point for the Flask REST API backend.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -19,13 +20,16 @@ def main():
     """Start the Flask REST API server."""
     app = create_app()
     
+    # Get port from environment variable (Cloud Run) or default to 5000 (local dev)
+    port = int(os.environ.get('PORT', 5000))
+    
     print("=" * 70)
     print("🚀 Chandas-Integrated - Sanskrit Meter Identification System")
     print("=" * 70)
-    print("📍 API Endpoint: http://localhost:5000/api")
-    print("📍 Health Check: http://localhost:5000/health")
-    print("📍 API Info:     http://localhost:5000/api/info")
-    print("📍 Examples:     http://localhost:5000/api/examples")
+    print(f"📍 API Endpoint: http://localhost:{port}/api")
+    print(f"📍 Health Check: http://localhost:{port}/health")
+    print(f"📍 API Info:     http://localhost:{port}/api/info")
+    print(f"📍 Examples:     http://localhost:{port}/api/examples")
     print("=" * 70)
     print("💡 Press CTRL+C to stop the server")
     print("=" * 70)
@@ -34,8 +38,8 @@ def main():
     # Run the Flask app
     app.run(
         host='0.0.0.0',
-        port=5000,
-        debug=True,
+        port=port,
+        debug=app.config['DEBUG'],
         threaded=True
     )
 

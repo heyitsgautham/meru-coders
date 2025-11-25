@@ -268,6 +268,15 @@
     </footer>
 
     <!-- Scripts -->
+    <script>
+        // Placeholder config. During deployment we create `config.js` with
+        // the production API URL. For local dev this keeps window.CONFIG empty
+        // so the app (src/config.js) falls back to http://localhost:5000/api.
+        window.CONFIG = window.CONFIG || {};
+    </script>
+    <!-- Optional runtime config created during deploy -->
+    <script src="config.js"></script>
+    <script src="src/config.js"></script>
     <script src="src/services/api.js"></script>
     <script src="src/components/navigation.js"></script>
     <script src="src/components/forms.js"></script>

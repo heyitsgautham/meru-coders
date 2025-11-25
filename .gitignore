@@ -6,3 +6,12 @@ venv/
 .venv/
 repos/
 repo_summary/
+
+# Cloud Run generated files
+gcp_config.py
+ 
+# Secrets
+backend/secrets/
+backend/secrets/*
+# Prevent accidentally committing generated runtime config used only for deploy
+frontend/config.js

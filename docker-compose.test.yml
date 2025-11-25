@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DEBUG=True
+      - LOG_LEVEL=DEBUG
+      - CORS_ORIGINS=http://localhost:8080
+    container_name: meru-backend-test
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    container_name: meru-frontend-test
