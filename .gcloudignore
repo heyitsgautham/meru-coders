@@ -1,0 +1,46 @@
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+**/tests/
+experiments/
+reference/
+
+# Secrets (but NOT config.js - we need that for deploy!)
+backend/secrets/
+client_secret.json
+
+# Unnecessary directories
+repos/
+repo_summary/
+
+# Docker compose (not needed for Cloud Build)
+docker-compose*.yml

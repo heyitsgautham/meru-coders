@@ -81,7 +81,7 @@ deploy_backend() {
         --min-instances 0 \
         --timeout 300 \
         --concurrency 80 \
-        --set-env-vars="DEBUG=False,LOG_LEVEL=INFO" \
+        --set-env-vars="DEBUG=False,LOG_LEVEL=INFO,CORS_ORIGINS=*" \
         --quiet
     
     BACKEND_URL=$(gcloud run services describe $BACKEND_SERVICE_NAME \
@@ -110,10 +110,9 @@ deploy_frontend() {
     if [ -z "$BACKEND_URL" ]; then
         echo "⚠️  Warning: Backend not found. Frontend will use default config."
     else
-        echo "📝 Creating runtime config file for frontend with backend URL: $BACKEND_URL"
+        echo "📝 Creating runtime config with backend URL: $BACKEND_URL"
 
         # Create frontend/config.js which will be copied into the built image.
-        # This avoids editing index.html in-place and keeps local dev unchanged.
         cat > "$PROJECT_ROOT/frontend/config.js" <<EOF
 window.CONFIG = { API_URL: '${BACKEND_URL}/api' };
 EOF
@@ -148,17 +147,6 @@ EOF
     echo ""
     echo "✅ Frontend deployed!"
     echo "URL: $FRONTEND_URL"
-    
-    # Update backend CORS
-    if [ ! -z "$BACKEND_URL" ]; then
-    echo ""
-    echo "🔄 Updating backend CORS..."
-    gcloud run services update $BACKEND_SERVICE_NAME \
-        --region=$REGION \
-        --update-env-vars="CORS_ORIGINS=$FRONTEND_URL" \
-        --quiet
-    echo "✅ CORS updated"
-fi
 }
 
 # Main deployment
