@@ -6,6 +6,7 @@ venv/
 .venv/
 repos/
 repo_summary/
+.DS_Store
 
 # Cloud Run generated files
 gcp_config.py
@@ -15,3 +16,6 @@ backend/secrets/
 backend/secrets/*
 # Prevent accidentally committing generated runtime config used only for deploy
 frontend/config.js
+
+backend/uploads/results/*.json
+backend/uploads/results/*.txt
