@@ -3,7 +3,6 @@ import { Header } from "./components/Header";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { ExamplesView } from "./components/ExamplesView";
 import { AboutView } from "./components/AboutView";
-import { Footer } from "./components/Footer";
 import { MandalaBackground } from "./components/MandalaBackground";
 import type { ViewType } from "./types/api";
 
@@ -53,8 +52,6 @@ export default function App() {
             </div>
           )}
         </main>
-        
-        <Footer />
       </div>
     </div>
   );
