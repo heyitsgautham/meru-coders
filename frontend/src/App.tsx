@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Header } from "./components/Header";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { ExamplesView } from "./components/ExamplesView";
@@ -6,9 +6,19 @@ import { AboutView } from "./components/AboutView";
 import { MandalaBackground } from "./components/MandalaBackground";
 import type { ViewType } from "./types/api";
 
+const STORAGE_KEY_VIEW = 'chanda_currentView';
+
 export default function App() {
-  const [currentView, setCurrentView] = useState<ViewType>("home");
+  const [currentView, setCurrentView] = useState<ViewType>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_VIEW);
+    return (saved as ViewType) || "home";
+  });
   const [textFromExample, setTextFromExample] = useState("");
+
+  // Save currentView to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_VIEW, currentView);
+  }, [currentView]);
 
   // Handle example selection - switch to home view and populate text
   const handleSelectExample = useCallback((text: string) => {

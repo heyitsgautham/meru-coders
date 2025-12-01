@@ -9,6 +9,11 @@ import type { AnalysisMode, IdentifyResponse } from "../types/api";
 const ANALYSIS_MODE: AnalysisMode = "line";
 const OUTPUT_SCRIPT = "";
 
+// LocalStorage keys
+const STORAGE_KEYS = {
+  activeTab: 'chanda_activeTab',
+};
+
 interface AnalysisFormProps {
   initialText?: string;
   onTextChange?: (text: string) => void;
@@ -16,7 +21,10 @@ interface AnalysisFormProps {
 
 export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormProps) {
   const [text, setText] = useState(initialText);
-  const [activeTab, setActiveTab] = useState<"text" | "image" | "file">("text");
+  const [activeTab, setActiveTab] = useState<"text" | "image" | "file">(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.activeTab);
+    return (saved as "text" | "image" | "file") || "text";
+  });
   
   // Image/File state
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -29,6 +37,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   // Refs for file inputs
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   
   // Results state
   const [result, setResult] = useState<IdentifyResponse | null>(null);
@@ -42,6 +51,20 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   
   const isLoading = textLoading || fileLoading;
   const error = textError || fileError || extractError;
+
+  // Save activeTab to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.activeTab, activeTab);
+  }, [activeTab]);
+
+  // Scroll to results when they appear
+  useEffect(() => {
+    if (result && resultsRef.current) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [result]);
 
   // Sync text with parent when initialText changes
   useEffect(() => {
@@ -519,7 +542,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
 
       {/* Results Display - SEPARATE container, wider width - Only show for text input tab */}
       {result && activeTab === "text" && (
-        <div style={{ width: '1400px', maxWidth: '100%', margin: '40px auto 0 auto' }}>
+        <div ref={resultsRef} style={{ width: '1400px', maxWidth: '100%', margin: '40px auto 0 auto' }}>
           <ResultsDisplay 
             result={result} 
             type={resultType}

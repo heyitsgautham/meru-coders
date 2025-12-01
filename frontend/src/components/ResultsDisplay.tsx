@@ -402,7 +402,7 @@ function LineAnalysisCard({
 }
 
 export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
-  const [showSanskrit, setShowSanskrit] = useState(false);
+  const [showSanskrit, setShowSanskrit] = useState(true);
 
   if (!result.success) {
     return (
@@ -571,11 +571,11 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             <>
               {/* Identified Chanda - Single div at top for line-by-line mode */}
               {sortedMeters.length > 0 && (
-                <div className="mb-8 p-8 rounded-2xl" style={{ background: '#fffbf5' }}>
+                <div className="mb-8 p-8 rounded-2xl border-2 border-orange-300" style={{ background: '#FFF6EA' }}>
                   <h4 className="text-xl font-bold text-orange-700 mb-6 flex items-center gap-2">
                     🕉️ Identified Chanda
                   </h4>
-                  <div className="rounded-xl p-6 border-2 border-orange-300" style={{ background: '#fff7ed' }}>
+                  <div className="rounded-xl p-6 border-2 border-orange-300" style={{ background: '#FFF6EA' }}>
                     {(() => {
                       const primaryMeter = sortedMeters[0][0];
                       const lineCount = sortedMeters[0][1];
