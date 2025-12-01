@@ -301,11 +301,12 @@ data/chanda_jaati.csv      - Jāti-based meters
 
 ---
 
-**Note to Copilot**: This project has ACHIEVED its goal of 100% accuracy for SIH 2025. When making changes:
-1. **ALWAYS run tests** - `PYTHONPATH=. python tests/test_all_fixes.py`
+### Development Best Practices
+1. Always create test files instead of writing it directly in terminal and forgetting to save them.
 2. **Preserve data integrity** - CSV files are carefully curated
 3. **Validate against authentic texts** - Use Rigveda, Bhagavad Gita verses
 4. **Maintain Unicode handling** - Critical for Vedic text processing
 5. **Document all changes** - This is a scholarly project requiring academic rigor
+
 
 The system is production-ready and has been validated against classical Sanskrit texts. Any modifications should maintain backward compatibility with the deployed version.

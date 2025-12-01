@@ -1290,12 +1290,36 @@ class Chanda:
                 
                 # Bug #2 Fix: Use holistic verse analysis to boost scores
                 # Apply boost once at the start of each verse
+                # BUT: Don't apply Vedic boost if there's a consistent classical meter
                 if not holistic_boost_applied and verse_aggregate_idx < len(verse_aggregates):
                     current_aggregate = verse_aggregates[verse_aggregate_idx]
                     if current_aggregate['holistic']['found']:
-                        meter_name = current_aggregate['holistic']['meter']
-                        # Strong boost for holistically identified meter
-                        ongoing_score[meter_name] += 4.0
+                        vedic_meter = current_aggregate['holistic']['meter']
+                        
+                        # Check if there's a consistent classical meter across all verse lines
+                        # Get line indices for this verse (groups of 4)
+                        verse_start = verse_aggregate_idx * 4
+                        verse_end = min(verse_start + 4, len(line_results))
+                        
+                        # Find classical meters that appear in ALL lines of this verse
+                        classical_meters_in_lines = []
+                        for idx in range(verse_start, verse_end):
+                            if idx < len(line_results):
+                                lr = line_results[idx]['result']
+                                if lr.get('found') and lr.get('chanda'):
+                                    # Get first meter (most confident) that's not the Vedic meter
+                                    line_meters = [c[0] for c in lr['chanda'] if c[0] != vedic_meter]
+                                    classical_meters_in_lines.append(set(line_meters))
+                        
+                        # If we have meters from all lines, find intersection
+                        has_consistent_classical = False
+                        if classical_meters_in_lines and len(classical_meters_in_lines) == (verse_end - verse_start):
+                            common_classical = set.intersection(*classical_meters_in_lines)
+                            has_consistent_classical = len(common_classical) > 0
+                        
+                        # Only apply Vedic boost if there's NO consistent classical meter
+                        if not has_consistent_classical:
+                            ongoing_score[vedic_meter] += 4.0
                     holistic_boost_applied = True
                 
                 if _result['found']:
@@ -1329,10 +1353,22 @@ class Chanda:
                     verse_scores = ongoing_score.most_common()
                     if verse_scores:
                         best_score = verse_scores[0][1]
-                        best_matches = ([
+                        tied_meters = [
                             _c
                             for _c, _score in verse_scores if _score == best_score
-                        ], best_score)
+                        ]
+                        
+                        # Tiebreaker: prefer specific classical meters over generic Vedic ones
+                        # Vedic category meters (generic): त्रिष्टुभ्, जगती, गायत्री, अनुष्टुभ्, etc.
+                        vedic_category_meters = {'त्रिष्टुभ्', 'जगती', 'गायत्री', 'अनुष्टुभ्', 'उष्णिक्', 'बृहती', 'पङ्क्ति'}
+                        
+                        # Sort: classical meters first, then Vedic category meters
+                        def meter_priority(m):
+                            # 0 = classical (preferred), 1 = Vedic category
+                            return 1 if m in vedic_category_meters else 0
+                        
+                        tied_meters.sort(key=meter_priority)
+                        best_matches = (tied_meters, best_score)
                     else:
                         best_matches = ([], 0)
                     verse_result['scores'] = verse_scores
@@ -1460,6 +1496,34 @@ class Chanda:
 
         lg_str = ''.join(direct_match['lg'])
         
+        # =====================================================================
+        # VEDIC METER PRIORITY CHECK - Added for SIH 2025
+        # =====================================================================
+        # The 7 major Vedic meters are identified by syllable count, not L-G pattern.
+        # HOWEVER: If there's an EXACT pattern match for a classical meter (like
+        # Indravajra, Upendravajra, etc.), that should take priority because
+        # classical meters have specific L-G patterns, not just syllable counts.
+        #
+        # Syllable counts: Gayatri(24), Ushnik(28), Anushtubh(32), Brihati(36),
+        #                  Pankti(40), Trishtubh(44), Jagati(48)
+        #
+        # Strategy: Set vedic_priority_meter here, but ONLY add it to confidence_map
+        # if there are NO exact pattern matches found later.
+        # =====================================================================
+        vedic_priority_meter = None
+        vedic_priority_confidence = 0.0
+        
+        # Check if this verse matches a Vedic meter by syllable count
+        syllable_count = len(lg_str)
+        vedic_syllable_counts = {24: 'गायत्री', 28: 'उष्णिक्', 32: 'अनुष्टुभ्', 
+                                  36: 'बृहती', 40: 'पङ्क्ति', 44: 'त्रिष्टुभ्', 48: 'जगती'}
+        
+        if syllable_count in vedic_syllable_counts:
+            vedic_priority_meter = vedic_syllable_counts[syllable_count]
+            vedic_priority_confidence = 11.0  # Will be used as fallback
+            found = True  # Ensure we mark as found
+        # =====================================================================
+        
         # Use pre-compiled regex patterns for massive performance boost
         # Previously: ~40ms per verse, Now: ~0.2ms per verse
         regex_matches = [k for k, compiled_re in self._compiled_patterns.items() 
@@ -1502,13 +1566,15 @@ class Chanda:
         full_gana = self.lg_to_gana(lg_str).translate(self.ttable_out)
         full_jaati = self.JAATI.get(len(lg_str), self.JAATI[-1])
 
-        # IMPROVED: Tiered matching - exact matches ALWAYS beat heuristics
-        # Key insight: Don't mix exact and heuristic confidence scores
-        # Priority: exact_pattern (10.0) > exact_regex (9.0) > heuristics
+        # IMPROVED: Tiered matching - exact pattern matches beat Vedic syllable-count
+        # Key insight: Classical meters with specific L-G patterns should win over
+        # generic Vedic syllable-count identification.
+        # Priority: exact_pattern (10.0) > vedic_fallback (9.5) > exact_regex (9.0) > heuristics
         
         confidence_map = {}  # meter_name -> (confidence, match_type)
         
-        # TIER 1a: TRUE exact pattern matches (highest priority - 10.0)
+        # TIER 1a: TRUE exact pattern matches (HIGHEST priority - 10.0)
+        # These are classical meters with specific L-G patterns like Indravajra
         true_exact_matches = set()
         if direct_match.get('exact_chanda'):
             for c in direct_match['exact_chanda']:
@@ -1522,37 +1588,70 @@ class Chanda:
                 confidence_map[meter_name] = (10.0, 'exact_pattern')
         
         # TIER 1b: Regex pattern matches (slightly lower priority - 9.0)
-        # These use lowercase letters as wildcards (e.g., 'g' = [LG])
         regex_pattern_matches = set()
         for pattern_key in regex_matches:
-            # Only count as regex match if pattern contains lowercase (wildcards)
             has_wildcards = any(c.islower() for c in pattern_key if c in 'lg')
             for c in self.CHANDA.get(pattern_key, []):
                 meter_name = c[0] if isinstance(c, tuple) else c
                 if meter_name not in true_exact_matches:
                     regex_pattern_matches.add(meter_name)
-                    # Give regex matches slightly lower score
                     if has_wildcards:
-                        confidence_map[meter_name] = (9.0, 'exact_regex')
+                        if meter_name not in confidence_map or confidence_map[meter_name][0] < 9.0:
+                            confidence_map[meter_name] = (9.0, 'exact_regex')
                     else:
-                        # No wildcards = true exact match via regex path
                         true_exact_matches.add(meter_name)
-                        confidence_map[meter_name] = (10.0, 'exact_pattern')
+                        if meter_name not in confidence_map or confidence_map[meter_name][0] < 10.0:
+                            confidence_map[meter_name] = (10.0, 'exact_pattern')
         
-        # Combine all exact matches, but prioritize true exact
+        # =====================================================================
+        # TIER 1c: VEDIC METER (as FALLBACK when no exact pattern matches)
+        # =====================================================================
+        # Only add Vedic meter if:
+        # 1. No exact pattern matches were found, OR
+        # 2. The only exact match IS the Vedic meter itself (e.g., Anushtubh pattern)
+        #
+        # This ensures Indravajra (exact pattern) beats Trishtubh (syllable count)
+        # but Anushtubh still works when there's no other pattern match.
+        # =====================================================================
+        has_non_vedic_exact_match = bool(true_exact_matches - {vedic_priority_meter}) if vedic_priority_meter else bool(true_exact_matches)
+        
+        if vedic_priority_meter:
+            if has_non_vedic_exact_match:
+                # There are exact pattern matches for classical meters
+                # Add Vedic meter as secondary option with lower confidence
+                confidence_map[vedic_priority_meter] = (9.5, 'vedic_syllable_secondary')
+                vedic_tuple = (vedic_priority_meter, ('',))
+                if vedic_tuple not in chanda:
+                    chanda.append(vedic_tuple)  # Append, not insert
+            else:
+                # No exact pattern matches - Vedic meter is primary
+                confidence_map[vedic_priority_meter] = (vedic_priority_confidence, 'vedic_syllable_priority')
+                vedic_tuple = (vedic_priority_meter, ('',))
+                if vedic_tuple not in chanda:
+                    chanda.insert(0, vedic_tuple)
+        # =====================================================================
+        
+        # Combine all exact matches
         exact_pattern_matches = true_exact_matches | regex_pattern_matches
         
         # CRITICAL: If we have TRUE exact pattern matches, use ONLY those
-        # Otherwise, fall back to regex matches
+        # Plus include Vedic meter as secondary option
         if true_exact_matches:
-            # Filter chanda to only include TRUE exact matches
             chanda = [c for c in chanda 
-                     if (c[0] if isinstance(c, tuple) else c) in true_exact_matches]
+                     if (c[0] if isinstance(c, tuple) else c) in true_exact_matches
+                     or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter]
             found = True
         elif regex_pattern_matches:
             # Fall back to regex matches
+            # BUT also include Vedic priority meter if present
             chanda = [c for c in chanda 
-                     if (c[0] if isinstance(c, tuple) else c) in regex_pattern_matches]
+                     if (c[0] if isinstance(c, tuple) else c) in regex_pattern_matches
+                     or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter]
+            # Ensure Vedic priority meter is in the list
+            if vedic_priority_meter:
+                vedic_tuple = (vedic_priority_meter, ('',))
+                if vedic_tuple not in chanda:
+                    chanda.insert(0, vedic_tuple)
             found = True
         else:
             # TIER 2: No exact matches - use multi-level heuristics
