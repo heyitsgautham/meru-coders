@@ -16,7 +16,14 @@ export interface Example {
 // OCR availability info
 export interface OCRAvailability {
   tesseract: boolean;
-  google: boolean;
+  cloud_vision: boolean;
+}
+
+// OCR Extract response (text only, no analysis)
+export interface OCRExtractResponse {
+  success: boolean;
+  text?: string;
+  error?: string;
 }
 
 // API Info response
@@ -126,7 +133,6 @@ export interface IdentifyTextRequest {
   enable_sandhi?: boolean;
 }
 
-export type OCREngine = 'tesseract' | 'google';
 export type AnalysisMode = 'line' | 'verse';
 
 // View type for navigation

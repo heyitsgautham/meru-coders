@@ -8,7 +8,7 @@ import type {
   APIInfoResponse,
   IdentifyResponse,
   AnalysisMode,
-  OCREngine,
+  OCRExtractResponse,
 } from '../types/api';
 
 // Get API URL from environment or use default
@@ -90,17 +90,28 @@ export async function identifyFromText(
 }
 
 /**
- * Identify meter from image
+ * Extract text from image using OCR (no meter analysis)
+ */
+export async function extractTextFromImage(file: File): Promise<OCRExtractResponse> {
+  const formData = new FormData();
+  formData.append('image_file', file);
+  
+  return request<OCRExtractResponse>('/ocr/extract', {
+    method: 'POST',
+    body: formData,
+  });
+}
+
+/**
+ * Identify meter from image (OCR + analysis in one step)
  */
 export async function identifyFromImage(
   file: File,
-  ocrEngine: OCREngine = 'tesseract',
   mode: AnalysisMode = 'line',
   outputScheme: string = ''
 ): Promise<IdentifyResponse> {
   const formData = new FormData();
   formData.append('image_file', file);
-  formData.append('ocr_engine', ocrEngine);
   formData.append('text_mode', mode);
   formData.append('output_scheme', outputScheme || '');
   formData.append('enable_sandhi', 'false');

@@ -1,6 +1,6 @@
 """OCR integration modules."""
 
 from .tesseract_ocr import TesseractOCR
-from .google_ocr import GoogleOCR
+from .cloud_vision_ocr import CloudVisionOCR
 
-__all__ = ['TesseractOCR', 'GoogleOCR']
+__all__ = ['TesseractOCR', 'CloudVisionOCR']

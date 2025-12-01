@@ -10,8 +10,8 @@ import type {
   Example,
   IdentifyResponse,
   AnalysisMode,
-  OCREngine,
   OCRAvailability,
+  OCRExtractResponse,
 } from '../types/api';
 
 // Hook for loading schemes
@@ -81,7 +81,7 @@ export function useExamples() {
 
 // Hook for checking API connection and OCR availability
 export function useAPIInfo() {
-  const [ocrAvailable, setOcrAvailable] = useState<OCRAvailability>({ tesseract: true, google: false });
+  const [ocrAvailable, setOcrAvailable] = useState<OCRAvailability>({ tesseract: true, cloud_vision: false });
   const [connected, setConnected] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -160,7 +160,6 @@ export function useIdentifyImage() {
 
   const identify = useCallback(async (
     file: File,
-    ocrEngine: OCREngine = 'tesseract',
     mode: AnalysisMode = 'line',
     outputScheme: string = ''
   ) => {
@@ -169,7 +168,7 @@ export function useIdentifyImage() {
     setResult(null);
 
     try {
-      const response = await api.identifyFromImage(file, ocrEngine, mode, outputScheme);
+      const response = await api.identifyFromImage(file, mode, outputScheme);
       setResult(response);
       return response;
     } catch (err) {
@@ -187,6 +186,42 @@ export function useIdentifyImage() {
   }, []);
 
   return { result, loading, error, identify, reset };
+}
+
+// Hook for OCR text extraction only (no analysis)
+export function useExtractText() {
+  const [text, setText] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const extract = useCallback(async (file: File) => {
+    setLoading(true);
+    setError(null);
+    setText(null);
+
+    try {
+      const response = await api.extractTextFromImage(file);
+      if (response.success && response.text !== undefined) {
+        setText(response.text);
+        return response.text;
+      } else {
+        throw new Error(response.error || 'OCR extraction failed');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'OCR extraction failed';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setText(null);
+    setError(null);
+  }, []);
+
+  return { text, loading, error, extract, reset };
 }
 
 // Hook for file identification

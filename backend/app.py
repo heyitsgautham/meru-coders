@@ -14,7 +14,7 @@ import logging
 
 from backend.config import settings
 from backend.core import Chanda
-from backend.ocr import TesseractOCR, GoogleOCR
+from backend.ocr import TesseractOCR, CloudVisionOCR
 
 
 def create_app():
@@ -68,18 +68,20 @@ def create_app():
         app.logger.warning(f"Tesseract OCR not available: {e}")
         app.tesseract_ocr = None
     
-    # Initialize Google OCR (optional)
-    if settings.CLIENT_SECRET:
-        app.logger.info("Initializing Google OCR...")
-        try:
-            app.google_ocr = GoogleOCR(credentials_path=settings.CLIENT_SECRET)
-            app.logger.info("Google OCR initialized successfully")
-        except Exception as e:
-            app.logger.warning(f"Google OCR not available: {e}")
-            app.google_ocr = None
-    else:
-        app.logger.info("Google OCR credentials not found - disabled")
-        app.google_ocr = None
+    # Initialize Cloud Vision OCR (primary OCR, with Tesseract as fallback)
+    app.logger.info("Initializing Cloud Vision OCR...")
+    try:
+        # Check if credentials file exists
+        gcp_creds = settings.GCP_CREDENTIALS
+        if gcp_creds and Path(gcp_creds).exists():
+            app.cloud_vision_ocr = CloudVisionOCR(credentials_path=gcp_creds)
+            app.logger.info("Cloud Vision OCR initialized successfully")
+        else:
+            app.logger.warning(f"GCP credentials not found at: {gcp_creds}")
+            app.cloud_vision_ocr = None
+    except Exception as e:
+        app.logger.warning(f"Cloud Vision OCR not available: {e}")
+        app.cloud_vision_ocr = None
     
     # Register API routes
     from backend.api import register_routes
@@ -107,12 +109,13 @@ def create_app():
                 'identify_text': f'{settings.API_PREFIX}/identify/text',
                 'identify_image': f'{settings.API_PREFIX}/identify/image',
                 'identify_file': f'{settings.API_PREFIX}/identify/file',
+                'ocr_extract': f'{settings.API_PREFIX}/ocr/extract',
                 'download': f'{settings.API_PREFIX}/download/<filename>',
                 'examples': f'{settings.API_PREFIX}/examples'
             },
             'ocr_available': {
                 'tesseract': app.tesseract_ocr is not None,
-                'google': app.google_ocr is not None
+                'cloud_vision': app.cloud_vision_ocr is not None
             },
             'features': {
                 'sandhi_splitting': True,

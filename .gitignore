@@ -24,3 +24,4 @@ backend/uploads/photos/
 
 node_modules/
 build/
+ocr.ipynb

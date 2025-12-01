@@ -327,31 +327,50 @@ function LineAnalysisCard({
 
                     ganaChars.forEach((ganaChar, gIdx) => {
                       if (cellsUsed < validPairs.length) {
-                        const spanCount = Math.min(3, validPairs.length - cellsUsed);
+                        const remainingSyllables = validPairs.length - cellsUsed;
+                        const spanCount = Math.min(3, remainingSyllables);
                         const englishGana = GANA_MAP[ganaChar] || ganaChar;
                         const isLastGana = cellsUsed + spanCount >= validPairs.length;
-                        cells.push(
-                          <td 
-                            key={gIdx}
-                            colSpan={spanCount}
-                            className="px-6 py-5 font-bold"
-                            style={{ 
-                              border: '2px solid #E1B88E', 
-                              borderRight: !isLastGana ? '4px solid #C68642' : '2px solid #E1B88E',
-                              fontSize: '1.25rem', 
-                              fontFamily: "'Noto Sans Devanagari', sans-serif", 
-                              backgroundColor: '#E7F5E8', 
-                              color: '#2D5A30' 
-                            }}
-                          >
-                            {showSanskrit ? ganaChar : englishGana}
-                          </td>
-                        );
+                        
+                        // Only show gana if this group has exactly 3 syllables
+                        // Don't show gana for incomplete groups (1 or 2 syllables at the end)
+                        if (spanCount === 3) {
+                          cells.push(
+                            <td 
+                              key={gIdx}
+                              colSpan={spanCount}
+                              className="px-6 py-5 font-bold"
+                              style={{ 
+                                border: '2px solid #E1B88E', 
+                                borderRight: !isLastGana ? '4px solid #C68642' : '2px solid #E1B88E',
+                                fontSize: '1.25rem', 
+                                fontFamily: "'Noto Sans Devanagari', sans-serif", 
+                                backgroundColor: '#E7F5E8', 
+                                color: '#2D5A30' 
+                              }}
+                            >
+                              {showSanskrit ? ganaChar : englishGana}
+                            </td>
+                          );
+                        } else {
+                          // For incomplete groups (1 or 2 syllables), show empty cell
+                          cells.push(
+                            <td 
+                              key={gIdx}
+                              colSpan={spanCount}
+                              className="px-6 py-5"
+                              style={{ 
+                                border: '2px solid #E1B88E', 
+                                backgroundColor: '#FFF9F2'
+                              }}
+                            />
+                          );
+                        }
                         cellsUsed += spanCount;
                       }
                     });
 
-                    // Fill remaining
+                    // Fill remaining if any
                     if (cellsUsed < validPairs.length) {
                       cells.push(
                         <td 
@@ -463,8 +482,8 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
           </div>
         )}
 
-        {/* Summary Section */}
-        {result.summary && <SummarySection summary={result.summary} />}
+        {/* Summary Section - Only show in verse mode, not line-by-line */}
+        {result.summary && verseResults.length > 0 && <SummarySection summary={result.summary} />}
 
         {/* OCR Text (for image input) */}
         {type === 'image' && result.ocr_text && (
@@ -580,26 +599,67 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
               </div>
             </details>
           ) : (
-            <div className="bg-gray-50 p-8 rounded-2xl border-2 border-gray-200">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="font-bold text-gray-800 text-xl">Line-by-Line Analysis</h3>
-                <button
-                  onClick={() => setShowSanskrit(prev => !prev)}
-                  className="language-toggle-btn"
-                >
-                  {showSanskrit ? 'Show IAST (English)' : 'Show Devanagari'}
-                </button>
+            <>
+              {/* Identified Meter - Single div at top for line-by-line mode */}
+              {sortedMeters.length > 0 && (
+                <div className="mb-8 p-8 rounded-2xl border-3 border-orange-500 shadow-lg" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' }}>
+                  <h4 className="text-xl font-bold text-orange-700 mb-6 flex items-center gap-2">
+                    🕉️ Identified Meter
+                  </h4>
+                  <div className="bg-white rounded-xl p-6 shadow-md">
+                    {(() => {
+                      const primaryMeter = sortedMeters[0][0];
+                      const lineCount = sortedMeters[0][1];
+                      const englishName = getMeterEnglish(primaryMeter);
+                      const totalLines = lineResults.length;
+                      const confidencePercent = Math.round((lineCount / totalLines) * 100);
+                      
+                      let confidenceClass = 'bg-green-600';
+                      if (confidencePercent < 50) {
+                        confidenceClass = 'bg-red-500';
+                      } else if (confidencePercent < 80) {
+                        confidenceClass = 'bg-amber-500';
+                      }
+
+                      return (
+                        <div className="flex items-center gap-4 flex-wrap">
+                          <span className="text-3xl font-bold text-orange-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+                            {primaryMeter}
+                          </span>
+                          {englishName && englishName !== primaryMeter && (
+                            <span className="text-xl text-gray-600 italic">({englishName})</span>
+                          )}
+                          <span className={`${confidenceClass} text-white px-4 py-1.5 rounded-full text-sm font-semibold`}>
+                            {confidencePercent}% Match
+                          </span>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-gray-50 p-8 rounded-2xl border-2 border-gray-200">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="font-bold text-gray-800 text-xl">Line-by-Line Analysis</h3>
+                  <button
+                    onClick={() => setShowSanskrit(prev => !prev)}
+                    className="language-toggle-btn"
+                  >
+                    {showSanskrit ? 'Show IAST (English)' : 'Show Devanagari'}
+                  </button>
+                </div>
+                <div className="space-y-6">
+                  {lineResults.map((lineItem, index) => (
+                    <LineAnalysisCard
+                      key={index}
+                      lineItem={lineItem}
+                      showSanskrit={showSanskrit}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="space-y-6">
-                {lineResults.map((lineItem, index) => (
-                  <LineAnalysisCard
-                    key={index}
-                    lineItem={lineItem}
-                    showSanskrit={showSanskrit}
-                  />
-                ))}
-              </div>
-            </div>
+            </>
           )
         )}
 
