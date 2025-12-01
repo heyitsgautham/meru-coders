@@ -12,7 +12,7 @@ class APIService {
      */
     static async request(endpoint, options = {}) {
         const url = `${API_BASE_URL}${endpoint}`;
-        
+
         try {
             const response = await fetch(url, {
                 ...options,
@@ -20,24 +20,24 @@ class APIService {
                     ...options.headers,
                 },
             });
-            
+
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.error || 'Request failed');
             }
-            
+
             return data;
         } catch (error) {
             console.error('API Error:', error);
             throw error;
         }
     }
-    
+
     /**
      * Identify meter from text
      */
-    static async identifyFromText(text, mode = 'line', outputScheme = 'devanagari') {
+    static async identifyFromText(text, mode = 'verse', outputScheme = 'devanagari') {
         return this.request('/identify/text', {
             method: 'POST',
             headers: {
@@ -45,12 +45,12 @@ class APIService {
             },
             body: JSON.stringify({
                 text,
-                mode,
+                text_mode: mode,
                 output_scheme: outputScheme,
             }),
         });
     }
-    
+
     /**
      * Identify meter from image
      */
@@ -60,13 +60,13 @@ class APIService {
         formData.append('ocr_engine', ocrEngine);
         formData.append('mode', mode);
         formData.append('output_scheme', outputScheme);
-        
+
         return this.request('/identify/image', {
             method: 'POST',
             body: formData,
         });
     }
-    
+
     /**
      * Identify meter from file
      */
@@ -75,34 +75,34 @@ class APIService {
         formData.append('file', file);
         formData.append('mode', mode);
         formData.append('output_scheme', outputScheme);
-        
+
         return this.request('/identify/file', {
             method: 'POST',
             body: formData,
         });
     }
-    
+
     /**
      * Get available transliteration schemes
      */
     static async getSchemes() {
         return this.request('/schemes');
     }
-    
+
     /**
      * Get example verses
      */
     static async getExamples() {
         return this.request('/examples');
     }
-    
+
     /**
      * Get API info
      */
     static async getAPIInfo() {
         return this.request('/info');
     }
-    
+
     /**
      * Download result file
      */

@@ -8,10 +8,13 @@ Tests all 8 test cases mentioned in the implementation checklist
 """
 
 import sys
-from backend.core.chanda import Chanda
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.chanda import Chanda
 
 # Initialize Chanda
-c = Chanda('backend/data/')
+c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
 # Test Results Tracker
 test_results = []

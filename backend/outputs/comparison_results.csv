@@ -1,0 +1,661 @@
+Model,Index,Shloka,Expected,Predicted,Confidence,Top1_Match,Top3_Match,Family_Match,Syllables
+chanda.py,1,"श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं
+वक्त्",mandäkräntä,मन्दाक्रान्ता,10.00,True,True,True,17
+chanda.py,2,"त्वरितगतिर्व्रजयुवतिस्तरणिसुता विपिनगता ।
+मुररिपुण",tvaritagati,गीतिका,10.00,False,False,False,20
+chanda.py,3,"विपदि धैर्यमथाभ्युदये क्षमा
+सदसि वाक्पटुता युधि वि",Drutavilambita,द्रुतविलम्बित,10.00,True,True,True,12
+chanda.py,4,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayāta,जगती,10.00,False,False,True,12
+chanda.py,5,"रे रे चातक सावधानमनसा मित्र क्षणं श्रूयताम्
+अम्भोद",śārdülavkrīḍita,शार्दूलविक्रीडित,10.00,True,True,True,19
+chanda.py,6,"मुरवैरिवपुस्तनुतां मुदं हेमनिभांशुकचन्दनलिप्तम् ।
+",upacitrā,त्रिष्टुभ्,10.00,False,False,False,22
+chanda.py,7,"विललास गोपरमणीषु तरणितनया प्रभोद्गता ।
+कृष्णनयनचको",udgatā,गीतिका,10.00,False,False,False,20
+chanda.py,8,"रविसुतापरिसरे विहरता दृशि हरेः ।
+व्रजवधूगजगतिर् मद",gajagati,गायत्री,10.00,False,False,False,16
+chanda.py,9,"पञ्चमं लघु सर्वत्र सप्तमं द्विचतुर्थयोः ।
+गुरु षष्",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,10,"लोकानां त्वं परो धर्मः पुरुषः पुरुषोत्तमः ।
+शरण्यं",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,11,"वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये ।
+जगतः पितर",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,12,"नमस्ते पुरुषाध्यक्ष नमस्ते भक्तवत्सल ।
+नमस्तेऽस्तु",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,13,"सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।
+शरण्ये त्",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,14,"नमो भगवते तस्मै यत एतच्चिदात्मकम् ।
+पुरुषायादिबीजा",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,15,"सर्वमङ्गलमाङ्गल्यं सर्वपापप्रणाशनम् ।
+चिन्ताशोकप्र",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,16,"सर्वज्ञे सर्ववरदे सर्वदुष्टभयङ्करि ।
+सर्वदुःखहरे द",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,17,"यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः ।
+तत्र ",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,18,"गुणातीत गुणाधार गुणबीज गुणात्मक ।
+गुणेश गुणिनां बी",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,19,"गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः ।
+",anuṣṭup,गायत्री,10.00,False,True,True,16
+chanda.py,20,स्यादिन्द्रवज्रा यदि तौ जगौ गः,indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,21,"लोकाभिरामं रणरङ्गधीरं
+राजीवनेत्रं रघुवंशनाथम् ।
+का",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,22,"लीलाकराग्रे धृतपर्वतेन्द्रम्
+इन्द्रं महावृष्टिमदं ",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,23,"त्वं वैष्णवी शक्तिरनन्तवीर्या
+विश्वस्य बीजं परमाऽस",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,24,"आशासु राशीभवदङ्गवल्ली-
+भासैव दासीकृतदुग्धसिन्धुम् ",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,25,"सत्यव्रतं सत्यपरं त्रिसत्यं
+सत्यस्य योनिं निहितं च",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,26,"चित्रं तदेतच्चरणारविन्दं
+चित्रं तदेतन्नयनारविन्दम्",indravajrā,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,27,उपेन्द्रवज्रा प्रथमे लघौ सा,upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,28,"न नाकपृष्ठं न च सार्वभौमं
+न पारमेष्ठ्यं न रसाधिपत्",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,29,"मुकुन्द मूर्ध्ना प्रणिपत्य याचे
+भवन्तमेकान्तमियन्त",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,30,"ननु प्रपन्नः सकृदेव नाथ
+तवाहमस्मीति च याचमानः ।
+तव",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,31,"ननेति भीत्या श्रुतयो वदन्ति
+वदन्ति साक्षान्न च यं ",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,32,"वदन्ति रामं परमेकमाद्यं
+निरस्तमायागुणसप्रवाहम् ।
+भ",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,33,"विचित्रपत्राङ्कुरशालिबाला-
+स्तनान्तरं मौनिमनोन्तरं",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda.py,34,"तदेतदाताम्रविलोचनश्री-
+सम्भाविताशेषविनम्रगर्वम् ।
+",upajātiḥ,उपेन्द्रवज्रा,10.00,False,False,True,11
+chanda.py,35,"देवि प्रपन्नार्तिहरे प्रसीद
+प्रसीद मातर्जगतोऽखिलस्",upajātiḥ,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,36,"कस्माच्च ते न नमेरन् महात्मन्
+गरीयसे ब्रह्मणोऽप्या",upajātiḥ,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,37,"काली त्वमेवासि सुनिष्ठुरासि
+त्वमन्नपूर्णा सदया च स",upajātiḥ,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,38,"अक्षय्यसम्पत्तिरजय्यतेजा-
+स्त्वमम्ब भूमेर्हृदयाब्ज",upajātiḥ,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,39,"अस्त्युत्तरस्यां दिशि देवतात्मा
+हिमालयो नाम नगाधिर",upajātiḥ,त्रिष्टुभ्,10.00,False,False,True,11
+chanda.py,40,मत्तौ गौ चेच्छालिनी वेदलोकैः,śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,41,"माता रामो मत्पिता रामचन्द्रः
+स्वामी रामो मत्सखा रा",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,42,"नाहं जातो जन्ममृत्यू कुतो मे
+नाहं चित्तं शोकमोहौ क",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,43,"तोये शैत्यं दाहकत्वं च वह्नौ
+तापो भानौ शीतभानौ प्र",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,44,"नो ते गोत्रं नापि जन्मापि नाख्या
+नो वा रूपं नैव शी",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,45,"केयं कान्तिः केशव त्वन्मुखेन्दोः
+कोऽयं वेषः कापि व",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,46,"तत्कैशोरं तच्च वक्त्रारविन्दं
+तत्कारुण्यं ते च लील",śālinī,शालिनी,10.00,True,True,True,11
+chanda.py,47,रात्परैर्नरलगै रथोद्धता,rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,48,"धेनुपालदयितास्तनस्थली-
+धन्यकुङ्कमसनाथकान्तये ।
+वेण",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,49,"चिन्तयामि हरिमेव सन्ततं
+मन्दमन्दहसिताननाम्बुजम् ।
+",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,50,"आञ्जनेयमतिपाटलाननं
+काञ्चनाद्रिकमनीयविग्रहम् ।
+पारि",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,51,"यत्र यत्र रघुनाथकीर्तनं
+तत्र तत्र कृतमस्तकाञ्जलिम्",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,52,"क्षीरसागरतरङ्गशीकरा-
+सारतारकितचारुमूर्तये ।
+भोगिभो",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,53,"येन भिन्नकरिकुम्भविस्खलन्
+मौक्तिकावलिभिरञ्चिता मही",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda.py,54,वदन्ति वंशस्थविलं जतौ जरौ,vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,55,"नमामि नारायणपादपङ्कजं
+करोमि नारायणपूजनं सदा ।
+वदाम",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,56,"नमो नमो वाङ्मनसातिभूमये
+नमो नमो वाङ्मनसैकभूमये ।
+न",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,57,"अहं प्रपन्नोऽस्मि पदाम्बुजं प्रभो
+भवापवर्गं तव योग",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,58,"पुनः प्रसन्नेन मुखेन्दुतेजसा
+पुरोऽवतीर्णस्य कृपामह",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,59,"क्रियासु युक्तैर्नृपचारचक्षुषो
+न वञ्चनीयाः प्रभवोऽ",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,60,"इदं शरीरं परिणामपेशलं
+पतत्यवश्यं श्लथसन्धिजर्जरम् ",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda.py,61,भुजङ्गप्रयातं चतुर्भिर्येकारैः,bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,62,"न मे द्वेषरागौ न मे लोभमोहौ
+न मे वै मदो नैव मात्सर",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,63,"शरीरं सुरूपं सदा रोगमुक्तं
+यशश्चारुचित्रं धनं मेरु",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,64,"नमामीशमीशाननिर्वाणरूपं
+विभुं व्यापकं ब्रह्म वेदस्व",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,65,"भजेऽहं सदा राममिन्दीवराभं
+भवारण्यदावानलाभाभिधानम् ",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,66,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,67,"अजं शाश्वतं कारणं कारणानां
+शिवं केवलं भासकं भासकान",bhujangaprayātam,जगती,10.00,False,False,True,12
+chanda.py,68,वद तोटकमब्धिसकारयुतम्,toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,69,"अधरं मधुरं वदनं मधुरं
+नयनं मधुरं हसितं मधुरं ।
+हृद",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,70,"वचनं मधुरं चरितं मधुरं
+वसनं मधुरं वलितं मधुरं ।
+चल",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,71,"जगदीश सुधीश भवेश विभो
+परमेश परात्पर पूत पितः ।
+प्र",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,72,"प्रणमामि नमामि नमामि भवं
+भवजन्मकृतिप्रणिषूदनकम् ।
+",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,73,"चिकुरं बहलं विरलं भ्रमरं
+मृदुलं वचनं विपुलं नयनम् ",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,74,"मधुरं मधुरं वपुरस्य विभोः
+मधुरं मधुरं वदनं मधुरम् ",toṭakam,तोटक,10.00,True,True,True,12
+chanda.py,75,त्र्याशाभिर्मेनजरगा प्रहर्षिणीयम्,praharṣinī,कलहंस,10.00,False,False,False,13
+chanda.py,76,"स्वच्छन्दं दलदरविन्द ते मरन्दं
+विन्दन्तो विदधतु गु",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,77,"दीनानामिह परिहाय शुष्कसस्यान्
+औदार्यं प्रकटयतो मही",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,78,"अश्रान्तस्मितमरुणारुणाधरोष्ठं
+हर्षार्द्रद्विगुणमनो",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,79,"अस्तोकस्मितभरमायतायताक्षं
+निःशेषस्तनमृदितं व्रजाङ्",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,80,"योऽम्ब त्वां हृदि विदधत्तटित्प्रकाशां
+पीयूषद्युतिम",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,81,"उद्धर्तुं विनतजनं विषादगर्तात्
+संस्कर्तुं भुवनहिता",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda.py,82,ज्ञेयं वसन्ततिलकं तभजा जगौ गः,vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,83,"ध्येयं वदन्ति शिवमेव हि केचिदन्ये
+शक्ति गणेशमपरे त",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,84,"योऽन्तः प्रविश्य मम वाचमिमां प्रसुप्तां
+सञ्जीवयत्य",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,85,"मज्जन्मनः फलमिदं मधुकैटभारे
+मत्प्रार्थनीय मदनुग्रह",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,86,"गङ्गातरङ्गरमणीयजटाकलापं
+गौरीनिरन्तरविभूषितवामभागम्",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,87,"मोहान्धकारभरिते हृदयेऽस्मदीये
+मातः सदैव कुरु वासमु",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,88,"उल्लासयन् कुवलयं धवलस्मितेन
+निघ्नन् तमांसि महसा तप",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda.py,89,ननमयययुतेयं मालिनी भोगिलोकैः,mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,90,"वटविटपिसमीपे भूमिभागे निषण्णं
+सकलमुनिजनानां ज्ञानद",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,91,"असितगिरिसमं स्यात् कज्जलं सिन्धुपात्रे
+सुरतरुवरशाख",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,92,"अतुलितबलधामं हेमशैलाभदेहं
+दनुजवनकृशानुं ज्ञानिनामग",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,93,"जयतु जयतु देवो देवकीनन्दनोऽयं
+जयतु जयतु कृष्णो वृष",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,94,"हृदयकमलमध्ये निर्विशेषं निरीहं
+हरिहरविधिवेद्यं योग",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,95,"भगवति तव तीरे नीरमात्राशनोऽहं
+विगतविषयतृष्णः कृष्ण",mālinī,मालिनी,10.00,True,True,True,15
+chanda.py,96,तूणकं समानिकापदद्वयं विनान्तिमम्,tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,97,"अम्बुदाञ्जनेन्द्रनीलनिन्दिकान्तिडम्बरः
+कुङ्कुमोद्य",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,98,"कुङ्कुमाक्तकाञ्चनाब्जगर्वहारिगौरभा
+पीतनाञ्चिताब्जग",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,99,"निस्तरङ्गपावनान्तरङ्गमानवान्तरं
+भावनातिगप्रभावशक्त",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,100,"सर्वसर्गभूपतेरनन्तभागकल्पना
+कल्पविच्चरेऽचरेऽपि जाग",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,101,"भव्यजन्मवर्धनाय बाल्यधर्मधायिनी
+युक्तलोकसेवनाय युक",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,102,"चण्डमुण्डधूम्रनेत्ररक्तबीजनाशिनी
+चन्द्रखण्डचूडचित्",tūṇakam,तूणक,10.00,False,False,True,15
+chanda.py,103,प्रमाणिकापदद्वयं वदन्ति पञ्चचामरम्,pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda.py,104,"नमामि भक्तवत्सलं कृपालुशीलकोमलं
+भजामि ते पदाम्बुजं",pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda.py,105,"मुरारिकायकालिमाललामवारिधारिणी
+तृणीकृतत्रिविष्टपा त",pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda.py,106,"टाकटाहसम्भ्रमभ्रमन्निलिम्पनिर्झरी
+विलोलवीचिवल्लरीव",pañcacāmaram,तूणक,10.00,False,False,False,15
+chanda.py,107,"कदा निलिम्पनिर्झरीनिकुञ्जकोटरे वसन्
+विमुक्तदुर्मति",pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda.py,108,"भजे व्रजैकमण्डनं समस्तपापखण्डनं
+स्वभक्तचित्तरञ्जनं",pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda.py,109,"सदैव पादपङ्कजं मदीयमानसे निजं
+दधानमुत्तमालकं नमामि",pañcacāmaram,अनुष्टुभ्,10.00,False,True,True,16
+chanda_iitk.py,1,"श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं
+वक्त्",mandäkräntä,मन्दाक्रान्ता,10.00,True,True,True,17
+chanda_iitk.py,2,"त्वरितगतिर्व्रजयुवतिस्तरणिसुता विपिनगता ।
+मुररिपुण",tvaritagati,त्वरितगति,10.00,True,True,True,20
+chanda_iitk.py,3,"विपदि धैर्यमथाभ्युदये क्षमा
+सदसि वाक्पटुता युधि वि",Drutavilambita,द्रुतविलम्बित,10.00,True,True,True,12
+chanda_iitk.py,4,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayāta,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,5,"रे रे चातक सावधानमनसा मित्र क्षणं श्रूयताम्
+अम्भोद",śārdülavkrīḍita,शार्दूलविक्रीडित,10.00,True,True,True,19
+chanda_iitk.py,6,"मुरवैरिवपुस्तनुतां मुदं हेमनिभांशुकचन्दनलिप्तम् ।
+",upacitrā,उपचित्र,10.00,True,True,True,22
+chanda_iitk.py,7,"विललास गोपरमणीषु तरणितनया प्रभोद्गता ।
+कृष्णनयनचको",udgatā,उद्गता,10.00,True,True,True,20
+chanda_iitk.py,8,"रविसुतापरिसरे विहरता दृशि हरेः ।
+व्रजवधूगजगतिर् मद",gajagati,गजगति,10.00,True,True,True,16
+chanda_iitk.py,9,"पञ्चमं लघु सर्वत्र सप्तमं द्विचतुर्थयोः ।
+गुरु षष्",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,10,"लोकानां त्वं परो धर्मः पुरुषः पुरुषोत्तमः ।
+शरण्यं",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,11,"वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये ।
+जगतः पितर",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,12,"नमस्ते पुरुषाध्यक्ष नमस्ते भक्तवत्सल ।
+नमस्तेऽस्तु",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,13,"सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।
+शरण्ये त्",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,14,"नमो भगवते तस्मै यत एतच्चिदात्मकम् ।
+पुरुषायादिबीजा",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,15,"सर्वमङ्गलमाङ्गल्यं सर्वपापप्रणाशनम् ।
+चिन्ताशोकप्र",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,16,"सर्वज्ञे सर्ववरदे सर्वदुष्टभयङ्करि ।
+सर्वदुःखहरे द",anuṣṭup,,0,False,False,False,16
+chanda_iitk.py,17,"यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः ।
+तत्र ",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,18,"गुणातीत गुणाधार गुणबीज गुणात्मक ।
+गुणेश गुणिनां बी",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,19,"गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः ।
+",anuṣṭup,अनुष्टुभ्,10.00,True,True,True,16
+chanda_iitk.py,20,स्यादिन्द्रवज्रा यदि तौ जगौ गः,indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,21,"लोकाभिरामं रणरङ्गधीरं
+राजीवनेत्रं रघुवंशनाथम् ।
+का",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,22,"लीलाकराग्रे धृतपर्वतेन्द्रम्
+इन्द्रं महावृष्टिमदं ",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,23,"त्वं वैष्णवी शक्तिरनन्तवीर्या
+विश्वस्य बीजं परमाऽस",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,24,"आशासु राशीभवदङ्गवल्ली-
+भासैव दासीकृतदुग्धसिन्धुम् ",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,25,"सत्यव्रतं सत्यपरं त्रिसत्यं
+सत्यस्य योनिं निहितं च",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,26,"चित्रं तदेतच्चरणारविन्दं
+चित्रं तदेतन्नयनारविन्दम्",indravajrā,इन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,27,उपेन्द्रवज्रा प्रथमे लघौ सा,upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,28,"न नाकपृष्ठं न च सार्वभौमं
+न पारमेष्ठ्यं न रसाधिपत्",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,29,"मुकुन्द मूर्ध्ना प्रणिपत्य याचे
+भवन्तमेकान्तमियन्त",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,30,"ननु प्रपन्नः सकृदेव नाथ
+तवाहमस्मीति च याचमानः ।
+तव",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,31,"ननेति भीत्या श्रुतयो वदन्ति
+वदन्ति साक्षान्न च यं ",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,32,"वदन्ति रामं परमेकमाद्यं
+निरस्तमायागुणसप्रवाहम् ।
+भ",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,33,"विचित्रपत्राङ्कुरशालिबाला-
+स्तनान्तरं मौनिमनोन्तरं",upendravajra,उपेन्द्रवज्रा,10.00,True,True,True,11
+chanda_iitk.py,34,"तदेतदाताम्रविलोचनश्री-
+सम्भाविताशेषविनम्रगर्वम् ।
+",upajātiḥ,उपेन्द्रवज्रा,10.00,False,False,True,11
+chanda_iitk.py,35,"देवि प्रपन्नार्तिहरे प्रसीद
+प्रसीद मातर्जगतोऽखिलस्",upajātiḥ,इन्द्रवज्रा,10.00,False,False,True,11
+chanda_iitk.py,36,"कस्माच्च ते न नमेरन् महात्मन्
+गरीयसे ब्रह्मणोऽप्या",upajātiḥ,,0,False,False,False,11
+chanda_iitk.py,37,"काली त्वमेवासि सुनिष्ठुरासि
+त्वमन्नपूर्णा सदया च स",upajātiḥ,इन्द्रवज्रा,10.00,False,False,True,11
+chanda_iitk.py,38,"अक्षय्यसम्पत्तिरजय्यतेजा-
+स्त्वमम्ब भूमेर्हृदयाब्ज",upajātiḥ,इन्द्रवज्रा,10.00,False,False,True,11
+chanda_iitk.py,39,"अस्त्युत्तरस्यां दिशि देवतात्मा
+हिमालयो नाम नगाधिर",upajātiḥ,इन्द्रवज्रा,10.00,False,False,True,11
+chanda_iitk.py,40,मत्तौ गौ चेच्छालिनी वेदलोकैः,śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,41,"माता रामो मत्पिता रामचन्द्रः
+स्वामी रामो मत्सखा रा",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,42,"नाहं जातो जन्ममृत्यू कुतो मे
+नाहं चित्तं शोकमोहौ क",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,43,"तोये शैत्यं दाहकत्वं च वह्नौ
+तापो भानौ शीतभानौ प्र",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,44,"नो ते गोत्रं नापि जन्मापि नाख्या
+नो वा रूपं नैव शी",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,45,"केयं कान्तिः केशव त्वन्मुखेन्दोः
+कोऽयं वेषः कापि व",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,46,"तत्कैशोरं तच्च वक्त्रारविन्दं
+तत्कारुण्यं ते च लील",śālinī,शालिनी,10.00,True,True,True,11
+chanda_iitk.py,47,रात्परैर्नरलगै रथोद्धता,rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,48,"धेनुपालदयितास्तनस्थली-
+धन्यकुङ्कमसनाथकान्तये ।
+वेण",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,49,"चिन्तयामि हरिमेव सन्ततं
+मन्दमन्दहसिताननाम्बुजम् ।
+",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,50,"आञ्जनेयमतिपाटलाननं
+काञ्चनाद्रिकमनीयविग्रहम् ।
+पारि",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,51,"यत्र यत्र रघुनाथकीर्तनं
+तत्र तत्र कृतमस्तकाञ्जलिम्",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,52,"क्षीरसागरतरङ्गशीकरा-
+सारतारकितचारुमूर्तये ।
+भोगिभो",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,53,"येन भिन्नकरिकुम्भविस्खलन्
+मौक्तिकावलिभिरञ्चिता मही",rathoddhata,रथोद्धता,10.00,True,True,True,11
+chanda_iitk.py,54,वदन्ति वंशस्थविलं जतौ जरौ,vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,55,"नमामि नारायणपादपङ्कजं
+करोमि नारायणपूजनं सदा ।
+वदाम",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,56,"नमो नमो वाङ्मनसातिभूमये
+नमो नमो वाङ्मनसैकभूमये ।
+न",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,57,"अहं प्रपन्नोऽस्मि पदाम्बुजं प्रभो
+भवापवर्गं तव योग",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,58,"पुनः प्रसन्नेन मुखेन्दुतेजसा
+पुरोऽवतीर्णस्य कृपामह",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,59,"क्रियासु युक्तैर्नृपचारचक्षुषो
+न वञ्चनीयाः प्रभवोऽ",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,60,"इदं शरीरं परिणामपेशलं
+पतत्यवश्यं श्लथसन्धिजर्जरम् ",vaṁśasthavilam,वंशस्थ,10.00,True,True,True,12
+chanda_iitk.py,61,भुजङ्गप्रयातं चतुर्भिर्येकारैः,bhujangaprayātam,,0,False,False,False,12
+chanda_iitk.py,62,"न मे द्वेषरागौ न मे लोभमोहौ
+न मे वै मदो नैव मात्सर",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,63,"शरीरं सुरूपं सदा रोगमुक्तं
+यशश्चारुचित्रं धनं मेरु",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,64,"नमामीशमीशाननिर्वाणरूपं
+विभुं व्यापकं ब्रह्म वेदस्व",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,65,"भजेऽहं सदा राममिन्दीवराभं
+भवारण्यदावानलाभाभिधानम् ",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,66,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,67,"अजं शाश्वतं कारणं कारणानां
+शिवं केवलं भासकं भासकान",bhujangaprayātam,भुजङ्गप्रयात,10.00,True,True,True,12
+chanda_iitk.py,68,वद तोटकमब्धिसकारयुतम्,toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,69,"अधरं मधुरं वदनं मधुरं
+नयनं मधुरं हसितं मधुरं ।
+हृद",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,70,"वचनं मधुरं चरितं मधुरं
+वसनं मधुरं वलितं मधुरं ।
+चल",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,71,"जगदीश सुधीश भवेश विभो
+परमेश परात्पर पूत पितः ।
+प्र",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,72,"प्रणमामि नमामि नमामि भवं
+भवजन्मकृतिप्रणिषूदनकम् ।
+",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,73,"चिकुरं बहलं विरलं भ्रमरं
+मृदुलं वचनं विपुलं नयनम् ",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,74,"मधुरं मधुरं वपुरस्य विभोः
+मधुरं मधुरं वदनं मधुरम् ",toṭakam,तोटक,10.00,True,True,True,12
+chanda_iitk.py,75,त्र्याशाभिर्मेनजरगा प्रहर्षिणीयम्,praharṣinī,,0,False,False,False,13
+chanda_iitk.py,76,"स्वच्छन्दं दलदरविन्द ते मरन्दं
+विन्दन्तो विदधतु गु",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,77,"दीनानामिह परिहाय शुष्कसस्यान्
+औदार्यं प्रकटयतो मही",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,78,"अश्रान्तस्मितमरुणारुणाधरोष्ठं
+हर्षार्द्रद्विगुणमनो",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,79,"अस्तोकस्मितभरमायतायताक्षं
+निःशेषस्तनमृदितं व्रजाङ्",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,80,"योऽम्ब त्वां हृदि विदधत्तटित्प्रकाशां
+पीयूषद्युतिम",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,81,"उद्धर्तुं विनतजनं विषादगर्तात्
+संस्कर्तुं भुवनहिता",praharṣinī,प्रहर्षिणी,10.00,True,True,True,13
+chanda_iitk.py,82,ज्ञेयं वसन्ततिलकं तभजा जगौ गः,vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,83,"ध्येयं वदन्ति शिवमेव हि केचिदन्ये
+शक्ति गणेशमपरे त",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,84,"योऽन्तः प्रविश्य मम वाचमिमां प्रसुप्तां
+सञ्जीवयत्य",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,85,"मज्जन्मनः फलमिदं मधुकैटभारे
+मत्प्रार्थनीय मदनुग्रह",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,86,"गङ्गातरङ्गरमणीयजटाकलापं
+गौरीनिरन्तरविभूषितवामभागम्",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,87,"मोहान्धकारभरिते हृदयेऽस्मदीये
+मातः सदैव कुरु वासमु",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,88,"उल्लासयन् कुवलयं धवलस्मितेन
+निघ्नन् तमांसि महसा तप",vasantatilakam,वसन्ततिलका,10.00,True,True,True,14
+chanda_iitk.py,89,ननमयययुतेयं मालिनी भोगिलोकैः,mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,90,"वटविटपिसमीपे भूमिभागे निषण्णं
+सकलमुनिजनानां ज्ञानद",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,91,"असितगिरिसमं स्यात् कज्जलं सिन्धुपात्रे
+सुरतरुवरशाख",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,92,"अतुलितबलधामं हेमशैलाभदेहं
+दनुजवनकृशानुं ज्ञानिनामग",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,93,"जयतु जयतु देवो देवकीनन्दनोऽयं
+जयतु जयतु कृष्णो वृष",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,94,"हृदयकमलमध्ये निर्विशेषं निरीहं
+हरिहरविधिवेद्यं योग",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,95,"भगवति तव तीरे नीरमात्राशनोऽहं
+विगतविषयतृष्णः कृष्ण",mālinī,मालिनी,10.00,True,True,True,15
+chanda_iitk.py,96,तूणकं समानिकापदद्वयं विनान्तिमम्,tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,97,"अम्बुदाञ्जनेन्द्रनीलनिन्दिकान्तिडम्बरः
+कुङ्कुमोद्य",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,98,"कुङ्कुमाक्तकाञ्चनाब्जगर्वहारिगौरभा
+पीतनाञ्चिताब्जग",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,99,"निस्तरङ्गपावनान्तरङ्गमानवान्तरं
+भावनातिगप्रभावशक्त",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,100,"सर्वसर्गभूपतेरनन्तभागकल्पना
+कल्पविच्चरेऽचरेऽपि जाग",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,101,"भव्यजन्मवर्धनाय बाल्यधर्मधायिनी
+युक्तलोकसेवनाय युक",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,102,"चण्डमुण्डधूम्रनेत्ररक्तबीजनाशिनी
+चन्द्रखण्डचूडचित्",tūṇakam,तूणक,10.00,False,False,True,15
+chanda_iitk.py,103,प्रमाणिकापदद्वयं वदन्ति पञ्चचामरम्,pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+chanda_iitk.py,104,"नमामि भक्तवत्सलं कृपालुशीलकोमलं
+भजामि ते पदाम्बुजं",pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+chanda_iitk.py,105,"मुरारिकायकालिमाललामवारिधारिणी
+तृणीकृतत्रिविष्टपा त",pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+chanda_iitk.py,106,"टाकटाहसम्भ्रमभ्रमन्निलिम्पनिर्झरी
+विलोलवीचिवल्लरीव",pañcacāmaram,तूणक,10.00,False,False,False,15
+chanda_iitk.py,107,"कदा निलिम्पनिर्झरीनिकुञ्जकोटरे वसन्
+विमुक्तदुर्मति",pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+chanda_iitk.py,108,"भजे व्रजैकमण्डनं समस्तपापखण्डनं
+स्वभक्तचित्तरञ्जनं",pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+chanda_iitk.py,109,"सदैव पादपङ्कजं मदीयमानसे निजं
+दधानमुत्तमालकं नमामि",pañcacāmaram,पञ्चचामर,10.00,True,True,True,16
+enhanced_chanda.py,1,"श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं
+वक्त्",mandäkräntä,Mandākrāntā,10.00,True,True,True,17
+enhanced_chanda.py,2,"त्वरितगतिर्व्रजयुवतिस्तरणिसुता विपिनगता ।
+मुररिपुण",tvaritagati,,0,False,False,False,20
+enhanced_chanda.py,3,"विपदि धैर्यमथाभ्युदये क्षमा
+सदसि वाक्पटुता युधि वि",Drutavilambita,Drutavilambitam,10.00,True,True,True,12
+enhanced_chanda.py,4,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayāta,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,5,"रे रे चातक सावधानमनसा मित्र क्षणं श्रूयताम्
+अम्भोद",śārdülavkrīḍita,Śārdūlavikrīḍitam,10.00,True,True,True,19
+enhanced_chanda.py,6,"मुरवैरिवपुस्तनुतां मुदं हेमनिभांशुकचन्दनलिप्तम् ।
+",upacitrā,upacitram,9.00,False,False,False,22
+enhanced_chanda.py,7,"विललास गोपरमणीषु तरणितनया प्रभोद्गता ।
+कृष्णनयनचको",udgatā,,0,False,False,False,20
+enhanced_chanda.py,8,"रविसुतापरिसरे विहरता दृशि हरेः ।
+व्रजवधूगजगतिर् मद",gajagati,naraśikhī,10.00,False,False,False,16
+enhanced_chanda.py,9,"पञ्चमं लघु सर्वत्र सप्तमं द्विचतुर्थयोः ।
+गुरु षष्",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,10,"लोकानां त्वं परो धर्मः पुरुषः पुरुषोत्तमः ।
+शरण्यं",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,11,"वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये ।
+जगतः पितर",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,12,"नमस्ते पुरुषाध्यक्ष नमस्ते भक्तवत्सल ।
+नमस्तेऽस्तु",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,13,"सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।
+शरण्ये त्",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,14,"नमो भगवते तस्मै यत एतच्चिदात्मकम् ।
+पुरुषायादिबीजा",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,15,"सर्वमङ्गलमाङ्गल्यं सर्वपापप्रणाशनम् ।
+चिन्ताशोकप्र",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,16,"सर्वज्ञे सर्ववरदे सर्वदुष्टभयङ्करि ।
+सर्वदुःखहरे द",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,17,"यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः ।
+तत्र ",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,18,"गुणातीत गुणाधार गुणबीज गुणात्मक ।
+गुणेश गुणिनां बी",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,19,"गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः ।
+",anuṣṭup,,0,False,False,False,16
+enhanced_chanda.py,20,स्यादिन्द्रवज्रा यदि तौ जगौ गः,indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,21,"लोकाभिरामं रणरङ्गधीरं
+राजीवनेत्रं रघुवंशनाथम् ।
+का",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,22,"लीलाकराग्रे धृतपर्वतेन्द्रम्
+इन्द्रं महावृष्टिमदं ",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,23,"त्वं वैष्णवी शक्तिरनन्तवीर्या
+विश्वस्य बीजं परमाऽस",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,24,"आशासु राशीभवदङ्गवल्ली-
+भासैव दासीकृतदुग्धसिन्धुम् ",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,25,"सत्यव्रतं सत्यपरं त्रिसत्यं
+सत्यस्य योनिं निहितं च",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,26,"चित्रं तदेतच्चरणारविन्दं
+चित्रं तदेतन्नयनारविन्दम्",indravajrā,indravajrā,10.00,True,True,True,11
+enhanced_chanda.py,27,उपेन्द्रवज्रा प्रथमे लघौ सा,upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,28,"न नाकपृष्ठं न च सार्वभौमं
+न पारमेष्ठ्यं न रसाधिपत्",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,29,"मुकुन्द मूर्ध्ना प्रणिपत्य याचे
+भवन्तमेकान्तमियन्त",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,30,"ननु प्रपन्नः सकृदेव नाथ
+तवाहमस्मीति च याचमानः ।
+तव",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,31,"ननेति भीत्या श्रुतयो वदन्ति
+वदन्ति साक्षान्न च यं ",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,32,"वदन्ति रामं परमेकमाद्यं
+निरस्तमायागुणसप्रवाहम् ।
+भ",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,33,"विचित्रपत्राङ्कुरशालिबाला-
+स्तनान्तरं मौनिमनोन्तरं",upendravajra,upendravajrā,10.00,True,True,True,11
+enhanced_chanda.py,34,"तदेतदाताम्रविलोचनश्री-
+सम्भाविताशेषविनम्रगर्वम् ।
+",upajātiḥ,upendravajrā,10.00,False,False,True,11
+enhanced_chanda.py,35,"देवि प्रपन्नार्तिहरे प्रसीद
+प्रसीद मातर्जगतोऽखिलस्",upajātiḥ,indravajrā,10.00,False,False,True,11
+enhanced_chanda.py,36,"कस्माच्च ते न नमेरन् महात्मन्
+गरीयसे ब्रह्मणोऽप्या",upajātiḥ,īhāmṛgī,10.00,False,False,False,11
+enhanced_chanda.py,37,"काली त्वमेवासि सुनिष्ठुरासि
+त्वमन्नपूर्णा सदया च स",upajātiḥ,indravajrā,10.00,False,False,True,11
+enhanced_chanda.py,38,"अक्षय्यसम्पत्तिरजय्यतेजा-
+स्त्वमम्ब भूमेर्हृदयाब्ज",upajātiḥ,indravajrā,10.00,False,False,True,11
+enhanced_chanda.py,39,"अस्त्युत्तरस्यां दिशि देवतात्मा
+हिमालयो नाम नगाधिर",upajātiḥ,indravajrā,10.00,False,False,True,11
+enhanced_chanda.py,40,मत्तौ गौ चेच्छालिनी वेदलोकैः,śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,41,"माता रामो मत्पिता रामचन्द्रः
+स्वामी रामो मत्सखा रा",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,42,"नाहं जातो जन्ममृत्यू कुतो मे
+नाहं चित्तं शोकमोहौ क",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,43,"तोये शैत्यं दाहकत्वं च वह्नौ
+तापो भानौ शीतभानौ प्र",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,44,"नो ते गोत्रं नापि जन्मापि नाख्या
+नो वा रूपं नैव शी",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,45,"केयं कान्तिः केशव त्वन्मुखेन्दोः
+कोऽयं वेषः कापि व",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,46,"तत्कैशोरं तच्च वक्त्रारविन्दं
+तत्कारुण्यं ते च लील",śālinī,Śālinī,10.00,True,True,True,11
+enhanced_chanda.py,47,रात्परैर्नरलगै रथोद्धता,rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,48,"धेनुपालदयितास्तनस्थली-
+धन्यकुङ्कमसनाथकान्तये ।
+वेण",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,49,"चिन्तयामि हरिमेव सन्ततं
+मन्दमन्दहसिताननाम्बुजम् ।
+",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,50,"आञ्जनेयमतिपाटलाननं
+काञ्चनाद्रिकमनीयविग्रहम् ।
+पारि",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,51,"यत्र यत्र रघुनाथकीर्तनं
+तत्र तत्र कृतमस्तकाञ्जलिम्",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,52,"क्षीरसागरतरङ्गशीकरा-
+सारतारकितचारुमूर्तये ।
+भोगिभो",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,53,"येन भिन्नकरिकुम्भविस्खलन्
+मौक्तिकावलिभिरञ्चिता मही",rathoddhata,Rathoddhatā,10.00,True,True,True,11
+enhanced_chanda.py,54,वदन्ति वंशस्थविलं जतौ जरौ,vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,55,"नमामि नारायणपादपङ्कजं
+करोमि नारायणपूजनं सदा ।
+वदाम",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,56,"नमो नमो वाङ्मनसातिभूमये
+नमो नमो वाङ्मनसैकभूमये ।
+न",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,57,"अहं प्रपन्नोऽस्मि पदाम्बुजं प्रभो
+भवापवर्गं तव योग",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,58,"पुनः प्रसन्नेन मुखेन्दुतेजसा
+पुरोऽवतीर्णस्य कृपामह",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,59,"क्रियासु युक्तैर्नृपचारचक्षुषो
+न वञ्चनीयाः प्रभवोऽ",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,60,"इदं शरीरं परिणामपेशलं
+पतत्यवश्यं श्लथसन्धिजर्जरम् ",vaṁśasthavilam,Vaṃśastha (Vaṃśasthavila),10.00,False,True,True,12
+enhanced_chanda.py,61,भुजङ्गप्रयातं चतुर्भिर्येकारैः,bhujangaprayātam,Bhujaṅgaprayātam,3.67,True,True,True,12
+enhanced_chanda.py,62,"न मे द्वेषरागौ न मे लोभमोहौ
+न मे वै मदो नैव मात्सर",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,63,"शरीरं सुरूपं सदा रोगमुक्तं
+यशश्चारुचित्रं धनं मेरु",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,64,"नमामीशमीशाननिर्वाणरूपं
+विभुं व्यापकं ब्रह्म वेदस्व",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,65,"भजेऽहं सदा राममिन्दीवराभं
+भवारण्यदावानलाभाभिधानम् ",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,66,"न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न ",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,67,"अजं शाश्वतं कारणं कारणानां
+शिवं केवलं भासकं भासकान",bhujangaprayātam,Bhujaṅgaprayātam,10.00,True,True,True,12
+enhanced_chanda.py,68,वद तोटकमब्धिसकारयुतम्,toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,69,"अधरं मधुरं वदनं मधुरं
+नयनं मधुरं हसितं मधुरं ।
+हृद",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,70,"वचनं मधुरं चरितं मधुरं
+वसनं मधुरं वलितं मधुरं ।
+चल",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,71,"जगदीश सुधीश भवेश विभो
+परमेश परात्पर पूत पितः ।
+प्र",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,72,"प्रणमामि नमामि नमामि भवं
+भवजन्मकृतिप्रणिषूदनकम् ।
+",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,73,"चिकुरं बहलं विरलं भ्रमरं
+मृदुलं वचनं विपुलं नयनम् ",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,74,"मधुरं मधुरं वपुरस्य विभोः
+मधुरं मधुरं वदनं मधुरम् ",toṭakam,Toṭakam,10.00,True,True,True,12
+enhanced_chanda.py,75,त्र्याशाभिर्मेनजरगा प्रहर्षिणीयम्,praharṣinī,Praharṣiṇī,3.69,True,True,True,13
+enhanced_chanda.py,76,"स्वच्छन्दं दलदरविन्द ते मरन्दं
+विन्दन्तो विदधतु गु",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,77,"दीनानामिह परिहाय शुष्कसस्यान्
+औदार्यं प्रकटयतो मही",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,78,"अश्रान्तस्मितमरुणारुणाधरोष्ठं
+हर्षार्द्रद्विगुणमनो",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,79,"अस्तोकस्मितभरमायतायताक्षं
+निःशेषस्तनमृदितं व्रजाङ्",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,80,"योऽम्ब त्वां हृदि विदधत्तटित्प्रकाशां
+पीयूषद्युतिम",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,81,"उद्धर्तुं विनतजनं विषादगर्तात्
+संस्कर्तुं भुवनहिता",praharṣinī,Praharṣiṇī,10.00,True,True,True,13
+enhanced_chanda.py,82,ज्ञेयं वसन्ततिलकं तभजा जगौ गः,vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,83,"ध्येयं वदन्ति शिवमेव हि केचिदन्ये
+शक्ति गणेशमपरे त",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,84,"योऽन्तः प्रविश्य मम वाचमिमां प्रसुप्तां
+सञ्जीवयत्य",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,85,"मज्जन्मनः फलमिदं मधुकैटभारे
+मत्प्रार्थनीय मदनुग्रह",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,86,"गङ्गातरङ्गरमणीयजटाकलापं
+गौरीनिरन्तरविभूषितवामभागम्",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,87,"मोहान्धकारभरिते हृदयेऽस्मदीये
+मातः सदैव कुरु वासमु",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,88,"उल्लासयन् कुवलयं धवलस्मितेन
+निघ्नन् तमांसि महसा तप",vasantatilakam,Vasantatilakā,10.00,True,True,True,14
+enhanced_chanda.py,89,ननमयययुतेयं मालिनी भोगिलोकैः,mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,90,"वटविटपिसमीपे भूमिभागे निषण्णं
+सकलमुनिजनानां ज्ञानद",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,91,"असितगिरिसमं स्यात् कज्जलं सिन्धुपात्रे
+सुरतरुवरशाख",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,92,"अतुलितबलधामं हेमशैलाभदेहं
+दनुजवनकृशानुं ज्ञानिनामग",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,93,"जयतु जयतु देवो देवकीनन्दनोऽयं
+जयतु जयतु कृष्णो वृष",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,94,"हृदयकमलमध्ये निर्विशेषं निरीहं
+हरिहरविधिवेद्यं योग",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,95,"भगवति तव तीरे नीरमात्राशनोऽहं
+विगतविषयतृष्णः कृष्ण",mālinī,Mālinī,10.00,True,True,True,15
+enhanced_chanda.py,96,तूणकं समानिकापदद्वयं विनान्तिमम्,tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,97,"अम्बुदाञ्जनेन्द्रनीलनिन्दिकान्तिडम्बरः
+कुङ्कुमोद्य",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,98,"कुङ्कुमाक्तकाञ्चनाब्जगर्वहारिगौरभा
+पीतनाञ्चिताब्जग",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,99,"निस्तरङ्गपावनान्तरङ्गमानवान्तरं
+भावनातिगप्रभावशक्त",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,100,"सर्वसर्गभूपतेरनन्तभागकल्पना
+कल्पविच्चरेऽचरेऽपि जाग",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,101,"भव्यजन्मवर्धनाय बाल्यधर्मधायिनी
+युक्तलोकसेवनाय युक",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,102,"चण्डमुण्डधूम्रनेत्ररक्तबीजनाशिनी
+चन्द्रखण्डचूडचित्",tūṇakam,Cārucāmaram,10.00,False,True,True,15
+enhanced_chanda.py,103,प्रमाणिकापदद्वयं वदन्ति पञ्चचामरम्,pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16
+enhanced_chanda.py,104,"नमामि भक्तवत्सलं कृपालुशीलकोमलं
+भजामि ते पदाम्बुजं",pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16
+enhanced_chanda.py,105,"मुरारिकायकालिमाललामवारिधारिणी
+तृणीकृतत्रिविष्टपा त",pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16
+enhanced_chanda.py,106,"टाकटाहसम्भ्रमभ्रमन्निलिम्पनिर्झरी
+विलोलवीचिवल्लरीव",pañcacāmaram,Cārucāmaram,10.00,False,False,False,15
+enhanced_chanda.py,107,"कदा निलिम्पनिर्झरीनिकुञ्जकोटरे वसन्
+विमुक्तदुर्मति",pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16
+enhanced_chanda.py,108,"भजे व्रजैकमण्डनं समस्तपापखण्डनं
+स्वभक्तचित्तरञ्जनं",pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16
+enhanced_chanda.py,109,"सदैव पादपङ्कजं मदीयमानसे निजं
+दधानमुत्तमालकं नमामि",pañcacāmaram,Pañcacāmaram,10.00,True,True,True,16

@@ -59,7 +59,8 @@ def register_routes(app):
             
             text = data['text']
             output_scheme = data.get('output_scheme', None)
-            text_mode = data.get('text_mode', 'line')
+            # Accept both 'text_mode' and 'mode' for compatibility with frontend
+            text_mode = data.get('text_mode') or data.get('mode', 'line')
             enable_sandhi = data.get('enable_sandhi', False)
             verse_mode = (text_mode == 'verse')
             

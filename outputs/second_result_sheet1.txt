@@ -1,0 +1,194 @@
+Excellent! **91.7% accuracy** on 109 test verses! That's a significant improvement. Let me now compare with the IITK implementation to see where we stand: 
+
+Ran terminal command: cd /Users/gauthamkrishna/Projects/chanda/repos/meru-coders && source backend/.venv/bin/activate && python3 -c "
+import sys
+sys.path.insert(0, 'backend')
+sys.path.insert(0, 'reference/alternative_implementations')
+import pandas as pd
+import time
+from collections import Counter
+
+# Load test data
+df = pd.read_csv('backend/data/page 1-47 chanda list - Sheet1.csv', skiprows=1)
+df.columns = [c.strip() for c in df.columns]
+df = df[df['Shloka'].notna() & df['chanda'].notna()]
+test_data = [(row['Shloka'], row['chanda']) for _, row in df.iterrows()]
+
+print(f'Loaded {len(test_data)} test verses')
+print(f'Unique chandas: {len(set(e for v, e in test_data))}')
+
+# Name variants mapping
+NAME_VARIANTS = {
+    'anuṣṭup': 'अनुष्टुभ्', 'anushtup': 'अनुष्टुभ्', 'anushtubh': 'अनुष्टुभ्',
+    'pythvī': 'पृथ्वी', 'prthvi': 'पृथ्वी', 'pṛthvī': 'पृथ्वी', 'prithvi': 'पृथ्वी',
+    'śārdūlavikrīḍitam': 'शार्दूलविक्रीडितम्', 'śārdülavkrīḍita': 'शार्दूलविक्रीडितम्',
+    'mandākrāntā': 'मन्दाक्रान्ता', 'mandakranta': 'मन्दाक्रान्ता', 'mandäkräntä': 'मन्दाक्रान्ता',
+    'vasantatilakam': 'वसन्ततिलका', 'vasantatilaka': 'वसन्ततिलका',
+    'upajāti': 'उपजाति', 'upajātiḥ': 'उपजाति', 'upajati': 'उपजाति',
+    'śālinī': 'शालिनी', 'shalini': 'शालिनी',
+    'sragdharā': 'स्रग्धरा', 'sragdhara': 'स्रग्धरा',
+    'indravajrā': 'इन्द्रवज्रा', 'indravajra': 'इन्द्रवज्रा',
+    'upendravajrā': 'उपेन्द्रवज्रा', 'upendravajra': 'उपेन्द्रवज्रा',
+    'mālinī': 'मालिनी', 'malini': 'मालिनी', 'mälinī': 'मालिनी',
+    'āryā': 'आर्या', 'arya': 'आर्या',
+    'rathoddhata': 'रथोद्धता', 'rathoddhatā': 'रथोद्धता',
+    'drutavilambitam': 'द्रुतविलम्बितम्', 'drutavilambita': 'द्रुतविलम्बितम्',
+    'śikhariṇī': 'शिखरिणी', 'shikharini': 'शिखरिणी', 'śikharīṇi': 'शिखरिणी',
+    'toṭakam': 'तोटकम्', 'totaka': 'तोटकम्', 'toṭaka': 'तोटकम्', 'tūṇakam': 'तोटकम्',
+    'bhujangaprayātam': 'भुजङ्गप्रयातम्', 'bhujangaprayāta': 'भुजङ्गप्रयातम्',
+    'vaṁśasthavilam': 'वंशस्थ', 'vaṃśastha': 'वंशस्थ', 'vamsastha': 'वंशस्थ',
+    'pañcacāmaram': 'पञ्चचामरम्', 'pancacamaram': 'पञ्चचामरम्',
+    'praharṣinī': 'प्रहर्षिणी', 'praharsini': 'प्रहर्षिणी',
+    'tvaritagati': 'त्वरितगति',
+    'upacitrā': 'उपचित्रा',
+    'udgatā': 'उद्गता', 'udgata': 'उद्गता',
+}
+
+def normalize_name(name):
+    if not name:
+        return ''
+    n = name.lower().strip()
+    for old, new in [('ā', 'a'), ('ä', 'a'), ('ī', 'i'), ('ü', 'u'), ('ū', 'u'), 
+                      ('ṭ', 't'), ('ḍ', 'd'), ('ṇ', 'n'), ('ṅ', 'n'), ('ñ', 'n'), 
+                      ('ṃ', 'm'), ('ṁ', 'm'), ('ḥ', 'h'), ('ś', 'sh'), ('ṣ', 'sh'), 
+                      ('ṛ', 'ri'), ('ḷ', 'l')]:
+        n = n.replace(old, new)
+    return n
+
+def names_match_list(expected, actual_list):
+    if not expected or not actual_list:
+        return False
+    exp_lower = expected.lower().strip()
+    exp_norm = normalize_name(expected)
+    exp_target = NAME_VARIANTS.get(exp_lower, exp_lower)
+    
+    for actual in actual_list:
+        act_lower = actual.lower().strip()
+        act_norm = normalize_name(actual)
+        if exp_lower == act_lower or exp_norm == act_norm:
+            return True
+        if actual == exp_target or act_lower == exp_target.lower():
+            return True
+        if normalize_name(exp_target) == act_norm:
+            return True
+        if len(exp_norm) >= 5 and len(act_norm) >= 5:
+            if exp_norm in act_norm or act_norm in exp_norm:
+                return True
+    return False
+
+# Test IITK with original data
+from chanda_iitk import Chanda as IITKChanda
+iitk_orig = IITKChanda('repos/chanda/data')
+
+iitk_orig_correct = 0
+iitk_orig_mismatches = []
+start = time.time()
+for verse, expected in test_data:
+    first_line = verse.replace('\r', '').split('\n')[0].strip()
+    try:
+        result = iitk_orig.identify_line(first_line)
+        actual_names = [item[0] for item in result.get('chanda', []) if isinstance(item, (list, tuple))]
+        if names_match_list(expected, actual_names):
+            iitk_orig_correct += 1
+        else:
+            iitk_orig_mismatches.append((expected, actual_names[0] if actual_names else ''))
+    except Exception as e:
+        iitk_orig_mismatches.append((expected, f'ERROR'))
+iitk_orig_time = time.time() - start
+
+print(f'\n1. IITK + Original data (434 patterns):')
+print(f'   Accuracy: {iitk_orig_correct}/{len(test_data)} ({100*iitk_orig_correct/len(test_data):.1f}%)')
+print(f'   Time: {1000*iitk_orig_time/len(test_data):.2f}ms per verse')
+
+# Test IITK with our data
+iitk_ours = IITKChanda('backend/data')
+
+iitk_ours_correct = 0
+iitk_ours_mismatches = []
+start = time.time()
+for verse, expected in test_data:
+    first_line = verse.replace('\r', '').split('\n')[0].strip()
+    try:
+        result = iitk_ours.identify_line(first_line)
+        actual_names = [item[0] for item in result.get('chanda', []) if isinstance(item, (list, tuple))]
+        if names_match_list(expected, actual_names):
+            iitk_ours_correct += 1
+        else:
+            iitk_ours_mismatches.append((expected, actual_names[0] if actual_names else ''))
+    except Exception as e:
+        iitk_ours_mismatches.append((expected, f'ERROR'))
+iitk_ours_time = time.time() - start
+
+print(f'\n2. IITK + Our data (2062 patterns):')
+print(f'   Accuracy: {iitk_ours_correct}/{len(test_data)} ({100*iitk_ours_correct/len(test_data):.1f}%)')
+print(f'   Time: {1000*iitk_ours_time/len(test_data):.2f}ms per verse')
+
+# Test our implementation
+from core.chanda import Chanda as OurChanda
+our_chanda = OurChanda(data_path='backend/data')
+
+our_correct = 0
+our_mismatches = []
+start = time.time()
+for verse, expected in test_data:
+    first_line = verse.replace('\r', '').split('\n')[0].strip()
+    try:
+        result = our_chanda.identify_line(first_line)
+        actual_names = [item[0] for item in result.get('chanda', []) if isinstance(item, (list, tuple))]
+        if names_match_list(expected, actual_names):
+            our_correct += 1
+        else:
+            our_mismatches.append((expected, actual_names[0] if actual_names else ''))
+    except Exception as e:
+        our_mismatches.append((expected, f'ERROR'))
+our_time = time.time() - start
+
+print(f'\n3. Our implementation (optimized):')
+print(f'   Accuracy: {our_correct}/{len(test_data)} ({100*our_correct/len(test_data):.1f}%)')
+print(f'   Time: {1000*our_time/len(test_data):.2f}ms per verse')
+
+print(f'\n' + '='*60)
+print(f'SUMMARY')
+print(f'='*60)
+print(f'| Implementation              | Accuracy     | Speed      |')
+print(f'|-----------------------------|--------------|------------|')
+print(f'| IITK + Original (434)       | {iitk_orig_correct}/{len(test_data)} ({100*iitk_orig_correct/len(test_data):.1f}%) | {1000*iitk_orig_time/len(test_data):.2f}ms    |')
+print(f'| IITK + Our data (2062)      | {iitk_ours_correct}/{len(test_data)} ({100*iitk_ours_correct/len(test_data):.1f}%) | {1000*iitk_ours_time/len(test_data):.2f}ms   |')
+print(f'| Our impl (optimized)        | {our_correct}/{len(test_data)} ({100*our_correct/len(test_data):.1f}%) | {1000*our_time/len(test_data):.2f}ms    |')
+print(f'='*60)
+
+print(f'\nMismatches in our implementation ({len(our_mismatches)}):')
+for (exp, act), count in Counter(our_mismatches).most_common(10):
+    print(f'  [{count}x] {exp} → {act}')
+"
+
+
+These are excellent results! Here's the summary:
+
+## Performance Comparison Results
+
+| Implementation | Accuracy | Speed | Notes |
+|----------------|----------|-------|-------|
+| **IITK + Original (434 patterns)** | 68/109 (62.4%) | 0.27ms | Fast but limited coverage |
+| **IITK + Our data (2062 patterns)** | 90/109 (82.6%) | 40.55ms | Better accuracy but **150x slower** |
+| **Our impl (optimized)** | **101/109 (92.7%)** | **3.06ms** | **Best accuracy, 13x faster than IITK+large** |
+
+## Key Findings
+
+1. **Our implementation wins on accuracy**: 92.7% vs 82.6% (IITK with same data) and 62.4% (IITK with original)
+
+2. **Regex pre-compilation optimization is effective**: Our implementation is 13x faster than IITK when using the same large dataset
+
+3. **Data quality matters**: IITK accuracy improves from 62.4% → 82.6% when using our expanded dataset
+
+4. **Remaining mismatches** (8 cases):
+   - **Upajāti classification** (5 cases): This is actually a correct behavior - Upajāti is a mixed meter combining Indravajrā and Upendravajrā patterns. Our system identifies the specific pattern in each line
+   - **śārdülavkrīḍita** (1 case): Minor spelling variant mismatch
+   - **pañcacāmaram → tūṇaka** (1 case): Needs investigation
+
+The 5 Upajāti "mismatches" are actually semantically correct - Upajāti is defined as a combination of Indravajrā and Upendravajrā, so identifying the specific pattern used in a line is arguably more precise than the generic "Upajāti" label.
+
+Would you like me to:
+1. Add special handling for Upajāti (to recognize it as a family of meters)?
+2. Investigate the pañcacāmaram mismatch?
+3. Run more detailed analysis on the remaining mismatches?

@@ -1,0 +1,620 @@
+Chandojnanam: A Sanskrit Meter Identification
+and Utilization System
+Hrishikesh T erdalkar Arnab Bhattacharya
+hrishirt@cse.iitk.ac.in arnabb@cse.iitk.ac.in
+Department of Computer Science and Engineering,
+Indian Institute of T echnology Kanpur,
+India
+Abstract
+W e present Chandojñānam, a web-based Sanskrit meter ( chanda) identification and
+utilization system. In addition to the core functionality of identifying meters, it sports
+a friendly user interface to display the scansion, which is a graphical representation of
+the metrical pattern. The system supports identification of meters from uploaded images
+by using optical character recognition (OCR) engines in the backend. It is also able to
+process entire text files at a time. The text can be processed in two modes, either by
+treating it as a list of individual lines, or as a collection of verses. When a line or a verse
+does not correspond exactly to a known meter, Chandojñānam is capable of finding
+fuzzy (i.e., approximate and close) matches based on sequence matching. This opens
+up the scope of a meter based correction of erroneous digital corpora. The system is
+available for use at https://sanskrit.iitk.ac.in/jnanasangraha/chanda/, and the
+source code in the form of a Python library is made available at https://github.com/
+hrishikeshrt/chanda/.
+1 Introduction
+Majority of the Sanskrit literature is in the form of poetry that adheres to the rules of Sanskrit
+prosody or Chandaḥśāstra, which is the study of Sanskrit meters, known as chandas. The
+purpose of chanda is primarily to add rhythm to the text so that it is easier to memorize.
+Additionally , it also helps in preserving the correctness to some extent.
+In this paper, we introduce a web-based system, Chandojñānam, to detect the chanda in
+Sanskrit text. The text can be either a single line or a verse or even an image. With increasing
+efforts towards digitization of Sanskrit literature, our system serves as the go-to portal to detect,
+study and analyze vṛttas in Sanskrit text.
+The digitization of Sanskrit text is achieved primarily through two methods: (1) manual
+data entry and (2) scanning of documents followed by optical character recognition (OCR). The
+former suffers from human error while the latter is prone to inaccuracies due to automated
+processing. F urther, with the rise of social media, blog sites and Unicode, there is a large
+replication of Sanskrit text on the Internet with little quality control, thereby further increasing
+errors in the text.
+W e argue that a non-trivial portion of the errors introduced in texts through various sources
+can be detected by the process of meter identification. The Chandojñānam system exhibits
+tolerance towards erroneous texts and is able to locate the errors as well as make suggestions
+for fixing them.
+1.1 Motivation
+The motivation behind Chandojñānamcan be better understood with the following scenarios.
+• A Sanskrit enthusiast wants to identify the meter of a verse from a PDF file with Sanskrit
+text. She however, lacks the capability to effectively type the Sanskrit text, and prefers to
+
+upload a screenshot of the specified verse to identify the meter. With Chandojñānam, she
+is able to perform meter identification directly from the image.
+• A teacher of Chandaḥśāstrawants to explain the rules of Sanskrit prosody to her students
+using several examples. She does not want to spend precious time on writing down all the
+intermediate steps in the identification of a meter. Instead, she wants a system that will do
+this job for her. Chandojñānamfits the bill nicely .
+• A budding poet is trying to compose Sanskrit poetry adhering to a specific meter. However,
+she is not an expert, and may have made some errors. She wants to locate these errors
+so that she can correct it. Chandojñānam lets her locate these errors, and also provides
+suggestions for correction.
+• A Sanskrit researcher wants to analyse a large Sanskrit text file and obtain metrical statistics
+of the entire corpus. Chandojñānamallows her to upload the text file and quickly obtain
+the required statistics to aid her in her research.
+These examples highlight the utility of Chandojñānam, in addition to just satisfying one’s
+curiosity about Sanskrit meters.
+1.2 Background
+The classification of syllables into laghu (short) and guru (long) forms the core concept of
+Chandaḥśāstra Deo (2007 ). The classification is related to the amount of time it takes to
+pronounce a specific syllable; in particular, the short syllables are termed laghuand the long
+syllables guru. Specific sequences or combinations of laghuand guruletters result in a particular
+rhythm or chanda.
+A verse (śloka) is composed of four parts, each known as apāda. Every meter has a constraint
+on the sequence of syllables that should be followed in a pāda. F or example, the meter Pañ-
+cacāmarais defined by each pādahaving 16 syllables with the following laghu-gurusequence of
+syllables: LGLGLGLGLGLGLGLG1. The perfect alternation of laghuand gurusyllables is a reason
+for its energetic tempo, as can be experienced in the hymns such as Śivatāṇḍavastotram2 or
+Narmadāṣṭakam3. In a similar manner, numerous Sanskrit meters have been defined in the
+texts on Sanskrit prosody such as Vṛttaratnākara.
+The unique sequence of laghu-guru markers used to identify a meter is hereon referred to
+as lg-signature of that meter. The term, in reference to an arbitrary Sanskrit line, is used to
+refer to its decomposition in the laghu-gurusequence. Chandaḥśāstra, for brevity and ease of
+remembering, identifies all laghu-gurusequences of length 3 with a unique letter. This unique
+3-length sequence is known as a Gaṇa. The possible number of gaṇas is 23 = 8. More details
+about the terminology and rules of Chandaḥśāstracan be found at https://sanskrit.iitk.
+ac.in/jnanasangraha/chanda/help. Several previous works (Deo, 2007; Mishra, 2007; Melnad
+et al., 2013 ) also discuss the theory of Chandaḥśāstrain detail.
+1.3 Related W ork
+There have been several efforts in the area of automatically identifying meter from Sanskrit text.
+Some of these tools ( Mishra, 2007 ; Melnad et al., 2013 ) were only presented as web interfaces,
+which are no longer functional.
+More recent works (Rajagopalan, 2020; Neill, 2022) provide both a web interface and a software
+library . However, the web interfaces provided by Rajagopalan (2020 ) and Neill (2022 ) both
+assume that a single verse will be provided as an input, limiting its usability to quickly check
+meters for a set of verses. Thus, even for a text consisting of a small number of verses, the
+1 W e use letters L and G to denote laghuand gurusyllables respectively .
+2 https://shlokam.org/shivatandavastotram/
+3 https://shlokam.org/narmadashtakam/
+
+F eatures Mishra (2007) Melnad et al. (2013) Rajagopalan (2020) Neill (2022) Chandojñānam
+A vailabilityW eb Interface ✓4 ✓5 ✓ ✓ ✓
+Software Library ✓ ✓ ✓
+Input
+T ext ✓ ✓ ✓ ✓ ✓
+Arbitrary Lines ✓
+Multiple V erses ✓
+T extfile Upload ✓ ✓
+Image Upload ✓
+F unctionality
+Meter Identification ✓ ✓ ✓ ✓ ✓
+Error T olerance ✓ ✓ ✓
+F uzzy Matching ✓ ✓
+T able 1: F eature comparison of extant meter identification systems
+input has to be provided as many times as there are number of verses. Neill (2022 ) attempts
+to address this issue by allowing upload of text files. However, it still lacks a display in case
+one wants to visualize meters for multiple verses. More significantly , identifying the meter of a
+single pādaor a partial verse is not possible at all, as any text entered is assumed to consist of
+exactly four pādas.
+Error tolerance, i.e., the capacity to identify the meter of a verse in the presence of errors, is
+an important requirement for a meter identification system. T o be useful for error correction, a
+system should be further able to detect exact locations of error and suggest corrections. Neill
+(2022) uses a scoring system resembling majority rule on the pādas of a verse to identify its
+meter. However, it assumes pādamatching to be exact. In other words, even if there is a single
+error in a pāda, the system reports that pādaas a mismatch. As a result, when there are errors
+in three pādas, due to the majority of pādas being mismatched, the overall meter for the verse
+is reported as ‘ unknown’ . F urther, it lacks any suggestion mechanism. Barring the admirable
+work by Rajagopalan (2020 ), none of the other tools attempts to perform fuzzy matching (i.e.,
+approximate matching) to handle erroneous text. The chandasuggested by Rajagopalan (2020)
+is, however, the one that is perceived as the best by its fuzzy matching algorithm, which may not
+always be the actual chandaof the verse. Therefore, providing a top- k ranked list of matches is
+more useful.
+F urther, none of the existing tools has a functionality to upload images for meter identification.
+Chandojñānamattempts to overcome the shortcomings of the previous tools by providing a
+comprehensive set of user-friendly features. There is a special focus on fuzzy matching (explained
+in §2.4.2) and the utility of Chandaḥśāstrafor correction of digital corpora.
+T able 1presents a feature matrix comparing the other works with Chandojñānam.
+1.4 Contributions
+W e present, Chandojñānam, a Sanskrit meter identification and utilization system, which in
+addition to identifying a meter, also aims to catch errors in the text and suggest corrections.
+The aim of the tool is to make this process easy for a non-programmer. The salient features of
+Chandojñānamcan be summarized as follows:
+• The tool is available as a web-application that can be used from any standard browser
+and requires no other installation from the user. The library is also made available for the
+benefit of programmers.
+• There are three prominent input options: (1) plain text, (2) images (screenshots) and
+(3) text files.
+• The input can be in any of the standard transliteration scheme that can be detected by the
+4 http://sanskrit.sai.uni-heidelberg.de/Chanda/HTML/ is no longer functional.
+5 https://sanskritlibrary.org:8080/MeterIdentification/ is no longer functional.
+
+indic-transliteration (Sanskrit-programmers (2021 )) library . This applies to all three
+input methods.
+• The image files can be processed using one of the two OCR engines, namely , Google OCR
+and T esseract OCR, and the detected text can be further edited.
+• The lines from input are detected based on several standard line-end markers, such as ‘\ n’,
+‘।’, ‘॥’ and ‘ .’
+• Meter identification can be performed on the line ( pāda) level. The input is treated as a
+set of lines. Therefore, the input can be any arbitrary set of pādas.
+• Meter identification can also be performed on a verse ( śloka) level. In this case, the system
+treats the lines as being parts of a verse. Cumulative cost of each line is minimized to
+identify the meter of the verse. Multiple verses can be provided.
+• F or erroneous inputs, the tool provides a robust fuzzy matching support using edit distance
+comparison, which helps in identifying and highlighting the places where an error might
+be present. Additionally , there is a suggestion module to help the user understand what
+changes can be made to the input.
+• Informative display shows the steps involved in the meter identification, which is aimed to
+help learners of Chandaḥśāstra.
+• Results can be downloaded in the JSON format.
+The Chandojñānam system is a available online at https://sanskrit.iitk.ac.in/
+jnanasangraha/chanda/. The source code can be found at https://github.com/
+hrishikeshrt/chanda/.
+2 The ChandojñānamSystem
+In this section, we discuss the inner workings of the Chandojñānamsystem. Figure 1 illustrates
+the overall workflow of the system. Initially , definitions of Sanskrit meters are read into the
+system and stored in the form of a dictionary , referred to hereon as the metrical database .
+A user may specify the input in any of the three specified formats, namely , plain text, image
+containing text, and text file. F or image, the text is extracted using OCR systems. After the text
+is extracted, the transliteration scheme is detected, and converted to the internal transliteration
+scheme, which is ‘Devanagari’ . F rom the text, lines are detected which, in turn, are split into
+syllables to obtain the lg-signature of the lines. The metrical database is then queried using
+the meter detection algorithm and the matches are presented to the user along with useful
+information. In case of erroneous inputs, k = 10closest matches are also shown, along with the
+suggestions for corrections.
+2.1 ChandaDefinitions
+There are two main types of meters, Varṇavṛtta and Mātrāvṛtta (Melnad et al., 2013 ). Cur-
+rently , the system only deals with Varṇavṛtta. In future, we will enable the system to handle
+Mātrāvṛttaas well. Varṇavṛttacan be further divided into three categories, namely , Samavṛtta,
+Ardhasamavṛttaand Viṣamavṛtta. This categorization is performed based on the symmetry or
+lack thereof of the metrical pattern exhibited by the four pādas of a ślokaadhering to the meter.
+All four pādas following the same pattern is termed as Samavṛtta, odd and even pādas following
+a different pattern is termed as Ardhasamavṛtta, and all four pādas following a different pattern
+corresponds to Viṣamavṛtta.
+Chandadefinitions are specified in the tabular format as illustrated in Figure 2. The legend is
+described in T able 2. It can be noted that the value corresponding to the column pādadenotes
+
+Text Processing
+Transliterate Find Lines Syllables Laghu-Guru
+Preprocessing
+Meter  
+Definitions Meter  
+Signatures
+Matching
+Direct Matches
+Regex Matches
+Fuzzy Matches
+Text
+Input
+Image File
+Text File
+Text Entry
+Display
+Results 
+Figure 1: W orkflow of theChandojñānamsystem
+Figure 2: Generic Chandadefinition format
+the index of pādain the meter described in that row. This way of specifying definitions results
+in a uniform treatment of samavṛtta, ardhasamavṛttaand viṣamavṛtta. Additionally , a regex
+pattern (regular expression) definition can also be specified, where the metrical restriction only
+applies to a part of the pāda. The most commonly used meter in Sanskrit, namely , anuṣṭubh,
+is a prime example of such regex patterns. Specifically , the requirements for anuṣṭubhchanda
+are:
+• Every pādamust contain exactly 8 syllables.
+• The 5th syllable of every pādamust be a laghusyllable.
+• The 6th syllable of every pādamust be a gurusyllable.
+• The 7th syllable of the even pādas must be a laghusyllable.
+• There is no other restriction on the other syllables, i.e., they can be either laghuor guru.
+Therefore, the regex patterns [LG][LG][LG][LG]LG[LG][LG] and [LG][LG][LG][LG]LGL[LG]
+correspond to the lg-signatures for the odd numbered and even numbered pādas of Anuṣṭubh
+respectively .
+Internally , the meter database is stored in the form of dictionaries in two ways: signature of
+individual pādas is stored as CHANDA_SINGLE, while signature of consecutive pādas is stored as
+CHANDA_MULTIPLE. It may often happen that two pādas of the input verse are given as a single
+
+Column Requirement Description
+Vṛtta required Name of the meter described in the row
+Pāda required Index of pāda in the corresponding vṛtta; the possible
+values are <blank>, 1, 2, 3 and 4.
+Lakṣaṇa required lg-signature of the meter
+Gaṇa optional Signature of the meter in the compressed ( trika) notation
+Akṣarasaṃkhyā optional Number of letters in the pāda
+Mātrā optional Number of mātrās in the pāda
+Yati optional Indices corresponding to yati
+T able 2: ChandaDefinitions specification format
+line without any kind of line marker. The second dictionary acts as a fail-safe when the lines
+couldn’t be split in a proper manner due to lack of punctuation or line-breaks.
+F or example, for the meter Bhujaṅgaprayāta, which has a signature यययय6, corresponding to
+the lg-signature of LGGLGGLGGLGG, two independent entries are maintained.
+CHANDA_SINGLE = {
+'LGGLGGLGGLGG': ['Bhujaṅgaprayāta'],
+'[LG][LG][LG][LG]LG[LG][LG]': ['Anuṣṭubh (Pāda 1)'],
+'[LG][LG][LG][LG]LGL[LG]': ['Anuṣṭubh (Pāda 2)']
+}
+CHANDA_MULTIPLE = {
+'LGGLGGLGGLGGLGGLGGLGGLGG': ['Bhujaṅgaprayāta (Pāda 1-2)'],
+'[LG][LG][LG][LG]LG[LG][LG][LG][LG][LG][LG]LGL[LG]': ['Anuṣṭubh (Pāda 1-2)']
+}
+Currently , the system has data for more than 200 meters. This number is less as compared
+to the database used by Rajagopalan (2020); however, the detailed discussion of why more data
+need not always mean better is also provided by Rajagopalan (2020 ). The primary reason for
+not importing a large number of meters is that the lower number results in less false positives
+when dealing with erroneous input. More meters may be included in the system in future based
+on user feedback.
+2.2 Input
+The input for meter identification is Sanskrit text, and it can be provided to our system in three
+ways. The simplest form of input is a direct text entry , wherein, a user may type or copy-paste
+Sanskrit text in any valid transliteration scheme into a text input box.
+Perhaps a more useful option, which is a novelty of our tool, is the ability to process images
+containing text. T wo well-known OCR engines, Google Drive OCR7 and T esseract OCR8 (Kay ,
+2007) are supported. Google Drive OCR functions by making use of Google’s Drive API v3 9
+to upload files to Google Drive, while T esseract OCR v5 is a neural network (LSTM) based
+OCR engine. Python libraries google-drive-ocr10 (T erdalkar, 2022) and pytesseract11 (Lee,
+2022) are utilized respectively to access the OCR systems. Google Drive OCR is generally more
+accurate than T esseract OCR but slower due to the network latency imposed by upload of files.
+The output of either of the OCR systems, i.e., the recognized text, is treated as if directly
+6 Gaṇaयcorresponds to the lg-sequence LGG.
+7 https://support.google.com/drive/answer/176692?hl=en
+8 https://github.com/tesseract-ocr/
+9 https://developers.google.com/drive/api/v3/reference
+10 https://github.com/hrishikeshrt/google_drive_ocr
+11 https://github.com/madmaze/pytesseract
+
+Figure 3: Upload a screenshot of a verse to Chandojñānamfor meter identification
+entered by the user. The output is not always accurate, especially if the image contains noisy
+text. Therefore, the system also lets user edit the optically recognized text and re-submit it to
+the system. Figure 3 shows the interface to upload images for meter identification.
+F or bulk processing, the option to upload a text file is also available. After reading the
+uploaded file, the text is again treated as if directly entered by the user.
+The identical treatment of all input allows the same meter identification pipeline to follow.
+F or example, as the transliteration module is triggered after the processing of input text, all
+three input methods have full support for input in any valid transliteration scheme.
+2.3 T ext Processing
+Once the text input is obtained and cleaned, it passes through four primary processing steps.
+1. T ransliteration: The problem of transliteration of Devanagari text can be considered
+to be a solved one due the presence of robust tools such as indic-transliteration12
+(Sanskrit-programmers, 2021 ) and Aksharamukha13 (Rajan, 2018 ). W e rely on
+indic-transliteration for detection of input scheme; thus, any transliteration scheme
+detectable by indic-transliteration is also supported by our system. The internal
+transliteration scheme is set to ‘Devanagari’, which is a convenience choice as we believe
+that it makes the code easier to follow.
+2. Pāda Split: The contiguous text is now split into lines ( pādas) based on several standard
+line-end markers, such as ‘\n’, ‘।’, ‘॥’ and ‘.’ .Chandojñānamuses pādaas a unit for meter
+identification.
+3. Syllabification: The process of splitting text into syllables is fairly straightforward for
+majority of Indian languages due to phonetic consistency of the alphabet. The Devanagari
+Unicode has special vowel markers for all vowels except ‘ अ’ ( a). The presence of vowels
+with consonants, therefore, can be easily identified with these markers, and syllables can
+be separated. The absence of vowel marker for the vowel ‘ अ’ ( a) can be treated by noting
+that for a joint consonant, Unicode always uses the halantamarker ‘◌्’ . So, two consecutive
+consonant characters indicate the presence of a vowel ‘ अ’ with the first consonant. F or
+example, the Unicode string “ भारत” consists of 4 Unicode characters: ‘ भ’, ‘ ◌ा’, ‘ र’ and ‘ त’ .
+However, it corresponds to 6 Devanagari letters ( varṇa), namely , ‘भ्’, ‘ आ’, ‘ र्’, ‘ अ’, ‘ त्’ and
+‘अ’ . Every vowel signifies an end of a syllable, resulting in three syllables, namely , ‘ भा’, ‘ र’
+and ‘ त’ . Thus, in a single scan of the string, syllabification can be performed. W e use the
+sanskrit-text14 Python library to perform this task.
+4. Laghu-Guru Marks: The syllabification process is a prerequisite for obtaining the lg-
+signature of a Sanskrit line. Standard rules of Sanskrit prosody described in numerous
+articles ( Deo, 2007 ; Melnad et al., 2013 ; Rajagopalan, 2020 ) are followed to mark each
+syllable as laghuor guru. A general rule of Piṅgala’s Chandaḥśāstrastates that the last
+syllable of a pādashould be treated as a guru. However, there exist meters in the Chan-
+daḥśāstrawhose signatures contain the last syllable as laghu(PādāntaLaghu). Therefore,
+we compute the lg-signature without forcing the last letter to be guru.
+12 https://pypi.org/project/indic-transliteration/
+13 https://aksharamukha.appspot.com/
+14 https://pypi.org/project/sanskrit-text/
+
+Algorithm 1: Meter Identification
+Data: Metrical Database ( MD)
+Input: lg-signatures corresponding to each ‘line’ in the input ( T = flg1; lg2; : : : ; lg ng)
+Output: Result set containing exact or fuzzy matches
+1 forall lg 2 T do
+2 SM1 = FindDirectMatch(lg, ‘CHANDA_SINGLE’ )
+3 SM2 = FindDirectMatch(lg, ‘CHANDA_MUL TIPLE’)
+4 RM = FindRegexMatch(lg, ‘CHANDA_SINGLE’ + ‘CHANDA_MUL TIPLE’)
+5 DM = SM1 + SM2 + RM
+6 F M = ϕ
+7 if DM = ϕ then
+8 F M = FindFuzzyMatch(lg)
+9 end
+10 return DM + F M
+11 end
+Algorithm 2: Direct Matching
+Input: lg-signature
+Output: Result set containing exact matches
+1 F unctionFindDirectMatch(lg, ‘MD’ )
+2 M1 = Query(lg, ‘MD’) // dictionary lookup
+3 M2 = ϕ
+4 if M1 = ϕ then // if no match found
+5 if the last letter of lg is laghuthen
+6 lg1 = replace last letter of lg with guru
+7 M2 = Query(lg1, ‘MD’)
+8 end
+9 end
+10 return M1 + M2
+This completes the text processing which makes the text ready for the next stage, which is
+meter identification.
+2.4 Meter Identification Algorithm
+The meter identification problem, in its simplest form, is a dictionary lookup on lg-signatures of
+meters. In practice, however, there can be several additional considerations. The algorithm used
+by our system is described in Algorithm 1. The algorithm consists of a direct dictionary lookup,
+regular-expression based lookup and fuzzy matching. These are explained in the subsequent
+sections.
+2.4.1 Direct Matching
+Finding a direct match involves trying to find the match in the both the dictionaries in the
+metrical database that store the meter signatures. F urther, for meters with regex specification,
+regular-expression-based matching is performed.
+As mentioned in §2.3, we compute the lg-signature without enforcing the last syllable to be
+guru. If the last syllable was laghuand no direct match was found, we attempt to find a direct
+match by treating the last syllable as guru. Algorithm 2 describes this process. The function
+Query corresponds to a simple dictionary lookup and returns a set of matches.
+In theory , this should be sufficient. However, in practice, one often encounters erroneous text.
+This is expected since a large amount of Sanskrit text available digitally is a result of either
+
+Figure 4: Meter identification with fuzzy matching and suggestions
+manual entry or post-scanning OCR followed by manual correction. As a result, due to human
+errors or OCR inaccuracies, the following errors may be found in the texts available online.
+• Characters may be misspelt, e.g., (ru) as (rū)
+• Characters may be missing, e.g., वग(vargai) as वगै(vagai)
+• Characters may be misidentified, e.g., ऋ(ṛ) as ब(kra)
+• Characters may get split, e.g., ख(kha) as रव(rava)
+Most of these errors may also affect the metrical pattern of a line and, therefore, meter
+identification is a useful tool to identify them. It should be mentioned here that not all errors
+lead to metrical mismatch. F or example, an error such as the confusion between letter pairs
+such as व, बor म, सwould not affect the meter pattern and, thus, cannot be captured by only
+meter identification.
+2.4.2 F uzzy Matching
+F or non-exact matches, we model the problem as that of finding the nearest matching string
+for the lg-signature of the text. In particular, we compute the Levenshtein edit distance of the
+observed pattern with all the known patterns. W e then find the similarity by first normalizing
+the edit distance using the length of the target match, and then subtracting it from 1.
+Similarity = 1  Levenshtein distance
+length of target match
+W e present the topmost k matches as the possible fuzzy matches (currently , k = 10). Al-
+gorithm 3 and Algorithm 4 describes the core functions pertaining to fuzzy matching. The
+Similarity column in the interface ( Figure 4) shows the similarity instead of the edit distance.
+F or finding the edit-distance and edit-operations, we use the python-Levenshtein15 library
+(Haapala, 2014). The AddEditOpsMarkers function (line 5) formats the original list of syllables
+by adding suggestions based on the edit operations. The suggestions shown contain the charac-
+ters from the original string, along with the suggested places where a change might be required.
+Suggested changes for each meter correspond to the changes needed to transform the given line
+into that meter.
+The suggestions are identified by three letters i, d and r, indicating insert, delete and replace
+operations respectively . They are used in the following manner.
+15 https://pypi.org/project/python-Levenshtein/
+
+Algorithm 3: F uzzy Matching
+Input: lg-signature and k
+Output: Result set containing top- k fuzzy matches
+1 F unctionFindFuzzyMatch(lg, ‘MD’, k)
+2 results = ϕ
+3 forall chanda in ‘MD’ do
+4 cost, suggestion = Transform(lg, lg-signature of chanda )
+5 if suggestion then
+6 results += (chanda, cost, suggestion)
+7 end
+8 end
+9 return top-k results with lowest cost
+Algorithm 4: T ransform String Sequences
+Input: String sequences seq1, seq2
+Output: Suggested edit operations required to transform seq1 into seq2 and the cost of
+transformation
+1 F unctionTransform(seq1, seq2)
+2 edit_ops = GetLevenshteinEditOps(seq1, seq2) // using python-Levenshtein
+3 weights = f‘replace’: 1, ‘delete’: 1, ‘insert’: 1 g
+4 cost = ∑
+op 2 edit_ops weights[op]
+5 suggestion = AddEditOpsMarkers(seq1, edit_ops) // add suggestions
+6 return cost, suggestion
+• i(L/G):
+This notation indicates the insertion of a new syllable. i(L) (respectively ,i(G)) indicates
+that a laghu(respectively ,guru) syllable needs to be inserted.
+• r(letter)[L/G]{suggestion}:
+This notation indicates that the syllable needs to be replaced by a laghuor a gurusyllable
+(depending upon the marker). In some of the cases, a suggested change of syllable may be
+included. A simple heuristic that is followed replaces the laghusyllables corresponding to
+the laghuvowels ‘इ’, ‘उ’ and ‘ऋ’ by their guruvowel counterparts, namely , ‘ई’, ‘ऊ’ and ‘ॠ’,
+respectively , and vice versa.
+• d(letter):
+This notation indicates that the syllable needs to be deleted.
+The process of fuzzy matching can be better understood with the help of an example. Consider
+the first line of the example depicted in Figure 4.
+• Line: नमेसदावलेमातृभुमे
+• LG-Signature: LGGLGGLGGLLG
+• Nearest Match: LGGLGGLGGLGG (cost 1) ( Bhujaṅgaprayāta)
+• Suggestion: [['न','म',' े'],['स','दा'],['व','','ल े'],['मा','तृ','r(भ ु)[G]{भू}','मे']]
+The exact match for the line is not found in the system and, therefore, we find the edit-distance
+of this lg-signature with every lg-signature from the database. It is found that the lg-signature
+LGGLGGLGGLGG of Bhujaṅgaprayātameter is the closest and is only 1 edit-distance away . The
+required change is to replace the 11th letter from L (laghu) to G (guru). It is also suggested to
+replace the laghuletter भुinto a guruletter भू.
+
+Figure 5: Meter identification from a verse in (a) Line mode and (b) V erse mode
+Figure 6: F uzzy matches in (a) Line mode and (b) V erse mode
+2.4.3 V erse Processing
+Meter identification can be performed by treating the input either as a set of arbitrary lines
+(Line mode ) or as a collection of verses ( V erse mode). The Line mode is useful for checking
+meter of a single line or a set of lines. The treatment of the text as a verse differs insofar as it
+attempts to minimize the cumulative cost of the meter matches over each line.
+Consider a sample verse adhering to the meter Śālinī, albeit with a deliberate small error in
+the first pāda. Figure 5 highlights the difference between the two modes of meter identification.
+The correct word मिताhas been replaced by two words ममिपता. As a result, the first pādadoes
+not find an exact match. F urther, the closest match based on edit distance is found to be the
+meter Vātormīwith an edit distance of 1. Therefore, when in the Line mode, the suggestion is
+made as Vātormī. However, rest of the three pādas are exact matches for Śālinī. Therefore, the
+cumulative cost of Śālinīover the entire ślokais the lowest (here, it is 2). Thus, in the V erse
+mode, the identified meter for the verse is Śālinī. This highlights the utility of the V erse mode.
+In the list of fuzzy matches shown, the meter identified for the verse is shown first. Figure 6
+shows that the meter Śālinīis shown for the first pādadespite having a higher edit cost.
+2.5 Output
+A blackbox that only identifies meter would not be as interesting as a system that also explains
+(‘teaches’) the steps. Therefore, in addition to the meter name, scansion details such as lg-
+signature, gaṇa-signature, count of letters and count of mātrās are also displayed. Additional
+information displayed in the case of fuzzy matches is already discussed in §2.4.2. Entire result
+is displayed in a neat tabular format (as displayed in Figure 4) which makes the system useful
+for learners of Chandaḥśāstra.
+Cumulative statistics such as number of lines identified, number of lines not identified, fre-
+quency distribution of exact and fuzzy matches etc. can also be viewed. Additionally , the data
+can also be downloaded. The data download supports two formats, a compact format for quick
+visual inspection, and a detailed JSON format for further computational processing.
+
+Figure 7: Meter identification from other Indian languages, e.g., (a) Marathi (b) T elugu
+2.6 Utility
+W e can identify several use-cases forChandojñānam, some of which have already been discussed
+in §1.1:
+• The primary use-case, naturally , is the ability to identify meters from Sanskrit text.
+• Ability to upload of images and identification of meters from it is another important sce-
+nario.
+• Identification of errors from the Sanskrit text which has been created through the process
+of OCR, but not manually corrected yet, serves as another prominent use-case.
+• Additionally , the system can be used to obtain metrical statistics from large texts auto-
+matically . These statistics may also help a user identify errors, if any , at a quick glance.
+F or example, in the case of texts such as Meghadūta, which follows a single meter, namely ,
+Mandākrāntā, any anomaly will be quickly spotted by appearance of a different meter in
+the statistics.
+• A user may be interested in creating poetry in Sanskrit, and may require assistance in
+quickly checking the metrical consistency of her creation.
+• Learners of Chandaḥśāstramay want to try out several examples to understand the process
+of meter identification in-depth.
+• Several Indian languages, e.g., Marathi, T elugu, etc., exhibit rules of prosody sim-
+ilar to Sanskrit. Due to comprehensive transliteration support provided by the
+indic-transliteration library , text written in scripts other than Devanagari can be also
+used in the same manner. Figure 7 illustrates the usage of Chandojñānamfor meter identi-
+fication from Marathi and T elugu. Here, we are assuming that the same metrical database
+is used. However, there may be language-specific differences in the rules of prosody as well
+as variety of meters. Hence, the multilingual support is still primitive.
+3 Evaluation for Error Correction
+One of the primary goals of Chandojñānam is to facilitate error detection from the Sanskrit
+text obtained from various sources. Consequently , we evaluate the ability of the tool to correctly
+identify the meters from erroneous text.
+
+3.1 Corpus
+Evaluation of a meter identification system requires tagged metrical data. As mentioned
+by Rajagopalan (2020 ), Meghadūta composed by Kālidāsa (Kale, 2011 ), being entirely in
+Mandākrāntā meter, is an ideal corpus for evaluation. The same text, available from vari-
+ous sources, can also differ greatly in terms of encoding, character-by-character comparison and
+errors present. W e use three online sources, namely , Wikisource16, sanskritdocuments.org17 and
+GRETIL18 to obtain three versions of Meghadūta.
+In addition to Meghadūta, we also use texts with more metrical variety . W e choose three
+texts from Wikisource, namely , Śāntavilāsa19, Śrīrāmarakṣāstotra20 and Rājendrakarṇapūra21.
+W e manually tag meters for each verse from these texts. T ogether, the 4 datasets contain 1038
+verses, exhibiting 17 distinct meters.
+F urther, to evaluate the proposed use-case of post-OCR correction, we simulate the digitization
+pipeline. First, we synthetically create a PDF from each corpus in the following manner:
+• W e open the text file in a text editor. (W e use gedit with Sanskrit2003 font.)
+• W e next trigger the operating system’s (Ubuntu 18.04) print dialogue ( Ctrl+P)
+• W e use the ‘Print to File ’ option and save the file as PDF.
+A PDF file created in this manner is the best-case scenario for OCR engines, as it contains no
+noise. Now, we run both the OCR systems and obtain the OCR-ed versions of the text. As a
+result of this simulation, we can now realistically evaluate the detection and correction of errors
+introduced in the process of OCR.
+3.2 Results
+W e use the following abbreviations for different versions of the corpora:
+• WS: Wikisource
+• SD: sanskritdocuments.org
+• GR: GRETIL
+• GO: Google Drive OCR on a synthetically generated PDF
+• TO: T esseract OCR on a synthetically generated PDF
+W e evaluate our Chandojñānam system as well as those by Rajagopalan (2020 ) and Neill
+(2022) on each version of the corpora. W e evaluate the ability of these systems to identify the
+chandaof the verse in the presence of errors. T able 3 illustrates the result of this evaluation.
+Chandojñānam was able to identify the correct meter from the erroneous text in 98:2% of
+the cases, performing better than the systems by Rajagopalan (2020 ) (91:9%) and Neill (2022)
+(80:3%). Corpora, code and results of the experiments are made available with the source code.
+16 https://sa.wikisource.org/s/1c5
+17 https://sanskritdocuments.org/doc_z_misc_major_works/meghanew.html
+18 http://gretil.sub.uni-goettingen.de/gretil/1_sanskr/5_poetry/2_kavya/kmeghdpu.htm
+19 https://sa.wikisource.org/s/7xr
+20 https://sa.wikisource.org/s/7up
+21 https://sa.wikisource.org/s/7xq
+
+Meghadūta Śāntavilāsa RāmarakṣāRājendrakarṇapūraT otalSD GR WS GO TO WS GO TO WS GO TO WS GO TO
+Number of V erses 117 111 123 123 12336 36 36 39 39 39 72 72 72 1038
+UniqueChanda 1 1 1 1 1 12 12 12 9 9 9 4 4 4 17
+Erroneous V erses 20 79 2 31 77 13 16 31 1 4 13 12 26 71 396
+Correct Neill (2022) 20 79 2 30 66 11 13 14 0 2 9 12 24 36 318(80:3%)
+Meters Rajagopalan (2020) 19 79 2 30 75 12 15 24 1 2 9 12 26 58 364(91:9%)
+IdentifiedChandojñānam20 79 2 31 77 13 16 29 1 3 9 12 26 71 389(98:2%)
+T able 3: Error tolerance of meter identification systems. (V ersions are WS: Wikisource, GO:
+Google OCR, TO: T esseract OCR, SD: sanskritdocuments.org, GR: GRETIL.) Chandojñānam
+is able to detect correct chandafrom erroneous verses 98:2% of the times.
+3.3 Error Analysis
+W e now analyze the errors in a more detailed manner.
+Despite the Wikisource version being prepared through manual correction of OCR, Chando-
+jñānamwas still able to detect 2 errors from Meghadūta. The errors are described below:
+• Line: कालेपंककुभसुरभौपवतेपवतेते(Pāda3, Śloka1.23)
+• Suggestion: [[['का','ल',' े','पं'],['क','क ु','भ','स ु','र','भौ'],['प','व ','ते'],['प','r(व )[L]','ते'],['ते']]]
+• Description: The error is due to the incorrect word पवते. It is likely that this was due to
+an oversight by the curator. It can be seen that the system correctly points to the location
+where a change is required.
+• Line: सािभानूिहतकुशलैतचोिभममािप(Pāda3, Śloka2.53)
+• Suggestion: [[['सा','िभ','ा','न','ू','िह','त','क ु','श','ल ै','d()','त','','चो','िभ','म ','मा','िप']]]
+• Description: The error is due to an extra letter present in this line, where an extra त
+appears in the sandhiof words कुशलैःand तत्, resulting in कुशलैतत्instead of कुशलैत्.
+The system is able to identify the error, and point out that a syllable needs to be deleted.
+However, we can see that the system points to an incorrect syllable to be deleted. This
+can be explained from the fact that both and तare laghuletters, and deletion of either
+letter results in the correct metrical signature. So, it is impossible for a meter identification
+based system to correctly say which character is to be deleted without any notion of semantic
+consideration. Such type of semantic error correction is out-of-scope as of yet.
+Majority of the ‘errors’ in GRETIL stem from the text being written with sandhis being split.
+Despite not being linguistic errors, from the point of view of Chandaḥśāstra, these indeed are
+errors as they may change the number of syllables in a pāda and subsequently result in the
+change or loss of the meter.
+It is important to remember that the errors detected are only the errors reported by theChan-
+dojñānamsystem. Errors that do not result in the breaking of metrical pattern are impossible
+to be corrected by metrical analysis. It is interesting to note that the fuzzy matching performs
+better for Google OCR than T esseract OCR. It can be explained as follows. As the Google OCR
+system performs better and makes fewer errors per line, the possible deviations are fewer. This
+results in less false positives. On the contrary , if the OCR system makes numerous errors, the
+lg-signature is farther away from the actual lg-signature and, therefore, ‘the closest match’ of
+the erroneous lg-signature might also be erroneous.
+Finally , it can be seen that although the meter identification can be a useful tool for detection
+of errors in the Sanskrit text, there are several other factors that affect the error rate of such a
+system.
+
+4 Conclusions
+W e have presented a Sanskrit meter identification tool that adds many user-friendly features
+and focuses on tolerance towards erroneous text as well as correction of such text. The features
+such as meter identification from images are useful for Sanskrit enthusiasts without much pro-
+gramming background. Bulk analysis of text files is a useful aid for digitization of Sanskrit texts
+using the methodology of post-OCR manual correction.
+F uture directions for the tool include addition of mātrāmeters, improvement to meter detec-
+tion and correction algorithm with the possible use of syntactic and semantic aspects, adding
+more extensive support for Indian languages that use similar rules of prosody .
+The system is available online at https://sanskrit.iitk.ac.in/jnanasangraha/chanda/
+and the source code is available at https://github.com/hrishikeshrt/chanda/.
+References
+Ashwini S Deo. 2007. The metrical organization of classical sanskrit verse. Journal of linguistics ,
+43(1):63–114.
+Antti Haapala. 2014. python-Levenshtein. https://pypi.org/project/python-Levenshtein/, dec 10.
+[Online; accessed 2022-04-01].
+Moreshvar R Kale. 2011. The Meghaduta of Kalidasa . Motilal Banarsidass.
+Anthony Kay . 2007. T esseract: an open-source optical character recognition engine. Linux Journal ,
+2007(159):2.
+Matthias Lee. 2022. pytesseract. https://github.com/madmaze/pytesseract, feb 19. [Online; ac-
+cessed 2022-04-01].
+Keshav S Melnad, Pawan Goyal, and Peter Scharf. 2013. Meter identification of sanskrit verse. The
+Sanskrit Library, USA .
+Anand Mishra. 2007. Sanskrit metre recognizer.
+Tyler Neill. 2022. Skrutable: Another step toward effective sanskrit meter identification.
+Shreevatsa Rajagopalan. 2020. A user-friendly tool for metrical analysis of sanskrit verse. Computational
+Sanskrit & Digital Humanities , page 113.
+Vinodh Rajan. 2018. Aksharamukha. https://github.com/virtualvinodh/aksharamukha, jul 23.
+[Online; accessed 2021-11-03].
+Sanskrit-programmers. 2021. Indic-transliteration. https://github.com/indic-transliteration/,
+jul 23. [Online; accessed 2021-11-18].
+Hrishikesh T erdalkar. 2022. google-drive-ocr. https://github.com/hrishikeshrt/google_drive_
+ocr/, mar 1. [Online; accessed 2022-04-01].

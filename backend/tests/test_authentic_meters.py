@@ -13,11 +13,15 @@ All verses have been syllable-count verified and sourced from:
 @date: November 2025
 """
 
-from backend.core.chanda import Chanda
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.chanda import Chanda
 import sanskrit_text as skt
 
 # Initialize the Chanda system
-c = Chanda('backend/data/')
+c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
 
 # Test Results Tracker
 test_results = []

@@ -26,10 +26,10 @@ class Results {
             'गीति': 'Gīti',
             'उपजाति': 'Upajāti'
         };
-        
+
         return meterMap[meterName] || this.simpleTransliterate(meterName);
     }
-    
+
     /**
      * Simple transliteration fallback
      */
@@ -37,14 +37,14 @@ class Results {
         // This is a basic fallback - in production you'd use a proper library
         return text;
     }
-    
+
     /**
      * Transliterate Devanagari to IAST (basic mapping)
      */
     transliterateToIAST(text) {
         const devaToIAST = {
-            'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū', 
-            'ऋ': 'ṛ', 'ॠ': 'ṝ', 'ऌ': 'ḷ', 'ॡ': 'ḹ', 'ए': 'e', 'ऐ': 'ai', 
+            'अ': 'a', 'आ': 'ā', 'इ': 'i', 'ई': 'ī', 'उ': 'u', 'ऊ': 'ū',
+            'ऋ': 'ṛ', 'ॠ': 'ṝ', 'ऌ': 'ḷ', 'ॡ': 'ḹ', 'ए': 'e', 'ऐ': 'ai',
             'ओ': 'o', 'औ': 'au',
             'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'ṅa',
             'च': 'ca', 'छ': 'cha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'ña',
@@ -58,30 +58,30 @@ class Results {
             'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au',
             'ं': 'ṃ', 'ः': 'ḥ', '्': '', 'ँ': 'm̐'
         };
-        
+
         let result = '';
         for (let char of text) {
             result += devaToIAST[char] || char;
         }
         return result;
     }
-    
+
     /**
      * Display results for different input types
      */
     displayResults(type, data) {
         const containerId = `${type}-results`;
         const container = document.getElementById(containerId);
-        
+
         if (!data.success) {
             this.showError(container, data.error || 'Analysis failed');
             return;
         }
-        
+
         container.style.display = 'block';
-        
+
         let html = '<div class="card">';
-        
+
         // Header
         html += '<div class="results-header">';
         html += '<h2>Analysis Results</h2>';
@@ -96,18 +96,18 @@ class Results {
             </a>`;
         }
         html += '</div>';
-        
+
         // Meters Found - Show ONLY top meters from each line
         if (data.result && data.result.line) {
             // Build our own summary showing only top meter per line
             const topMeterCounts = {};
-            
+
             data.result.line.forEach(lineItem => {
                 const result = lineItem.result;
                 if (!result) return;
-                
+
                 let topMeter = null;
-                
+
                 // Extract top meter from display_chanda_primary (new format)
                 if (result.display_chanda_primary && result.display_chanda_primary.trim()) {
                     const primaryMeters = result.display_chanda_primary.split('|').map(m => m.trim());
@@ -115,14 +115,14 @@ class Results {
                         // Extract meter name (before the bracket with confidence score)
                         const meterMatch = primaryMeters[0].match(/^(.+?)\s*\[[\d.]+\]$/);
                         topMeter = meterMatch ? meterMatch[1].trim() : primaryMeters[0];
-                        
+
                         // Remove transliteration if present
                         const parenMatch = topMeter.match(/^(.+?)\s*\([^)]+\)$/);
                         if (parenMatch) {
                             topMeter = parenMatch[1].trim();
                         }
                     }
-                } 
+                }
                 // Fallback to display_chanda (old format) - take first meter only
                 else if (result.found && result.display_chanda) {
                     const meters = result.display_chanda.split('/').map(m => m.trim());
@@ -135,13 +135,13 @@ class Results {
                         }
                     }
                 }
-                
+
                 // Count this top meter
                 if (topMeter) {
                     topMeterCounts[topMeter] = (topMeterCounts[topMeter] || 0) + 1;
                 }
             });
-            
+
             // Display the summary if we found any meters
             if (Object.keys(topMeterCounts).length > 0) {
                 html += '<div class="meters-found-section">';
@@ -150,15 +150,15 @@ class Results {
                 html += '<button class="language-toggle-btn-compact" onclick="window.resultsComponent.toggleLanguage(event)">EN</button>';
                 html += '</div>';
                 html += '<div class="meters-list">';
-                
+
                 // Sort by count (highest to lowest)
                 const sortedMeters = Object.entries(topMeterCounts).sort((a, b) => b[1] - a[1]);
-                
+
                 sortedMeters.forEach(([meter, count]) => {
                     // The meter name as is (in Devanagari)
                     let devanagari = meter;
                     let iast = '';
-                    
+
                     // Check if there's a parenthetical note (like "पाद 1-2")
                     const parenMatch = meter.match(/^(.+?)\s*\((.+?)\)$/);
                     if (parenMatch) {
@@ -183,18 +183,18 @@ class Results {
                             iast = this.transliterateToIAST(meter);
                         }
                     }
-                    
+
                     html += `<div class="meter-badge">
                         <span class="meter-name-large meter-name-toggle" data-devanagari="${this.escapeHtml(devanagari)}" data-iast="${this.escapeHtml(iast)}">${this.escapeHtml(devanagari)}</span>
                         <span class="meter-count">${count} line${count > 1 ? 's' : ''}</span>
                     </div>`;
                 });
-                
+
                 html += '</div>';
                 html += '</div>';
             }
         }
-        
+
         // Summary - Collapsible
         if (data.summary) {
             html += '<details class="summary-details">';
@@ -204,7 +204,7 @@ class Results {
             html += '</div>';
             html += '</details>';
         }
-        
+
         // OCR text (for image input)
         if (type === 'image' && data.ocr_text) {
             html += '<div class="ocr-section">';
@@ -221,12 +221,12 @@ class Results {
             html += `<div class="ocr-text">${this.escapeHtml(data.ocr_text)}</div>`;
             html += '</div>';
         }
-        
+
         // Results table
         if (data.result) {
             const lineResults = data.result.line || [];
             const verseResults = data.result.verse || [];
-            
+
             if (lineResults.length > 0 || verseResults.length > 0) {
                 html += this.renderResultsTable(lineResults, verseResults);
             } else {
@@ -239,24 +239,24 @@ class Results {
             html += '<span>No meters identified in the provided text.</span>';
             html += '</div>';
         }
-        
+
         html += '</div>';
-        
+
         container.innerHTML = html;
         container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-    
+
     /**
      * Render summary section
      */
     renderSummary(summary) {
         let html = '<div class="result-summary-container">';
-        
+
         // Summary stats box
         html += '<div class="summary-box">';
         html += '<h4>Summary</h4>';
         html += '<div class="summary-stats">';
-        
+
         // Count section
         if (summary.count) {
             if (summary.count.line !== undefined) {
@@ -265,7 +265,7 @@ class Results {
                 html += `<span class="summary-value">${summary.count.line}</span>`;
                 html += '</div>';
             }
-            
+
             if (summary.count.match_line !== undefined) {
                 html += '<div class="summary-item">';
                 html += '<span class="summary-label">Identified Lines</span>';
@@ -273,7 +273,7 @@ class Results {
                 html += '</div>';
             }
         }
-        
+
         // Unique meters count
         if (summary.line && summary.line.match && summary.line.match.chanda) {
             const uniqueMeters = Object.keys(summary.line.match.chanda).length;
@@ -282,9 +282,9 @@ class Results {
             html += `<span class="summary-value">${uniqueMeters}</span>`;
             html += '</div>';
         }
-        
+
         html += '</div></div>';
-        
+
         // Meters found box
         if (summary.line && summary.line.match && summary.line.match.chanda) {
             html += '<div class="summary-box">';
@@ -299,34 +299,89 @@ class Results {
             });
             html += '</div></div>';
         }
-        
+
         html += '</div>';
-        
+
         return html;
     }
-    
+
     /**
      * Render results table
      */
     renderResultsTable(lineResults, verseResults) {
         let html = '';
-        
-        // Render line results
+
+        // IMPORTANT: Show Verse Analysis FIRST when available
+        // This is crucial for Vedic meters (Gāyatrī, Triṣṭubh, etc.) 
+        // where the meter is identified from the complete verse, not individual lines
+        if (verseResults && verseResults.length > 0) {
+            html += '<div class="verse-analysis-section primary-result">';
+            html += '<h4>🕉️ Verse Meter (Primary Result)</h4>';
+            verseResults.forEach((verse, vIndex) => {
+                html += '<div class="verse-result-card">';
+                if (verse.chanda && verse.chanda[0]) {
+                    const meterNames = verse.chanda[0];
+                    const score = verse.chanda[1];
+                    const primaryMeter = meterNames[0];
+                    const englishName = this.getMeterEnglish(primaryMeter);
+
+                    // Calculate confidence as percentage
+                    // For verse mode: score is cumulative based on lines
+                    // A score of 4+ for 2 lines = excellent match
+                    // Normalize: score per line, then convert to percentage
+                    const numLines = lineResults ? lineResults.length : 1;
+                    const scorePerLine = score / Math.max(numLines, 1);
+                    // scorePerLine of 2.0+ means holistic match was found (excellent)
+                    // scorePerLine of 1.0 means basic line match
+                    // Convert to 0-100% scale where 2.0 per line = 100%
+                    const confidencePercent = Math.min(100, Math.round((scorePerLine / 2.0) * 100));
+
+                    let confidenceClass;
+                    if (confidencePercent >= 80) {
+                        confidenceClass = 'confidence-high';
+                    } else if (confidencePercent >= 50) {
+                        confidenceClass = 'confidence-medium';
+                    } else {
+                        confidenceClass = 'confidence-low';
+                    }
+
+                    html += '<div class="verse-meter-display">';
+                    html += `<span class="verse-meter-name">${primaryMeter}</span>`;
+                    if (englishName && englishName !== primaryMeter) {
+                        html += `<span class="verse-meter-english">(${englishName})</span>`;
+                    }
+                    html += `<span class="verse-meter-score ${confidenceClass}">${confidencePercent}% Match</span>`;
+                    html += '</div>';
+
+                    if (meterNames.length > 1) {
+                        html += '<div class="verse-meter-alternates">';
+                        html += '<small>Alternates: ' + meterNames.slice(1).join(', ') + '</small>';
+                        html += '</div>';
+                    }
+                }
+                html += '</div>';
+            });
+            html += '<p class="verse-note"><em>Note: For Vedic meters (Gāyatrī, Triṣṭubh, Jagatī, etc.), the verse-level identification is the primary result. Line-by-line patterns below show individual pāda analysis.</em></p>';
+            html += '</div>';
+        }
+
+        // Render line results (secondary, for detailed analysis)
         if (lineResults && lineResults.length > 0) {
-            html += '<h4>Line-by-Line Analysis</h4>';
-            
+            const hasVerseResult = verseResults && verseResults.length > 0;
+            html += hasVerseResult ? '<details class="line-details"><summary>Line-by-Line Analysis (Pāda Details)</summary>' : '<h4>Line-by-Line Analysis</h4>';
+
             lineResults.forEach((lineItem, index) => {
                 const result = lineItem.result || {};
                 const line = lineItem.line || '';
-                
+
                 html += '<div class="line-analysis-card">';
                 html += `<div class="line-header">Line ${index + 1}</div>`;
-                
+
                 // Get data directly from backend
                 const syllables = result.display_syllables || [];
                 const lgArray = result.display_lg || [];
                 const ganaString = result.display_gana || '';
-                
+
                 // Filter out syllables with empty L/G marks (like halanta)
                 const validSyllables = [];
                 const validLG = [];
@@ -336,15 +391,15 @@ class Results {
                         validLG.push(lgArray[idx]);
                     }
                 });
-                
+
                 if (validSyllables.length > 0) {
                     // Transliterate syllables to IAST for English display
                     const syllablesIAST = validSyllables.map(syl => this.transliterateToIAST(syl));
-                    
+
                     // Create table structure
                     html += '<div class="analysis-table-container">';
                     html += '<table class="analysis-table">';
-                    
+
                     // Header row - Syllables
                     html += '<thead><tr>';
                     html += '<th class="row-label-cell">Akṣarāṇi</th>';
@@ -353,9 +408,9 @@ class Results {
                         html += `<th class="syllable-cell table-content" data-sanskrit="${this.escapeHtml(syllable)}" data-english="${this.escapeHtml(iast)}">${this.escapeHtml(iast)}</th>`;
                     });
                     html += '</tr></thead>';
-                    
+
                     html += '<tbody>';
-                    
+
                     // L/G Pattern row
                     if (validLG.length > 0) {
                         html += '<tr>';
@@ -368,14 +423,14 @@ class Results {
                         });
                         html += '</tr>';
                     }
-                    
+
                     // Gana row - each gana spans 3 syllables
                     if (ganaString) {
                         html += '<tr>';
                         html += '<td class="row-label-cell">Gaṇa</td>';
                         const ganaChars = Array.from(ganaString);
                         let cellsUsed = 0;
-                        
+
                         ganaChars.forEach((ganaChar) => {
                             if (cellsUsed < validSyllables.length) {
                                 const spanCount = Math.min(3, validSyllables.length - cellsUsed);
@@ -390,7 +445,7 @@ class Results {
                                 cellsUsed += spanCount;
                             }
                         });
-                        
+
                         // Fill remaining cells if any
                         if (cellsUsed < validSyllables.length) {
                             const remainingCells = validSyllables.length - cellsUsed;
@@ -398,29 +453,29 @@ class Results {
                         }
                         html += '</tr>';
                     }
-                    
+
                     html += '</tbody>';
                     html += '</table>';
-                    
+
                     // Add language toggle button for table content
                     html += '<button class="table-language-toggle-btn" onclick="window.resultsComponent.toggleTableLanguage(event)">Change to Sanskrit</button>';
-                    
+
                     html += '</div>';
                 }
-                
+
                 // Identified Meter - Show only TOP MOST RELEVANT meter
                 html += '<div class="meter-result-row">';
-                
+
                 // Use display_chanda_primary if available (high-confidence matches only)
                 if (result.display_chanda_primary && result.display_chanda_primary.trim()) {
                     // Split multiple primary matches and SHOW ONLY THE FIRST ONE
                     const primaryMeters = result.display_chanda_primary.split('|').map(m => m.trim());
                     const firstMeter = primaryMeters[0];
-                    
+
                     // Extract meter name (before the bracket with confidence score)
                     const meterMatch = firstMeter.match(/^(.+?)\s*\[[\d.]+\]$/);
                     const meterName = meterMatch ? meterMatch[1].trim() : firstMeter;
-                    
+
                     html += `<span class="meter-name-identified">${this.escapeHtml(meterName)}</span>`;
                     html += `<span class="meter-match match-exact">Exact Match</span>`;
                 } else if (result.found && result.display_chanda) {
@@ -440,26 +495,22 @@ class Results {
                     html += '<span class="meter-name-identified">No match found</span>';
                 }
                 html += '</div>';
-                
+
                 html += '</div>';
             });
+
+            // Close the details tag if we opened it (when verse results exist)
+            if (hasVerseResult) {
+                html += '</details>';
+            }
         }
-        
-        // Render verse results
-        if (verseResults && verseResults.length > 0) {
-            html += '<h4>Verse Analysis</h4>';
-            verseResults.forEach((verse, vIndex) => {
-                html += '<div class="verse-result">';
-                if (verse.chanda && verse.chanda[0]) {
-                    html += `<h5>Verse ${vIndex + 1}: ${verse.chanda[0].join(' / ')} (Score: ${verse.chanda[1]})</h5>`;
-                }
-                html += '</div>';
-            });
-        }
-        
+
+        // NOTE: Verse results are now rendered FIRST (above line results)
+        // so we don't need to render them again here
+
         return html;
     }
-    
+
     /**
      * Show error message
      */
@@ -478,34 +529,34 @@ class Results {
             </div>
         `;
     }
-    
+
     /**
      * Toggle between Hindi and English meter names
      */
     toggleLanguage(event) {
         const button = event.target;
-        
+
         // Check if it's the compact button (shows "EN" or "हि")
         const isCompact = button.classList.contains('language-toggle-btn-compact');
         const isShowingDevanagari = isCompact ? (button.textContent === 'EN') : (button.textContent === 'Change to English');
-        
+
         // Toggle meter names in the summary section
         const meterToggles = document.querySelectorAll('.meter-name-toggle');
         meterToggles.forEach(element => {
             const devanagari = element.dataset.devanagari;
             const iast = element.dataset.iast;
-            
+
             if (devanagari && iast) {
                 element.textContent = isShowingDevanagari ? iast : devanagari;
             }
         });
-        
+
         // Toggle meter names in line analysis
         const meterNames = document.querySelectorAll('.meter-name-large:not(.meter-name-toggle), .meter-name-identified');
         meterNames.forEach(element => {
             const hindi = element.dataset.hindi || element.textContent;
             const english = element.dataset.english || element.textContent;
-            
+
             // Store both values if not already stored
             if (!element.dataset.hindi) {
                 element.dataset.hindi = hindi;
@@ -513,10 +564,10 @@ class Results {
             if (!element.dataset.english) {
                 element.dataset.english = english;
             }
-            
+
             element.textContent = isShowingDevanagari ? english : hindi;
         });
-        
+
         // Update button text
         if (isCompact) {
             button.textContent = isShowingDevanagari ? 'हि' : 'EN';
@@ -524,14 +575,14 @@ class Results {
             button.textContent = isShowingDevanagari ? 'Change to Sanskrit' : 'Change to English';
         }
     }
-    
+
     /**
      * Toggle display of alternate meter matches
      */
     toggleAlternates(event, lineIndex) {
         const button = event.target;
         const alternatesDiv = document.getElementById(`alternates-${lineIndex}`);
-        
+
         if (alternatesDiv) {
             if (alternatesDiv.style.display === 'none') {
                 alternatesDiv.style.display = 'block';
@@ -542,7 +593,7 @@ class Results {
             }
         }
     }
-    
+
     /**
      * Toggle between Sanskrit and English table content (Syllables, L/G and Gana values)
      */
@@ -550,19 +601,19 @@ class Results {
         const button = event.target;
         const tableContent = document.querySelectorAll('.table-content');
         const isEnglish = button.textContent === 'Change to Sanskrit';
-        
+
         tableContent.forEach(element => {
             const sanskrit = element.dataset.sanskrit;
             const english = element.dataset.english;
-            
+
             if (sanskrit && english) {
                 element.textContent = isEnglish ? sanskrit : english;
             }
         });
-        
+
         button.textContent = isEnglish ? 'Change to English' : 'Change to Sanskrit';
     }
-    
+
     /**
      * Escape HTML to prevent XSS
      */

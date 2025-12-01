@@ -1,0 +1,8 @@
+
+Problem Statement ID - 25158
+Problem Statement Title	- Chandas Identifier
+Description	- Chandas Shastra (called Prosody in English) is the study of rythms in poetry. The syllables are classified as laghu (Short) or guru (Long) and the patterns of arrangement of laghu and guru syllables determine the type of chandas. Understanding the guru and laghu syllables is essential for proper pronunciation and correct recitation of poetry in the majority of Indian languages. There are seven major Chandas identified in the literature along with many other patterns. Acharya Pingala's Chandas shastra is a seminal work that describes these in detail and has binary numbers, combinatorial mathematics, and binomial coefficients. It also discusses some of the algorithms for interconversion of binary numbers and introduces the concept called 'Pascal's triangle' at least 1.5 millennia before Pascal, and was called 'Meru prastara' by Halayudha, a 10th-century commentator of Pingala's chandarshastra. The challenge is to develop a program that correctly identifies the chandas of any given Shloka.
+Organization - AICTE
+Department - Indian Knowledge Systems (IKS)
+Category - Software
+Theme - Smart Education

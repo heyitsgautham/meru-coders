@@ -1,151 +1,171 @@
-source,अक्षरसङ्ख्या,पद,मात्रा,यति,लक्षण,लक्षण (raw),विषम-पद,वृत्त,सम-पद
-,11,1,14,,ननरलग,ललललललगलगलग,,अपरवक्त्र,
-,12,2,16,,नजजर,ललललगललगलगलग,,अपरवक्त्र,
-,11,1,15,,सससलग,ललगललगललगलग,,उपचित्र,
-,11,2,16,,भभभगग,गललगललगललगग,,उपचित्र,
-,12,1,16,,ननरय,ललललललगलगलगग,,"औपच्छन्दसिक, पुष्पिताग्रा",
-,13,2,18,,नजजरग,ललललगललगलगलगग,,"औपच्छन्दसिक, पुष्पिताग्रा",
-,10,1,14,,ससजग,ललगललगलगलग,,"वियोगिनी, वैतालीय, सुन्दरी",
-,11,2,16,,सभरलग,ललगगललगलगलग,,"वियोगिनी, वैतालीय, सुन्दरी",
-,10,1,14,,सससग,ललगललगललगग,,वेगवती,
-,11,2,16,,भभभगग,गललगललगललगग,,वेगवती,
-,11,1,15,,सससलग,ललगललगललगलग,,हरिणप्लुता,
-,12,2,16,,नभभर,लललगललगललगलग,,हरिणप्लुता,
-,11,1,16,,ससजगग,ललगललगलगलगग,,वसन्तमालिका,
-,12,2,18,,सभरय,ललगगललगलगलगग,,वसन्तमालिका,
-,8,1,3,,----लग--,----लग--,,अनुष्टुभ्,
-,8,2,4,,----लगल-,----लगल-,,अनुष्टुभ्,
-ganesh.json,46,,,,,,llllllglglg,Aparavaktrā,llllgllglglg
-ganesh.json,46,,,,,,llgllglglgg,Aupacchandasikam,llggllglglgg
-ganesh.json,50,,,,,,llllllglglgg,Puṣpitāgrā,llllgllglglgg
-ganesh.json,42,,,,,,llgllglglg,Viyoginī,llggllglglg
-mishra.json,56,,,,,,gggllllglglg,ahīnatālī,llggllllglglglgg
-mishra.json,48,,,,,,llggllglglglgg,akoṣakṛṣṭā,ggllglglgg
-mishra.json,46,,,,,,gllllllgllgg,akusumacaram,gllgllgllgg
-mishra.json,46,,,,,,glgglglllgglg,alipadam,lllgglgglg
-mishra.json,52,,,,,,gllllllgllgll,alparutam,gllllllggllll
-mishra.json,50,,,,,,lglglglglglgg,amarāvatī,glglglglglgl
-mishra.json,50,,,,,,glglglglglgl,amarāvatī,lglglglglglgg
-mishra.json,52,,,,,,gllgllgllgllg,anaṅgapadam,llgllgllgllgg
-mishra.json,52,,,,,,lllgllllglglg,anirayā,lllglllgllglg
-mishra.json,54,,,,,,lllglllgglgglg,anālepanam,lllgglgglgglg
-mishra.json,62,,,,,,llggllglglglllgg,anāsavavāsitā,lllglllglglglgg
-mishra.json,44,,,,,,llllgllglglg,anūpakam,llgllglglg
-mishra.json,58,,,,,,llllllllggglgglg,aparaprīṇitā,llllllgglgglg
-mishra.json,50,,,,,,llggllglglgg,apramāthinī,llllgllglglgg
-mishra.json,48,,,,,,llggllglglgg,arbhakapaṅktiḥ,gllgllglglgg
-mishra.json,52,,,,,,gllllllggllll,ardharutam,gllllllgllgll
-mishra.json,44,,,,,,llgllglglg,aruntudaḥ,llllgllglglg
-mishra.json,42,,,,,,llggllglglg,asudhā,gggllglglg
-mishra.json,46,,,,,,gggllglglgg,asurāḍhyā,llllllglglgg
-mishra.json,40,,,,,,lglgglgglg,atailam,gglgglgglg
-mishra.json,54,,,,,,llggllglglllgg,atiprativinītā,llllgglglglgg
-mishra.json,52,,,,,,ggllllllllllg,atisurahitā,llllllllgllgg
-mishra.json,44,,,,,,lllglgglglg,aupagavam,gllglgglglg
-mishra.json,44,,,,,,gllglgglglg,aupagavītam,lllglgglglg
-mishra.json,44,,,,,,gllgllgllgg,avahitrā,llgllgllgll
-mishra.json,58,,,,,,lllgllgllglglg,avarodhavanitā,llgllglglglllgg
-mishra.json,58,,,,,,llgllglglglllgg,avarodhavanitā,lllgllgllglglg
-mishra.json,46,,,,,,ggllllgllllg,avācīkṛtavadanā,llllgggllgg
-mishra.json,44,,,,,,llggggllllg,ayavatī,ggllllggllg
-mishra.json,50,,,,,,llllgllglglgg,añcitāgrā,llllllglglgg
-mishra.json,48,,,,,,ggggllllllg,baddhā,llgllgllllllg
-vrttaratnakara.json,40,,,,,,ggllglglgg,bhadravirāṭ,gggllglglg
-mishra.json,42,,,,,,ggllglglgg,bhadravirāṭ,gggllglglgg
-mishra.json,44,,,,,,gglggllglgg,bhadrā,lglggllglgg
-mishra.json,52,,,,,,llgllgllgllgg,bhujaṅgabhṛtā,gllgllgllgllg
-mishra.json,54,,,,,,llggllllllglglg,bṛhaccharāvatī,llllllglglgg
-mishra.json,50,,,,,,glgllllglglg,camūrubhīruḥ,llgllllglglgg
-mishra.json,50,,,,,,llgllllglglgg,camūruḥ,glgllllglglg
-mishra.json,52,,,,,,gggggllggllgg,dhīrāvarttaḥ,ggggllllggggg
-mishra.json,52,,,,,,ggggllllggggg,dhīrāvarttaḥ2,gggggllggllgg
-vrttaratnakara.json,46,,,,,,gllgllgllgg,drutamadhyā,llllgllgllgg
-mishra.json,40,,,,,,gglllglglg,ghaṭikā,llgllglglg
-mishra.json,46,,,,,,llgllgllglg,hariluptā,llggllgllglg
-vrttaratnakara.json,46,,,,,,llgllgllglg,hariṇaplutā,lllgllgllglg
-mishra.json,46,,,,,,lllgllgllglg,hariṇīplutā,llgllgllglg
-mishra.json,44,,,,,,lglggllglgg,haṃsī,gglggllglgg
-mishra.json,56,,,,,,llggllllglglglgg,hīnatālī,gggllllglglg
-mishra.json,46,,,,,,lllgglgglg,jāriṇī,glgglglllgglg
-mishra.json,52,,,,,,llglglllgllgg,kalanā,llglglllglglg
-mishra.json,52,,,,,,llglglllglglg,kalanāvatī,llglglllgllgg
-mishra.json,46,,,,,,gllgllgllgg,kamalākarā,gllllllgllgg
-mishra.json,44,,,,,,gllgglglglg,karabhoddhatā,llglllglglg
-mishra.json,42,,,,,,gggllglglg,karadhā,llllllglglg
-mishra.json,44,,,,,,llgglllglglg,karīritā,llgllglglg
-mishra.json,44,,,,,,glglllgllgg,karṇinī,glglllglglg
-vrttaratnakara.json,42,,,,,,llglglllgg,ketumatī,gllglglllgg
-mishra.json,42,,,,,,gllglglllgg,ketuḥ,llglglllgg
-mishra.json,46,,,,,,glglllglglg,kilikitā,lllglllglglg
-mishra.json,46,,,,,,lllglllglglg,kilikitā2,glglllglglg
-mishra.json,46,,,,,,ggllgllgllg,kinnaṭakaḥ,llgllgllgllg
-mishra.json,46,,,,,,gggllllglglgg,kiṃśukāvalī,ggllglglgg
-mishra.json,46,,,,,,gllgllgllgg,korakitā,llllggllllgg
-mishra.json,48,,,,,,llgllgllllllg,kāmākṣī,ggggllllllg
-mishra.json,42,,,,,,gggllglglgg,kāntā,ggllglglgg
-mishra.json,46,,,,,,llggllgllglg,luptā,llgllgllglg
-mishra.json,54,,,,,,gllllggglgglgg,lāsyalīlā,ggllggglgglgg
-mishra.json,54,,,,,,ggllggglgglgg,lāsyalīlālayaḥ,gllllggglgglgg
-mishra.json,52,,,,,,llglglllglglg,madhuvāri,gglgllglgllgl
-mishra.json,54,,,,,,llgllglglglgg,madākrāntā,gggllglglglggg
-mishra.json,64,,,,,,llglllllglllgg,mārdaṅgī,gggllllgllllllllgg
-mishra.json,64,,,,,,gggllllgllllllllgg,mārdaṅgī2,llglllllglllgg
-mishra.json,46,,,,,,llllgllglglg,mṛdumālatī,llllllglglg
-mishra.json,44,,,,,,llgllglglg,navanīlatā,llgglllglglg
-mishra.json,46,,,,,,llgllgllgllg,naṭakaḥ,ggllgllgllg
-mishra.json,52,,,,,,gglgllglgllgl,nirmadhuvāri,llglglllglglg
-mishra.json,50,,,,,,llglglllgllgg,padmāvatī,gglglllgllgg
-mishra.json,50,,,,,,gglglllgllgg,padmāvatī,llglglllgllgg
-mishra.json,58,,,,,,llllllgglgglg,paraprīṇitā,llllllllggglgglg
-mishra.json,40,,,,,,gggllglglg,prabhāsitā,llgllglglg
-mishra.json,40,,,,,,llgllglglg,prabhāsitā,gggllglglg
-mishra.json,58,,,,,,llllgllglglllgg,pramodapadam,llllllglglglgg
-mishra.json,58,,,,,,llllllglglglgg,pramodapariṇītā,llllgllglglllgg
-mishra.json,46,,,,,,llggllglglgg,pramālikā,llgllglglgg
-mishra.json,50,,,,,,llllgllglglgg,pramāthinī,llggllglglgg
-mishra.json,54,,,,,,llllgglglglgg,prativinītā,llggllglglllgg
-mishra.json,44,,,,,,llglllggglgg,pātaśīlā,gglgggglgg
-mishra.json,46,,,,,,llllggllllgg,pāṭalikā,gllgllgllgg
-mishra.json,52,,,,,,llllllllgllgg,rucimukhī,llllllgllllgg
-mishra.json,44,,,,,,ggllllggllg,samayavatī,llggggllllg
-mishra.json,54,,,,,,gggllglglglggg,sammadākrāntā,llgllglglglgg
-mishra.json,48,,,,,,gglglllgllgg,sarasīkam,llgglllgllgg
-mishra.json,44,,,,,,gglgggglgg,saṃpātaśīlā,llglllggglgg
-mishra.json,42,,,,,,gggllglglg,sudhā,llggllglglg
-mishra.json,42,,,,,,llggllglglg,sundarī,llgllglglg
-mishra.json,52,,,,,,llllllllgllgg,surahitā,ggllllllllllg
-mishra.json,46,,,,,,llllllglglgg,surāḍhyā,gggllglglgg
-mishra.json,46,,,,,,llllgggllgg,sācīkṛtavadanā,ggllllgllllg
-mishra.json,44,,,,,,glglllglglg,sārikā,glglllgllgg
-mishra.json,48,,,,,,gllgllglglgg,ulapohā,llggllglglgg
-vrttaratnakara.json,44,,,,,,llgllgllglg,upacitrā,gllgllgllgg
-mishra.json,44,,,,,,llgllgllgll,upacitrā,gllgllgllgg
-mishra.json,48,,,,,,lglggllglglg,upameyā,gglggllglglg
-mishra.json,48,,,,,,llgglllgllgg,upasarasīkam,gglglllgllgg
-mishra.json,46,,,,,,gllgllglglgg,upāḍhyam,lllllglglgg
-mishra.json,46,,,,,,lllllglglgg,upāḍhyam,gllgllglglgg
-mishra.json,38,,,,,,ggllglglg,vaisārī,gggllglglg
-mishra.json,42,,,,,,llllllglglg,vaiyālī,gggllglglg
-mishra.json,42,,,,,,gllgllgllgg,vargavatī,llgllgllgg
-vrttaratnakara.json,48,,,,,,llgllgllgllgg,vegavatī,gllgllgllgg
-mishra.json,42,,,,,,llgllgllgg,vegavatī,gllgllgllgg
-mishra.json,48,,,,,,ggllglglgg,vilāsavāpī,llggllglglglgg
-mishra.json,52,,,,,,llllllgllllgg,vimukhī,llllllllgllgg
-mishra.json,46,,,,,,gggllllglglg,vimāninī,llggllglglg
-mishra.json,46,,,,,,llggllglglg,vimāninī2,gggllllglglg
-mishra.json,48,,,,,,llggllglglgg,viyadvāṇī,gggllglglggg
-mishra.json,48,,,,,,gggllglglggg,viyadvāṇī,llggllglglgg
-mishra.json,40,,,,,,gglgglgglg,viśvapramā,lglgglgglg
-mishra.json,38,,,,,,gggllglglg,vāsavavanditā,ggllglglg
-mishra.json,64,,,,,,llllglglllgllglg,vāsavavāsinī,ggllglglllgllglg
-mishra.json,64,,,,,,ggllglglllgllglg,vāsinī,llllglglllgllglg
-vrttaratnakara.json,48,,,,,,glglglglglgl,yavātparāmatīya,lglglglglglg
-mishra.json,54,,,,,,lllgglgglgglg,ālepanam,lllglllgglgglg
-mishra.json,40,,,,,,llgllglglg,ālolaghaṭikā,gglllglglg
-mishra.json,62,,,,,,lllglllglglglgg,āsavavāsitā,llggllglglglllgg
-mishra.json,46,,,,,,llllgllgllgg,īhā,gllgllgllgg
-mishra.json,54,,,,,,llllllglglgg,śarāvatī,llggllllllglglg
-mishra.json,48,,,,,,gglggllglglg,śiśirā,lglggllglglg
-mishra.json,52,,,,,,lllglllgllglg,śiśumukhī,lllgllllglglg
-mishra.json,46,,,,,,ggllglglgg,śukāvalī,gggllllglglgg
-mishra.json,44,,,,,,llglllglglg,śālabhañjikā,gllgglglglg
+वृत्त,पद,लक्षण,लक्षण (raw),अक्षरसङ्ख्या,मात्रा,यति
+अपरवक्त्र,1,ननरलग,ललललललगलगलग,11,14,
+अपरवक्त्र,2,नजजर,ललललगललगलगलग,12,16,
+उपचित्र,1,सससलग,ललगललगललगलग,11,15,
+उपचित्र,2,भभभगग,गललगललगललगग,11,16,
+"औपच्छन्दसिक, पुष्पिताग्रा",1,ननरय,ललललललगलगलगग,12,16,
+"औपच्छन्दसिक, पुष्पिताग्रा",2,नजजरग,ललललगललगलगलगग,13,18,
+"वियोगिनी, वैतालीय, सुन्दरी",1,ससजग,ललगललगलगलग,10,14,
+"वियोगिनी, वैतालीय, सुन्दरी",2,सभरलग,ललगगललगलगलग,11,16,
+वेगवती,1,सससग,ललगललगललगग,10,14,
+वेगवती,2,भभभगग,गललगललगललगग,11,16,
+हरिणप्लुता,1,सससलग,ललगललगललगलग,11,15,
+हरिणप्लुता,2,नभभर,लललगललगललगलग,12,16,
+वसन्तमालिका,1,ससजगग,ललगललगलगलगग,11,16,
+वसन्तमालिका,2,सभरय,ललगगललगलगलगग,12,18,
+अनुष्टुभ्,1,----लग--,----लग--,8,3,
+अनुष्टुभ्,2,----लगल-,----लगल-,8,4,
+Aparavaktrā,,llllllglglg | llllgllglglg,llllllglglg | llllgllglglg,46,,ganesh.json
+Aupacchandasikam,,llgllglglgg | llggllglglgg,llgllglglgg | llggllglglgg,46,,ganesh.json
+Aupacchandasikam (Vasantamālikā) (Upodgatā),,llgllglglgg | llggllglglgg,llgllglglgg | llggllglglgg,46,,curated.json
+Puṣpitāgrā,,llllllglglgg | llllgllglglgg,llllllglglgg | llllgllglglgg,50,,ganesh.json
+Viyoginī,,llgllglglg | llggllglglg,llgllglglg | llggllglglg,42,,ganesh.json
+ahīnatālī,,gggllllglglg | llggllllglglglgg,gggllllglglg | llggllllglglglgg,56,,mishra.json
+akoṣakṛṣṭā,,llggllglglglgg | ggllglglgg,llggllglglglgg | ggllglglgg,48,,mishra.json
+akusumacaram,,gllllllgllgg | gllgllgllgg,gllllllgllgg | gllgllgllgg,46,,mishra.json
+alipadam,,glgglglllgglg | lllgglgglg,glgglglllgglg | lllgglgglg,46,,mishra.json
+alparutam,,gllllllgllgll | gllllllggllll,gllllllgllgll | gllllllggllll,52,,mishra.json
+amarāvatī,,lglglglglglgg | glglglglglgl,lglglglglglgg | glglglglglgl,50,,mishra.json
+amarāvatī,,glglglglglgl | lglglglglglgg,glglglglglgl | lglglglglglgg,50,,mishra.json
+anaṅgapadam,,gllgllgllgllg | llgllgllgllgg,gllgllgllgllg | llgllgllgllgg,52,,mishra.json
+anirayā,,lllgllllglglg | lllglllgllglg,lllgllllglglg | lllglllgllglg,52,,mishra.json
+anālepanam,,lllglllgglgglg | lllgglgglgglg,lllglllgglgglg | lllgglgglgglg,54,,mishra.json
+anāsavavāsitā,,llggllglglglllgg | lllglllglglglgg,llggllglglglllgg | lllglllglglglgg,62,,mishra.json
+anūpakam,,llllgllglglg | llgllglglg,llllgllglglg | llgllglglg,44,,mishra.json
+aparaprīṇitā,,llllllllggglgglg | llllllgglgglg,llllllllggglgglg | llllllgglgglg,58,,mishra.json
+aparavaktra,,llllllglglg | llllgllglglg,llllllglglg | llllgllglglg,46,,vrttaratnakara.json
+aparavaktram,,llllllglglg | llllgllglglg,llllllglglg | llllgllglglg,46,,mishra.json
+apramāthinī,,llggllglglgg | llllgllglglgg,llggllglglgg | llllgllglglgg,50,,mishra.json
+arbhakapaṅktiḥ,,llggllglglgg | gllgllglglgg,llggllglglgg | gllgllglglgg,48,,mishra.json
+ardharutam,,gllllllggllll | gllllllgllgll,gllllllggllll | gllllllgllgll,52,,mishra.json
+aruntudaḥ,,llgllglglg | llllgllglglg,llgllglglg | llllgllglglg,44,,mishra.json
+asudhā,,llggllglglg | gggllglglg,llggllglglg | gggllglglg,42,,mishra.json
+asurāḍhyā,,gggllglglgg | llllllglglgg,gggllglglgg | llllllglglgg,46,,mishra.json
+atailam,,lglgglgglg | gglgglgglg,lglgglgglg | gglgglgglg,40,,mishra.json
+atiprativinītā,,llggllglglllgg | llllgglglglgg,llggllglglllgg | llllgglglglgg,54,,mishra.json
+atisurahitā,,ggllllllllllg | llllllllgllgg,ggllllllllllg | llllllllgllgg,52,,mishra.json
+aupagavam,,lllglgglglg | gllglgglglg,lllglgglglg | gllglgglglg,44,,mishra.json
+aupagavītam,,gllglgglglg | lllglgglglg,gllglgglglg | lllglgglglg,44,,mishra.json
+avahitrā,,gllgllgllgg | llgllgllgll,gllgllgllgg | llgllgllgll,44,,mishra.json
+avarodhavanitā,,lllgllgllglglg | llgllglglglllgg,lllgllgllglglg | llgllglglglllgg,58,,mishra.json
+avarodhavanitā,,llgllglglglllgg | lllgllgllglglg,llgllglglglllgg | lllgllgllglglg,58,,mishra.json
+avācīkṛtavadanā,,ggllllgllllg | llllgggllgg,ggllllgllllg | llllgggllgg,46,,mishra.json
+ayavatī,,llggggllllg | ggllllggllg,llggggllllg | ggllllggllg,44,,mishra.json
+añcitāgrā,,llllgllglglgg | llllllglglgg,llllgllglglgg | llllllglglgg,50,,mishra.json
+baddhā,,ggggllllllg | llgllgllllllg,ggggllllllg | llgllgllllllg,48,,mishra.json
+bhadravirāṭ,,ggllglglgg | gggllglglg,ggllglglgg | gggllglglg,40,,vrttaratnakara.json
+bhadravirāṭ,,ggllglglgg | gggllglglgg,ggllglglgg | gggllglglgg,42,,mishra.json
+bhadrā,,gglggllglgg | lglggllglgg,gglggllglgg | lglggllglgg,44,,mishra.json
+bhujaṅgabhṛtā,,llgllgllgllgg | gllgllgllgllg,llgllgllgllgg | gllgllgllgllg,52,,mishra.json
+bṛhaccharāvatī,,llggllllllglglg | llllllglglgg,llggllllllglglg | llllllglglgg,54,,mishra.json
+camūrubhīruḥ,,glgllllglglg | llgllllglglgg,glgllllglglg | llgllllglglgg,50,,mishra.json
+camūruḥ,,llgllllglglgg | glgllllglglg,llgllllglglgg | glgllllglglg,50,,mishra.json
+dhīrāvarttaḥ,,gggggllggllgg | ggggllllggggg,gggggllggllgg | ggggllllggggg,52,,mishra.json
+dhīrāvarttaḥ2,,ggggllllggggg | gggggllggllgg,ggggllllggggg | gggggllggllgg,52,,mishra.json
+drutamadhyā,,gllgllgllgg | llllgllgllgg,gllgllgllgg | llllgllgllgg,46,,vrttaratnakara.json
+drutamadhyā,,gllgllgllgg | llllgllgllgg,gllgllgllgg | llllgllgllgg,46,,mishra.json
+ghaṭikā,,gglllglglg | llgllglglg,gglllglglg | llgllglglg,40,,mishra.json
+hariluptā,,llgllgllglg | llggllgllglg,llgllgllglg | llggllgllglg,46,,mishra.json
+hariṇaplutā,,llgllgllglg | lllgllgllglg,llgllgllglg | lllgllgllglg,46,,vrttaratnakara.json
+hariṇīplutā,,lllgllgllglg | llgllgllglg,lllgllgllglg | llgllgllglg,46,,mishra.json
+hariṇīplutā,,llgllgllglg | lllgllgllglg,llgllgllglg | lllgllgllglg,46,,mishra.json
+haṃsī,,lglggllglgg | gglggllglgg,lglggllglgg | gglggllglgg,44,,mishra.json
+hīnatālī,,llggllllglglglgg | gggllllglglg,llggllllglglglgg | gggllllglglg,56,,mishra.json
+jāriṇī,,lllgglgglg | glgglglllgglg,lllgglgglg | glgglglllgglg,46,,mishra.json
+kalanā,,llglglllgllgg | llglglllglglg,llglglllgllgg | llglglllglglg,52,,mishra.json
+kalanāvatī,,llglglllglglg | llglglllgllgg,llglglllglglg | llglglllgllgg,52,,mishra.json
+kamalākarā,,gllgllgllgg | gllllllgllgg,gllgllgllgg | gllllllgllgg,46,,mishra.json
+karabhoddhatā,,gllgglglglg | llglllglglg,gllgglglglg | llglllglglg,44,,mishra.json
+karadhā,,gggllglglg | llllllglglg,gggllglglg | llllllglglg,42,,mishra.json
+karīritā,,llgglllglglg | llgllglglg,llgglllglglg | llgllglglg,44,,mishra.json
+karṇinī,,glglllgllgg | glglllglglg,glglllgllgg | glglllglglg,44,,mishra.json
+ketumatī,,llglglllgg | gllglglllgg,llglglllgg | gllglglllgg,42,,vrttaratnakara.json
+ketumatī,,llglglllgg | gllglglllgg,llglglllgg | gllglglllgg,42,,mishra.json
+ketuḥ,,gllglglllgg | llglglllgg,gllglglllgg | llglglllgg,42,,mishra.json
+kilikitā,,glglllglglg | lllglllglglg,glglllglglg | lllglllglglg,46,,mishra.json
+kilikitā2,,lllglllglglg | glglllglglg,lllglllglglg | glglllglglg,46,,mishra.json
+kinnaṭakaḥ,,ggllgllgllg | llgllgllgllg,ggllgllgllg | llgllgllgllg,46,,mishra.json
+kiṃśukāvalī,,gggllllglglgg | ggllglglgg,gggllllglglgg | ggllglglgg,46,,mishra.json
+korakitā,,gllgllgllgg | llllggllllgg,gllgllgllgg | llllggllllgg,46,,mishra.json
+kāmākṣī,,llgllgllllllg | ggggllllllg,llgllgllllllg | ggggllllllg,48,,mishra.json
+kāntā,,gggllglglgg | ggllglglgg,gggllglglgg | ggllglglgg,42,,mishra.json
+luptā,,llggllgllglg | llgllgllglg,llggllgllglg | llgllgllglg,46,,mishra.json
+lāsyalīlā,,gllllggglgglgg | ggllggglgglgg,gllllggglgglgg | ggllggglgglgg,54,,mishra.json
+lāsyalīlālayaḥ,,ggllggglgglgg | gllllggglgglgg,ggllggglgglgg | gllllggglgglgg,54,,mishra.json
+madhuvāri,,llglglllglglg | gglgllglgllgl,llglglllglglg | gglgllglgllgl,52,,mishra.json
+madākrāntā,,llgllglglglgg | gggllglglglggg,llgllglglglgg | gggllglglglggg,54,,mishra.json
+mārdaṅgī,,llglllllglllgg | gggllllgllllllllgg,llglllllglllgg | gggllllgllllllllgg,64,,mishra.json
+mārdaṅgī2,,gggllllgllllllllgg | llglllllglllgg,gggllllgllllllllgg | llglllllglllgg,64,,mishra.json
+mṛdumālatī,,llllgllglglg | llllllglglg,llllgllglglg | llllllglglg,46,,mishra.json
+navanīlatā,,llgllglglg | llgglllglglg,llgllglglg | llgglllglglg,44,,mishra.json
+naṭakaḥ,,llgllgllgllg | ggllgllgllg,llgllgllgllg | ggllgllgllg,46,,mishra.json
+nirmadhuvāri,,gglgllglgllgl | llglglllglglg,gglgllglgllgl | llglglllglglg,52,,mishra.json
+padmāvatī,,llglglllgllgg | gglglllgllgg,llglglllgllgg | gglglllgllgg,50,,mishra.json
+padmāvatī,,gglglllgllgg | llglglllgllgg,gglglllgllgg | llglglllgllgg,50,,mishra.json
+paraprīṇitā,,llllllgglgglg | llllllllggglgglg,llllllgglgglg | llllllllggglgglg,58,,mishra.json
+paravaktram,,llllgllglglg | llllllglglg,llllgllglglg | llllllglglg,46,,mishra.json
+prabhāsitā,,gggllglglg | llgllglglg,gggllglglg | llgllglglg,40,,mishra.json
+prabhāsitā,,llgllglglg | gggllglglg,llgllglglg | gggllglglg,40,,mishra.json
+pramodapadam,,llllgllglglllgg | llllllglglglgg,llllgllglglllgg | llllllglglglgg,58,,mishra.json
+pramodapariṇītā,,llllllglglglgg | llllgllglglllgg,llllllglglglgg | llllgllglglllgg,58,,mishra.json
+pramālikā,,llggllglglgg | llgllglglgg,llggllglglgg | llgllglglgg,46,,mishra.json
+pramāthinī,,llllgllglglgg | llggllglglgg,llllgllglglgg | llggllglglgg,50,,mishra.json
+prativinītā,,llllgglglglgg | llggllglglllgg,llllgglglglgg | llggllglglllgg,54,,mishra.json
+puṣpitāgrā,,llllllglglgg | llllgllglglgg,llllllglglgg | llllgllglglgg,50,,vrttaratnakara.json
+puṣpitāgrā,,llllllglglgg | llllgllglglgg,llllllglglgg | llllgllglglgg,50,,mishra.json
+pātaśīlā,,llglllggglgg | gglgggglgg,llglllggglgg | gglgggglgg,44,,mishra.json
+pāṭalikā,,llllggllllgg | gllgllgllgg,llllggllllgg | gllgllgllgg,46,,mishra.json
+rucimukhī,,llllllllgllgg | llllllgllllgg,llllllllgllgg | llllllgllllgg,52,,mishra.json
+samayavatī,,ggllllggllg | llggggllllg,ggllllggllg | llggggllllg,44,,mishra.json
+sammadākrāntā,,gggllglglglggg | llgllglglglgg,gggllglglglggg | llgllglglglgg,54,,mishra.json
+samudrakāntā,,ggllglglgg | gggllglglgg,ggllglglgg | gggllglglgg,42,,mishra.json
+sarasīkam,,gglglllgllgg | llgglllgllgg,gglglllgllgg | llgglllgllgg,48,,mishra.json
+saṃpātaśīlā,,gglgggglgg | llglllggglgg,gglgggglgg | llglllggglgg,44,,mishra.json
+sudhā,,gggllglglg | llggllglglg,gggllglglg | llggllglglg,42,,mishra.json
+sundarī,,llggllglglg | llgllglglg,llggllglglg | llgllglglg,42,,mishra.json
+sundarī,,llgllglglg | llggllglglg,llgllglglg | llggllglglg,42,,mishra.json
+surahitā,,llllllllgllgg | ggllllllllllg,llllllllgllgg | ggllllllllllg,52,,mishra.json
+surāḍhyā,,llllllglglgg | gggllglglgg,llllllglglgg | gggllglglgg,46,,mishra.json
+sācīkṛtavadanā,,llllgggllgg | ggllllgllllg,llllgggllgg | ggllllgllllg,46,,mishra.json
+sārikā,,glglllglglg | glglllgllgg,glglllglglg | glglllgllgg,44,,mishra.json
+ulapohā,,gllgllglglgg | llggllglglgg,gllgllglglgg | llggllglglgg,48,,mishra.json
+upacitrā,,llgllgllglg | gllgllgllgg,llgllgllglg | gllgllgllgg,44,,vrttaratnakara.json
+upacitrā,,llgllgllgll | gllgllgllgg,llgllgllgll | gllgllgllgg,44,,mishra.json
+upameyā,,lglggllglglg | gglggllglglg,lglggllglglg | gglggllglglg,48,,mishra.json
+upasarasīkam,,llgglllgllgg | gglglllgllgg,llgglllgllgg | gglglllgllgg,48,,mishra.json
+upodgatā,,llgllglglgg | llggllglglgg,llgllglglgg | llggllglglgg,46,,mishra.json
+upodgatā1,,llggllglglgg | llgllglglgg,llggllglglgg | llgllglglgg,46,,mishra.json
+upāḍhyam,,gllgllglglgg | lllllglglgg,gllgllglglgg | lllllglglgg,46,,mishra.json
+upāḍhyam,,lllllglglgg | gllgllglglgg,lllllglglgg | gllgllglglgg,46,,mishra.json
+vaisārī,,ggllglglg | gggllglglg,ggllglglg | gggllglglg,38,,mishra.json
+vaiyālī,,llllllglglg | gggllglglg,llllllglglg | gggllglglg,42,,mishra.json
+vargavatī,,gllgllgllgg | llgllgllgg,gllgllgllgg | llgllgllgg,42,,mishra.json
+vasantamālikā,,llgllglglgg | llggllglglgg,llgllglglgg | llggllglglgg,46,,mishra.json
+vegavatī,,llgllgllgllgg | gllgllgllgg,llgllgllgllgg | gllgllgllgg,48,,vrttaratnakara.json
+vegavatī,,llgllgllgg | gllgllgllgg,llgllgllgg | gllgllgllgg,42,,mishra.json
+vilāsavāpī,,ggllglglgg | llggllglglglgg,ggllglglgg | llggllglglglgg,48,,mishra.json
+vimukhī,,llllllgllllgg | llllllllgllgg,llllllgllllgg | llllllllgllgg,52,,mishra.json
+vimāninī,,gggllllglglg | llggllglglg,gggllllglglg | llggllglglg,46,,mishra.json
+vimāninī2,,llggllglglg | gggllllglglg,llggllglglg | gggllllglglg,46,,mishra.json
+viparītākhyānakī,,lglggllglgg | gglggllglgg,lglggllglgg | gglggllglgg,44,,mishra.json
+viparītākhyānikī,,lglggllglgg | gglggllglgg,lglggllglgg | gglggllglgg,44,,vrttaratnakara.json
+viyadvāṇī,,llggllglglgg | gggllglglggg,llggllglglgg | gggllglglggg,48,,mishra.json
+viyadvāṇī,,gggllglglggg | llggllglglgg,gggllglglggg | llggllglglgg,48,,mishra.json
+viśvapramā,,gglgglgglg | lglgglgglg,gglgglgglg | lglgglgglg,40,,mishra.json
+vāsavavanditā,,gggllglglg | ggllglglg,gggllglglg | ggllglglg,38,,mishra.json
+vāsavavāsinī,,llllglglllgllglg | ggllglglllgllglg,llllglglllgllglg | ggllglglllgllglg,64,,mishra.json
+vāsinī,,ggllglglllgllglg | llllglglllgllglg,ggllglglllgllglg | llllglglllgllglg,64,,mishra.json
+yavātparāmatīya,,glglglglglgl | lglglglglglg,glglglglglgl | lglglglglglg,48,,vrttaratnakara.json
+yuddhavirāṭ,,gggllglglgg | ggllglglgg,gggllglglgg | ggllglglgg,42,,mishra.json
+ākhyānakī,,gglggllglgg | lglggllglgg,gglggllglgg | lglggllglgg,44,,mishra.json
+ākhyānikī,,gglggllglgg | lglggllglgg,gglggllglgg | lglggllglgg,44,,vrttaratnakara.json
+ālepanam,,lllgglgglgglg | lllglllgglgglg,lllgglgglgglg | lllglllgglgglg,54,,mishra.json
+ālolaghaṭikā,,llgllglglg | gglllglglg,llgllglglg | gglllglglg,40,,mishra.json
+āsavavāsitā,,lllglllglglglgg | llggllglglglllgg,lllglllglglglgg | llggllglglglllgg,62,,mishra.json
+īhā,,llllgllgllgg | gllgllgllgg,llllgllgllgg | gllgllgllgg,46,,mishra.json
+śarāvatī,,llllllglglgg | llggllllllglglg,llllllglglgg | llggllllllglglg,54,,mishra.json
+śiśiraśikhā,,llllllglglg | llllgllglglg,llllllglglg | llllgllglglg,46,,mishra.json
+śiśirā,,gglggllglglg | lglggllglglg,gglggllglglg | lglggllglglg,48,,mishra.json
+śiśumukhī,,lllglllgllglg | lllgllllglglg,lllglllgllglg | lllgllllglglg,52,,mishra.json
+śukāvalī,,ggllglglgg | gggllllglglgg,ggllglglgg | gggllllglglgg,46,,mishra.json
+śālabhañjikā,,llglllglglg | gllgglglglg,llglllglglg | gllgglglglg,44,,mishra.json

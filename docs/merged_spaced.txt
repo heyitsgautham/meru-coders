@@ -1,0 +1,5250 @@
+རགས
+chandovallari
+A Handbook of Sanskrit Prosody
+Dr. Sampadananda Mishra
+छन्दोवल्लरी
+A HANDBOOK OF SANSKRIT PROSODY
+Dr. Sampadananda Mishra
+SRI AUROBINDO SOCIETY, PUDUCHERRY
+
+आ परितोषाद्विदुषां न साधु मन्ये प्रयोगविज्ञानम् ।
+बलवदपि शिक्षितानामात्मन्यप्रत्ययं चेतः ॥
+āparitoṣādviduṣāṁ na sādhu manye prayogavijñānam
+balavadapi śikṣitānāmātmanyapratyayaṁ cetaḥ
+Abhijñānaśākuntalam of Kalidasa, 1.2
+Until the wise are satisfied, I do not consider my knowledge, which
+I present, to be perfect. The mind of men although well instructed,
+has no confidence in itself.
+
+CONTENTS
+Preface
+Introduction
+i
+V
+Chandas and their Significances to o
+vi
+SECTION I. Chandas and their Basic Principles
+Introduction
+Chandaśāstra and the texts on chanda
+Use of chandas
+1
+2
+Rules of Chanda
+Chanda or Metre
+Padya or Verse
+Pāda or Quarter
+Aksara or Syllables
+Laghu or Short Syllables
+Guru or Long Syllables
+Matrā or Metrical-Unit
+Verse Classification
+Vrttachanda
+Samavṛtta or even metre
+Ardhasamavṛtta or Half-even Metres
+Visamavṛtta or Uneven Metres
+Jāti
+Yati or Metrical Pause
+
+Sentential Pause
+ати
+10
+Harmonic Pause
+10
+Metres with Sxteen Syllables
+Pañcacāmaram
+65
+Scanning of the chandas
+10
+Gana
+10
+Classification of ganas
+11
+Metres with Seventeen Syllables
+Sikhariņi
+Prthvi
+Mandākrāntā
+137
+69
+73
+77
+Description of gaṇasini aldi has exbmed
+11
+Schematic Representation of the gaṇa
+11
+Metres with Nineteen Syllables
+Sardūlavikrīḍitam
+81
+Conclusion
+12
+19 bland ist bar
+Metres with Twentyone Syllables
+Sragdharā
+85
+SECTION II. Popular Sanskrit Metres
+Metres with Eight Syllables
+Anustup
+Metres with Eleven Syllables
+SECTION III. Appendixes
+13
+Appendix I
+89
+Indravajrā
+Upendravajrā
+21
+Upajātiḥ
+Sālinī
+Rathoddhatā
+72323
+17
+Appendix II
+90
+Appendix III
+94
+25
+Appendix IV
+98
+29
+Matra Chandas or Metres of Syllabic Instants
+Names of the Chandas and their Meanings
+126
+130
+Metres with Twelve Syllables y
+Vamsasthavilam
+37
+Bhujangaprayātam
+Toṭakam
+445
+41
+Metres with Thirteen Syllables
+Examples of Fourteen Varities of Upajati
+Index to the Sources of the Examples...
+Shloka Index
+Bibliography
+134
+137
+140
+152
+Praharṣinī
+49
+Metres with Fourteen Syllables
+Vasantalilakam
+53
+Metres with Fifteen Syllables
+Mālinī
+57
+Tūṇakam
+61
+PREFACE
+Invested with a rhythm of higher spheres
+The word was used as a hieratic means
+For the release of the imprisioned spirit
+Into communion with its comrade gods.
+Sri Aurobindo
+Since time immemorial the Rishis and poets of the land once known
+as Bhāratavarṣa, and today as India, have consciously sought how
+language could be moulded and words, sounds and rhythms used to
+express the higher truths. It is this search that has led Sanskrit to its
+sculpted perfection.
+One of the important and highly developed tools of perfection
+is chandas or metre. The word Chanda, derived from the root chad,
+literally meaning that which delights. And in Sanskrit there is no
+poetry without a chandas.
+To understand and appreciate any poetical composition, a
+knowledge and a feel of chandas is essential. Says the poet Dandi,
+in his Kāvyādarśa, "the lore of chandas is the boat for those who
+desire to cross the deep ocean of poetry."
+सा विद्या नौस्तितीर्षूणां गम्भीरं काव्यसागरम् ।
+sā vidyā naustitīrṣuṇāṁ gambhiraṁ kāvyasāgaram
+To express any experience, feeling or emotion, the appropriate
+chandas has to be chosen with great care, because each metre has
+its own mood and movement. While using a particular metre, says
+Kshemendra in his Suvṛttatilaka, "One has to see the rasa, the
+mood, the nature of description and the context."
+काव्ये रसानुसारेण वर्णनानुगुणेन च ।
+कुर्वीत सर्ववृत्तानां विनियोगं विभागवित् ॥
+kāvye rasānusāreṇa varṇanānugunena ca
+kurvīta sarvavṛttānāṁ viniyogaṁ vibhāgavit
+
+ii
+In Sanskrit and in all Indian languages, the chanda is determined
+by the arrangement of short and long syllables. The large number
+of possible combinations has given rise to a large variety of chandas.
+Sometimes the name of the chanda gives the clue to its
+movement. For example, mandäkräntä means 'slow moving'. Most
+of its syllables are long and heavy and it is ideal for expressing
+pathos. Kalidasa has used it beautifully in Meghadütam where the
+lovelorn Yaksa asks the cloud to be a messenger to his beloved.
+श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं
+वक्त्रच्छायां शशिनि शिखिनां बर्हभारेषु केशान् ।
+उत्पश्यामि प्रतनुषु नदीवीचिषु भ्रूविलासान्
+हन्तैकस्मिन् क्वचिदपि न ते चण्डि सादृश्यमस्ति ।।
+śyāmāsvāngaṁ cakitahariṇīprekṣaṇe dṛṣṭipātaṁ
+vaktrachāyāṁ śaśini śikhināṁ barhabhāreṣu keśān
+utpaśyāmi pratanuṣu nadīvīciṣu bhrūvilāsān
+hantaikasmin kvacidapi na te caṇdi sādṛśyamasti
+I fancy to see your body in the priyangu creepers, your glances
+in the eyes of the bewildered female deer, the beauty of your
+face in the moon, your hair in the plumages of the peacocks,
+and the sportive movements of your eyebrows in the rivers. But,
+O misfortune! Nowhere in a single thing. O passionate one,
+does your likeness exist.
+Similarly, tvaritagati means 'fast gait' and contains many short
+syllables. Here is a description of a gopi's meeting with Krishna. The
+verse is taken from Gangadasa's chandomañjarī.
+त्वरितगतिर्व्रजयुवतिस्तरणिसुता विपिनगता ।
+मुररिपुणा रतिगुरुणा सहमिलिता प्रमदमिता ।।
+tvaritagatirvrajayuvatistaraṇisutā vipinagatā
+muraripuṇā ratiguruṇā sahamilitā pramadamitā
+The maiden of vrajapura, while wandering in the forest near
+the fast-flowing river Yamuna, became happy meeting Krishna,
+the master of the art of love.
+iii
+Drutavilambita means 'fast and slow'. This metre begins
+with short syllables at a fast pace and later adopts a slow and tardy
+rhythm using long syllables. Bhartrihari has used this metre in the
+following verse of his Nītiśatakam.
+विपदि धैर्यमथाभ्युदये क्षमा
+सदसि वाक्पटुता युधि विक्रमः ।
+यशसि चाभिरुचिर्व्यसनं श्रुतौ
+प्रकृतिसिद्धमिदं हि महात्मनाम् ।।
+vipadi dhairyamathābhyudaye kṣamā
+sadasi vākpaṭutā yudhi vikramaḥ
+yaśasi cābhirucirvyasanaṁ śrutau
+prakṛtisiddhamidaṁ hi mahātmanām
+Eloquence in the assembly; in the field
+The puissant arm, the lion's heart; proud looks
+Unshaken in defeat; but modest-kind
+Mercy when victory crowns; passionate for books
+High love of learning; thoughts to fame inclined;-
+These things are natural to the noble mind.
+At times the names of the chandas are derived from Nature.
+For example, 'bhujangaprayāta' is named after the serpent and its
+rhythm has a zigzag movement. Shankaracharya has written his
+Bhavānyaṣṭakam in this metre.
+न तातो न माता न बन्धुर्न दाता
+न पुत्रो न पुत्री न भृत्यो न भर्ता ।
+न जाया न विद्या न वृत्तिर्ममैव
+गतिस्त्वं गतिस्त्वं त्वमेका भवानि ॥
+na tāto na mātā na bandhurna dātā
+na putro na putrī na bhṛtyo na bhartā |
+na jāyā na vidyā na vṛttirmamaiva
+gatistvaṁ gatistvaṁ tvamekā bhavāni ||
+Neither father, nor mother, nor friend, nor giver, nor son, nor
+daughter, nor servant, nor master, nor wife, nor learning, nor
+occupation have I. You alone, O Bhavani, are my refuge.
+
+iv
+śārdülavkrīḍita means 'the play of the tiger' and is a typical
+representation of the leaps of a tiger. There is first a long leap
+followed by a break, provided by the caesura after the 12th syllable,
+and then a short leap.
+रे रे चातक सावधानमनसा मित्र क्षणं श्रूयताम्
+अम्भोदा बहवो हि सन्ति गगने सर्वे तु नैतादृशाः ।
+केचिद् वृष्टिभिरार्द्रयन्ति वसुधां गर्जन्ति केचिद् वृथा
+यं यं पश्यसि तस्य तस्य पुरतो मा ब्रूहि दीनं वचः ।।
+re re cātaka sāvadhānamanasā mitra kṣaṇaṁ śrūyatām
+ambhodā bahavo hi santi gagane sarve'pi naitādṛśāḥ
+kecid vṛṣṭibhirardrayanti vasudhāṁ garjanti kecid vṛthā
+yam yaṁ paśyasi tasya tasya purataḥ mā brūhi dīnaṁ vacaḥ
+O rainlark, rainlark, flitting near the cloud,
+Attentive hear, winged friend, a friendly word.
+All vapours are not like, the heavens that shround
+Darkening; some drench the earth for noble fruit,
+Some are vain thunderers wandering by with bruit:
+Sue not to each thou seest then, O bird;
+If humbly entreat thou must, let few have heard.
+Though these are some interesting insights into Sanskrit metres,
+there is no hard and fast rule. The same chanda is often used to
+depict different moods, and different chandas can express the same
+mood. It all depends on the inspiration and the mastery of the poet.
+Chandovallarī is an attempt to introduce and explain the
+structure of the principal chandas of Sanskrit prosody. More
+importantly it attempts to give a direct feel and a living experience
+of the various chandas.
+We acknowledge the contributions of Thakur Prasad ji and
+Shami Sen who have helped in the preparation of the book.
+Vijay
+INTRODUCTION
+Almost all padyakāvyas or poetical compositions in Sanskrit
+follow a metrical pattern. Therefore to understand and appreciate
+them a knowledge of metrics or chandas is essential. The current
+work aims to serve as an introduction to the main Sanskrit metres.
+The examples given and the several indexes provided will enable
+interested readers to become familiar with the commonly used
+metres and identify them.
+There are three main sections. Section one explains the place
+of chandas in Indian literature, the history of chandas and
+chandaśāstras, the classification of chandas and the rules governing
+them. Section two deals with nineteen major and well-known metres
+along with explanations and examples collected from various sources.
+Each śloka is followed by an English translation. This section begins
+with a verse of Valmiki, believed to be the first poet or ādikavi, as
+an example of anuṣṭup metre, and ends with a verse of Kalidasa,
+one of the greatest poets of Sanskrit literature, as an example of
+sragdharā.
+In section three there are several appendixes. The first appen-
+dix gives the list of 26 genera or classes of chandas. The second
+appendix contains the alphabetical list of gaṇas or syllabic feet.
+The third appendix is an alphabetical list of the names of 121
+chandas. The fourth appendix presents the explanation of all the
+121 chandas along with their definitions and scheme of gaṇas. The
+second, third and the fourth appendixes are all interlinked. The fifth
+appendix has a note on mätrā chandas or metres regulated by syllabic
+instants. Apart from these five appendixes this section also has
+indexes to the names of the chandas and thier meanings, examples
+to illustrate all varieties of upajāti metre, all the sources from which
+examples appearing in the book are taken, all the ślokas appearing
+in this book and a list of books referred to in this presentation.
+Sampadananda Mishra
+
+Introduction
+SIGNIFICANCE OF CHANDAS nd
+IN THE LIGHT OF SRI AUROBINDO
+Acharya Durga writes in his commentary on Nirukta (7.2)
+of Yaskacharya: "No speech takes place without chanda",
+(näcchandasi väguccarati). The same point is further elaborated
+by Acharya Bharata who says in his Natyaśāstra (14.15): "No
+speech is possible without chanda and a chanda without speech is
+also equally impossible", (chandohino na śabdo'sti na chandaḥ
+sabdavarjitam). Thus, one gathers from this that chanda is as
+important as speech itself. But what exactly is a chanda? Rgveda
+(1.164.24) says that all the seven chandas are measured by syllables,
+(aksreṇa mimate saptavāṇīḥ). Supported by this Katyayana
+defines chanda in his Ṛksarvānukramaṇī as "measurement of
+syllables", (yad-akṣara-parimāṇaṁ tat chandaḥ). The following
+words of Sri Aurobindo's add more clarity to the above statement
+of Katyayana. He says that a chanda or metre means "a fixed and
+balanced system of the measures of sound, mātrā ..." It is the
+"ordered measures of the poetic spirit" and is the "right physical
+basis for the poetic movement."3
+A metre is generally regulated by several elements such as,
+the number of metrical lines, number of syllables and their
+arrangement or the number of syllabic instants, the arrangement of
+pauses etc. In the case of Sanskrit chandas or metres it is seen that
+the main principle governing the metres of the Vedas is measurement
+by number of syllables. This was also extended to the classical
+Sanskrit metres. However, they differ in many cases from those of
+Vedic metres where it is the number of syllables that matters. But
+in classical Sanskrit metres, the arrangement of syllables by short
+and long, plays an important role. In Vedic Sanskrit it is not necessary
+that all gayatri chandas should have the same arrangement of
+syllables, but the number of syllables should be same in all quarters.
+vii
+In classical Sanskrit the metres regulated by number of
+syllables (aksaravṛttas) are divided into three categories such as,
+samavṛttass or metres having same number of syllables in each
+line with same arrangement; ardhasamavṛttas or metres where
+each alternate line has same arrangement of sounds; visamavṛttas
+or metres having uneven stanzas with different arrangements. Based
+on arrangement of syllables, one particular metre differs from
+another. Thus, we have a large variety of metres. In case of the
+above metres if any quarter of a metre has one or two syllables less
+or more than the prescribed number then the metre is considered to
+be defective. This is called chandobhanga (or breaking the rules of
+the metre) which is not permitted by prosodians. But in the case of
+Vedic metres the absence or excess of one or two syllables in a
+quarter of any chanda is neither considered to be a defect nor by
+that does a chanda change into another. So, the Aitareyabrāhmaṇa
+(1.6) says, na vā ekākṣreṇa chandāmsi viyanti na dvābhyām,
+and Kauṣitakībrāhmaṇa (27.1) adds, na hyekākṣareṇa
+anyacchando bhavati na dvābhyām. But to recognise the places
+where more or less syllables occur the Vedic prosodians used some
+terms before the name of the chanda. For example, in a gayatri
+metre, if one syllable is less in a quarter then it is called nicṛd gayatri,
+if two syllables are less then it is virāț gayatrī; if one syllable is
+more it is called bhurik gayatri, if two syllables are more then it is
+svarāt gayatrī. So is the case with other metres as well. The
+Vedic prosodians have also prescribed how to fill the metre by means
+of vyuha (which ordinarily implies breaking sandhi in case of ya
+and va). For example, the first line of the famous gayatrimantra
+(tat savitur vareṇyam) has one syllable less. So to fill it, one can
+break ya in varenyaminto i and a or i and ya and instead of
+vareṇyam, one can chant vareṇi-am or vareṇi-yam. These are
+some cases where Vedic metres are more flexible than those of
+classical ones.
+Apart from the akşaravṛttas, the classical Sanskrit has also
+another metre called jātivṛtta or mätrāvṛtta which is absent in
+Vedic literature. Here, the metre is regulated not by the number of
+viii
+syllables but by the syllabic instants or mātrās. āryā and vaitālīya
+are considered to be the two main varieties of mātrāvṛttas.
+This, in short, is a brief outline of the Sanskrit metres both
+Vedic and classical.
+Now with regard to metres, several questions may come to
+mind such as: what do we demand from the metres? Are metres
+artificial or natural? Is there any greater significance of the metres
+than their physical compositions? What do different arrangements
+stand for? etc. In ancient texts on the chandas, we do not find
+much helpful answer to these questions. But Sri Aurobindo's views
+on the subject provide some deep insights into the understanding of
+real significance of the chandas.
+Chandas: The most Natural Mould of Expression
+Chanda or metre is an essential part of poetry. It is this part
+that makes poetry differ from prose. In prose intonation is flat. But
+poetic intonation, as Sri Aurobindo observes, has "with it a heightened
+or gathered intensity of language, a deepened vibrating intensity of
+rhythm, an intense inspiration in the thought substance."4 With these
+elements poetry is capable of lifting us "to a higher scale of
+consciousness which expresses things common with uncommon
+power of vision and of utterance." Chanda is a "spontaneous form"
+of this uncommon power.
+Sri Aurobindo observes that there is "a greater natural power"
+and "intenser value of sound" inherent within the metrical forms.
+He says: "Metre, on the contrary, is the most natural mould of
+expression for certain states of creative emotion and vision, it is
+much more natural and spontaneous than a non-metrical form, the
+emotion expresses itself best and most powerfully in a balanced
+rather than in a loose and shapeless rhythm." This is the reason
+why ancient Indians expressed everything including science,
+philosophy, law etc., in metrical forms.
+Metrical forms, of course, help the memory because they
+have an easy durability inherent in them. But this is not the only
+reason why ancient Indians were fond of metrical forms. They were
+ix
+able to memorise aslo huge passages of prose from Brāhmaṇa texts
+as accurately as the metrical hymns in the Vedas and Upanishads.
+So for them, metre was something deeper than its physical form.
+Sri Aurobindo makes it very clear when he says: "The tradition of
+metre is not a vain and foolish convention followed by the great
+poets of the past in primitive ignorance unconscious of their own
+bondage, it is in spite of its appearance of human convention a law
+of Nature, an innermost mind-nature, a highest speech-nature.
+The Chandas and Creation
+All creations have a base to proceed on. This base is constituted
+with oneness and sameness and a superstructure of diversity. There
+is the possibility of a highest creation only when there is an intense
+power of basic unity and sameness constituting the supporting base
+for the "intensest power of appropriate and governed diversity".
+Similarly in poetic speech, a metre gives this intense power of basic
+unity and sameness, and the rhythmic vibration in a metre gives the
+"intensest power of expressive diversity." The ancient Rishis were
+aware of these facts, and to them metre was not a lifeless formal
+construction but a fact of reproduction of great creative world-
+rhythms.
+Bhartrihari, a grammarian-philosopher of 6th century A.D.,
+says in his Vākyapadiya (1.121) that "this universe came forth
+from the chandas only", chandobhya eva prathamametad viśvam
+vyavartata. This statement of Bhartrihari has an echo in
+Sri Aurobindo who was convinced that there is a subtle truth in the
+"fixed and recurring measures of sound". He believed like the Vedic
+Rishis that "the spirit of creation framed all movements of the world
+by chandas, in certain fixed rhythms of the formative word, and it is
+because they are faithful to cosmic metres that the basic world
+movements unchangingly endure. A balanced harmony maintained
+by a system of subtle recurrences is the foundation of immortality
+in created things, and metrical movement is simply creative sound
+grown conscious of this secret of its own powers."
+
+X
+xi
+A True Picture of Chandas
+Sri Aurobindo draws "a parallel between the elements of Man
+and the elements of Metre" when he gives a true picture of a metre.
+He says that in man there is the outward food plasm and within it
+there is the vital or sensational man. Within the vital man there is
+the emotional or impressional man and further within that there is
+the intellectual man who governs the others. Again, within him there
+is the delight of the Spirit and within this delight there sits the Spirit
+itself, the Lord of all these. In metre also similar elements exist.
+Sri Aurobindo explains that the quantitative or accentual
+arrangement forms the body of a metre. Within this body there lies
+the sensational element which deals with the arrangement of pauses
+and sounds, such as assonance, alliteration, composition of related
+and varying letters etc. Within this there is the pure emotional
+movement of the verse. Within these three elements (the body, the
+sensational element and the emotional movement of the verse), there
+is the intellectual element which brings the element of restraint,
+management and subordination to the law of harmony. This element
+is the driver of the chariot of sound. Without this the harmony is not
+possible in a verse. Again, there is the poetic delight and within this
+delight there is the spirit. This spirit is an unanalysable reality behind
+metre, style and diction, and this is the element which distinguishes
+one poet from another. The august poetic delight is the outflow of
+this "mighty spirit, its sense of life and power and its pleasure in the
+use of that power with no ulterior motive beyond its own delight."8
+Significance of Different Arrangements of Sounds in Chandas
+Among all important elements of a metre different
+arrangements of sounds occupy a significant place. Sri Aurobindo
+observes that different arrangements of sounds have different
+spiritual values. He says that these arrangements "tend to produce
+by virtue of the fixed succession of sounds a fixed spiritual
+atmosphere and a given type of emotional exaltation, and the mere
+creative power of sounds though a metrical thing is yet mean to
+spirit, is very great on the material but ascending in force through
+the moral and intellectual, it culminates on the emotional plane. It is
+a factor of first importance in music and poetry."
+Therefore, Sri Aurobindo says that when we speak of a
+particular metre "we are speaking of a certain spiritual force working
+through emotion into the material shape of a fixed mould of
+rhythmical sound which obeys both in its limiting sameness and in
+its variations the law of the spirit within.'
+Chandas: the gate of inspiration
+9910
+According to Sri Aurobindo, for a poet, "management of metre
+is the gate of his inspiration and law of his success." As long as a
+poet does not have a right metrical mood, the ideas and feelings
+"will not run into the right form, the words will not take their right
+places, the syllables will not fall into a natural harmony." It is only
+when a poet finds a right metre suitable to the spirit and emotion of
+the poetry he is creating, that everything fits in place. In Sri
+Aurobindo's words: “Ideas and words come rapidly and almost as
+rapidly take their places, as in a well-ordered assembly where
+everyone knows his seat."¹¹ There should not be any sort of effort
+to create the metre and it should be a spontaneous movement. Sri
+Aurobindo says that "when the metre has to be created with effort,
+everything else has to be done with effort, and the result has to be
+worked on over and over again before it satisfies."12
+Conclusion
+The above views of Sri Aurobindo not only provide new
+guidelines to the study of chandas, but also reveal the secret truth
+of chandas and throw a new light, a new vision on the world of
+poets and poetry.
+Sampadananda Mishra
+xii
+References
+1. Sri Aurobindo: "The Future Poetry", SABCL. Vol. 9, p.17
+2. ibid., p.153
+3. ibid., p.18
+4. Sri Aurobindo: "Collected Poems", SABCL. Vol. 5, p.368
+5. Sri Aurobindo: "The Future Poetry", SABCL. Vol. 9, p.392
+6. Sri Aurobindo: "Collected Poems", SABCL. Vol.5, p.369
+7. Sri Aurobindo: "The Future Poetry", SABCL. Vol. 9, p.19
+8. Sri Aurobindo: "The Supplement", SABCL. Vol. 27, p.86
+9. ibid., p.87
+10. ibid.
+11. ibid.
+12. ibid., p.88
+SECTION I
+CHANDAS AND THEIR BASIC PRINCIPLES
+SECTION I
+1.1. Introduction
+The vast body of Sanskrit literature, which we have with us
+today, is the legacy of Rishis both ancient and modern. It is an
+inexhaustible wealth of inspiration for the student of poetic metres.
+The study of metrics has a long tradition as an important branch
+of Vedic learning. The text that deals with the rules of metrics is
+called chandaśāstra and is one of the six Vedāngas or limbs of the
+Vedas.¹
+The chanda itself is considered by the eminent grammarian,
+Panini, as the two legs of the Vedas.2
+1.1.1. Chandaśāstra and texts on chanda
+The chandaśāstra is said to be the first systematic treatise on
+chandas. It was written in about 150 B.C. by Pingalacharya.³
+According to the 'History of Indian Literature', the
+Sankhyāyana-śrautasūtra contains several chapters on prosody.
+Other Sanskrit texts dealing with prosody or metrics are Ṛgveda-
+prātiśākhya, Katyayana's Anukramaṇis and Nidānasūtra related
+to Samaveda.4
+Apart from these, chapters 14, 15 and 32 of Bharata's
+Nāṭyaśāstra and chapters 328-335 of Agnipurāṇa also deal with
+the metrics.
+Among the later works on metrics (1) Śrutabodha of Kalidasa
+(2nd cent. A.D.), (2) Suvrttatilaka of Kshemendra (11th cent. A.D.),
+(3) Chandomañjarī of Ganga Dasa (12th cent. A.D.), and (4) Vṛtta-
+ratnākara of Kedara Bhatta (15th cent. A. D.) are important.
+1. śikṣā kalpo vyākaraṇaṁ niruktaṁ chandasāṁ cayaḥ
+jyotiṣāmayanaṁ caiva vedāngāni şaḍeva tu
+Rgvedabhāṣyabhumikā of Sayanacharya
+2. chandaḥ pādau tu vedasya, Pāṇinīyaśikṣā, 41
+3. History of Indian Literature, M. Winternitz, Vol. 3, p. 32
+4. Ibid. Vol. 3, p. 31; Vol. 3, p. 269
+2
+Chandovallarī
+Following are some minor works on prosody or metrics:
+1. Chandakaustubha of Radhadamodara and Baladeva Vidya
+Bhusana (19th Cent. A.D.)
+2. Chando'nuśāsana of Jayakirti (10th Cent. A.D.)
+3. Chando'nuśāsana of Hemachandra (12th Cent. A.D.)
+4. Chandaśekhara of Rajashekhara (11th Cent. A.D.)
+5. Chandoviciti of Janashraya (6th Cent. A.D.)
+6. Svayambhucchandaḥ of Svayambhu (9th Cent. A.D.)
+7. Vāṇībhūṣṇa of Damodara Mishra (15th Cent. A.D.)
+8. Vṛttaratnāvalī of Venkatesha (16th Cent. A.D.)
+9. Vṛttajātisamuccaya of Virahanka (10th Cent. A.D.)
+10. Vṛttamauktika of Chandrasekhara (17th Cent. A.D.)
+In this work we have referred to Chandomañjarī of Ganga
+Dasa. This is a very popular work on metrics in which the author
+has dealt with almost all popular chandas used by classical poets.
+Following in the footsteps of Pingalacharya, Ganga Dasa's work is
+very systematic and well-presented.
+1.1.2. Use of chandas
+Regarding the use of chandas it is seen that in the Vedas
+there are seven major chandas used by the Rishis. They are:
+1. गायत्री gāyatrī
+(24 syllables)
+2. उष्णिक् usnik
+(28 syllables)
+3. अनुष्टुप् anustup
+(32 syllables)
+4. बृहती brhati
+(36 syllables)
+5. पङ्किः panktih
+(40 syllables)
+6. त्रिष्टुप् tristup
+(44 syllables)
+7. जगती jagati
+(48 syllables)
+
+Apart from these, we also have references of seven more
+metres used in the Vedas. They are:
+5. gāyatryuṣṇiganuṣṭubbṛhatīpanktistriṣṭubjagatyai, Atharvaveda, 19.21.1
+Chandas and their Basic Principles
+1. अतिजगती atijagatī
+(52 syllables)
+2. शक्वरी śakvarī
+(56 syllables)
+3. अतिशक्वरी atiśakvarī
+(60 syllables)
+4. अष्टिः astih
+(64 syllables)
+5. अत्यष्टिः atyastih
+(68 syllables)
+6. धृतिः dhrtih
+(72 syllables)
+7. अतिधृतिः atidhrtih
+(76 syllables)
+Maharsi Valmiki has used sixteen different chandas in the
+Ramayana. They are:
+1. अनुष्टुप् anustup
+2. इन्द्रवज्रा indravajrā
+3. उपेन्द्रवज्रा upendravajrā
+4. वंशस्थः varśasthah
+5. इन्द्रवंशा indravamśā
+6. वैश्वदेवी vaiśvadevī
+7. प्रहर्षिणी praharsinī
+8. रुचिरा rucirā
+9. वसन्ततिलकम् vasantatilakam
+10. पुष्पिताग्रा puspitāgrā
+11. अपरवक्त्रम् aparavaktram
+12. सुन्दरी sundarī
+13. औपछन्दसिकम् aupachandasikam
+14. भुजङ्गप्रयातम् bhujangaprayātam
+15. उपजातिः upajātih
+16. मालिनी mālinī
+Maharsi Vyasa, in his Mahabharata, has used eighteen types of
+chandas. The names of the chandas are:-
+1. अनुष्टुप् anustup
+2. इन्द्रवज्रा indravajrā
+3. उपेन्द्रवज्रा upendravajrā
+4. रथोद्धता rathoddhatā
+5. शालिनी śālinī
+6. वंशस्थ : varśasthah
+7. इन्द्रवंशा indravamśā
+8. भुजङ्गप्रयातम् bhujangaprayātam
+9. द्रुतविलम्बितम् drutavilambitam
+10. प्रहर्षिणी praharsinī
+11. रुचिरा rucirā
+12. वसन्ततिलकम् vasantatilakam
+13. मालिनी mālinī
+14. पञ्चचामरम् pañcacāmaram
+15. शार्दूलविक्रीडितम् śārdūlavikriditam
+16. पुष्पिताग्रा puspitāgrā
+17. अपरवक्त्रम् aparavaktram
+18. प्रमाणिका pramānikā
+In the classical period there developed a great number of
+chandas numbering approximately two hundred and fifty.
+
+
+Page No.4
+
+Chandovallarī
+1.2. Rules of Chandas
+This section deals with the technical terms in Chandaśāstra
+and the essential rules relating to chandas.
+1.2.1. Chanda or Metre
+Literary compositions (kāvyas) in Sanskrit may be in the form
+of prose (gadya) or in the form of verse (padya). A poetical stanza
+or verse in Sanskrit is called padya. Generally a padya or verse
+contains four pādas or quarters or metrical lines.
+Sanskrit verses are classified into groups and sub-groups
+according to-
+(a) the number of syllables or syllabic instants they contain
+in each quarter and
+(b) the position or placement of short or long syllables within
+the verse.
+Such groups and sub-groups are called chandas.
+1.2.2. Padya or Verse
+As mentioned above any metrical composition in Sanskrit is
+called a padya or verse.
+1.2.3. Pada or Quarter
+All verses in Sanskrit contain four lines. Each line is called a
+pāda or quarter. The first two pādas form the first half of a verse
+and the remaining two pādas form the last half of the verse.
+A pāda or quarter is regulated either by number of syllables
+(akṣara) or by the number of syllabic instants (mātrā).
+1.2.3.1. Akşara or Syllable
+Aksara is as much a word as can be pronounced distinctly at
+one go or by one effort of the voice. So a vowel with or without
+one or more consonants is considered as one syllable.
+A syllable can be short (laghu) or long (guru), depending on
+whether its vowel is short or long.
+
+Page No.5
+
+Chandas and their Basic Principles
+1.2.3.1.a. Laghu or Short Syllables
+5
+The vowels अ (a), इ (i), उ (u), ऋ (r) and ल (l) are short.
+Whenever any of these is used in a verse separately or with one or
+more consonants, it will be considered as a short syllable. For
+example, (ka), fo (ki), etc. are short syllables.
+The crescent sign (~) is used to represent a short syllable in
+scansion and metrical analysis.
+1.2.3.1.b. Guru or Long Syllables
+The vowels आ (ā), ई (l), ऊ (ū), ॠ (r), ए (e), ऐ (ai), ओ (o), औ
+(au) are long. Whenever any of these is used in a verse separately
+or with one or more consonants, it will be considered as long. For
+example, (kā), (ki), etc. are long syllables.
+The horizontal bar (-) is used to represent a long syllable in
+scansion and metrical analysis.
+However, a short vowel becomes long under three conditions
+given below.6
+(a). If a vowel is followed by an anusvāra. For example, कं (kam), i (gam), etc.
+(b) If a vowel is followed by a visarga. For example, कः (kah), गः (gah), etc.
+(c) If a vowel is followed by a conjunct consonant. For example, गन्ध (gandha). Here, even though ga is short, it has to be considered as long because it is followed by the conjunct consonant न्य (ndha). While counting the syllables, ग (ga) and (n) should be counted together as गन् (gan) and घ (dha) as a separate syllable.
+At the end of a quarter a short syllable can be considered as
+long and a long syllable short as per the requirement of the chanda.
+As illustration we present a verse (Chandomañjarī, 2.8.5) in
+anuṣṭup metre showing its scansion into long and short syllables.
+6.
+sānusvāraśca dirghaśca visargo ca gururbhavet
+varṇaḥ samyogapūrvaśca tathā pādāntago'pi vā
+Chandomañjarī, 1.11
+
+Page N0.6
+Chandovallarī
+पुनातु भक्तिरच्युता सदाऽच्युताङघ्रिपद्मयोः ।
+श्रुतिस्मृतिप्रमाणिका भवाम्बुराशितारिका ॥
+u-u-u-u-u-u-u-u-
+u-u-u-u-u-u-u-u-
+punātu bhaktiracyutā sadā'cyutānghripadmayoḥ
+śrutismṛtipramāṇikā bhavāmburāśitārikā
+1.2.3.2. Mātrā or Metrical Unit
+A unit of metrical quantity is called a mātrā, or 'instant'. A
+mātrā or 'instant' denotes the time required to utter a short vowel.
+All short vowels are regarded as consisting of one mātrā. All long
+vowels and dipthongs are regarded as consisting of two mātrās.
+For example, the word तप (tapa) contains two (1+1) mātrās because there are two short vowels त् + अ, प् + अ (t+a, p+a). The word ताप (tāpa) contains three (2+1) mātrās because there is one long vowel and one short vowel त् + आ, प् + अ (t+ā, p+a)
+1.2.4. Verse Classification
+All padyas or verses in Sanskrit are classified as either vṛtta
+or jāti.
+1.2.4.1. Vṛttattachanda
+A vṛttattachanda is that which is regulated by the number
+and positions of syllable in each pada or quarter.
+Vṛttattachanda is further sub-divided into three categories,
+such as:
+(a) samavṛtta or even metres
+(b) ardhasamavṛtta or half-even metres
+(c) visamavṛtta or uneven metres
+1.2.4.1.a. Samavṛtta or Even Metres
+Verses in which the quarters contain an equal number of
+syllables are called samavṛtta. anuṣṭup, indravajrā etc. are
+examples of this type.
+
+Page No.7
+
+Chandas and their Basic Principles
+The prosodians divide verses of this type into twenty-six
+genera, according to the number of syllables in each of the four
+pādas or quarters. This number varies from one to twenty-six. Each
+of these genera has specific name. For example, the general name
+for metres with eight syllables is anuṣṭup and for metres with eleven
+syllables, triṣṭup. Each one of the genera again contains many
+species according to the combination of short or long syllables. For
+example, anuṣṭup has many common varieties, such as citrapadā,
+māṇavakam, vidyunmālā, samānikā, pramāṇikā, etc. etc.
+In a similar way, all other genera of metres have species of
+their own.
+All samavṛtta metres containing more than twenty-six syllables
+in each pāda are classified under a 27th genus named daṇḍaka,
+which may have up to 999 syllables in each pāda.8
+7. For the names of these genera see Appendix -1
+8. An example of a verse having 54 syllables in each quarter.
+प्रचलितकरिवृत्तिपर्यन्तचञ्चन्नखाघातभिन्नेन्दुनिःस्यन्दमानामृतज्योतिजीवत्कपालावलीमुक्तचण्डावृहासत्रसद्भूरिभूतप्रवृत्त-
+स्तुतिश्वसदसितभुजङ्गभोगाङ्गदग्रन्थिनिष्पीडनस्फारफुल्लत्फणापीठनिर्यद्विषज्योतिरुज्जृम्भणोड्डामरव्यस्तविस्तारिदोः-
+खण्डपर्यासितक्ष्माधरम् ।
+ज्वलदनलपिशङ्कनेत्रच्छटासाटमीमोत्तमाङ्गभ्रमिप्रस्तुतालातचक्रक्रियास्यूतदिग्नागमुत्तुङ्गखट्वाङ्गकोटिध्वजोद्भूति-
+विक्षिप्ततारागणं प्रमुदितकटपूतनोत्तालवेतालतालस्फुटत्कर्णसम्भ्रान्तगोरोघनाश्लेषहृष्यन्मनत्र्यम्बकानन्दि
+वस्ताण्डवं देवि भूयादभीष्ट्यै च हृष्टयै च नः ॥
+Mālatīmādhava of Bhavabhuti, V.23
+Oh goddess, may the dance of you two be for our welfare and joy - the
+dance, in which your praise is commenced by the various creatures terrified
+by the fierce and loud laughter of the rows of skulls revived by the dropping
+upon them of the nectar flowing from the moon pierced by the strokes of
+the nails protruding from the skirts of the elephant-hide moved about; in
+which the mountains are hurled off by your spreading arms; poisonous
+flames issuing forth from the broad hoods widely extended in consequence
+of the firm pressing of the armlet-like coils of the universe are connected
+by the fiery circle, as of a firebrand, traced out by your whirling head
+rendred frightful by its being covered over with the mass of flames issuing
+from the eye tawny on account of the fire blazing in it; in which the
+constellations of the stars are tossed about by the flapping of the banner
+attached to the lofty point of your stab, and which brings delight to Shiva
+who is pleased at heart by the close embrace of Gauri appalled by her ears
+being stunned by the clapping of the hands of the frantic vetalas and the
+delighted ghosts and goblins.
+
+
+Page No.8
+
+Chandovallarī
+1.2.4.1.b. Ardhasamavrtta or Half-even Metresam
+Verses in which the alternate quarters have the same structure,
+i.e. when the first quarter is similar to the third quarter and the
+second to the fourth, they are called ardhasamavṛttas.
+No division of this type into genera and species is practicable.
+The following are the metres of this type:
+1. उपचित्रम् upacitram
+2. वेगवती vegavati
+3. हरिणप्लुता harinaplutā
+4. अपरवक्त्रम् aparavaktram
+5. वैतालीयम् vaitālīyam
+6. पुष्पिताग्रा puspitāgrā
+7. सुन्दरी sundarī
+8. द्रुतमध्या drutamadhyā
+9. भद्रविराट् bhadravirāt
+10. केतुमती ketumatī
+11. आख्यानकी ākhyānakī
+12. विपरीतपूर्वा viparītapūrvā
+13. परामती parāmatī
+14. कौमुदी kaumudi
+15. मञ्जुसौरभम् manjusaurabham
+16. माकल्भारिणी mākalbhārinī
+The following verse (Chandomañjarī, 3.1) in upacitrā metre
+is an example of ardhasama type of metre.
+Gana :
+*स स स लगभ भ भ ग ग
+ससस ल ग भ भ भ ग ग
+मुरवैरिवपुस्तनुतां मुदं हेमनिभांशुकचन्दनलिप्तम् ।
+गगनं चपलामिलितं यथा शारदनीरधरैरुपचित्रम् ॥
+uu-uu-uu-u--uu-uu-uu--
+uu-uu-uu-u--uu-uu-uu--
+muravairivapustanutāṁ mudaṁ
+hemanibhāṁśukacandanaliptam
+gaganaṁ capalāmilitaṁ yathā
+śāradanīradharairupacitram
+1.2.4.1.c. Visamavrtta or Uneven Metres
+Verses in which all the quarters are dissimilar from the point
+of view of number and placement of syllables, are called visama-
+vrttas. Here also there is no division into genera and species.
+
+Page No.9
+
+Chandas and their Basic Principles
+Following are the metres of this type.
+1. उद्गता udgatā
+2. सौरभकम् saurabhakam
+3. ललितम् lalitam
+4. वक्त्रम् vaktram
+5. पथ्यावक्त्रम् pathyāvaktram
+The following verse (Chandomañjarī, 4.1 ) in udgatā metre
+is an example of visamavṛtta.
+Gana:
+स ज स ल न स ज ग
+भ न भ ग स ज स ज ग
+
+विललास गोपरमणीषु तरणितनया प्रभोद्गता ।
+कृष्णनयनचकोरयुगे दधती सुधांशुकिरणोमिविभ्रमम् ।।
+vilalāsa goparamaṇīṣu
+taraṇitanayā prabhodgatā
+kṛṣṇanayanacakorayuge
+dadhati sudhāṁśukiraṇormivibhramam
+
+1.2.4.2. Jāti
+In this kind of metre the quarters are regulated by the mātrās
+or syllabic instants. The most widely known metre of this kind is
+ārya which has nine varieties, viz:
+1. थ्या pathyā
+2. विपुला vipula
+3. चपला capalā
+4. मुखचपला mukhacapala
+5. जघनचपला jaghanacapalā
+6. गीति gīti
+7.उपगीति upagīti
+8. उद्गीति udgiti
+9. आर्यागीति āryāgīti
+
+
+Page No.10
+
+Chandovallarī
+Other metres of this type are vaitālīya and mātrāsamaka.
+1.2.5. Yati or Metrical Pause
+The metrical pause in Sanskrit is called yati or virama. This
+metrical pause is of two types, the sentential pause and the harmonic
+pause.
+1.2.5.1. Sentential Pause
+The sentential pause occurs at the end of the hemistich i.e. at the
+middle of a verse and again at the end. The pause at the end of the
+hemistich is marked by a single vertical line (|) called half pause and
+at the end of the verse by two vertical lines (||) called full pause.
+1.2.5.2. Harmonic Pause
+The harmonic pause, technically called caesura, occurs after
+some particular syllables within the quarter of a verse. It varies
+from metre to metre. For example in sikhariṇī metre the harmonic
+pause occurs after 6th and 17th syllables of each quarter. In
+śārdulavikrīḍitam it occurs after 12th and 19th syllables of each
+quarter.
+1.2.6. Scanning of the Chandas
+When a verse is scanned, it is split into constituent syllables, long or
+short. However, for the purpose of classification and concise
+definition of the chandas, the Sanskrit prosodians use groups of
+syllables called gaṇas.
+1.2.6.1. Gaṇa
+In metres regulated by syllables, each metrical line or quarter of a
+verse is divided into groups of three syllables each. Each group is
+distinguished from the others by its own particular arrangement of
+syllables. These groups are called gaṇas or syllabic feet.
+
+Page No.11
+
+Chandas and their Basic Principles
+1.2.6.1.a. Classification of gaṇas
+There are eight gaṇas used by Sanskrit prosodians. They are:
+न गण na gana
+य गण ya gana
+र गण ra gana
+त गण ta gaṇa
+म गण ma gana
+भ गण bha gana
+ज गण ja gaṇa
+स गण sa gaṇa
+1.2.6.1.b. Description of ganas
+(a) Where all three syllables are short it is called 'na' gaṇa.
+(b) Where the 1st syllable is short and the other two are long
+it is 'ya' gana.
+(c) Where the middle syllable is short and the other two long
+it is 'ra' gaṇa.
+(d) Where the last syllable is short and other two long it is
+'ta' gaṇa.
+(e) Where all the three syllables are long it is 'ma' gaṇa.
+(f) Where all the first syllable is long and the other two short
+it is 'bha' gana.
+(g) Where the middle syllable is long and the other two short
+it is 'ja' gana.
+(h) Where the last syllable is long and the other two short it
+is 'sa' gaṇa.
+Apart from these eight gaṇas there are other two gaṇas named
+ga and la. ga represents a single long syllable and la represents a
+single short syllable.
+1.2.6.1.c. Schematic Representation of the gaṇa
+The above system of gaṇa can also be represented by using
+symbols.
+
+
+Page No.12
+
+Chandovallarī
+la gana u
+na gana uuu
+ya gana u--
+ra gana -u-
+ta gana --u
+ga gana -
+ma gana ---
+bha gana u-u
+ja gaṇa u-
+sa gana uu-
+1.3. Conclusion
+We conclude this chapter with an example of a simple verse
+(Chandomañjarī, 2.8.6) showing its scansion into gaṇas. The metre
+is gajagati. The definition of this metre is नभलगा 'गजगतिः'. It means
+the gajagati metre consists of gaṇas in the order of na bha la and
+ga. It is interesting to note that in Sanskrit the definition of each
+metre is written in that particular metre itself as shown in the above
+definition of gajagati.
+Gana:
+न भ लग न भ ल ग
+
+रविसुतापरिसरे विहरता दृशि हरेः ।
+व्रजवधूगजगतिर् मदमलं व्यतनुत ॥
+
+uuu-uuu-uuu-uuu-
+
+ravisutāparisare viharatā dṛśi hareḥ
+vrajavadhūgajagatir madamalaṁ vyatanuta
+
+SECTION II
+II.1. Metres with Eight Syllables
+II.1.1.3 अनुष्टुप् (anuṣṭup): Also called the śloka, this is the most widely used metre in Sanskrit language. The greater part of the Mahabharata, Ramayana and Puranas are written in this metre. It allows great freedom in the use of long and short syllables. However, in its usual form, the fifth syllable of each pāda should be short, the sixth long and the seventh alternatively long and short.
+Def. पञ्चमं लघु सर्वत्र सप्तमं द्विचतुर्थयोः ।
+गुरु षष्ठं च जानीयात् शेषेष्वनियमो मतः ।।
+pañcamaṁ laghu sarvatra saptamaṁ dvicaturthayoḥ
+guru şaṣṭhaṁ ca jāniyāt śeṣeṣvaniyamo mataḥ
+EXAMPLES
+Chandomañjarī, 4.258
+a) लोकानां त्वं परो धर्मः पुरुषः पुरुषोत्तमः ।
+शरण्यं शरणं च त्वाम् आहुर्दिव्या महर्षयः ।।
+lokānāṁ tvaṁ paro dharmaḥ puruṣaḥ purusottamaḥ
+śaraṇyaṁ śaraṇaṁ ca tvām āhurdivyā maharṣayaḥ
+Rāmāyaṇa of Valmiki, V, CXIX, 14
+a) O Lord, Thou art the embodiment of the highest virtue in all the
+worlds. Thou art the indweller, the Supreme Being. Holy sages pro-
+claim Thee as the greatest refuge and saviour of mankind.
+
+
+Page No.14
+
+Chandovallarī
+b) वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये ।
+जगतः पितरौ वन्दे पार्वतीपरमेश्वरौ ।।
+vāgarthāviva sampṛktau vāgarthapratipattaye
+jagataḥ pitarau vande pārvatiparameśvarau
+Raghuvamsa of Kalidasa, 1.1
+c) नमस्ते पुरुषाध्यक्ष नमस्ते भक्तवत्सल ।
+नमस्तेऽस्तु हृषीकेश नारायण नमोऽस्तु ते ।।
+namaste puruṣādhyakṣaḥ namaste bhaktavatsala
+namaste'stu hṛṣīkeśa nārāyaṇa namo'stu te
+Adhyātmarāmāyaṇam, 1.5.59
+d) सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।
+शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते ।।
+sarvajñe sarvavarade sarvaduṣṭabhayankari
+sarvaduḥkhahare devi mahālakṣmi namo'stu te
+Devīmāhātmyam, 11.10
+
+b) For the knowledge of the word and sense, I invoke lord Siva and
+goddess Parvati, the father and mother of the universe, who are
+mingled with each other like word and sense.
+c) Salutations to Thee, the supreme spirit presiding over all! Saluta-
+tions to Thee, the lover of all devotees! Salutations to Thee, the master
+of all senses! Salutations to Thee, O Nārāyaṇa, the Supreme Abode of
+Infinite Consciousness.
+d) Salutations be to you, O Nārāyaṇi! O you, who are the most
+auspicious among all that is auspicious! O auspicious Devi, who
+accomplish every object! O three-eyed Gauri, the refuge of all.
+
+
+
+Page No.15
+
+
+Popular Sanskrit Metres
+
+e) नमो भगवते तस्मै यत एतच्चिदात्मकम् ।
+पुरुषायादिबीजाय परेशायाभिधीमहि ।।
+namo bhagavate tasmai yata etaccidātmakam
+puruṣāyādibījāya pareśāyābhidhimahi
+Śrīmadbhāgavatam, VIII, 3.2
+f) सर्वमङ्गलमाङ्गल्यं सर्वपापप्रणाशनम् ।
+चिन्ताशोकप्रशमनम् आयुर्वर्धनकारकम् ॥
+sarvamangalamāngalyaṁ sarvapāpapraṇāśanam
+cintāśokapraśamanam ayurvardhanakārakam
+Adityahṛdayastotram, 5
+g) सर्वज्ञे सर्ववरदे सर्वदुष्टभयङ्करि ।
+सर्वदुःखहरे देवि महालक्ष्मि नमोऽस्तु ते ॥
+sarvamangalamāngalye śive sarvārthasādhike
+śaranye tryambake gauri nārāyaṇi namo'stu te
+Mahālakṣmyaṣṭakam, 5
+
+e) We offer our salutations to the Lord who endows all beings with
+consciousness. We meditate on Him, the Great Being, who is the
+origin of the universe and is the Supreme Lord.
+f) It is (the holy rays of God Sun) most auspicious among all that is
+auspicious, it is the destroyer of all sins, allayer of anxiety and anguish,
+and bestower of longevity.
+g) O Mother, Thou knowest all, Thou givest boons to all, Thou art a
+terror to the wicked, and Thou art the remover of the misery of all. O
+Mother, auspicious, salutations to Thee.
+
+
+Page No.16
+
+Chandovallarī
+h) गुणातीत गुणाधार गुणबीज गुणात्मक ।
+गुणेश गुणिनां बीज गुणिनां गुरवे नमः ॥
+guṇātīta guṇādhāra guṇabīja guṇātmaka
+guṇeśa gunināṁ bīja guṇināṁ gurave namaḥ
+Brahmavaivarta-purāṇam, IV, XXX, 46
+i) गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः ।
+गुरुस्साक्षात् परं ब्रह्म तस्मै श्रीगुरवे नमः ।।
+gururbrahmā gururviṣṇuḥ gururdevo maheśvaraḥ
+gurussākṣāt paraṁ brahma tasmai śrīgurave namaḥ
+Gurustotram of Viśvasara Tantra, 1
+j) यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः ।
+तत्र श्रीर्विजयो भूतिः ध्रुवा नीतिर्मतिर्मम ॥
+yatra yogeśvaraḥ kṛṣṇo yatra pārtho dhanurdharaḥ
+tatra śrīrvijayo bhūtiḥ dhruvā nītirmatirmama
+Śrīmadbhagavadgītā, 18.78
+
+h) O Lord, Thou art the one beyond all attributes, yet Thou supportest
+them all. Thou art the origin of all attributes and abidest in them as
+their self. Thou art the Lord of those who possess noble attributes.
+Thou art also their progenitor and Master. Salutations to Thee.
+i) The guru is no other than Brahmā, the creator, Visņu, the preserver,
+Siva, the destroyer. The guru is verily the Brahman itself. Salutations
+to that guru.
+j) Wherever there is Krishna, the Divine Master of Yoga, and wherever
+there is Arjuna, the supreme archer, there will certainly be opulence,
+victory, extraordinary power, and morality. This is my opinon.
+
+
+
+
+
+
+
+II.2. Metres with Eleven Syllables
+II.2.1. (indravajrā): Each pāda of this meter contains
+eleven syllables. Here the 1st, 2nd, 4th, 5th, 8th, 10th and
+11th syllables of each pāda are long and the others short.
+There should be a pause after the 5th and last syllables of
+each pāda.
+*
+
+Sch. g.
+त त ज ग ग
+Def.
+स्यादिन्द्रवज्रा यदि तौ जगौ गः
+--u--uu-u--
+Chandomañjarī, 2.41
+
+*Sch.g. - Scheme of ganas
+Def. - Definition
+
+18
+EXAMPLES
+Chandovallarī
+a) लोकाभिरामं रणरङ्गधीरं
+राजीवनेत्रं रघुवंशनाथम् ।
+कारुण्यरूपं करुणाकरं तं
+श्रीरामचन्द्रं शरणं प्रपद्ये ।।
+lokābhirāmaṁ raṇarangadhīraṁ
+rajīvanetraṁ raghuvaṁśanātham
+kāruṇyarūpaṁ karuṇākaraṁ taṁ
+śrīrāmacandraṁ śaraṇaṁ prapadye
+Śrīrāmarakṣāstotram of Budhakaushika, 32
+b) लीलाकराग्रे धृतपर्वतेन्द्रम्
+इन्द्रं महावृष्टिमदं जयन्तम् ।
+गोपीभुजैलालितपादपद्मं
+बालं मुकुन्दं मनसा स्मरामि ॥
+līlākarāgre dhṛtaparvatendraṁ
+indraṁ mahāvṛṣṭimadaṁ jayantam
+gopībhujairlālitapādapadmaṁ
+bālaṁ mukundaṁ manasā smarāmi
+Bālamukundāstakam, 8
+
+a) I surrender to Lord Rama, the prettiest in this world, brave in the
+battle field, the one with lotus like eyes, the chief of the Raghu clan,
+the all-merciful lord.
+b) I remember in my mind that child Krishna, who lifted the mount
+Govardhana and held it against the high rage of Indra causing rain
+havoc in the city of Gopapura and whose lotus feet are fondled by the
+cowherd ladies of that city.
+19
+
+Popular Sanskrit Metres
+c) त्वं वैष्णवी शक्तिरनन्तवीर्या
+विश्वस्य बीजं परमाऽसि माया ।
+सम्मोहितं देवि समस्तमेतत्
+त्वं वै प्रसन्ना भुवि मुक्तिहेतुः ।।
+tvaṁ vaiṣṇavi śaktimanantaviryā
+viśvasya bijaṁ paramā'si māyā
+sammohitaṁ devi samastametat
+tvaṁ vai prasannā bhuvi muktihetuḥ
+Devīmāhātmyam, 11.4
+d) आशासु राशीभवदङ्गवल्ली-
+भासैव दासीकृतदुग्धसिन्धुम् ।
+मन्दस्मितैर्निन्दितशारदेन्दुं
+वन्देऽरविन्दासनसुन्दरि त्वाम् ॥
+āśāsu rāśībhavadangavalli-
+bhāsaiva dāsīkṛtadugdhasindhum
+mandasmitairninditaśāradendum
+vande'ravindāsanasundari tvām
+Sarasvati-stuti, Stotraratnāvalī, P. 79
+c) O Mother, Thou art the great primal energy, the source of infinite
+strength; Thou the seed of the world, the supreme Maya; Thou hast
+enchanted the whole universe by Thy deluding charm; Thou, pleased,
+O supreme Mother, bestowest salvation upon men.
+d) O lotus-seated, beautiful Sarasvati, I bow to you. The milk-ocean
+is made a slave by the lustre coming from your creeper-like limbs,
+gathered in all directions. The autumnal moon's face is marred by
+your gentle and sweet smile.
+20
+Chandovallarī
+e) सत्यव्रतं सत्यपरं त्रिसत्यं
+सत्यस्य योनिं निहितं च सत्ये ।
+सत्यस्य सत्यामृतसत्यनेत्रं
+सत्यात्मकं त्वां शरणं प्रपन्नाः ।।
+satyavrataṁ satyaparaṁ trisatyaṁ
+satyasya yonim nihitaṁ ca satye
+satyasya satyāmṛtasatyanetraṁ
+satyātmakaṁ tvāṁ śaraṇaṁ prapannāḥ
+Śrīmadbhāgavatam, X, 2, 26
+f) चित्रं तदेतच्चरणारविन्दं
+चित्रं तदेतन्नयनारविन्दम् ।
+चित्रं तदेतद्वदनारविन्दं
+चित्रं तदेतद्वपुरस्य चित्रम् ॥
+citraṁ tadetaccaraṇāravindaṁ
+citraṁ tadetannayanāravindam
+citram tadetadvadanāravindam
+citraṁ tadetadvapurasya citram
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.88
+e) O Lord, Thou art the one vowed to Truth and to Thee Truth is
+supreme. Thou art Truth in the past, present and future. Thou art the
+source of Truth and Thou art founded in Truth. Thou art the Reality
+behind all realities, Thou art the eye of the ordered Truth, and Thou
+art the embodiment of Truth. O Lord, in Thee do we take refuge.
+f) Beautiful are the lotus feet (of Krishna), beautiful is his lotus-like
+face, beautiful are the lotus-like eyes, beautiful and wonder of beauty
+is his body.
+Popular Sanskrit Metres
+21
+II.2.2.34 (upendravajra): This metre is similar to the
+previous one, indravajrā (II.2.1). The difference between
+two is that in it first syllable of each pada is short, whereas
+it is long in indravajrā. The places of pause are also same
+in both.
+ज त ज ग ग 
+Sch. g. u-u--uu-u--
+Def. उपेन्द्रवज्रा प्रथमे लघौ सा
+
+Chandomañjarī, 2.42
+22
+EXAMPLES
+Chandovallarīt
+a) न नाकपृष्ठं न च सार्वभौमं
+न पारमेष्ठ्यं न रसाधिपत्यम् ।
+न योगसिद्धीरपुनर्भवं वा
+समञ्जस त्वा विरहय्य का ।।
+na nākapṛṣṭhaṁ na ca sarvabhaumaṁ
+na pārameṣṭhyaṁ na rasādhipatyam
+na yogasiddhirapunarbhavam vā
+samañjasa tvā virahayya kānkṣe
+b) मुकुन्द मूर्ध्ना प्रणिपत्य याचे
+Śrīmadbhāgavatam, 6.11.25
+भवन्तमेकान्तमियन्तमर्थम् ।
+अविस्मृतिस्त्वच्चरणारविन्दे
+भवे भवे मेऽस्तु भवत्प्रसादात् ।।
+mukunda mūrdhnā praṇipatya yāce
+bhavantamekāntamiyantamartham
+avismṛtistvaccaraṇāravinde
+bhave bhave me'stu bhavatprasādāt
+Mukundamālā of Kulashekhara, 
+a) O Lord, the most excellent one, I desire not heaven and the status
+of an emperor, nor do I have any fascination for the position of Brahma
+and lordship over all the worlds; I hanker not after the superhuman
+powers of the Yogis, nor even freedom from the cycle of birth and
+death, O Lord, I do not want anything of these if I am to be separated
+from you.
+b) O Mukunda (the one who gives emancipation), I prostrate before
+you in deep reverence and beseech you for this much only and nothing
+else - May I, by your grace, never forget your lotus-feet in this life
+and in lives to come.
+
+23
+Popular Sanskrit Metres
+c) ननु प्रपन्नः सकृदेव नाथ
+तवाहमस्मीति च याचमानः ।
+तवानुकम्प्यः स्मरतः प्रतिज्ञां
+मदेकवर्जं किमिदं व्रतं ते ।।
+nanu prapannaḥ sakṛdeva nātha
+tavāhamasmīti ca yācamānaḥ
+tavānukampyaḥ smarataḥ pratijñāṁ
+madekavarjaṁ kimidaṁ vrataṁ te
+Stotraratna of Yamunacharya, 64
+d) ननेति भीत्या श्रुतयो वदन्ति
+वदन्ति साक्षान्न च यं कदाचित् ।
+चिदेकरूपः शिव ईश्वराणां
+महेश्वरोऽसौ भुवि रामकृष्णः ।।
+naneti bhītyā śrutayo vadanti
+vadanti sākṣānna ca yaṁ kadācit
+cidekarupaḥ śiva īśvarāṇāṁ
+maheśvaro'sau bhuvi rāmakṛṣṇaḥ
+coupled to useammime Śrīrāmakṛṣṇāṣṭakam of Pramadadasa Mitra, 2
+
+c) He who will take refuge in Thee and pray but once, saying, "I am
+Thine", he will at once become an object of Thy mercy - such is Thy
+promise. Remember this and let me know whether Thou hast decided
+this will hold true in case of everybody except me.
+d) That which the śrutis, through fear, describe as 'not this', 'not
+this', but never in a direct way, whose only form is cit, that which is
+good, the Supreme Ruler of rulers - that is manifest on earth as Sri
+Ramakrishna.
+24
+Chandovallarī p
+e) वदन्ति रामं परमेकमाद्यं
+निरस्तमायागुणसप्रवाहम् ।
+भजन्ति चाहर्निशमप्रमत्ताः
+परं पदं यान्ति तथैव सिद्धाः ॥
+vadanti rāmaṁ paramekamādyaṁ
+nirastamāyāguṇasapravāham
+bhajanti cāharniśamapramattāḥ
+paraṁ padaṁ yānti tathaiva siddhāḥ
+Adhyātmarāmāyaṇam, 1.12
+Popular Sanskrit Metres
+
+f) विचित्रपत्राङ्कुरशालिबाला-
+स्तनान्तरं मौनिमनोन्तरं वा ।
+अपास्य वृन्दावनपादपं तम्
+उपास्यमन्यं न विलोकयामः ।।
+vicitrapatrānkuraśālibālā-
+stanāntaraṁ maunimanontaraṁ vā
+apāsya vṛndāvanapādapaṁ tam
+upāsyamanyaṁ na vilokayāmaḥ
+amua? logowinteKṛṣṇakarṇāmṛtam of Lilasuka, 1.22
+e) Rama is said to be the original Being transcending all manifestations
+of the gunas of prakṛti and is unaffected by them. Knowing Him to be
+so, men devote themselves day and night without any reservation in
+his adoration and thereby they attain to the supreme state.
+f) Leaving these three, namely the bosom of a maiden of gokula,
+painted with picturesque tints, the innermost mind of a saint rapt in
+silent meditation, and the tree of vṛndāvana - no other place do we
+behold wherein to contemplate the Lord.
+25
+II.2.3. 34: (upajātiḥ): This is a mixed metre and usually takes
+the form of a combination of indravajrā and upendravajrā,
+or of vamśastha and indravaṁśā. Places of pause are same
+as in the other two. The different combinations of
+indravajrā and upendravajrā give rise to fourteen types
+of upajāti metre. These fourteen types are listed below
+with their names:
+कीर्तिः kīrtiņ उ इ इ
+माला mālā उ उ इ इ
+हंसी hamsī उ इ उ इ
+जाया jāyā उ उ उ इ
+आर्द्रा ārdrā उ इ इ उ
+प्रेमा premā उ उ इ उ
+ऋद्धिः rddhih उ इ उ उ
+वाणी vānī इ उ इ इ
+शाला Śālā इ इ उ इ
+माया māyā इ उ उ इ
+बाला bālā इ इ इ उ
+भद्रा bhadrā इ उ इ उ
+रामा rāmā इ इ उ उ
+बुद्धिः buddhih इ उ उ उ
+NB: In the scheme here, & stands for indravajrā and 3 stands for
+upendravajrā. Examples of all the fourteen varities of upajāti as
+mentioned above are given in the appendix seven of this book.
+26
+EXAMPLES
+Chandovallarī
+a) तदेतदाताम्रविलोचनश्री-
+सम्भाविताशेषविनम्रगर्वम् ।
+मुहुर्मुरारेर्मधुराधरोष्ठं
+मुखाम्बुजं चुम्बति मानसं मे ॥
+tadetadātāmravilocanaśrī-
+sambhāvitāśeṣavinamragarvam
+muhurmurārermadhurādharoṣṭhaṁ
+mukhāmbujaṁ cumbati mānasaṁ me
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.84
+b) देवि प्रपन्नार्तिहरे प्रसीद
+प्रसीद मातर्जगतोऽखिलस्य ।
+प्रसीद विश्वेश्वरि पाहि विश्वं
+त्वमीश्वरी देवि चराचरस्य ।।
+devi prapannārtihare prasida
+prasīda mātarjagato'khilasya
+prasīda viśveśvari pāhi viśvaṁ
+tvamiśvari devi caracarasya
+Devīmāhātmyam, 11.2
+a) My mind is repeatedly kissing the lotus-like face of Murari (the
+slayer of demon Mura) which is charming with its two sweet lips,
+and which has increased the pride of good fortune of all His humble
+devotees with the beauty of His slightly copper-red eyes.
+b) O Goddess, you who remove the sufferings of your supplicants,
+be gracious, be propitious; O Mother of whole world, be gracious, O
+Mother of the universe, protect the universe. You are, O Goddess, the
+ruler of all that is moving and unmoving.
+27
+Popular Sanskrit Metres
+c) काली त्वमेवासि सुनिष्ठुरासि
+त्वमन्नपूर्णा सदया च सौम्या ।
+नमामि रौद्रां भुवनान्तकत्रि
+प्रेमाकुलामेव नमामि राधे ||
+kāli tvamevāsi suniṣṭhurāsi
+tvamannapūrṇā sadayā ca saumyā
+namāmi raudrāṁ bhuvanāntakartri
+premākulāmeva namāmi rādhe 
+Bhavānī Bhārati of Sri Aurobindo, 87
+d) कस्माच्च ते न नमेरन् महात्मन्
+गरीयसे ब्रह्मणोऽप्यादिकर्त्रे ।
+अनन्त देवेश जगन्निवास
+त्वमक्षरं सदसत्तत्परं यत् ॥
+kasmācca te na nameran mahātman
+gariyase brahmaṇe'pyādikartre
+ananta deveśa jagannivāsa
+tvamakṣaraṁ sadasattatparaṁ yat
+Śrīmadbhagavadgītā, 11.37
+
+c) Thou art, indeed, Kālī and utterly ruthless Thou art; Thou art
+Annapūrṇā, the merciful and gracious. I bow to Thee as the violent
+one, O ender of the worlds; I bow to Thee, O Rādhā, in Thy ecstasy
+of love.
+d) O great one, who stands above even Brahma, you are the original
+master, why should they not offer their homage up to you, O limitless
+one! O refuge of the universe, you are the invincible source, the cause
+of all causes, transcendental to this material manifestation
+28
+Chandovallarīgo
+e) अक्षय्यसम्पत्तिरजय्यतेजा-
+स्त्वमम्ब भूमेर्हृदयाब्जभूता ।
+काञ्चित्कलां चित्कलिकाप्रसूतिं
+तां त्वां विदो भारतगां वदन्ति ।।
+akṣayyasampattirajayyatejās
+tvamamba bhūmerhṛdayābjabhūtā
+kāñcitkalāṁ citkalikāprasūtim
+tāṁ tvāṁ vido bhāratagāṁ vadanti
+Bhāratistava of T.V. Kapali Sastri, 51
+1) अस्त्युत्तरस्यां दिशि देवतात्मा
+हिमालयो नाम नगाधिराजः ।
+पूर्वापरौ तोयनिधी वगाह्य
+स्थितः पृथिव्या इव मानदण्डः ।।
+astyuttarasyāṁ diśi devatātmā
+himālayo nāma nagādhirājaḥ
+pūrvǎparau toyanidhi vagāhya
+sthitaḥ pṛthivyā iva mānadaṇḍah
+Kumārasambhavam of Kalidasa, 1.1
+Popular Sanskrit Metres
+e) O Mother, indestructible are your riches, beyond transgression
+your lustre. You are the lotus-heart of the earth. You are a part born
+out of the bud of consciousness. In this manner the learned people
+know you as the Mother of India.
+f) There in the northern quarter, the deity-souled lord of mountains,
+by name Himalaya, stands like a measuring rod of the earth, the eastern
+and the western.
+
+29
+II.2.4. (śālinī): This metre has eleven syllables in each
+pāda. Here except the sixth and ninth syllables of each pāda,
+all other syllables are long. There should be a pause after
+the 4th and last syllables of each pāda.
+Sch. g. म त त ग ग
+-----u--u--
+Def. मत्तौ गौ चेच्छालिनी वेदलोकैः
+
+Chandomañjarī, 2.45
+
+30
+EXAMPLES
+ama Chandovallarī
+a) माता रामो मत्पिता रामचन्द्रः
+स्वामी रामो मत्सखा रामचन्द्रः ।
+सर्वस्वं मे रामचन्द्रो दयालु-
+र्नान्यं जाने नैव जाने न जाने ॥
+mātā rāmo matpitā rāmacandraḥ
+svāmī rāmo matsakhā rāmacandraḥ
+sarvasvaṁ me rāmacandro dayālur-
+nānyaṁ jāne naiva jāne na jāne
+Śrīrāmarakṣāstotram of Budhakaushika, 30
+b) नाहं जातो जन्ममृत्यू कुतो मे
+नाहं चित्तं शोकमोहौ कुतो मे
+नाहं प्राणः क्षुत्पिपासे कुतो मे ।
+नाहं कर्ता बन्धमोक्षौ कुतो मे ॥
+nāhaṁ jāto janmamṛtyū kuto me
+nāhaṁ prāṇaḥ kṣutpipāse kuto me
+nāhaṁ cittaṁ śokamohau kuto me
+nāhaṁ kartā bandhamokṣau kuto me
+Ātmapañcakam of Shankaracharya, 1
+
+a) Lord Rāma is my mother; Lord Rāma is my father; Lord Rāma is
+my lord; Lord Rāma is my friend; Lord Rāma, who is merciful, is my
+all-in-all. I know none else; I know none else, none else.
+b) I am not born, how can there be birth and death for me? I am not
+the prāna, the life-force, how can I hunger and thirst? I am not the
+mind, so whence can there be misery and delusion for me? I am not
+the doer, whence can there be bondage and freedom for me?
+
+31
+Popular Sanskrit Metres
+c) तोये शैत्यं दाहकत्वं च वह्नौ
+तापो भानौ शीतभानौ प्रसादः ।
+पुष्पे गन्धो दुग्धमध्ये च सर्पि-
+र्यत्तच्छम्भो त्वं ततस्त्वां प्रपद्ये ॥
+toye śaityaṁ dāhakatvaṁ ca vahnau 
+tāpo bhānau śītabhānau prasādaḥ
+puspe gandho dugdhamadhye ca sarpir-
+yattacchambho tvaṁ tatastvāṁ prapadye
+d) नो ते गोत्रं नापि जन्मापि नाख्या
+नो वा रूपं नैव शीलं न देशः ।
+इत्थंभूतोऽपीश्वरस्त्वं त्रिलोक्याः
+सर्वान् कामान् पूरयेस्तद् भजे त्वाम् ।
+no te gotraṁ nāpi janmāpi nākhyā
+no vā rūpaṁ naiva śīlaṁ na deśaḥ
+itthambhūto'piśvarastvaṁ trilokyāḥ
+sarvān kāmān pürayestad bhaje tvām
+Skandapurāna, IV.1.X.132
+c) O Lord, Thou art the coolness in water, ignition in fire, heat in the
+sun, serenity in the moon, fragrance in the flowers, and clarified butter
+in the milk. Therefore, O Sambhu (the most benevolent lord) ! I take
+refuge in Thee.
+d) My Lord, Thou hast no lineage, nor birth, nor name, nor form.
+Neither hast thou any duty nor any locality. Still Thou art the Lord of
+all the worlds, and Thou dost fulfil all desires. Therefore, my God, do
+I take refuge in Thee.
+32
+Chandovallarī qof
+e) तत्कैशोरं तच्च वक्त्रारविन्दं
+तत्कारुण्यं ते च लीलाकटाक्षाः ।
+तत्सौन्दर्यं सा च सान्द्रस्मितश्रीः
+सत्यं सत्यं दुर्लभं दैवतेऽपि ॥
+tatkaiśoraṁ tacca vaktrāravindam
+tatkāruṇyaṁ te ca līlākaṭākṣāḥ
+tatsaundaryaṁ să ca sāndrasmitaśrīḥ
+satyaṁ satyam durlabhaṁ daivate'pi
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.55
+f) केयं कान्तिः केशव त्वन्मुखेन्दोः
+कोऽयं वेषः कापि वाचामभूमिः ।
+सेयं सेयं स्वादुता मञ्जुलश्रीः
+भूयो भूयो भूयशस्त्वां नमामि ॥
+keyaṁ kāntiḥ keśava tvanmukhendoḥ og vi na
+ko'yaṁ veṣaḥ kāpi vācāmabhūmiḥ
+seyaṁ seyaṁ svādutā mañjulaśrīḥ
+bhūyo bhūyo bhūyaśastvāṁ namāmi
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.94
+e) That tender youth, that lotus-like face, that compassion, those
+sportive glances, that beauty, and that beauty of soft smile, truly,
+hardly attainable are they, even by the Gods.
+f) How indescribable! How beyond all speech, O Keśava (one having
+long handsome hair), is the lustre of Thy moon-like face and Thy
+fascinating costume! May that lustre, and that fascinating costume
+be enjoyed by Thyself. I bow down to Thee, again and again, with
+folded hands.
+Popular Sanskrit Metres
+33
+II.2.5. ǹ
+(rathoddhata): This metre has eleven syllables in
+each pāda. Here the 1st, 3rd, 7th, 9th and 11th syllables of
+each pādaare long and the others short. There should be a
+pause after the 4th and last syllables of each pāda.
+ र न र ल ग
+Sch. g. -u-uuu-u-u-
+Def.  रात्परैर्नरलगै रथोद्धता
+Chandomañjarī, 2.49
+34
+EXAMPLES
+Chandovallarī eff
+a) धेनुपालदयितास्तनस्थली-
+धन्यकुङ्कमसनाथकान्तये ।
+वेणुगीतगतिमूलवेधसे
+ब्रह्मराशिमहसे नमो नमः ।।
+dhenupāladayitāstanasthali-
+dhanyakunkumasanathakāntaye
+veņugītagatimūlavedhase
+Popular Sanskrit Metres
+
+b) चिन्तयामि हरिमेव सन्ततं
+मन्दमन्दहसिताननाम्बुजम् ।
+नन्दगोपतनयं परात्परं
+नारदादिमुनिवृन्दवन्दितम् ॥
+cintayāmi harimeva santataṁ
+mandamandahasitānanāmbujam
+nandagopatanayaṁ parātparaṁ
+anismelo nāradādimunivṛndavanditam
+Mukundamālā of Kulashekhara, 9
+
+35
+
+a) Salutations to Shri Krishna, the Radiant Supreme, the prime creator
+of the Divine Music reverberating through His flute, the one who
+shines with lovely streaks of saffron fallen from the bosoms of the
+cow-herdesses.
+b) Constantly I think of Hari (attractor of all) alone, whose face has a
+gentle smile playing over it, is charming like a lotus in bloom, and
+who is beyond all cause, effect and relationships. Yet he appeared as
+the son of cowherd Nanda and was adored by ascetic sages like Nārada
+and others.
+
+c) आञ्जनेयमतिपाटलाननं
+काञ्चनाद्रिकमनीयविग्रहम् ।
+पारिजाततरुमूलवासिनं
+भावयामि पवमाननन्दनम् ॥
+āñjaneyamatipāțalānanaṁ
+
+kāñcanādrikamaniyavigraham
+pārijātatarumūlavāsinaṁ
+
+bhāvayāmi pavamānanandanam
+Bbm Rāmāyaṇa of Valmiki, Pārāyaṇakrama
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.76
+
+d) तत्र तत्र कृतमस्तकाञ्जलिम् ।
+वाष्पवारिपरिपूर्णलोचनं
+मारुतिं नमत राक्षसान्तकम् ।।
+yatra yatra raghunathakīrtanaṁ
+tatra tatra kṛtamastakāñjalim
+vāṣpavāriparipūrṇalocanaṁ light
+mārutiṁ namata rākṣasāntakam
+Rāmāyaṇa of Valmiki, Pārāyaṇakrama
+c) I contemplate on Lord Hanuman (one having large jaws), the pink-
+faced, the son of the Wind-god and mother Anjanā, whose image is
+beautiful like a golden mountain and who resides below the pārijāta,
+the celestial coral tree.
+d) Wherever there is the chanting of the name of Rāma, the Lord of
+the Raghu race, Hanumān is found there with folded hands and eyes
+brimming with tears. Bow to that Hanuman, destroyer of the demons.
+36
+Chandovallarī 
+e) क्षीरसागरतरङ्गशीकरा-
+सारतारकितचारुमूर्तये । 
+भोगिभोगशयनीयशायिने
+माधवाय मधुविद्विषे नमः ॥
+kşirasāgaratarangaśīkarā-
+sāratārakitacārumūrtaye
+bhogibhogaśayaniyaśāyine 
+mādhavāya madhuvidvise namaḥ
+
+
+
+f) येन भिन्नकरिकुम्भविस्खलन्
+मौक्तिकावलिभिरञ्चिता मही ।
+अद्य तेन हरिणान्तिके कथं
+कथ्यतां नु हरिणा पराक्रमः ।।
+yena bhinnakarikumbhaviskhalan
+mauktikāvalibhirañcitā mahi
+adya tena hariņāntike kathaṁ
+kathyatāṁ nu hariņā parākramaḥ
+
+
+e) I bow to Madhava, the foe of the demon Madhu, whose sky-blue
+body is sparkling with starry drops continuously being splashed from
+the billows of the milky ocean and who is reclining on the coils of the
+snake-god Ananta or on the couch of infinity.
+f) How that lion that had formerly graced the earth with lines of
+pearls dropping down from the broken temple of elephant, should
+now show his prowess to the deer?
+
+37
+
+II.3. Metres with Twelve Syllables
+ वंशस्थविलम् (vaṁśasthavilam): This metre contains twelve
+syllables in each pāda. The 1st, 3rd, 6th, 7th, 9th and 11th
+syllables of each padaof this metre are short and the others
+long. There should be a pause after the 5th and last syllables
+of each pāda.
+       ज  त ज  र
+Sch. g. u-u--uu-u-u-
+Def.    वदन्ति वंशस्थविलं जतौ जरौ
+38
+a) नमामि नारायणपादपङ्कजं
+करोमि नारायणपूजनं सदा ।
+वदामि नारायणनामनिर्मलं
+स्मरामि नारायणतत्त्वमव्ययम् ॥
+namāmi nārāyaṇapādapankajaṁ
+karomi nārāyaṇapūjanaṁ sadā
+vadāmi nārāyaṇanāmanirmalaṁ
+smarāmi nārāyaṇatattvamavyayam
+Mukundamālā of Kulashekhara, 36
+b) नमो नमो वाङ्मनसातिभूमये
+नमो नमो वाङ्मनसैकभूमये ।
+नमो नमोऽनन्तमहाविभूतये
+नमो नमोऽनन्तदयैकसिन्धवे ।।
+namonamo vānmanasātibhūmaye
+namonamo vāṁmanasaikabhūmaye 2
+namonamo'nantamahāvibhūtaye
+namonamo'nantadayaikasindhave
+Stotraratna of Yamunacharya, 21
+
+a) I bow down in worship of the lotus feet of Nārāyaṇa, the lord who
+is the Supreme Abode of Infinite Consciousness. I do holy service to
+Nārāyaṇa constantly. I repeat the hallowed names of Nārāyaṇa. I
+remember the immutable essence of Nārāyaṇa.
+b) Obeisance again and again to Thee, who art beyond speech and
+mind; obeisance again and again to Thee who art the sole object of
+speech and mind; obeisance again and again to Thee, possessor of
+infinite great powers; obeisance again and again to Thee having infinite
+mercy.
+
+39
+
+c) अहं प्रपन्नोऽस्मि पदाम्बुजं प्रभो
+भवापवर्गं तव योगिभावितम् ।
+यथाञ्जसाऽज्ञानमपारवारिधिं
+सुखं तरिष्यामि तथानुशाधि माम् ।।
+aham prapanno'smi padāmbujam prabholl
+bhavāpavargaṁ tava yogibhāvitam
+yathāñjasā'jñānamapāravāridhiṁore
+sukhaṁ tariṣyāmi tathānuśādhi mām
+ปริ
+
+Adhyātmarāmāyaṇam, 7.5.5
+
+d) पुनः प्रसन्नेन मुखेन्दुतेजसा
+पुरोऽवतीर्णस्य कृपामहाम्बुधेः ।
+तदेव लीलामुरलीरवामृतं
+समाधिविघ्नाय कदा नु मे भवेत् ॥
+punaḥ prasannena mukhendutejasā bi
+puro'vatirṇasya kṛpāmahāmbudheḥ
+tadeva līlāmuraliravāmṛtaṁ
+samādhivighnāya kadā nu me bhavet
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.34
+
+c) O Lord, I seek shelter in Thy lotus-feet which Yogins ever meditate
+upon and which verily sever all the shackles that bind man to earth. O
+Lord, show unto me the way by which I may truly cross this shore-
+less ocean of ignorance with ease.
+d) When will the nectar music of His sportive flute of that great ocean
+of mercy incarnating before me with a face pleasant like glow of
+moon, once again break my concentration?
+
+40
+Chandovallarīgo
+e) क्रियासु युक्तैर्नृपचारचक्षुषो
+न वञ्चनीयाः प्रभवोऽनुजीविभिः ।
+अतोऽर्हसि क्षन्तुमसाधु साधु वा
+हितं मनोहारि च दुर्लभं वचः ।।
+kriyāsu yuktairnṛpacăracakṣuşo
+na vañcaniyāḥ prabhavo'nujivibhiḥ
+ato'rhasi kṣantumasādhu sādhu vān
+hitaṁ manohāri ca durlabhaṁ vacaḥ
+
+Kirātārjuniyam of Bharavi, 1.4
+Popular Sanskrit Metres
+
+f) इदं शरीरं परिणामपेशलं
+पतत्यवश्यं श्लथसन्धिजर्जरम् ।
+किमौषधैः क्लिश्यसि मूढ दुर्मते
+निरामयं कृष्णरसायनं पिब ।।
+idaṁ śarīraṁ pariņāmapeśalaṁ
+patatyavaśyaṁ ślathasandhijarjaram
+kimauṣadhaiḥ kliśyasi mūḍha durmate 
+nirāmayaṁ kṛṣṇarasāyanaṁ piba
+Mukundamālā of Kulashekhara, 32
+
+e) Masters who see through eyes of spies, are not, O King, to be
+misled by dependants deputed on special duties. So it behoves you to
+bear the agreeable as well as disagreeable. A salutary yet pleasant
+advice is rare.
+f) This body, so attractive (in youth), is bound to age one day and
+disintegrate gradually by its own nature. O fool! why try to perpetuate
+it by medicine? Utter the sweet name of Lord Krishna, which is a sure
+remedy for all ills.
+Chandomañjarī, 2.69
+
+41
+
+II.3.2. भुजङ्गप्रयातम् (bhujangaprayātam): This metre contains
+twelve syllables in each päda. Thelst, 4th, 7th and 10th
+syllables of each pada of this metre are short and the others
+long. There should be a pause after the sixth and last syllables
+of each pāda.
+    य य य य
+Sch. g. u--u--u--u--
+Def. भुजङ्गप्रयातं चतुर्भिर्येकारैः
+42
+EXAMPLES
+me Chandovallarī
+a) न मे द्वेषरागौ न मे लोभमोहौ
+न मे वै मदो नैव मात्सर्यभावः ।
+न धर्मो न चार्थो न कामो न मोक्ष-
+श्चिदानन्दरूपः शिवोऽहं शिवोऽहम् ॥
+na me dveṣarāgau na me lobhamohau
+na me vai mado naiva mātsaryabhāvaḥ
+na dharmo na cārtho na kāmo na mokṣa-
+ścidānandarūpaḥ śivo'haṁ śivo'ham
+Popular Sanskrit Metres
+
+b) शरीरं सुरूपं सदा रोगमुक्तं
+यशश्चारुचित्रं धनं मेरुतुल्यम् ।
+मनश्चेन्न लग्नं गुरोरङ्घ्रिपद्म् 
+ततः कि ततः किं ततः किं ततः किम्‌ ।। c
+śarīraṁ surūpaṁ sadā rogamuktaṁ
+yaśaścārucitraṁ dhanaṁ merutulyam
+manaścenna lagnaṁ guroranghripadme
+tataḥ kim tataḥ kim tataḥ kiṁ tataḥ kim
+Gurvaṣṭakam of Shanakaracharya, 1
+
+
+a) I have neither aversion, nor clinging, nor greed, nor delusion, nor
+envy, nor any pride, duty or purpose, nor desire, nor freedom. Being
+the soul of knowledge and Bliss, Shiva I am, Shiva I am.
+b) Though your body is beautiful and ever free from disease, your
+name is unsullied and though you possess mountain-high wealth, yet,
+if your mind is not absorbed in the lotus-feet of the Guru, what will it
+all avail you? What indeed, will it all avail you?
+
+43
+c) नमामीशमीशाननिर्वाणरूपं
+विभुं व्यापकं ब्रह्म वेदस्वरूपम् ।
+अजं निर्गुणं निर्विकल्पं निरीहं
+चिदाकाशमाकाशवासं भजेऽहम् ॥
+namāmīśamīśānanirvāṇarūpaṁ
+vibhuṁ vyāpakaṁ brahmavedasvarūpam
+ajaṁ nirgunaṁ nirvikalpaṁ nirīhaṁ
+cidākāśamākāśavāsaṁ bhaje'ham
+43
+Rāmacaritamānasa of Tulasidasa, VII, 1
+Nirvāṇāṣṭakam of Shankaracharya, 3
+d) भजेऽहं सदा राममिन्दीवराभं
+भवारण्यदावानलाभाभिधानम् ।
+भवानीहदा भावितानन्दरूपं
+भवाभावहेतुं भवादिप्रपन्नम् ॥
+bhaje'ham sadā rāmamindīvarābhaṁ 
+bhavāraṇyadāvānalābhābhidhānam
+bhavānīhṛdā bhāvitānandarupaṁ
+bhavābhāvahetum bhavādiprapannam
+Adhyātmarāmāyaṇam, 6.13.24
+c) Salutations unto Thee, Thou who art all pervading great Lord, who
+art liberation itself, and the vast revealed scripture is Thy embodied
+form. I adore Thee, the unborn, attributeless and unconditioned one.
+Thou art desireless. Thou art the Pure Consciousness robed with the
+garment of sky.
+d) I always adore Rāma, who has the complexion of a blue lotus,
+who is like a fire to the forest of saṁsāra, whose blissful form is
+always adored by Pārvatī in her heart, who puts an end to the jiva's
+attachment to the saṁsāra, and in whom Siva and other godheads
+take refuge.
+
+44
+Chandovallarī qu
+e) न तातो न माता न बन्धुर्न दाता
+Popular Sanskrit Metres
+न पुत्रो न पुत्री न भृत्यो न भर्ता ।
+न जाया न विद्या न वृत्तिर्ममैव
+गतिस्त्वं गतिस्त्वं त्वमेका भवानि ॥
+na tāto na mātā na bandhurna dātā
+putro na putri na bhṛtyo na bhartā
+na jāyā na vidyā na vṛttirmaiva
+gatistvaṁ gatistvaṁ tvamekā bhavāni
+Bhavanyaṣṭakam of Shankaracharya, 1
+f) अजं शाश्वतं कारणं कारणानां
+शिवं केवलं भासकं भासकानाम् ।
+तुरीयं तमःपारमाद्यन्तहीनं
+प्रपद्ये परं पावनं द्वैतहीनम् ॥
+ajaṁ śāśvataṁ kāraṇaṁ kāraṇānāṁ
+śivaṁ kevalaṁ bhāsakaṁ bhāsakānām
+turīyaṁ tamaḥ pāramādyantahīnaṁ 
+prapadye paraṁ pāvanaṁ dvaitahīnam
+Vedasārasivastotram of Shankaracharya, 7
+
+e) Nor father, nor mother, nor comrades, nor giver, nor son, nor
+daughter, nor servant, nor master, nor wife, nor knowledge, nor
+occupation do I have. O Bhavani, Mother of the universe, Thou art
+my sole refuge, Thou my sole refuge.
+f) I take refuge in Him, the Unborn, Eternal, the Cause of all causes,
+the Good, the Absolute, the Light of lights, the Transcendent, the one
+beyond darkness, without beginning and without end, the Supreme
+Purifier, and the One without dualities.
+Chandomañjarī, 2.79
+
+45
+II.3.3. तोटकम् (toṭakam): This metre contains twelve syllables in
+each pāda. The 1st, 2nd, 4th, 5th, 7th, 8th, 10th and 11th
+syllables of each pada of this metre are short and the others
+long. There should be a pause after the 4th, 8th, and last
+syllables of each pāda.
+ स स स स
+Sch. g.uu-uu-uu-uu-
+Def. वद तोटकमब्धिसकारयुतम्
+
+46 Chandovallarī
+a) अधरं मधुरं वदनं मधुरं
+नयनं मधुरं हसितं मधुरं ।
+हृदयं मधुरं गमनं मधुरं
+मधुराधिपतेरखिलं मधुरम् ॥
+adharaṁ madhuraṁ vadanaṁ madhuraṁ
+nayanaṁ madhuraṁ hasitaṁ madhuram
+hṛdayaṁ madhuraṁ gamanaṁ madhuraṁ
+madhurādhipaterakhilaṁ madhuram
+Madhurāṣṭakam of Vallabhacharya, 1
+b) वचनं मधुरं चरितं मधुरं
+वसनं मधुरं वलितं मधुरं ।
+चलितं मधुरं भ्रमितं मधुरं
+मधुराधिपतेरखिलं मधुरम् ॥
+vacanaṁ madhuraṁ caritaṁ madhuraṁ
+vasanaṁ madhuraṁ valitaṁ madhuram
+calitaṁ madhuram bhramitaṁ madhuraṁ
+madhurādhipaterakhilaṁ madhuram
+Madhurāṣṭakam of Vallabhacharya, 2
+Popular Sanskrit Metres
+c) जगदीश सुधीश भवेश विभो
+परमेश परात्पर पूत पितः ।
+प्रणतं पतितं हतबुद्धिबलं
+जनतारण तारय तापितकम् ॥
+jagadīśa sudhiśa bhaveśa vibho
+parameśa parātpara pūta pitaḥ
+pranataṁ patitaṁ hatabuddhibalaṁ
+janatāraṇa tāraya tāpitakam
+47
+a) His lips are sweet, His face is sweet, His eyes are sweet, His smile
+is sweet, His heart is sweet and His gait is sweet. He is the Lord of
+Sweetness. All of Him is sweet.
+b) His words are sweet, His doings are sweet, His clothes are sweet,
+His movements are sweet, His walking is sweet and roving through is
+sweet. He is the Lord of Sweetness. All of Him is sweet.
+☐ Parameśvara-stuti, Stotraratnāvalī, P.18
+d) प्रणमामि नमामि नमामि भवं
+भवजन्मकृतिप्रणिषूदनकम् ।
+गुणहीनमनन्तमितं शरणं
+जनतारण तारय तापितकम् ॥
+praṇamāmi namāmi namāmi bhavaṁ
+bhavajanmakṛtipraniṣūdanakam
+gunahinamanantamitaṁ śaraṇaṁ
+janatāraṇa tāraya tāpitakam
+Parameśvara-stuti, Stotraratnāvalī, P.20
+c) O lord of the world, lord of the intelligence, lord of the universe, O
+All pervading Supreme One, you are beyond all nature, ever pure, O
+Father, protector of all creatures, protect this servant who has come
+to your refuge, who is without knowledge and strength, and who is
+afflicted by the worldly illusion. W 180
+d) O lord, you are the one who set us free from the bondage of our
+births and deeds in this world; I salute you again and again. O Protector
+of the world, O formless and endless One, do protect this servant
+who is afflicted by the worldly illusion and has taken refuge in you.
+48
+Chandovallarī 
+e) चिकुरं बहलं विरलं भ्रमरं 
+मृदुलं वचनं विपुलं नयनम् ।
+अधरं मधुरं वदनं ललितं
+चपलं चरितं नु कदानुभवे ॥
+cikuram bahalaṁ viralaṁ bhramaraṁ 
+mṛdulaṁ vacanaṁ vipulaṁ nayanam
+adharam madhuraṁ vadanaṁ lalitaṁ
+capalaṁ caritaṁ nu kadānubhave
+Popular Sanskrit Metres
+
+Krsnakarṇāmṛtam of Lilasuka, 1.61
+f) मधुरं मधुरं वपुरस्य विभोः
+मधुरं मधुरं वदनं मधुरम् ।
+मधुगन्धिमृदुस्मितमेतदहो
+मधुरं मधुरं मधुरं मधुरम् ॥
+madhuraṁ madhuraṁ vapurasya vibhoḥ
+madhuram madhuraṁ vadanaṁ madhuram
+madhugandhi mṛdusmitametadaho
+madhuram madhuraṁ madhuraṁ madhuram
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.91
+e) His thick knotted hair, the fine rare curls hanging on His forehead,
+His sweet words and gleaming eyes, His sweet lips and lovely face
+with wayward bearings, Oh! When shall I be able to visualilse them
+all.
+f) Beautiful, beautiful is the Lord's form; beautiful, how beautiful His
+face with smiles fragrant like honey; Oh! beautiful, beautiful, how
+beautiful is all of Him.
+nofullt daltowebsite al ode
+Chandomañjarī, 2.95
+49
+II.4. Metres with Thirteen Syllables
+II.4.1. प्रहर्षिणी (praharṣinī): There are thirteen syllables in each
+pāda of this metre. The 1st, 2nd, 3rd, 8th, 10th, 12th and
+13th syllables of each pada of this metre are long and others
+short. There should be a pause after the 3rd and last syllables
+of each pāda.
+      म न ज र  ग
+Sch. g ---uuuu-u-u--
+Def. त्र्याशाभिर्मेनजरगा प्रहर्षिणीयम्
+
+
+50
+EXAMPLES
+Chandovallarī
+a) अश्रान्तस्मितमरुणारुणाधरोष्ठं
+हर्षार्द्रद्विगुणमनोज्ञवेणुगीतम् ।
+विभ्राम्यद्विपुलविलोचनार्धमुग्धं
+वीक्षिष्ये तव वदनाम्बुजं कदा नु ।
+aśrāntasmitamaruṇāruṇādharoṣṭhaṁ
+harşärdradviguṇamanojñaveṇugitam
+vibhrāmyadvipulavilocanardhamugdham
+vikṣiṣye tava vadanāmbujaṁ kadā nu
+
+Kṛṣṇakarṇāmṛtam of Lilasuka, 1.44
+b) अस्तोकस्मितभरमायतायताक्षं
+निःशेषस्तनमृदितं व्रजाङ्गनाभिः ।
+निःसीमस्तवकितनीलकान्तिधारं
+दृश्यासं त्रिभुवनसुन्दरं महस्ते ।।
+
+astokasmitabharamāyatāyatākṣaṁ
+niḥśeṣastanamṛditaṁ vrajānganābhiḥ
+niḥsīmastavakitanīlakāntidhāram
+dṛśyāsaṁ tribhuvanasundaraṁ mahaste
+Krsnakarṇāmṛtam of Lilasuka, 1.28
+Popular Sanskrit Metres
+
+a) The untired smiles on Thy lovely red lips from where flows doubly
+pleasing music of Thy flute, Thy wide rolling half-open eyes so
+enchanting, ah! when shall I behold all these on Thy lotus-like face?
+b) When shall I behold Thy smiling radiant Form held completely
+within the bosoms of cowherd-damsels, with blue halo radiating
+unbounded lustre on all sides, and which is the most beautiful in all
+the three worlds?
+
+
+
+51
+c) स्वच्छन्दं दलदरविन्द ते मरन्दं
+विन्दन्तो विदधतु गुञ्जितं मिलिन्दाः ।
+आमोदानथ हरिदन्तराणि नेतुं
+नैवान्यो जगति समीरणात्प्रवीणः ।।
+svacchandaṁ daladaravinda te marandaṁ 
+vindanto vidadhatu guñjitaṁ milindāḥ
+āmodānatha haridantarāņi netuṁ 
+naivānyo jagati samīraṇāt pravīṇaḥ
+
+Bhāminīvilāsa of Jagannatha, 1.14
+d) दीनानामिह परिहाय शुष्कसस्यान्
+औदार्यं प्रकटयतो महीधरेषु ।
+औन्नत्यं परमवाप्य दुर्मदस्य
+ज्ञातोऽयं जलधर तावको विवेकः ॥
+dīnānāmiha parihāya śuṣkasasyān
+audāryaṁ prakaṭayato mahidhareṣu
+aunnatyaṁ paramavāpya durmadasya
+jñāto'yaṁ jaladhara tāvako vivekaḥ
+
+Bhāminīvilāsa of Jagannatha, 1.91
+
+
+c) O full-blooming lotus, let the bees enjoy your honey and hum at
+their pleasure, but no one else other than the wind in this world is
+capable of spreading your fragrance in all directions.
+lod taom odr
+d) O cloud, your power of discrimination is known to me now, since
+you being proud of your high position, show your generosity towards
+mountains leaving these dry corn-fields of the poor.ielses
+
+52
+Bowl Chandovallarī
+e) योऽम्ब त्वां हृदि विदधत्तटित्प्रकाशां
+पीयूषद्युतिमदहृन्मुखारविन्दाम् ।
+अन्यत्तु स्मृतिपथतो धुनोति सर्वं
+कामारेः सुदति न तस्य भुव्यसाध्यम् ॥
+yo'mba tvāṁ hṛdi vidadhattațiprakāśāṁ
+dab piyūṣadyutimadahṛnmukhāravindām
+anyattu smṛtipathato dhunoti sarvaṁ
+kāmāreḥ sudati na tasya bhuvyasadhyam
+Popular Sanskrit Metres
+
+Umāsahasram of Vasishtha Ganapati Muni, 428
+f) उद्धर्तुं विनतजनं विषादगर्तात्
+संस्कर्तुं भुवनहिताय योगयुक्तम् ।
+संहर्तुं खलकुलमुद्धतं च दर्पाद्
+भर्गस्य प्रियतरुणी सदा सदीक्षा ||
+uddhartum vinatajanaṁ visādagartāt
+samskartum bhuvanahitaya yogayuktam
+saṁhartum khalakulamuddhataṁ ca darpād
+bhargasya priyataruṇī sadā sadīkṣā
+14 Julianega bali Umāsahasram of Vasishtha Ganapati Muni, 
+e) O Mother, the beautiful consort of Lord Siva, Thou shinest like the
+brilliant lightning. Thy lotus-like face makes the beauty of the moon
+dull. Forgetting all else when one remembers Thee alone in his heart,
+has nothing unachieved in the world.
+f) Umā, the Divine Mother, the most beloved consort of Lord Siva, is
+ever conscious to save Her devotees fallen in the hollow of grief and
+sorrow. She perfects the Yogis for the wellbeing of the world. She
+annhilates also the wicked and evil beings inflamed with arrogance.
+Chandomañjarī, 2.112
+
+53
+II.5. Metres with Fourteen Syllables
+II.5.1. quafam
+वसन्ततिरकम्‌  (vasantatilakam): This metre contains four-
+teen syllables in each pāda. Here the 1st, 2nd, 4th, 8th, 11th,
+13th and 14th syllables are long and the others short. There
+should be a pause after the 8th and last syllables of each
+pāda. 
+त भ ज ज ग ग 
+Sch. g. --u-uuu-uu-u--
+Def  ज्ञेयं वसन्ततिलकं तभजा जगौ गः
+
+54
+EXAMPLES
+Chandovallarī
+a) ध्येयं वदन्ति शिवमेव हि केचिदन्ये
+शक्ति गणेशमपरे तु दिवाकरं वै ।
+रूपैस्तु तैरपि विभासि यतस्त्वमेव
+तस्मात्त्वमेव शरणं मम दीनबन्धो ॥
+dhyeyaṁ vadanti śivameva hi kecidanye
+śaktim gaṇeśamapare tu divākaraṁ vai
+rūpaistu tairapi vibhāsi yatastvameva
+tasmāttvameva śaraṇaṁ mama dinabandho
+Śrīhariśaraṇāṣṭakam of Swami Brahmananda, 1
+b) योऽन्तः प्रविश्य मम वाचमिमां प्रसुप्तां
+सञ्जीवयत्यखिलशक्तिधरः स्वधाम्ना ।
+अन्यांश्च हस्तचरणश्रवणत्वगादीन्
+प्राणान्नमो भगवते पुरुषाय तुभ्यम् ॥
+yo'ntaḥ praviśya mama vācamimāṁ prasuptāṁ
+sañjīvayatyakhilaśaktidharaḥ svadhāmnā
+anyāṁśca hastacaraṇaśravaṇatvagādin
+prāṇānnamo bhagavate puruṣāya tubhyam
+Śrīmadbhāgavatam, 4.9.6
+a) Some say Śiva alone is worthy of being meditated upon, others say
+Sakti, yet others Gaṇeśa and still others the Sun. But as Thou alone
+manifestest in all these forms, therefore, O friend of the destitute, I
+take refuge in Thee.
+b) O glorious Lord, salutations to Thee. Thy power of intelligence
+has entered into me rousing my dormant speech. Lord of all powers,
+Thou art the impeller of my action and also of my other organs.
+
+55
+Popular Sanskrit Metres
+c) मज्जन्मनः फलमिदं मधुकैटभारे
+मत्प्रार्थनीय मदनुग्रह एष एव ।
+त्वद्भृत्यभृत्यपरिचारकभृत्यभृत्य-
+भृत्यस्य भृत्य इति मां स्मर लोकनाथ ||
+majjanmanaḥ phalamidaṁ madhukaiṭabhāre
+matprārthaniya madanugraha eşa eva
+tvadbhṛtyabhṛtyaparicārakabhṛtyabhṛtya-
+bhṛtyasya bhṛtya iti māṁ smara lokanātha
+Mukundamālā of Kulashekhara, 28
+d) गङ्गातरङ्गरमणीयजटाकलापं
+गौरीनिरन्तरविभूषितवामभागम् ।
+नारायणप्रियमनङ्गमदापहारं
+वाराणसीपुरपतिं भज विश्वनाथम् ॥
+gangātarangaramaṇīyajaṭākalāpaṁ
+gaurinirantaravibhūṣitavāmabhāgam
+nārāyaṇapriyamanangamadāpahāraṁ
+vārāṇasīpurapatiṁ bhaja viśvanātham
+Viśvanāthāṣṭakam of Vyasadeva, 1
+
+c) O slayer of Madhu and Kaitabha, O Master of all worlds, the
+aspiration of my life is this alone, my prayer this alone, and the gracious
+help which I seek is this alone: Be gracious to know that I am the
+most insignificant of all your servants.
+d) May we worship Viśvanātha, the Lord of Varanasi, whose locks of
+hair look charming along with the ripples of Gangā, who is ever adorned
+on his left by Gauri, who is the beloved of Nārāyaṇa, who is the
+destroyer of Cupid's pride.
+56
+Chandovallarī
+e) मोहान्धकारभरिते हृदयेऽस्मदीये
+मातः सदैव कुरु वासमुदारभावे ।
+स्वीयाखिलावयवनिर्मलसुप्रभाभिः
+शीघ्रं विनाशय मनोगतमन्धकारम् ॥
+mohāndhakārabharite hṛdaye'smadiye
+mātaḥ sadaiva kuru vāsamudārabhāve
+sviyākhilāvayavanirmalasuprabhābhiḥ
+śīghraṁ vināśaya manogatamandhakāram
+Sarasvati-stuti, Stotraratnāvalī, P. 81
+Popular Sanskrit Metres
+
+f) उल्लासयन् कुवलयं धवलस्मितेन
+निघ्नन् तमांसि महसा तपनेक्षितेन ।
+आगामिचित्रबहुलं कुशलं दधानः
+श्रीमान् विभाति भगवानरविन्दनाथः ॥
+ullāsayan kuvalayaṁ dhavalasmitena
+nighnan tamāṁsi mahasā tapanekṣitena
+āgāmicitrabahulaṁ kuśalaṁ dadhānaḥ
+śrīmān vibhāti bhagavānaravindanāthaḥ
+Śrī-aravindastotram of T.V. Kapali Sastri, 1
+
+e) O Compassionate Mother, make your abode permanent in our hearts,
+always filled with ignorance and darkness. O Mother, destroy instantly
+the darkness by the pure lustre of your physical form.
+f) His smile, moon-white, joys the earth into blossoming; His flaming
+eye of light destroys the darkness; the weal of the future picturesque
+He holds in His palm; resplendent shines forth the Lord, Sri Aurobindo.
+Chandomañjarī, 2.134
+
+57
+II.6. Metres with Fifteen Syllables
+II. 6.1. मालिनी (mālinī): This metre has fifteen syllables in each
+pāda. The 1st, 2nd, 3rd, 4th, 5th, 6th, 10th and 13th syllables
+of each pada of this metre are short and the others long.
+There should be a pause after the 8th and last syllables of
+each pāda.
+न न म य य 
+Sch. g. uuuuuu---u--u--
+Def. ननमयययुतेयं मालिनी भोगिलोकैः
+
+58
+EXAMPLES
+Chandovallarī
+a) वटविटपिसमीपे भूमिभागे निषण्णं
+सकलमुनिजनानां ज्ञानदातारमारात् ।
+त्रिभुवनमुरुमीशं दक्षिणामूर्तिदेवं
+जननमरणदुःखच्छेददक्षं नमामि ।।
+vaṭavițapisamipe bhūmibhāge niṣaṇṇaṁ
+sakalamunijanānāṁ jñānadātāramārāt
+tribhuvanamurumīśaṁ dakṣiņāmūrtidevaṁ
+jananamaraṇaduḥkhacchedadakṣaṁ namāmi
+Dakṣiņāmūrtistotram of Shankaracharya, 2
+b) असितगिरिसमं स्यात् कज्जलं सिन्धुपात्रे
+सुरतरुवरशाखा लेखनी पत्रमूर्वी ।
+लिखति यदि गृहीत्वा शारदा सर्वकालं
+तदपि तव गुणानामीश पारं न याति ॥
+asitagirisamaṁ syāt kajjalaṁ sindhupātre
+surataruvaraśākhā lekhanī patramūrvī
+likhati yadi gṛhītvā śāradā sarvakālaṁ
+tadapi tava guṇānāmīśa pāraṁ na yāti
+Śivamahimnastotram of Pushpadanta, 32
+
+
+a) I bow down to Dakṣiņāmūrti, the teacher of the three worlds, the
+Lord, the destroyer of all miseries of birth and death, who seated on
+the ground under the banyan tree grants knowledge to all Rishis
+assembled before Him.
+b) If the goddess of learning Herself were to write for all time with
+the biggest branch of the celestial tree as pen, the whole earth as
+paper, the blue mountain as ink, the ocean as ink-pot, even then, O
+Lord Thy attributes shall not reach the end of their description.
+Popular Sanskrit Metres
+
+59
+c) अतुलितबलधामं हेमशैलाभदेहं
+दनुजवनकृशानुं ज्ञानिनामग्रगण्यम् ।
+सकलगुणनिधानं वानराणामधीशं
+रघुपतिप्रियभक्तं वातजातं नमामि ॥
+atulitabaladhāmaṁ hemaśailābhadehaṁ
+danujavanakṛśānuṁ jñānināmagragaṇyam
+sakalaguṇanidhānaṁ vānarāṇāmadhīśaṁ
+raghupatipriyabhaktaṁ vātajātaṁ namāmi
+Rāmacaritamānasa of Tulasidasa, 5th canto
+d) जयतु जयतु देवो देवकीनन्दनोऽयं
+जयतु जयतु कृष्णो वृष्णिवंशप्रदीपः ।
+जयतु जयतु मेघश्यामलः कोमलाङ्गो
+जयतु जयतु पृथ्वीभारनाशो मुकुन्दः ।।
+jayatu jayatu devo devakinandano'yaṁ
+jayatu jayatu kṛṣṇo vṛṣṇivaṁśapradipaḥ
+jayatu jayatu meghaśyāmalaḥ komalango
+jayatu jayatu pṛthvibhāranāśo mukundaḥ
+Mukundamālā of Kulashekhara, 3
+
+c) I bow to Hanuman, the son of wind-god, the beloved devotee of
+Lord Rama, the chief of the monkeys, the repository of all virtues,
+the foremost among the wise, a fire consuming the forest of demon
+race, whose body shines like a golden mountain and who is an abode
+of immeasurable strength.
+d) Victory to the Supreme Divinity, the delight of Devakī; victory to
+Lord Krishna, the light of vrsni race; victory to that embodiment of
+tender beauty suffused with cloud-blue; victory to Mukunda who
+removes the burden of earth caused by the wicked.
+60
+Chandovallarī
+e) हृदयकमलमध्ये निर्विशेषं निरीहं
+हरिहरविधिवेद्यं योगिभिर्ध्यानगम्यम् ।
+जननमरणभीतिभ्रंशि सच्चित्स्वरूपं
+सकलभुवनबीजं ब्रह्मचैतन्यमीडे ।।
+hṛdayakamalamadhye nirviseṣaṁ nirīhaṁ
+hariharavidhivedyam yogibhirdhyānagamyam
+jananamaraṇabhitibhraṁśi saccitsvarūpaṁ
+sakalabhuvanabijam brahmacaitanyamide
+Mahānirvāṇatantra, III, 50
+Popular Sanskrit Metres
+f) भगवति तव तीरे नीरमात्राशनोऽहं
+विगतविषयतृष्णः कृष्णमाराधयामि ।
+सकलकलुषभङ्गे स्वर्गसोपानसङ्गे
+तरलतरतरङ्गे देवि गङ्गे प्रसीद ।।
+bhagavati tava tīre nīramātrāśano'haṁ
+vigataviṣayatṛṣṇaḥ kṛṣṇamārādhayāmi
+sakalakaluṣabhange svargasopānasange
+taralataratarange devi gange prasida
+Śrīgangāṣṭakam of Shankaracharya, 1
+samānikā (8.5) minus the last syllable.
+e) In my heart-lotus do I contemplate on the Brahman, distinctionless
+and featureless, who is the object of realisation for even the Creator,
+Protector and Destroyer of the universe Himself, to whom Yogis attain
+by meditation; who destroys the fear of birth and death; and who is
+pure Existence, pure Consciousness and the Originator of all worlds.
+f) O Goddess Gangā, may I worship Lord Krishna on your bank by
+taking your water alone. Rippling tremulously, O Gangā, you destroy
+all our sins. As a ladder, your grace helps us to reach heaven, O
+Goddess, be pleased with me.
+
+Chandomañjarī, 2.137
+
+61
+II.6.2. . तूणकम्‌  (tūṇakam): This metre contains fifteen syllables in
+each pāda. The 1st, 3rd, 5th, 7th, 9th, 11th, 13th and 15th
+syllables of each pada of this metre are long and the others
+short. There should be a pause after the 4th, 8th, 12th and
+last syllables of each pāda. One pāda of this metre,
+according to rule, is comparable with two pādas of\
+   र ज र ज र 
+Sch. g. -u-u-u-u-u-u-u-
+Def.तूणकं समानिकापदद्वयं विनान्तिमम्
+
+62
+Chandovallarī
+EXAMPLES
+a) अम्बुदाञ्जनेन्द्रनीलनिन्दिकान्तिडम्बरः
+कुङ्कुमोद्यदर्कविद्युदंशुदिव्यदम्बरः ।
+श्रीमदङ्गचर्चितेन्दुपीतनाक्तचन्दनः
+स्वाङघ्रिदास्यदोऽस्तु मे स वल्लवेन्द्रनन्दनः ।।
+ambudāñjanendranilanindikāntiḍambaraḥ
+kunkumodyadarkavidyudaṁśudivyadambaraḥ
+Śrīmadangacarcitendupītanāktacandanaḥ
+svänghridāsyado'stu me sa vallavendranandanaḥ
+Govindalīlāmxtam of Krishnadasa Kaviraja, 17.50
+b) कुङ्कुमाक्तकाञ्चनाब्जगर्वहारिगौरभा
+पीतनाञ्चिताब्जगन्धकीर्तिनिन्दिसौरभा ।
+वल्लवेशसूनुसर्ववाञ्छितार्थसाधिका
+मह्यमात्मपादपद्मदास्यदास्तु राधिका ॥
+kunkumāktakāñcanābjagarvahārigaurabhā
+pītanāñcitābjagandhakīrtinindisaurabhā
+vallaveśasūnusarvavāñchitārthasādhikā
+mahyamātmapādapadmadāsyadāstu rādhikā
+Govindaliīlāmrtam of Krishnadasa Kaviraja, 17.59
+Popular Sanskrit Metres
+
+a) May Lord Krishna, the dear child of the king of cowherds let me
+serve His feet; He is that Krishna the lustre of whose body disrespects
+the coulour of fresh clouds, collyrium and emerald, whose yellow
+garment is brighter than saffron, rising-sun and the flash of lightning,
+and whose body is anointed with the paste of saffron and sandal.
+b) May Rādhā, the lustre of whose body destroys the pride of golden
+lotus decked with saffron, the scent of whose body despises the sweet
+scent of the lotus decked with saffron; May She, who brings fulfillment
+to all desires of Krishna, let me serve Her feet.
+
+63
+c) निस्तरङ्गपावनान्तरङ्गमानवान्तरं
+भावनातिगप्रभावशक्तियोगभास्वरम् ।
+सुन्दरातिसुन्दरं महोऽरविन्दमन्दिरं
+सूरिवृन्दवन्दनीयमद्भुतं विचिन्त्यताम् ॥
+nistarangapāvanāntarangamānavāntaraṁ
+bhāvanātigaprabhāvaśaktiyogabhāsvaram
+sundarātisundaraṁ mahoravindamandiraṁ
+sūrivṛndavandaniyamadbhutaṁ vicintyatām
+Prārthanam of T.V. Kapali Sastri, 20
+d) सर्वसर्गभूपतेरनन्तभागकल्पना
+कल्पविच्चरेऽचरेऽपि जागरूकचिन्तना ।
+आदिशक्तिरीक्षितेन बिभ्रती जगत्त्रयं
+जीवभावलासिनीह सेयमम्बिका मिरा ॥
+sarvasargabhūpateranantabhāgakalpanā
+kalpaviccare'care'pi jāgarūkacintanā
+ādiśaktirīkṣitena bibhrati jagattrayaṁ
+jīvabhāvalāsiniha seyamambikā mirā
+Mātrmahimā of T. V. Kapali Sastri, 1
+
+c) Let that light, beautiful and yet more beautiful, whose home is Sri
+Aurobindo, be meditated upon - the Light that is the wave-less sacred
+deep, the inmost of man, but which is radiant in union with the Power,
+the Sakti whose splendour outreaches conception, the Light, the
+Wonder worshipped by the Wise.
+d) She - who from the king of All creation takes and forms countless
+portions and knows the process, whose thought is wakeful in the
+mobile and the immobile, who is the primal force, Sakti, holding the
+three worlds in Her gaze, she here as a separate soul shines, Mother
+Mira.
+64
+Chandovallarī
+e) भव्यजन्मवर्धनाय बाल्यधर्मधायिनी
+युक्तलोकसेवनाय युक्तरूपधारिणी ।
+साधनाय नव्यदेहशिल्पशिक्षणार्थिनां
+उल्लसन्नवागमा विराजते मिराम्बिका ॥
+bhavyajanmavardhanāya bālyadharmadhāyinī
+yuktalokasevanāya yuktarūpadhāriṇī
+sādhanāya navyadehaśilpaśikṣaṇārthinām
+ullasannavāgamā virājate mirāmbikā
+Mātṛmahimā of T.V. Kapali Sastri, 3
+Popular Sanskrit Metres
+65
+f) चण्डमुण्डधूम्रनेत्ररक्तबीजनाशिनी
+चन्द्रखण्डचूडचित्तमोहिनी परात्परा ।
+निर्जरीसमूहमौलिरत्नरञ्जिताङघ्रिका
+राजताद्रिवासिनी विलासिनी गतिर्मम ॥
+candamunḍadhūmranetraraktabījanāśinī
+candrakhaṇḍacūḍacittamohinī parātparā
+nirjarīsamūhamauliratnarañjitānghrikā
+rājatādrivāsini vilāsini gatirmama
+Devistotramañjarī of Vasishtha Ganapati Muni, 
+e) For the increase and growth of happy births, she upholds youth's
+nature and law for ever. For the worship of these who are yoked (to
+the Divine) suitable form she wears. For the practice and success of
+those who seek to learn the new physiques' sculpture. She keeps
+aloft the new knowledge at play. Resplendent in glory exists, the Mother
+Mira.
+f) She is the destroyer of the asuras like Canda, Munda, Dhūmranetra,
+Raktabīja. She is the most enchanting beloved of Lord Shiva. Her feet
+are adorned by the jewelled crests of prostrating gods. That
+transcendental and sportive Radiant Mother, who has her abode in the
+silvery mountain, is my refuge.
+
+65
+II.7. Metres with Sixteen Syllables
+II.7.1. पञ्चचामरम्
+(pañcacāmaram): Two pādas of
+pramāṇikā (8.6) metre put together would form one pāda
+of this metre. So, this metre contains sixteen
+syllables in each pada and the arrangement of syllabic groups
+in each pāda of this metre is: ja ra la ga ja ra la ga. Here,
+the 1st, 3rd, 5th, 7th, 9th, 11th, 13th and 15th syllables of each
+pāda are short and the others long. There should be a pause
+after the 4th, 8th, 12th and the last syllables of each pāda.
+ज र ल ग ज र  ल ग
+Sch. g.  u-u-u-u-u-u-u-u-
+Def. प्रमाणिकापदद्वयं वदन्ति पञ्चचामरम्
+
+Chandomañjarī, 2.151
+
+66
+EXAMPLES
+Chandovallarī
+a) नमामि भक्तवत्सलं कृपालुशीलकोमलं
+भजामि ते पदाम्बुजं ह्यकामिनां स्वधामदम् ।
+तदेकमद्भुतं प्रभुं निरीहमीश्वरं विभुं
+जगद्गुरुं च शाश्वतं तुरीयमेककेवलम् ॥
+namāmi bhaktavatsalaṁ kṛpāluśīlakomalaṁ
+bhajāmi te padāmbujaṁ hyakāmināṁ svadhāmadam
+tadekamadbhutaṁ prabhuṁ nirīhamīśvaraṁ vibhum
+jagadguruṁ ca śāśvataṁ turīyamekakevalam
+Rāmacaritamānasa of Tulasidasa, III. 1
+Popular Sanskrit Metres
+
+
+b) मुरारिकायकालिमाललामवारिधारिणी
+तृणीकृतत्रिविष्टपा त्रिलोकशोकहारिणी ।
+मनोनुकूलकूलकुञ्जपुञ्जधूतदुर्मदा
+धुनोतु मे मनोमलं कलिन्दनन्दिनी सदा ।।
+murārikāyakālimālalāmavāridhāriṇī
+tṛṇīkṛtatriviṣṭapā trilokaśokahāriṇī
+manonukūlakūlakuñjapuñjadhūtadurmadā
+dhunotu me manomalaṁ kalindanandini sadā
+Yamunāṣṭakam of Shankaracharya, 1
+
+a) O Lord, Thou art compassionate, gracious and sweet, I bow to
+Thee. Thou alone, O Lord, art marvellous, selfless, mighty and
+omnipresent. Thou art the teacher of the world, eternal, transcendent,
+one and absolute. I worship Thy lotus-feet which enable the selfless
+to attain to Thy eternal abode.
+b) May Yamuna, daughter of Kalinda, whose water is blue and beautiful
+like Krishna, who can mock at heaven by Her ability to end the
+afflictions of three worlds, whose banks have a multitude of gardens,
+and who is the remover of pride in human beings - may that river
+Yamuna always wash away my inner impurities.
+
+67
+
+c) जटाकटाहसम्भ्रमभ्रमन्निलिम्पनिर्झरी
+विलोलवीचिवल्लरीविराजमानमूर्धनि ।
+धगद् धगद् धगज्ज्वलल्ललाटपट्टपावके
+किशोरचन्द्रशेखरे रतिः प्रतिक्षणं मम ॥
+67
+jaṭākaṭāhasambhramabhramannilimpanirjhari-
+vilolavicivallarīvirājamānamūrdhani
+dhagaddhagaddhagajjvalallalaṭapaṭṭapävake
+kiśoracandrasekhare ratiḥ pratikṣaṇaṁ mama
+Śivatāṇḍavastotram of Ravana, 2
+d) कदा निलिम्पनिर्झरीनिकुञ्जकोटरे वसन्
+विमुक्तदुर्मतिः सदा शिरः स्थमञ्जलिं वहन् ।
+विलोललोललोचनो ललामभाललग्नकः
+शिवेति मन्त्रमुच्चरन् कदा सुखी भवाम्यहम् ।।
+kadā nilimpanirjharīnikuñjakoțare vasan
+vimuktadurmatiḥ sadā śiraḥsthamañjaliṁ vahan
+vilolalolalocano lalāmabhālalagnakaḥ
+śiveti mantramuccaran kadā sukhi bhavāmyaham
+Śivatāṇḍavastotram of Ravana, 13
+
+c) May my devotion to Lord Siva be eternal, on whose head shines
+the crescent moon, who has the torrent of surging Gangā swirling
+within the cauldron of his matted locks and whose forehead is bright
+with the fiery glow of His third eye.
+d) Sitting in an arbour near the bank of River Ganga and meditating
+on Lord Siva's beautiful face adorned with crescent moon, chanting
+His sacred name, and praying with folded hands, with eyes anxious
+to get His vision, with mind free from all evil thoughts, these alone
+can make me happy. Oh, when shall all that be accomplished for me.
+68
+Chandovallarī
+e) भजे व्रजैकमण्डनं समस्तपापखण्डनं
+स्वभक्तचित्तरञ्जनं सदैव नन्दनन्दनम् ।
+सुपिच्छगुच्छमस्तकं सुनादवेणुहस्तकं
+अनङ्गरङ्गसागरं नमामि कृष्णनागरम् ॥
+bhaje vrajaikamaṇḍanaṁ samastapāpakhaṇḍanaṁ
+svabhaktacittaranjanaṁ sadaiva nandanandanam
+supicchagucchamastakaṁ sunādaveņuhastakaṁ
+anangarangasāgaraṁ namāmi kṛṣṇanāgaram
+Kṛṣṇāṣṭakam of Shankaracharya, 1
+Popular Sanskrit Metres
+
+f) सदैव पादपङ्कजं मदीयमानसे निजं
+दधानमुत्तमालकं नमामि नन्दबालकम् ।
+समस्तदोषशोषणं समस्तलोकपोषणं
+समस्तगोपमानसं नमामि नन्दलालसम् ॥
+sadaiva pādapankajaṁ madīyamānase nijaṁ
+dadhānamuttamālakaṁ namāmi nandabālakam
+samastadoṣaśoṣaṇaṁ samastalokapoṣaṇaṁ
+samastagopamānasaṁ namāmi nandalālasam
+Kṛṣṇāṣṭakam of Shankaracharya, 4
+e) I adore always Lord Krishna, the son of Nanda, the sole ornament
+of vrajapura, the destroyer of sins and giver of joy to his devotees. I
+salute Lord Krishna, the gallant wearing a peacock feather on head,
+who has a sweet musical flute in his hand and who is an ocean of
+love.
+f) I salute the son of Nanda, whose lotus-feet areafloat on the lake of
+my mind and whose curls look beautiful on his forehead. I salute Him
+again as He is the remover of all sins, protector of all worlds and has
+become one with the heart and soul of the gopis.
+Chandomañjarī, 2.161
+
+69
+II.8. Metres with Seventeen Syllables
+II.8.1  शिखरिणी  (śikhariṇī): This metre contains seventeen syllables
+in each pāda. The 1st, 7th, 8th, 9th, 10th, 11th, 14th, 15th
+and 16th syllables of each pada of this metre are short and
+the others long. There should be a pause after the 6th and
+last syllables of each pāda.
+  	य म न स भ  ल ग
+Sch. g. u-----uuuuu--uuu-
+Def. रसै रुद्रैश्च्छन्ना यमनसभला गः शिखरिणी
+
+70
+EXAMPLES
+Chandovallarī
+a) हर त्वं संसारं द्रुततरमसारं सुरपते
+हर त्वं पापानां विततिमपरां यादवपते ।
+अहो दीनेऽनाथे निहितमचलं निश्चितपदं
+जगन्नाथस्वामी नयनपथगामी भवतु मे ॥
+hara tvaṁ saṁsāraṁ drutataramasāraṁ surapate
+hara tvaṁ pāpānāṁ vitatimaparāṁ yādavapate
+aho dine'nāthe nihitamacalaṁ niścitapadaṁ
+jagannathasvāmī nayanapathagāmī bhavatu me
+Jagannāthāṣṭakam of Shankaracharya, 8
+b) कदा वा कालिन्दीकुवलयदलश्यामलतराः
+कटाक्षा लक्ष्यन्ते किमपि करुणावीचिनिचिताः ।
+कदा वा कन्दर्पप्रतिभटजटाचन्द्रशिशिराः
+कमप्यन्तस्तोषं ददति मुरलीकेलिनिनदाः ।।
+kadā vā kālindikuvalayadalaśyāmalatarāḥ
+kaṭākṣāḥ lakṣyante kimapi karuṇāvīcinicitāḥ
+kadā vā kandarpapratibhatajaṭācandraśiśirāḥ
+kamapyantastoşaṁ dadati muralīkelininadāḥ
+Krsnakarnāmrtam of Lilasuka, 1.26
+Popular Sanskrit Metres
+a) O god of all gods, I pray, free me from all vain fascinations of this
+fleeting world and wipe off all sins from my heart. O Lord, have
+unfailing mercy upon me, so miserable and helpless that I am. O
+mighty Lord of the universe, reveal Thyself unto me.
+b) Ah! when shall I behold those sweet glances of grace beyond
+speech, cast from eyes bluer than the blue lilies in the waters of
+Yamuna? And when shall that flute echo notes more soothing than the
+beams of the moon on the head of Śiva, the enemy of Cupid, and give
+rise within my heart to joy unshakable.
+
+71
+c) त्रयी साङ्ख्यं योगः पशुपतिमतं वैष्णवमिति
+प्रभिन्ने प्रस्थाने परमिदमदः पथ्यमिति च ।
+रुचीनां वैचित्र्याद् ऋजुकुटिलनानापथजुषां
+नृणामेको गम्यस्त्वमसि पयसामर्णव इव ।।
+trayī sānkhyaṁ yogaḥ paśupatimataṁ vaiṣṇavamiti
+prabhinne prasthāne paramidamadaḥ pathyamiti ca
+rucīnāṁ vaicitryād ṛjukuțilanānāpathajuṣāṁ
+nṛṇāmeko gamyastvamasi payasāmarṇava iva
+Sivamahimnastotram of Pushpadanta, 7
+d) विधात्री धर्माणां त्वमसि सकलाम्नायजननी
+त्वमर्थानां मूलं धनदनमनीयाङघ्रिकमले ।
+त्वमादिः कामानां जननि कृतकन्दर्पविजये
+सतां भक्तेर्बीजं त्वमसि परमब्रह्ममहिषी ।।
+vidhātrī dharmāṇāṁ tvamasi sakalāmnāyajananī
+tvamarthānāṁ mülaṁ dhanadanamaniyānghrikamale
+tvamādiḥ kāmānāṁ janani kṛtakandarpavijaye
+satāṁ bhakterbijaṁ tvamasi paramabrahmamahişi
+Anandalahari of Shankaracharya, 8
+
+c) There are many paths of realisation enjoined in the three Vedas,
+Sānkhya, Yoga, Pāśupata doctrine, and Vaisnava śāstras. All following
+them, straight or labyrinthine depending how one chooses it by one's
+temperament, reach Thee alone, just as rivers meet the ocean.
+d) Thou art the ordainer of all scriptures and the regulator of all
+religious paths and righteousness. All wealth originates from Thee
+and Thy lotus-feet are worshipped by god of wealth himself. O Mother,
+Thou art the primal cause of all desires conquerer of all passions.
+Verily, Thou being the consort and the power of the supreme Brahman,
+art the cause of the devotion in the good.
+72
+Chandovallarī
+e) न मोक्षस्याकाङ्क्षा न च विभववाञ्छापि हृदि मे
+न विज्ञानापेक्षा शशिमुखि सुखेच्छापि न पुनः ।
+अतस्त्वां संयाचे जननि जननं यातु मम वै
+मृडानी रुद्राणी शिव शिव भवानीति जपतः ।।
+na mokṣasyākānkṣā na ca vibhavavāñchāpi hṛdi me
+na vijñānāpekṣā śaśimukhi sukhecchāpi na punaḥ
+atastvāṁ saṁyāce janani jananaṁ yātu mama vai
+mṛḍānī rudrāņi śiva śiva bhavānīti japataḥ
+Devyaparādhakṣamāpanastotram of Shankaracharya, 8
+f) पिता त्वं माता त्वं दयिततनयस्त्वं प्रियसुहृत्
+त्वमेव त्वं मित्रं गुरुरसि गतिश्चासि जगताम् ।
+त्वदीयस्त्वद्भृत्यस्तव परिजनस्त्वद्गतिरिह
+प्रपन्नश्चैवं सत्यहमपि तवैवास्मि हि भरः ॥
+pitā tvaṁ mātā tvaṁ dayitatanayastvaṁ priyasuhṛt
+tvameva tvaṁ mitraṁ gururasi gatiścāsi jagatām
+tvadiyastvadbhṛtyastava parijanastvadgatiriha
+prapannaścaivaṁ satyahamapi tavaivāsmi hi bharaḥ
+Stotraratna of Yamunacharya, 60
+Popular Sanskrit Metres
+e) I have no desire for liberation, nor hankering after wealth. Neither
+do I cherish knowledge, nor desire for happiness. O Mother Divine,
+this alone I beg of Thee; may I pass my life in reciting Thy glorious
+names, Mrdānī, Rudrānī and Bhavānī.
+f) Thou art my father, Thou my mother, Thou my beloved son, Thou
+my confidant, and Thou the preceptor and refuge of the worlds. I am
+Thine, Thy servant, Thy attendant, and Thou being my goal, I take
+refuge in Thee. Thus, O Lord, all my load is on Thee.
+Chandomañjarī, 2.162
+73
+II. 8.2. पृथ्वी (pythvī): This metre contains seventeen syllables in each
+pāda. Here the 1st, 3rd, 4th, 5th, 7th, 9th, 10th, 11th, 13th
+and 16th syllables of each pāda are short and the others long.
+There should be a pause after the 8th and last syllables of
+each pāda.
+		ज स ज स य  ल ग 
+Sch. g. u-uuu-u-uuu-u--u-
+Def.जसौ जसयला वसुग्रहयतिश्च पृथ्वी गुरुः
+
+74
+EXAMPLES
+
+a) करौ शरदिजाम्बुजक्रमविलासशिक्षागुरुः
+पदौ विबुधपादपप्रथमपल्लवोल्लङ्घिनौ ।
+दृशौ दलितदुर्मदत्रिभुवनोपमानश्रियौ
+विलोकय विलोचनामृतमहो महः शैशवम् ॥
+karau śaradijāmbujakramavilāsaśikṣāguruḥ
+padau vibudhapādapaprathamapallavollanghinau
+dṛśau dalitadurmadatribhuvanopamānasriyau
+vilokaya vilocanāmṛtamaho mahaḥ śaiśavam
+Krsnakarnāmrtam of Lilasuka, 1.85
+b) कलक्वणितकङ्कणं करनिरुद्धपीताम्बरं
+पुनः प्रकृतिचापलं प्रणयिनीभुजायन्त्रितं
+क्रमप्रसृतकुन्तलं कलितबर्हभूषं विभोः ।
+मम स्फुरतु मानसे मदनकेलिशय्योत्थितम् ।।
+kalakvaṇitakankaṇaṁ karaniruddhapītāmbaraṁ
+kramaprasṛtakuntalaṁ kalitabarhabhūṣaṁ vibhoḥ
+punaḥ prakṛticāpalaṁ praṇayinībhujāyantritaṁ
+mama sphuratu mānase madanakeliśayyotthitam
+Krsnakarnāmrtam of Lilasuka, 1.20
+Popular Sanskrit Metres
+
+a) The two hands imparting lessons in a beautiful, manner, as it were,
+unto the lotus full-bloom in autumn; the two feet surpassing in
+tenderness, the first fresh offshoots on the celestial tree; the two eyes
+excelling in loveliness all that in three worlds known as beautiful;
+behold this wondrous child-form ambrosial to eyes; do behold it, O
+my eyes.
+b) May the Lord rising from his night-chamber, with bracelets tinkling
+sweet, slipping saffron scarf held in hand, putting curls and peacock's
+feather back in place, half-leaning in the arms of His beloved
+embracing Him - May this poise of the Lord shine in my heart.
+
+75
+c) नमः सवितृतेजसे भरतभूजुषे तस्थुषे
+नमो भरतमेदिनीतनुभृते रहस्यार्चिषे ।
+नमः परमपावनश्रुतविदां सवित्र्यै नमः
+नमो नम इदम्प्रसु प्रभु गिरां भवत्यै नमः ॥
+namaḥ savitṛtejase bharatabhūjuṣe tasthuse
+namo bharatamedinītanubhṛte rahasyārciṣe
+namaḥ paramapāvanaśrutavidāṁ savitryai namaḥ
+namo nama idamprasu prabhu girāṁ bhavatyai namaḥ
+humatondiba Bhāratīstava of T.V. Kapali Sastri, p.25
+d) पुरा सरसि मानसे विकचसारसालिस्खलत्-
+परागसुरभीकृते पयसि यस्य यातं वयः ।
+स पल्वलजलेऽधुना मिलदनेकभेकाकुले
+मरालकुलनायक कथय रे कथं प्रवर्तताम् ।।
+purā sarasi mānase vikacasārasāliskhalat-
+parāgasurabhikṛte payasi yasya yātaṁ vayaḥ
+sa palvalajale'dhunā miladanekabhekākule
+marālakulanāyaka kathaya re kathaṁ pravartatām
+Bhāminīvilāsa of Jagannatha, 1.2
+
+c) Salutations to the splendour of the sun which permanently serves
+the land of Bharata, salutations to the mystic flame which nurtures
+the body of the land of Bharata, salutations to the mother of the ever
+purified scholars, O Mother of all these, salutations to you, O Mother
+of speech, salutations to you.
+d) Say how the leader of swan-family who lived earlier in the lake of
+mānasa whose water is fragrant by the pollen falling from the rows
+of full-bloom lotuses, should now bear to be in a pudle full of frogs.
+76
+Chandovallarī
+e) कदम्बवनचारिणीं मुनिकदम्बकादम्बिनीं
+नितम्बजितभूधरां सुरनितम्बिनीसेविताम् ।
+नवाम्बुरुहलोचनामभिनवाम्बुदश्यामलां
+त्रिलोचनकुटुम्बिनीं त्रिपुरसुन्दरीमाश्रये ॥
+kadambavanacāriṇīṁ munikadambakādambinīm
+nitambajitabhūdharāṁ suranitambinīsevitām
+navāmburuhalocanāmabhinavāmbudaśyāmalāṁ
+trilocanakuțumbinim tripurasundarīmāśraye
+Tripurasundaristotram of Shankaracharya, 8
+Popular Sanskrit Metres
+e) I take refuge in Tripurasundari, the consort of the three-eyed Śiva,
+who wanders in the kadamba forest, who moves like a cluster of
+charming clouds in the sky of the heart of sages, who has a beautiful
+form, who is served by the celestial maids, who has three eyes like
+freshly blossomed lotuses and who resembles in colour the fresh
+clouds.
+f) I take refuge in Tripurasundari, the consort of the three-eyed Śiva,
+who dwells in the kadamba forest, who holds a golden flute and
+wears a necklace of priceless gems, whose face is flushed with wine,
+who with grace and large-eyes is the giver of prosperity and protection
+to Her devotees.
+
+77
+f) कदम्बवनवासिनीं कनकवल्लकीधारिणीं
+दयाविभवकारिणीं विशदलोचनीं वारिणीं
+महार्हमणिहारिणीं मुखसमुल्लसद्वारिणीम् ।
+त्रिलोचनकुटुम्बिनीं त्रिपुरसुन्दरीमाश्रये ॥
+kadambavanavāsinīṁ kanakavallakīdhāriṇīṁ
+mahārhamaṇihāriṇīṁ mukhasamullasadvāriṇīm
+dayāvibhavakāriṇīṁ viśadalocanīṁ vāriṇīṁ
+trilocanakutumbinim tripurasundarīmāśraye
+Tripurasundaristotram of Shankaracharya, 2
+II. 8.3. मन्दाक्रान्ता (mandākrāntā ): This metre contains seventeen
+syllables in each pāda. The 1st, 2nd, 3rd, 4th, 10th, 11th,
+13th, 14th, 16th and 17th syllables of each pāda of this metre
+are long and the others short. There should be a pause after
+the 4th, 10th and last syllables of each pāda.
+		म भ न ग ग य य 
+Sch. g. ----uuuuu--u--u--
+Def. मन्दाक्रान्ताऽम्बुधिरसनगम भनौ गौ ययुग्मम्
+Chandomañjarī, 2.164
+
+78
+EXAMPLES
+Chandovallarī
+a) मन्दं मन्दं मधुरनिनदैर्वेणुमापूरयन्तं
+वृन्दं वृन्दावनभुवि गवां चारयन्तं चरन्तम् ।
+छन्दोभागे शतमखमखध्वंसिनां दानवानां
+हन्तारं तं कथय रसने गोपकन्याभुजङ्गम् ॥
+mandaṁ mandaṁ madhuraninadairveņumāpūrayantaṁ
+vṛndaṁ vṛndāvanabhuvi gavāṁ carayantaṁ carantam
+chandobhāge satamakhamakhadhvaṁsināṁ dānavānāṁ
+hantāraṁ taṁ kathaya rasane goapakanyābhujangam
+Krsnakarnāmrtam of Lilasuka, 2.6
+b) माधुर्येण द्विगुणशिशिरं वक्त्रचन्द्रं वहन्ती
+वंशीवीथीविगलदमृतस्रोतसा सेचयन्ती ।
+मद्वाणीनां विहरणपदं मत्तसौभाग्यभाजां
+मत्पुण्यानां परिणतिरहो नेत्रयोः सन्निधत्ते ।।
+mādhuryeņa dviguṇaśiśiraṁ vaktracandraṁ vahantī
+vaṁśīvīthivigaladamṛtaṁ srotasa secayanti
+madvāṇīnāṁ viharaṇapadaṁ mattasaubhagyabhājāṁ
+matpuṇyānāṁ pariṇatiraho netrayoḥ sannidhatte
+Krsnakarnāmrtam of Lilasuka, 1.74
+Popular Sanskrit Metres
+a) He who gently fills the flute with sweet notes, who in Vṛndāvana
+walks driving herds of cows, who is glorified in the Vedas as the
+slayer of demons who tried to destroy the sacrifice of Indra, and who
+is the paramour of the gopīs, Him, O tongue, do thou sing of.
+b) Bearing a moon-like face doubly gracious in sweetness, flooding
+my blessed and intoxicated speech with the nectar of the melodious
+flute, Lo, incarnates before my eyes, the fruit of my meritorious deeds.
+
+79
+c) ब्रह्मानन्दं परमसुखदं केवलं ज्ञानमूर्ति
+द्वन्द्वातीतं गगनसदृशं तत्त्वमस्यादिलक्ष्यम् ।
+एकं नित्यं विमलमचलं सर्वधीसाक्षिभूतं
+भावातीतं त्रिगुणरहितं सद्गुरुं तं नमामि ॥
+brahmānandaṁ paramasukhadaṁ kevalaṁ jñānamurtim
+dvandvātītaṁ gaganasadṛśaṁ tattvamasyādilakṣyam
+ekaṁ nityaṁ vimalamacalaṁ sarvadhīsākṣibhūtaṁ
+bhāvātītaṁ triguṇarahitaṁ sadguruṁ taṁ namāmi
+Gurustotram of Viśvasāra Tantra, 14
+d) नास्था धर्मे न वसुनिचये नैव कामोपभोगे
+यद्यद् भव्यं भवतु भगवन् पूर्वकर्मानुरूपम् ।
+एतत् प्रार्थ्यं मम बहुमतं जन्मजन्मान्तरेऽपि
+त्वत्पादाम्भोरुहयुगगता निश्चला भक्तिरस्तु ॥
+nāsthā dharme na vasunicaye naiva kāmopabhoge
+yadyad bhavyaṁ bhavatu bhagavan pūrvakarmānurūpaṁ
+etat prārthyaṁ mama bahumataṁ janmajanmāntare'pi
+tvatpādāmbhoruhayugagatā niścalā bhaktirastu
+Mukundamālā of Kulashekhara, 5
+
+c) Salutations to the true Guru, the embodiment of the Bliss of
+Brahman, the bestower of supreme happiness, the absolute, the
+knowledge incarnate, the one beyond duality, as vast as the sky, the
+one indicated by the Vedic utterance "Thou art That". Salutations to
+Him, the One, Eternal, Pure, Immovable, the Witness of all intellect,
+the one beyond all tastes and untainted by the three guṇas of Nature.
+d) O Lord, I have no hope for Dharma, no desire for accession of
+wealth and enjoyment of sense pleasures. Whatever is destined by the
+merits of my previous deeds, may it come to pass. My prayer to Thee
+is that, O Lord, in my birth after birth, may I have deep and unwavering
+devotion to Thy lotus-feet.
+80
+Chandovallarī
+e) तृष्णातोये मदनपवनोद्धूतमोहोर्मिमाले
+दारावर्ते तनयसहजग्राहसङ्घाकुले च ।
+संसाराख्ये महति जलधौ मज्जतां नस्त्रिधामन्
+पादाम्भोजे वरद भवतो भक्तिनावं प्रयच्छ । ।
+tṛṣṇātoye madanapavanoddhūtamohormimāle
+dārāvarte tanayasahajagrāhasanghākule ca
+saṁsārākhye mahati jaladhau majjatāṁ nastridhāman
+pādāmbhoje varada bhavato bhaktināvaṁ prayaccha
+Mukundamālā of Kulashekhara, 14
+f) तोयैरल्पैरपि करुणया भीमभानौ निदाघे
+मालाकार व्यरचि भवता या तरोरस्य पुष्टिः ।
+सा किं शक्या जनयितुमिह प्रावृषेण्येन वारां
+धारासारानपि विकिरता विश्वतो वारिदेन ॥
+toyairalpairapi karuṇayā bhīmabhānau nidāghe
+mālākāra vyaraci bhavatā yā tarorasya puştiḥ
+sā kim śakyā janayitumiha prāvṛṣeṇyena vārāṁ
+dhārāsārānapi vikiratā viśvato vāridena
+Bhāminīvilāsa of Jagannatha, 1.28
+e) We are sinking in the terrible ocean of saṁsāra whose water of
+insatiable desires curls into waves of maddening infatuations stirred
+by strong wind of lust and is further infested with large crocodiles in
+the form of brothers and sons as well as the whirlpool of wives (or
+husbands). O fulfiller of all desires, O omnipresent Lord, may we be
+able to retain our deep devotion to Thy lotus-feet which alone can be
+our boat to cross this ocean of saṁsāra.
+f) O gardener! will the heavy downpours from clouds in all directions
+in the rainy season be able to nurture the tree with same care and
+affection as you do with little water in hot summer?
+Popular Sanskrit Metres
+81
+II.9. Metres with Nineteen syllables
+II.9.1. शार्दूलविक्रीडितम् (śārdūlavikrīditam): This metre contains
+nineteen syllables in each pāda. The 1st, 2nd, 3rd, 6th, 8th,
+12th, 13th, 14th, 16th, 17th and 19th syllables of each pāda
+of this metre are long and the others short. There should be
+a pause after the 12th and last syllables of each pāda.
+		म स ज स त त ग 
+Sch. g.---uu-u-uuu---u--u-
+Def. सूर्याश्वैर्मेसजस्तताः सगुरवः शार्दूलविक्रीडितम्
+Chandomañjarī, 2.196
+82
+EXAMPLES
+a)
+Chandovallarī
+कस्तूरीतिलकं ललाटपटले वक्षःस्थले कौस्तुभम्
+नासाग्रे वरमौक्तिकं करतले वेणुं करे कङ्कणम् ।
+सर्वाङ्गे हरिचन्दनं च कलयन् कण्ठे च मुक्तावलीं
+गोपस्त्रीपरिवेष्टितो विजयते गोपालचूडामणिः ।।
+kastūrītilakaṁ lalāṭapaṭale vakṣaḥsthale kaustubhaṁ
+nāsāgre varamauktikaṁ karatale veņuṁ kare kankaṇam
+sarvānge haricandanaṁ ca kalayan kaṇṭhe ca muktāvalīṁ
+gopastrīparivestito vijayate gopālacūḍāmaṇiḥ
+Krsnakarnāmrtam of Lilasuka, 2.108
+b) खड्गं चक्रगदेषुचापपरिघान् शूलं भुशुण्डीं शिरः
+शङ्खं सन्दधतीं करैस्त्रिनयनां सर्वाङ्गभूषावृताम् ।
+यां हन्तुं मधुकैटभौ जलजभूस्तुष्टाव सुप्ते हरौ
+नीलाश्मद्युतिमास्यपाददशकां सेवे महाकालिकाम् ।।
+khadgam cakragadeṣucāpaparighān śülaṁ bhusuṇḍīṁ śiraḥ
+sankhaṁ sandadhatim karaistrinayanāṁ sarvāngabhūṣāvṛtām
+yāṁ hantum madhukaiṭabhau jalajabhūstuṣṭāva supte harau
+nīlāśmadyutimāsyapādadaśakāṁ seve mahākālikām
+Devīmāhātmyam, 1.1
+
+a) Having a musk-mark on the forehead, kaustubha gem on chest, and
+a lustrous fresh pearl pendant on the tip of His nose, holding the flute in
+hands, adorned with wristlets, with sandal paste all over the body, with
+a string of pearls around the neck - He, the crest-jewel of the cowherd
+race, triumphs for ever, surrounded by the cowherd damsels.
+b) I seek Mahākālī with ten faces, ten legs, and with sword, disc,
+mace, arrows, bow, club, spear, missile, human skulls and conch in
+her hands, who is three-eyed, and with ornaments adorning all Her
+limbs who shines like a blue jewel, whom Brahma worshipped in order
+to destroy Madhu and Kaiṭabha when Vishnu was in a mystic sleep.
+
+83
+Popular Sanskrit Metres
+c) हे गोपालक हे कृपाजलनिधे हे सिन्धुकन्यापते
+हे कंसान्तक हे गजेन्द्रकरुणापारीण हे माधव ।
+हे रामानुज हे जगत्त्रयगुरो हे पुण्डरीकाक्ष मां
+हे गोपीजननाथ पालय परं जानामि न त्वां विना ।।
+
+he gopālaka he kṛpājalanidhe he sindhukanyāpate
+he kaṁsāntaka he gajendrakaruṇāpārīṇa he mādhava
+he rāmānuja he jagattrayaguro he puṇḍarīkākṣa māṁ
+he gopijananātha palaya paraṁ jānāmi na tvāṁ vinā
+Mukundamālā of Kulashekhara, 22
+d) यं शैवाः समुपासते शिव इति ब्रह्मेति वेदान्तिनो
+बौद्धा बुद्ध इति प्रमाणपटवः कर्तेति नैयायिकाः ।
+अर्हन्नित्यथ जैनशासनरताः कर्मेति मीमांसकाः
+सोऽयं नो विदधातु वाञ्छितफलं त्रैलोक्यनाथो हरिः ।।
+yaṁ śaivā samupāsate śiva iti brahmeti vedāntino
+bauddha buddha iti pramāṇpaṭavaḥ karteti naiyāyikāḥ
+arhannityatha jainaśāsanaratāḥ karmeti mīmāṁsakāḥ
+so'yaṁ no vidadhātu vāñchitaphalaṁ trailokyanātho hariḥ
+Hanumannātakam of Hanuman, 1.1
+
+c) O Thou, who as a tender cowherd boy looked after the cows of
+Vrndāvana, O ocean of compassion, consort of ocean-born Laksmī, O
+slayer of Kamsa, bestower of endless mercy upon the elephant king in
+distress, O Madhava, O younger brother of Balarama, O Preceptor of
+three worlds, O lotus-eyed one, O Lord of the gopīs of Vrndāvana,
+deign to save me, as I know none other than Thee as supreme.
+d) May the Lord of the universe, whom devotees of Śiva worship as
+Siva, the Vedantins as Brahman, the Buddhist as Buddha, the followers
+of nyāya philosophy as the Agent, those devoted to Jaina doctrines as
+Arhat, the ritualists of mimmāsā school as karma - May He fulfill all
+our hearty desires.
+84
+Chandovallarī
+e) वेदान्तेषु यमाहुरेकपुरुषं व्याप्य स्थितं रोदसी
+यस्मिन्नीश्वर इत्यनन्यविषयः शब्दो यथार्थाक्षरः ।
+अन्तर्यश्च मुमुक्षुभिर्नियमितप्राणादिभिर्मृग्यते
+यः स्थाणुः स्थिरभक्तियोगसुलभो निःश्रेयसायास्तु वः ।।
+vedānteṣu yamāhurekapuruşaṁ vyāpya sthitaṁ rodasī
+yasminniśvara ityananyaviṣayaḥ śabdo yathārthākṣaraḥ
+antaryaśca mumukṣubhirniyamitaprāṇādibhirmṛgyate
+yaḥ sthānuḥ sthirabhaktiyogasulabho niḥśreyasāyāstu vaḥ
+Vikramorvasiyam of Kalidasa, 1.1
+f) शान्तं शाश्वतमप्रमेयमनघं निर्वाणशान्तिप्रदं
+ब्रह्माशम्भुफणीन्द्रसेव्यमनिशं वेदान्तवेद्यं विभुम् ।
+रामाख्यं जगदीश्वरं सुरगुरुं मायामनुष्यं हरिं
+वन्देऽहं करुणाकरं रघुवरं भूपालचूडामणिम् ॥
+śāntaṁ śāśvatamaprameyamanaghaṁ nirvāṇaśāntipradaṁ
+brahmāśambhuphanindrasevyamaniśaṁ vedantavedyaṁ vibhum
+rāmākhyaṁ jagadīśvaraṁ suraguruṁ māyāmanuṣyaṁ harim
+vande'haṁ karuṇākaraṁ raghuvaraṁ bhūpālacūḍāmaṇim
+Rāmacaritamānasa of Tulasidasa, 5.1
+Popular Sanskrit Metres
+e) May the Eternal Lord who is attainable by firm faith and meditation,
+who is acclaimed as the Supreme Spirit in the Vedanta, who pervades
+earth and sky by his omnipresence, for whom the epithet Lord is
+proper, and who is sought within by those desiring salvation by control
+of vital breaths, May He bestow upon you all highest bliss.
+f) I bow to Lord Rāma, the best of the Raghus, the crest-jewel of
+kings, the mine of compassion, the Lord of the universe, the Teacher
+of Gods, calm, eternal, immeasurable, free from blemishes, giver of
+peace of Nirvana, served always by Brahma, the creator, Shambhu,
+the destroyer and the Snake-king, the mighty Lord knowable only
+through Vedanta.
+85
+II.10. Metres with Twenty-one Syllables
+II. 10.1. सग्धरा (sragdhara): This metre contains twenty-one
+syllables in each pāda. The 1st" 2nd, 3rd, 4th, 6th, 7th,
+14th, 15th, 17th, 18th, 20th and 21st syllables of each pāda
+of this metre are long and the others short. There should
+be a pause after the 7th, 14th and 21st syllables of each
+pāda.
+		म र भ न य य य 
+Sch. g. ----u--uuuuuu--u--u--
+Def. म्रभ्नैर्यानां त्रयेण त्रिमुनियतियुता स्रग्धरा कीर्तितेयम्
+Chandomañjarī, 2.210
+
+
+86
+a) मौलौ मायूरबर्ह मृगमदतिलकं चारुलालाटपट्टे
+कर्णद्वन्द्वे च तालीदलमतिमृदुलं मौक्तिकं नासिकायाम् ।
+हारो मन्दारमालापरिमलभरिते कौस्तुभस्योपकण्ठे
+पाणौ वेणुश्च यस्य व्रजयुवतियुतः पातु पीताम्बरो नः ।।
+maulau māyūrabarhaṁ mṛgamadatilakaṁ carulālāṭapaṭṭe
+karṇadvandve ca tālīdalamatimṛdulaṁ mauktikaṁ nāsikāyām
+hāro mandāramālāparimalabharite kaustubhasyopakanthe
+pāņau veņuśca yasya vrajayuvatiyutaḥ pātu pītāmbaro naḥ
+Kṛṣṇakarṇāmṛtam of Lilasuka, 2.92
+b) रामं कामारिसेव्यं भवभयहरणं कालमत्तेभसिंहं
+योगीन्द्रं ज्ञानगम्यं गुणनिधिमजितं निर्गुणं निर्विकारम् ।
+मायातीतं सुरेशं खलवधनिरतं ब्रह्मवृन्दैकदेवं
+वन्दे कन्दावदातं सरसिजनयनं देवमुर्वीशरूपम् ॥
+rāmaṁ kāmārisevyaṁ bhavabhayaharaṇaṁ kālamattebhasimhaṁ
+yogindraṁ jñānagamyaṁ gunanidhimajitaṁ nirguṇaṁ nirvikāram
+māyātītaṁ sureśaṁ khalavadhanirataṁ brahmavṛndaikadevaṁ
+vande kandāvadātaṁ sarasijanayanaṁ devamurvīśarūpam
+Rāmacaritamānasa of Tulasidasa, 6.1
+a) He who wears on His crest the peacock-plume, on His forehead a
+musk-mark and on two ears the tender palm-shoots, on His nose a
+pearl-pendant and on chest the kaustubha gem and a garland of exquisite
+fragrant hibiscus flowers, who holds in His hand the flute, may He
+who shines with saffron robe in the company of loving cowherdesses,
+protect us.
+b) I adore Lord Rāma, the Supreme Deity, object of worship even to
+Siva, dispeller of the fear of birth and death, the lion who quelled the
+mad elephant of Death, the master of Yogis, the one attainable through
+immediate knowledge, the storehouse of divine qualities yet without
+any attribute, unconquerable by any, immutable, beyond māyā, the Lord
+of celestial beings, keen to destroy evil beings, the only protector of the
+Brahmins, most splendidly beautiful Lord having lotus-like eyes who
+came on the earth as a mundane king.
+Popular Sanskrit Metres
+c) ब्रह्माण्डच्छत्रदण्डः शतधृतिभवनाम्भोरुहनालदण्डः
+क्षोणीनौ कूपदण्डः क्षरदमरसरित्पट्टिकाकेतुदण्डः ।
+ज्योतिश्चक्राक्षदण्डस्त्रिभुवनविजयस्तम्भदण्डोऽङघ्रिदण्डः
+श्रेयस्त्रैविक्रमस्ते वितरतु विबुधद्वेषिणां कालदण्डः ।।
+87
+brahmaṇḍacchatradandaḥ śatadhṛtibhavanāmbhoruhanāladaṇḍaḥ
+kṣoņinau kūpadaṇḍaḥ kṣaradamarasaritpaṭṭikāketudanḍaḥ
+jyotiścakrākṣadanḍastribhuvanavijayastambhadando'nghridandah
+śreyastraivikramaste vitaratu vibudhadveṣiņām kāladaṇḍaḥ
+Daśakumāracaritam of Dandi, 1.1
+d) सानन्दं नन्दिहस्ताहतमुरजरवाहूतकौमारबर्हि-
+त्रासान्नासाग्ररन्ध्रं विशति फणिपतौ भोगसङ्कोचभाजि ।
+गण्डोड्डीनालिमालामुखरितककुभस्ताण्डवे शूलपाणे-
+र्वैनायक्यश्चिरं वो वदनविधुतयः पान्तु चीत्कारवत्यः ।।
+sānandaṁ nandihastāhatamurajaravāhutakaumārabarhi-
+trāsānnāsāgrarandhraṁ viśati phaṇipatau bhogasankocabhāji
+gandoḍḍīnālimālāmukharitakakubhastāṇḍave śūlapāṇer-
+vaināyakyaściraṁ vo vadanavidhutayaḥ pāntu cītkāravatyaḥ
+Mālatīmādhavam of Bhavabhuti, 1.1
+c) May the sustainer of world, the staff-like feet of Lord Visņu, bring
+good furtune - the boon which constitutes the pole of the umbrella
+protecting the universe, which is the long stalk of the lotus, the birth-
+place of Brahma, and is the main mast of mundane ship, which serves
+as the flag-staff of the banner-like heavenly river gliding along the sky,
+and is wheel-axis of the firmament of stars, and is pillar that proclaiming
+His victory over the three worlds, and which spells death to the enemies
+of Gods, the demons.
+d) May the agitations and fearsome cries of Lord Gaṇeśa which were
+occasioned at the time of the vehement dance of Lord Siva as the
+serpent king with his body contracted, entered into the front aperture
+his nostril through the fear of Kartikeya's peacock that was attracted
+by the sound of the tabor joyfully beaten by an attendant of Lord Siva,
+and which made the directions resound with the buzzing of the swarms
+of the bees flying up from his temples, - may long protect you.
+88
+an Chandovallarī
+e) ब्रह्मा रुद्रः कुमारो हरिवरुणयमा वह्निरिन्द्रः कुबेर-
+श्चन्द्रादित्यौ सरस्वत्युदधियुगनगा वायुरुर्वीभुजङ्गाः ।
+सिद्धा नद्योऽश्विनौ श्रीर्दितिरदितिसुता मातरश्चण्डिकाद्या
+वेदास्तीर्थानि यज्ञा गणवसुमुनयः पान्तु नित्यं ग्रहाश्च ॥
+brahmā rudraḥ kumāro harivaruṇayamā vahnirindraḥ kubera-
+ścandrādityau sarasvatyudadhiyuganagā vāyururvībhujangāḥ
+siddhā nadyo'śvinau śrīrditiraditisutā mātaraścaṇḍikādyā
+vedāstīrthāni yajñā gaṇavasumunayaḥ pāntu nityaṁ grahāśca
+Pañcatantram of Vishnusharma, 1.1
+f) या सृष्टिः स्रष्टुराद्या वहति विधिहुतं या हविर्या च होत्री
+ये द्वे कालं विधत्तः श्रुतिविषयगुणा या स्थिता व्याप्य विश्वम् ।
+यामाहुः सर्वबीजप्रकृतिरिति यया प्राणिनः प्राणवन्तः
+प्रत्यक्षाभिः प्रपन्नस्तनुभिरवतु वस्ताभिरष्टाभिरीशः ।।
+yā sṛṣṭiḥ sraṣṭurādyā vahati vidhihutaṁ yā haviryā ca hotrī
+ye dve kālaṁ vidhattaḥ śrutiviṣayaguṇā yā sthitā vyāpya viśvam
+yāmāhuḥ sarvabījaprakṛtiriti yayā prāṇinaḥ prāṇavantaḥ
+pratyakṣābhiḥ prapannastanubhiravatu vastābhiraṣṭābhirīśaḥ
+Abhijñānaśākuntalam of Kalidasa, 1.1
+e) Brahmā, the creator, Lord Siva, Kumāra, the son of Pārvatī, Lord
+Visņu, Varuna, the Lord of water, Yama, the god of Death, Indra, the
+god of Mind, Kubera, the God of wealth, Chandra, the Moon-god,
+Aditya, the Sun-god, Sarasvati, the goddess of speech, the sea, the
+four Yugas, the mountains (Himālaya etc.), the Wind-god, the serpents,
+the siddhas, the rivers, the Aśvins (two physicians of the gods), goddess
+Laksmi, Diti, the mother of the demons, the children of Aditi, all forms
+of the Divine Mother, the Vedas, pilgrimages, sacrifices, eight Vasus, all
+Munis and nine grahas - May all protect you for ever.
+f) May the Supreme Lord Siva in eight visible forms, viz. Water which
+is the first creation of the creator, Fire which carries the offerings to
+the Gods; Hotri, the sacrificer, Sun and Moon, the two regulating time,
+the all-pervading Ether which is the medium of sound, Earth, the source
+of all seeds and, Air, that by which creatures possess breath - May He
+protect you all.
+
+89 
+
+appendix 
+90
+APPENDIX I
+Genera or Classes of Metres
+(Arranged according to the number of syllables in each pāda)
+1 Metres with one syllable
+2 Metres with two syllables
+3 Metres with three syllables
+4 Metres with four syllables
+5 Metres with five syllables
+6 Metres with six syllables
+7 Metres with seven syllables
+8 Metres with eight syllables
+9 Metres with nine syllables
+10 Metres with ten syllables
+11 Metres with eleven syllables
+12 Metres with twelve syllables
+13 Metres with thirteen syllables
+14 Metres with fourteen syllables
+15 Metres with fifteen syllables
+16 Metres with sixteen syllables
+17 Metres with seventeen syllables
+18 Metres with eighteen syllables
+19 Metres with nineteen syllables
+20 Metres with twenty syllables
+21 Metres with twenty-one syllables
+22 Metres with twenty-two syllables
+23 Metres with twenty-three syllables
+24 Metres with twenty-four syllables
+25 Metres with twenty-five syllables
+26 Metres with twenty-six syllable
+27 Metres with twenty-seven
+and more syllables
+उक्था ukthā
+अत्युक्था atyukthā
+मध्या  madhya
+प्रतिष्ठा pratistha
+सुप्रतिष्ठा supratiṣṭhā
+गायत्री gayatri
+उष्णिक्‌ usnik
+अनुष्टुप् anuṣṭup
+बृहती bṛhatī
+पङ्किः  pańktiḥ
+त्रिष्टुप् triṣṭup
+जगती jagatī
+अतिजगती atijagatī
+शक्वरी śakvari
+अतिशक्वरी atiśakvarī
+अष्टिः astih
+अत्यष्टिः atyaṣṭiḥ
+धृतिः dhṛtiḥ
+अतिधृतिः atidhṛtiḥ
+कृतिः  kṛtiḥ
+प्रकृतिः prakṛtiḥ
+आकृतिः ākṛtiḥ
+विकृतिः  vikṛtiḥ
+संस्कृतिः samskṛtiḥ
+अतिकृतिः atikrtih
+उत्कृतिः  utkṛtiḥ
+दण्डकः dandakaḥ
+91
+APPENDIX II
+Index of the gaṇa groupings
+(In Sanskrit alphabetical order)
+This index gives the scannings or gaṇa groupings of the 123*
+chandas covered in this work, together with the name of each
+chanda.
+The chandas here are of samavṛtta type, where all the four
+quarters have the same scansion and number of syllables.
+The number in the third column refers to the main list of chandas
+and their definitions (see Appendix IV). The first part of the number
+(the integer) gives the number of syllables in each pāda of the
+metre and the genus or class. The second part of the number (the
+decimal) gives the particular species of the chanda.
+gaṇa                         chanda                         Number
+-------------------------------------------------------------------
+ग                           श्रीः                           1.1
+ग ग                         कोः                             2.1
+ग म                         कन्या                           4.1
+ग ल र ज                     समानिका                        8.5
+ज त ज भ                    चित्रा                          16.1
+ज त ज त                    उर्जस्वसा                       11.2
+ज त म त                    वात्स्यायनिका                   12.2
+ज त स त                    रोहिणी                          13.2
+ज त ज र ज                  प्रमाणिका                       8.6
+ज त ज त ल त                एकविंशतिः                       16.4
+ज त ज न न ज                कुमारीव्रजिता                   7.2
+ज त म त म त                जलेश्वरगति                      12.4
+ज म म म                     पृथ्वी                          17.2
+
+त ज ज रु ग                 मेटटकम्                         11.12
+त ज ज म ग                   इन्द्राणी                        11.1
+त ज स ग म                   इन्द्राणी                        12.3
+त ज स स म                   सर्वर्तनिकम्                    14.2
+त स                         तनुमध्या                        6.1
+त भ म म                     मगोनिका                        12.15
+त स स                       सती                             10.3
+त स ज त म                   स्वस्तिमति                       12.3
+न न ग त ग                   मालवी                          12.14
+न न ग ग ग                   गुङ्गुमुद्रा                     13.9
+न ग ग ग त                   सुग्रीवी                        11.4
+न ग त त ग                   सरसी                           17.6
+न ग ग भ त                   नंदिनी                         11.2
+न ग त त ग                   शङ्खचूड                         16.7
+न भ ग ग ग                   नलिनी                          16.2
+न न न त ग                   मदालसा                         7.1
+न न न न त                   अनुष्टुभी                      16.4
+न न न त त                   चित्रा                          14.7
+न न त त ग                   शिखरिणी                        16.8
+
+न न भ ल ग                   गृहपालिका                     14.4
+न न न                       भुजङ्गप्रयुक्ता                9.1
+न न म म म                   मालिनी                         15.2
+न न र र र                   मन्दाकिनी                     12.11
+न त स ल ग                   नाराचिनी                      18.3
+न स स ग म                   अपलापिता                     14.3
+न भ भ र                     चण्डी                          13.4
+न न भ त ग                   द्वात्रिंशत्                    12.10
+न स ग ग ग                   गजगति                          8.7
+न स ल त ग                   शशिवदना                      6.2
+न ग ग भ                     कुसुमपक्षिका                  12.12
+ग र ग म                     मनोरमा                        10.4
+
+*There is no scheme of gana for anustup and upajāti. So this list has 121
+chandas only instead of 123.
+
+92
+Chandovallarī
+न स न र र
+विपिनतिलकम्
+15.4
+न स म र स ल ग
+हरिणी
+17.5
+भ ग ग
+पङ्किः
+5.1
+भ त न ग ग
+अनुकूला
+11.8
+भ त न स भ भ न य
+तन्वी
+24.1
+भ त ल ग
+माणवकम्
+8.3
+भ भ ग ग
+चित्रपदा
+8.2
+भ भ भ ग ग
+दोधकम्
+11.11
+भ भ भ भ भ भ भ ग 
+मदिरा
+22.2
+भ म स
+मणिमध्यम्
+9.2
+भ म स ग 
+रुक्मवती
+10.1
+भ म स भ लललललललललललल ग
+क्रौञ्चपदा
+25.1
+भ र न न न ग
+ऋषभगजविलसितम्
+16.2
+भ र न भ न ल ग
+वंशपत्रपतितम्
+17.3
+भ स म त न ग
+चकिता
+16.3
+म
+नारी
+3.1
+म ग ग न न त त ग ग
+फुल्लदाम
+19.5
+म ग ग न न म
+असम्बाधा
+14.1
+म ग न न ग
+भ्रमरविलसिता
+11.7
+म त त ग ग
+शालिनी
+11.5
+म त न म ग ग
+वासन्ती
+14.5
+म त न य य य
+कुसुमितलतावेल्लिता
+18.1
+म त य स ग
+मत्तमयूरम्
+13.3
+म न ज र ग
+प्रहर्षिणी
+13.1
+म भ त ग ग
+वातोर्मी
+11.6
+म भ न ग ग य य
+मन्दाक्रान्ता
+17.4
+म भ न म न ग
+मदनललिता
+16.5
+म भ न म य ल ग
+हारिणी
+17.8
+म भ न र स ल ग
+भाराक्रान्ता
+17.9
+म भ न ल ग ग य य
+चित्रलेखा
+18.4
+भ म स ग
+मत्ता
+10.2
+म भ स म
+जलधरमाला
+12.16
+म म
+विद्युल्लेखा
+6.4
+म म ग ग
+विद्युन्माला
+8.4
+म म ग ग न न न न ग ग
+हंसी
+22.1
+म म ग ग ललललललललललललललग
+मत्ताक्रीडम्
+23.2
+Appendix II
+93
+म त न न न र स ल ग
+भुजङ्गविजृम्भितम्
+26.1
+म म म म म
+लीलाखेल:
+15.3
+म म म य य
+चित्रा
+15.7
+म म य य
+वैश्वदेवी
+12.8
+म र भ न य न ग
+सुरसा
+19.4
+म र भ न य य य
+स्रग्धरा
+21.1
+म र म य य
+चन्द्रलेखा
+15.6
+म स ग
+मदलेखा
+7.3
+म स ज स त त ग
+शार्दूलविक्रीडितम्
+19.3
+म स ज स त स
+शार्दूलललितम्
+18.5
+म स म भ ग ग
+लोला
+14.6
+य म न न ग र र ग
+शोभा
+20.4
+य म न स त त ग
+छाया
+19.2
+य म न स भ ल ग
+शिखरिणी
+17.1
+य म न स र र ग
+प्रवरललितम्
+16.7
+य म न स र र ग
+मेघविस्फूर्जिता
+19.1
+य य
+सोमराजी
+6.3
+य य य य
+भुजङ्गप्रयातम्
+12.5
+र
+मृगी
+3.2
+र ज र ज र
+तूणकम्
+15.5
+र ज र ज र ज ग ल
+वृत्तम्
+20.3
+र ज र ल ग
+श्येनी
+11.13
+र न भ ग ग
+स्वागता
+11.10
+र न भ स
+चन्द्रवर्त्म
+12.1
+र न र ल ग
+रथोद्धता
+11.9
+र र र र
+स्रग्विणी
+12.7
+स ज ज भ र स ल ग
+गीतिका
+20.2
+स ज र
+भुजङ्गसङ्गता
+19.3
+स ज स ज ग
+मञ्जुभाषिणी
+13.5
+स ज स ज ग
+प्रबोधिता
+13.8
+स ज स स
+प्रमिताक्षरा
+12.9
+स ज स स ग
+कलहंसः
+13.7
+स ल ग
+प्रिया
+5.2
+स स स स
+तोटकम्
+12.6
+Appendix III
+Index of Chandas Arranged in Sanskrit Alphabetic Order
+The list has names of the 123 chandas dealt with in this
+work. In the first column, we list the names in Devangari and in the
+second its Roman transliteration, whereas the third column referes
+to number in Appendix IV which explains chandas and their
+definitions.
+अचलधृतिः
+acaladhṛtiḥ
+16.8
+अद्रितनया
+adritanaya
+23.1
+अनुकूला
+anukūlā
+11.8
+अनुष्टुप्
+anuştup
+8.1
+अपराजिता
+aparăjită
+14.3
+असम्बाधा
+asambādhā
+14.1
+इन्द्रवज्रा
+indravajrā
+11.1
+इन्द्रवंशा
+indravaṁśā
+12.3
+उपजातिः
+upajātiḥ
+11.3
+उपेन्द्रवज्रा
+upendravajra
+11.2
+ऋषभगजविलसितम्
+rṣabhagajavilasitam
+16.2
+कन्या
+kanyā
+4.1
+कलहंसः
+kalahamsaḥ
+13.7
+कुमारललिता
+kumāralalitā
+7.2
+कुसुमविचित्रा
+kusumavicitrā
+12.12
+कुसुमितलतावेल्लिता
+kusumitalatāvellitā
+18.1
+कोकिलकम्
+kokilakam
+17.7
+क्रौञ्चपदा
+krauñcapada
+25.1
+गजगतिः
+gajagatiḥ
+8.7
+गरुडरुतम्
+garuḍarutam
+16.9
+गीतिका
+gītikā
+20.2
+चकिता
+cakitā
+16.3
+चण्डी
+candi
+13.4
+चन्द्रलेखा
+candralekha
+15.6
+चन्द्रवर्त्म
+candravartma
+12.1
+Appendix III
+95
+चन्द्रिका
+candrikā
+13.6
+चित्रम्
+citram
+16.1
+चित्रपदा
+citrapada
+8.2
+चित्रलेखा
+citralekhā
+18.4
+चित्रा
+citrā
+15.7
+छाया
+chāyā
+19.2
+जलधरमाला
+jaladharamālā
+12.6
+जलोद्धतगतिः
+jaloddhatagatiḥ
+12.4
+तनुमध्या
+tanumadhya
+6.1
+तन्वी
+tanvīnu
+24.1
+तामरसम्
+tāmarasam
+12.13
+तूणकम्
+tūṇakam
+15.5
+तोटकम्
+toṭakam
+12.6
+त्वरितगतिः
+tvaritagatiḥ
+10.3
+दोधकम्
+dodhakamn
+11.11
+द्रुतविलम्बितम्
+drutavilambitam
+12.10
+नन्दनम्
+nandanam
+18.2
+नईटकम्
+narddaṭakam
+17.6
+नान्दीमुखी
+nāndimukhi
+14.7
+नाराचम्
+nārācam
+18.3
+नारी
+nārī
+3.1
+पङ्किः
+panktiḥ
+5.1
+पञ्चचामरम्
+райсасāmaram
+16.4
+पृथ्वी
+pṛthvi
+17.2
+प्रवरललितम्
+pravaralalitam
+16.7
+प्रबोधिता
+prabodhitä
+13.8
+प्रमाणिका
+pramāṇikā
+8.6
+प्रमिताक्षरा
+pramitākṣarā
+12.9
+प्रहरणकलिका
+praharaṇakalikā
+14.4
+प्रहर्षिणी
+praharşiṇī
+13.1
+प्रिया
+priyā
+5.2
+फुल्लदाम
+phulladāma
+19.5
+भाराक्रान्ता
+bhārākrāntā
+17.9
+भुजगशिशुभृता
+bhujagaśiśubhṛtā
+9.1
+भुजङ्गप्रयातम्
+bhujangaprayātam
+12.5
+भुजङ्गविजृम्भितम्
+bhujangavijṛmbhitam
+26.1
+96
+Chandovallarī
+भुजङ्गसङ्गता
+bhujangasangatā
+9.8
+भ्रमरविलसिता
+bhramaravilasitā
+11.7
+मञ्जुभाषिणी
+mañjubhāṣiṇī
+13.5
+मणिमध्यम्
+manimadhyam
+9.2
+मणिमाला
+maṇimālā
+12.15
+मत्तमयूरम्
+mattamyüram
+13.3
+मत्ता
+mattā
+10.2
+मत्ताक्रीडम्
+mattākrīḍam
+23.2
+मदनललिता
+madanalalitā
+16.5
+मदलेखा
+madalekhā
+7.3
+मदिरा
+madirā
+22.2
+मन्दाक्रान्ता
+madhumati
+7.1
+मनोरमा
+manoramand
+10.4
+मन्दाकिनी
+mandakinit
+12.11
+मन्दाक्रान्त
+mandākrāntā
+17.4
+माणवकम्
+māṇavakam
+8.3
+मालती
+mālatī
+12.4
+मालिनी
+mālinī
+15.2
+मृगी
+mrgi
+3.2
+मृगेन्द्रमुखम्
+mrgendramukham
+13.9
+मेघविस्फूर्जिता
+meghavisphūrjitā
+19.1
+मोटनकम्
+moṭanakamilan
+11.12
+रथोद्धता
+rathoddhata
+11.9
+रुक्मवती
+rukmavati
+10.1
+रुचिरा
+rucirā
+13.2
+लीलाखेलः
+līlākhelaḥ
+15.3
+लोला
+lolā
+14.6
+वंशपत्रपतितम्
+vaṁsapatrapatitam
+17.3
+वंशस्थविलम्
+vamśasthavilam
+12.2
+वसन्ततिलकम्
+vasantatilakam
+14.2
+वाणिनी
+vāṇinī
+16.6
+वातोर्मी
+vātormī
+11.6
+वासन्ती
+vāsantī
+14.5
+विद्युन्माला
+vidyunmālā
+8.4
+विद्युल्लेखा
+vidyullekhā
+6.4
+विपिनतिलकम्
+vipinatilakam
+15.4
+Appendix III
+97
+
+
+
+185
+वृत्तम्
+vṛtam
+20.3
+वैश्वदेवी
+vaiśvadevi
+12.8
+शशिकला
+śaśikalā
+15.1
+शशिवदना
+śaśivadanā
+6.2
+शार्दूलललितम्
+śārdulalaltiam
+18.5
+शार्दूलविक्रीडितम्
+śārdulavikrīditam
+19.3
+शालिनी
+śālinī
+11.5
+शिखरिणी
+śikhariṇī
+17.1
+शोभा
+śobhā
+20.4
+श्येनी
+śyenī
+11.13
+श्रीः
+śrīḥ
+1.1
+सती
+satī
+4.2
+समानिका
+samānikā
+8.5
+सरसी
+sarasī
+21.2
+सुमुखी
+sumukhi
+11.4
+सुरसा
+surasā
+19.4
+सुवदना
+suvadanā
+20.1
+सोमराजी
+somarājī
+6.3
+स्त्री
+strī
+2.1
+स्रग्धरा
+sragdharā
+21.1
+स्रग्विणी
+sragviņi
+12.7
+स्वागता
+svāgatā
+11.10
+हरिणी
+hariṇī
+17.5
+हारिणी
+hāriṇī
+17.8
+हंसी
+hamsi
+22.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+APPENDIX IV
+Metres in Sanskrit Prosody
+(According to number of syllables in each pāda)
+Metres with One Syllable
+1.1.  श्री: (śrīḥ): When each pāda* or quarter of a verse contains
+only one long syllable then the metre is called śrīh.
+Sch. g.
+Def.
+ग
+-
+श्रीः
+Metres with Two Syllables
+2.1.स्त्री (stri): When each pada contains two long syllables it is called
+strī.
+Sch. g.
+Def.
+ग ग
+-  -
+गौ स्त्री
+Metres with Three Syllables
+3.1.  नारी (nāri): When each pada contains three long syllables it is
+called nārī.
+Sch. g.
+Def.
+म
+ -- -
+मो नारी
+3.2. मृगी(mrgi): When three syllables of one ra group form each
+pāda then the metre is called mṛgi. Hence, in each pāda the 1st
+and 3rd syllables are long and the 2nd is short.
+Sch. g.
+र
+Def.
+- u -
+रो मृगी
+*Henceforth we will use only the word pāda to mean 'quarter' of a verse.
+(a) Sch. g. - Scheme of gaṇa (b) Def. - Definition
+Appendix IV
+99
+Metres with Four Syllables 
+4.1. कन्या (kanya): When four long syllables arranged as one ga
+syllable and one ma group form each pāda, then the metre is called
+kanyā.
+Sch. g. ग म
+Def.
+ - - - -
+ग्मौ चेत्कन्या
+4.2  सती (sati): This metre has four syllables of one na group and
+one ga group in each pāda. Hence, the first three syllables of each
+pāda are short and the 4th is long.
+Sch. g.
+न ग
+     u u u -
+Def. नगि सती
+Metres with Five Syllables
+5.1. पङ्किः (panktiḥ): This metre has five syllables of one bha group
+and two ga groups in each pāda. So, here the 1st, 4th and 5th
+syllables of each pāda are long and the 2nd and the 3rd short.
+Sch. g. 
+भ  ग ग
+     - u u - -
+Def. भगौ गति पङ्किः
+5.2.  प्रिया(priya): This metre has five syllables of one sa group, one la
+group and one ga group in each pāda. So, here the 1st, 2nd and 4th
+syllables of each pāda are short and the 3rd and the 5th long.
+Sch. g. स लग
+Def.
+u u- u -
+सलगैः प्रिया
+Metres with Six Syllables
+6.1. तनुमध्या(tanumadhyā): This metre contains six syllables of one
+ta group and one ya group in each pāda. So, here the 1st, 2nd, 5th
+and 6th syllables of each pāda are long and the 3rd and the 4th
+short.
+Sch. g.
+Def.
+त य
+ - -  uu- -
+त्यौ चेत् तनुमध्या
+100
+Chandovallarī
+6.2.
+ शशिवदना 
+(śaśivadanā): This metre contains six syllables of one
+na group and one ya group in each pāda. So, here the 1st, 2nd, 3rd
+and 4th syllables of each pāda are short and the last two long.
+Sch. g.
+न य
+Def.
+ uuuu -  -
+शशिवदना न्यौ
+
+6.3.
+ सोमराजी (somarāji): This metre has six syllables made up of two
+ya groups in each pāda. So, here the 1st and 4th syllables of each
+pāda are short and the others long. There should be a pause after
+the 2nd and the last syllables of each pāda.
+
+Sch. g.य  य
+     u - -u-  -
+Def. द्विया सोमराजी
+
+6.4. विद्युल्लेखा  (vidyullekha): This metre contains six syllables made
+up of two ma groups in each pāda. Hence, all the six syllables of
+each pāda are long. There should be a pause after the 3rd and the
+last syllables of each pāda.
+Sch. g.
+म म
+Def. विद्युल्लेखा मो मः
+Metres with Seven Syllables
+7.1. मधुमती  (madhumati): This metre contains seven syllables of two
+na groups and one ga group in each pāda. So, here except for the
+last sylalble, all other syllables of each pāda are short. There should be a pause after the 5th and the last syllables of each pāda.
+Sch. g. न न ग
+     uu u uuu- 
+Def. ननगि मधुमती
+7.2. कुमारललिता  (kumāralalitā): This metre contains seven syllables
+of one ja group, one sa group and one ga group in each pāda. So,
+here the 2nd, 6th and 7th syllables of each pāda are long and the
+others short. There should be a pause after the 3rd and the last
+syllables of each pāda.
+Sch. g.
+ज स ग
+     u -u uu -  -
+Def. कुमारललिता ज्स्गाः
+Appemdix IV
+101
+7.3.  मदलेखा  (madalekha): This metre has seven syllables of one ma
+group, one sa group and one ga group in each pāda. So, here the
+4th and 5th syllables of each päda are short and the others long.
+There should be a pause after the 3rd and the last syllables of each
+pāda.
+Sch. g.
+म  स ग
+      - -  -  uu--
+Def. म्सौ गः स्यान्मदलेखा
+Metres with Eight Syllables
+8.1. अनुष्टुप्(anuṣṭup): This metre allows great freedom in use of
+long and short syllables. However, in its usual form, the fifth syllable
+of each pāda should be short, the sixth long and the seventh
+alternatively long and short. There being no fixed rule for the other
+syllables.
+8.2. चित्रपदा (citrapadā): This metre has eight syllables of two bha
+and two ga groups in each pāda. So, here the 1st, 4th, 7th and 8th
+syllables of each pāda are long and the others short.
+dió
+Sch.g. भ भ ग ग
+Def.
+-UU-  uu  --
+चित्रपदा यदि भौगौ
+8.3.माणवकम्(māṇavakam): This is an eight-syllabled metre
+containing syllables of one Bha group, one ta group, one la group
+and one ga group in each pāda. So, here the 1st, 4th, 5th and 8th
+syllables of each pāda are long and the others short. There should
+be a pause after the 4th and the last syllables of each pāda.
+
+Sch. g. भ  लग
+     - uu - - uu-
+Def. भात्तलगा माणवकम्
+8.4 विद्युन्माला (vidyunmālā): This metre has eight syllables of two
+ma and two ga groups in each pāda. So, here all the syllables of
+each pāda are long.
+म ग ग
+Sch. g. म म गग
+        - -  - - --   --
+ad Def. मो मो गो गो विद्युन्माला
+102
+Chandovallarī
+8.5. समानिका(samānikā): This metre has eight syllables of one ga
+group, one la group, one ra group and one ja group in each pāda.
+So, here the 1st, 3rd, 5th and 7th syllables of each pāda are long and
+the others short. There should be a pause after the 4th and the 8th
+syllables of each pāda.
+Sch. g. ग ल र  ज
+      - U- U - U- U
+Def. ग्लौ रजौ समानिका तु
+8.6.प्रमाणिका(pramāṇikā):This metre has eight syllables of one ja
+group, one ra group, one la group and one ga group in each pāda.
+So, here the 1st, 3rd, 5th and 7th syllables of each pāda are short
+and the others long. Places of pause are like samānikā (8.5).
+Sch. g. ज  र   लग 
+     u - u - u- u-
+Def. प्रमाणिका जरौ लगौ
+8.7.  गजगतिः  (gajagatiḥ): Eight syllables of one na group, one bha
+group, one la group and one ga group form each pada of this metre.
+So, here the 4th and 8th syllables of each pāda are long and the
+others short. Places of pause are the same as in samānikā (8.5).
+Sch. g. न भ ल ग
+Def.
+uuu -  uuu -
+नभलगाः गजगतिः
+Metres with Nine Syllables
+9.1. भुजगशिशुभृता(bhujagaśiśubhṛtā): This metre contains nine syllables
+of two na groups and one ma group in each pāda. So, here the last
+three syllables of each pāda are long and the others short. There
+should be a pause after the 7th and the last syllables of each pāda.
+Sch. g.  न न म
+     u u uuuu - - -
+Def. भुजगशिशुभृता नौ मः
+
+9.2.मणिमध्यम(maṇimadhyam): This metre contains nine syllables
+of one bha group, one ma group and one sa group in each pāda. So,
+here the 1st, 4th, 5th, 6th and 9th syllables of each pāda are long
+and the others short. There should be a pause after the 5th and the
+Appendix IV
+103
+last syllables of each pāda.
+Sch. g. भ   म  स
+      - u u- -   -uu-
+Def. स्यान्मणिमध्या चेद्भमसा
+
+9.3.  भुजङ्गसङ्गता(bhujangasangatā): This is a nine-syllabled metre
+containing syllables of one sa group, one ja group and one ra group
+in each pāda. So, here the 1st, 2nd, 4th, 6th and 8th syllables of
+each pāda are short and the others long. There should be a pause
+after the 3rd and the last syllables of each pāda.
+Sch. g.
+स ज र
+     uu -u- u- u-
+Def. सर्जेरैर्भुजङ्गसङ्गता
+Metres with Ten Syllables
+10.1. रुक्मवती  (rukmavati): This metre contains ten syllables of one
+bha group, one ma group, one sa group and one ga group in each
+pāda. So, here the 2nd, 3rd, 7th and 8th syllables of each pada are
+short and the others long. There should be a pause after the 5th and
+the last syllables of each pāda.
+Sch. g. भ म स ग
+     -  uu- - -u u--
+Def. रुक्मवती सा यत्र भमस्गाः
+10.2.  मत्ता (matta): This metre has ten syllables of one ma group,
+one bha group, one sa group and one ga group in each pāda. So,
+here the 5th, 6th, 7th and 8th syllables of each pāda are short and
+the others long. There should be a pause after the 4th and the last
+syllables of each pāda.
+Sch. g. म भ स ग
+     - - -- uu uu --
+Def. ज्ञेया मत्ता मभसगसृष्टा
+10.3..त्वरितगति: (tvaritagatiḥ): This metre has ten syllables of one na
+group, one ja group, one na group and one ga group in each pāda.
+So, here the 5th and the 10th syllables of each pāda are long and the
+others short. Places of pause are the same as in rukmavati (10.1).
+Sch. g. न ज न ग
+      uuuu -u uuu-
+Def. त्वरितगतिश्च नजनगैः
+104
+Chandovallarī
+10.4.मनोरमा (manorama): This metre has ten syllables of one na
+group, one ra group, one ja group and one ga group in each pāda.
+So, here the 4th, 6th, 8th and 10th syllables of each pāda are long
+and the others short.
+Sch. g. न  र ज ग
+uu u-u- u-u-
+नरजगैर्भवेन्मनोरमा
+Def.
+Metres with Eleven Syllables
+11.1. इन्द्रवजा (indravajrā): This is a metre containing eleven syllables
+of two ta groups, one ja group and two ga groups in each pāda. So,
+here the 3rd, 6th, 7th and 9th syllables of each pada are short and
+the others long. There should be a pause after the 5th and the last
+syllables of each pāda.
+त त ज ग ग
+Sch. g.
+      - - u-- uu -  u- -
+Def. स्यादिन्द्रवज्रा यदि तौ जगौ गः
+11.2 पेन्द्रवजा 
+(upendravajra ): This metre is same as indravajrā
+(11.1) with the exception that here the first syllable is short. bi
+Sch. g. ज त ज ग ग
+     u- u- - uu- u- -
+Def. उपेन्द्रवज्रा प्रथमे लघौ सा
+
+11.3. उपजातिः: (upajātiḥ): This is a combination of indravajra and
+upendravajra. When both indravajrā and upendravajra are
+combined it is called upajāti. Apart from indravajra and
+upendravajra combination of any other two chandas also makes
+upajāti.
+11.4. सुमुखी (sumukhi): This metre has eleven syllables of one na
+group, two ja groups, one la group and one ga group in each pāda.
+So, here the 5th, 8th and 11th syllables of each päda are long and
+the others short.
+Sch. g. न  ज ज ल ग
+     uuu u- uu- uu -
+Def. नजजलगैगदिता सुमुखी
+11.5.शालिनी  (śālinī): This metre contains eleven syllables of one ma
+Appendix IV
+105
+group, two ta groups and two ga groups in each pāda. So, here the 6th
+and 9th syllables of each pāda are short and the others long. There
+should be a pause after the 4th and the last sylalbles of each pāda.
+Sch. g. म त त ग ग 
+Def.
+- - - - - U - -U--
+मत्तौ गौ चेच्छालिनी वेदलोकैः
+11.6 वातोर्मी (vātormī): This metre contains eleven syllables of one
+ma group, one bha group, one ta group and two ga groups in each
+pāda. So, here the 5th, 6th and 9th syllables of each pāda are short
+and the others long. Places of pause are same as in śālinī (11.5).
+Sch. g.
+म भ त ग ग
+     - - -- UU - - U- -
+Def. वातोर्मीयं गदिता म्भौतगौ गः
+11.7. भ्रमरविलसिता(bhramaravilasitā): This metre has eleven syllables
+of one ma group, one ga group, two na groups and again one ga
+group in each pāda. So, here the 1st, 2nd, 3rd, 4th and 11th syllables
+of each pāda are long and the others short. Places of pause are the
+same as in śālinī (11.5).
+ Sch. g. म ग न न ग
+     -  - - -  UUUUUU - 
+Def. मो गो नौ गो भ्रमरविलसिता
+11.8.
+ अनुकूला (anukūlā): This metre has eleven syllables of one bha
+group, one ta group, one na group and two ga groups in each pada.
+So, here the 1st, 4th, 5th, 10th and 11th syllables are long and the
+others short. There should be a pause after the 5th and the last
+syllables of each pāda.
+
+Sch. g. भ
+त न ग ग
+     -UU - - UUUU - -  
+Def स्यादनुकूला भतनगगश्चेत्
+11.9.रथोद्धता(rathoddhata): This metre has eleven syllables of one
+ra group, one na group, again one ra group, one la group and one
+ga group in each pāda. So, here the 1st, 3rd, 7th, 9th and 11th
+syllables of each pāda are long and the others short. There should
+be a pause after the 3rd and the last syllables of each pāda.
+Sch. g. र न र ल ग
+     - U-UUU- U - U-
+Def. रात्परैर्नरलगै रथोद्धता
+106
+Chandovallarī
+11.10. स्वागता  (svāgata): This metre contains eleven syllables of one
+ra group, one na group, one bha group and two ga groups in each
+pāda. So, here the 1st, 3rd, 7th, 10th and 11th syllables of each
+pāda are long and the others short. Places of pause are the same
+as in rathoddhatā (11.9).
+
+Sch. g.
+Def.
+र न भ ग ग
+ - U- UUU-UU - -
+स्वागता रनभगैर्गुरुणा च
+11.11. दोधकम् (dodhakam): Each pāda of this metre is made up of
+eleven syllables of three bha groups and two ga groups. So, here
+the 1st, 4th, 7th, 10th and 11th syllables of each pāda are long and
+the others short. There should be a pause after the 6th and the last
+syllables of each pāda.
+Sch.g. भ भ भ ग ग
+      -UU - UU  -UU --
+Def. दोधकमिच्छति भत्रितयाद्गौ
+11.12. मोटनकम्(moṭanakam): This metre has eleven syllables of one
+ta group, two ja groups, one la group and one ga group in each
+pāda. So, here the 1st, 2nd, 5th, 8th and 11th syllables of each pada
+are long and the others short.
+
+Sch. g.
+Def.
+त ज ज ल ग
+ - -UU - UU -U U-
+स्यान्मोटनकं तजजाश्च लॅगौ
+11.13. श्येनी ((syenī): This metre has eleven syllables of one ra group,
+one ja group, again one ra group, one la group and one ga group in
+each pāda. So, here the 1st, 3rd, 5th, 7th, 9th and 11th syllables of
+each pāda are long and the others short.
+
+Sch. g. र ज र लग
+      - U-U - U- U- U-
+Def. श्येन्युदीरिता रजौ रॅली गुरु:
+Metres with Twelve Syllables
+12.1. चन्द्रव (candravartma ): This metre contains twelve syllables
+of one ra group, one na group, one bha group and one sa group in
+each pāda. So, here the 1st, 3rd, 7th and 12th syllables of each
+pāda are long and the others short. There should be a pause after
+Appendix IV
+107
+the 4th and the last syllables of each pāda.
+Sch. g. र न म स
+     -U- U UU- U UUU -
+Def. चन्द्रवर्मे निगदन्ति रनभसः
+
+12.2. वंशस्थविलम्(vamsasthavilam): This metre has twelve syllables
+of one ja group, one ta group, again one ja group and one ra group
+in each pāda. So, here the 1st, 3rd, 6th, 7th, 9th and 11th syllables of
+each pāda are short and the others long. There should be a pause
+after the 5th and the last syllables of each pāda.
+
+Sch. g.
+ज त ज र
+     U- U --  UU- U- U-
+Def. वदन्ति वंशस्थविलं जतौ जरौ
+12.3. इन्द्रवंशा (indravaṁśā): This metre has twelve syllables of two
+ta groups, one ja group and one ra group in each pāda. So, here
+the 1st, 2nd, 4th, 5th, 8th, 10th and 12th syllables of each pada are
+long and the others short. Places of pause are same as in
+vamśasthavilam (12.2). This metre and vaṁśasthavilam are same
+with the exception that here the 1st syllable is long.
+त त ज र
+Sch. g.
+     - - U- - UU-U- U-
+Def. तच्चेन्द्रवंशा प्रथमाक्षरे गुरौ
+12.4.: जलोद्धतगतिः  (jaloddhatagatiḥ): This metre has twelve syllables
+of two ja groups and two sa groups coming alternately one after
+another (ja sa ja sa) in each pāda. So, here the 2nd, 6th, 8th and
+12th syllables of each pāda are long and the others short. There
+should be a pause after the 6th and the last syllables of each pāda.
+Sch. g. ज स ज स
+     U - UUU - U - UUU-
+Def. जसौ जसयुतौ जलोद्धतगतिः
+12.5.भुजङ्गप्रयातम्(bhujangaprayātam): Twelve syllables of four ya
+groups form each pāda of this metre. So, here the 1st, 4th, 7th and
+10th syllables of each pāda are short and the others long. Places of
+pause are same as in jaloddhatagati (12.4).
+Sch. g. 
+य य य य
+Def.
+U-- U -- U-- U--
+भुजङ्गप्रयातं चतुर्भिर्येकारैः
+108
+
+Chandovallarī
+12.6. तोटकम्(totakam): Syllables of four sa groups form each pāda
+of this metre. So, here the 3rd, 6th, 9th and 12th syllables of each
+pāda are long and the others short. There should be a pause after
+the 4th, 8th and 12th syllables of each pāda.
+Sch. g.
+स स स स
+     UU -U U- UU -UU  -
+Def. वद तोटकमब्धिसकारयुतम्
+12.7. नग्विणी (sragvini): Syllables of four ra groups form each pada
+of this metre. So, here the 2nd, 5th, 8th and 11th syllables of each
+pāda are short and the others long. Places of pause are same as in
+jaloddhatagati (12.4).
+Sch. g. र र र र
+     - U -- U-- U - - U -
+Def. कीर्तितैषा चतूरेफिका स्रग्विणी
+12.8. वैश्वदेवी(vaiśvadevi): Syllables of two ma groups and two ya
+groups, in that order form each pāda of this metre. So, here the 7th
+and 10th syllables of each pāda are short and the others long. There
+should be a pause after the 5th and the last syllables of each pāda.
+Sch. g. म म य य
+     - - -  - - -U-- U- -
+Def. बाणाश्चैश्च्छिन्ना वैश्वदेवी ममौ यौ
+12.9.
+. प्रमिताक्षरा
+(pramitākṣarā): Syllables of three sa groups along with
+one ja group coming after the first sa group form each pada of this
+metre. So, here the 3rd, 5th, 9th and 12th syllables of each pada are
+long and the others short. Places of pause are same as in vaiśvadevī
+(12.8).
+
+Sch. g. स ज स स
+     UU - U- U UU- UU-
+Def. प्रमिताक्षरा सजससैः कथिता
+12.10.
+ द्रुतविलम्बितम्(drutavilambitam): Twelve syllables of one na
+group, two bha groups and one ra group form each pada of this
+metre. So, here the 4th, 7th, 10th and 12th syllables of each pada
+are long and the others short. There should be a pause after the 4th,
+8th and the last syllables of each pāda.
+
+Sch. g. न भ भ र
+     UUU-  UU- U U - U-
+Def. द्रुतविलम्बितमाह नभौ भरौ
+
+Appendix IV
+109
+12.11.न्दाकिनी(mandākinī): Syllables of two na groups and two
+ra groups form each pada of this metre. So, here the 7th, 9th, 10th
+and 12th syllables of each päda are long and the others short. There
+should be a pause after the 7th and the last syllables of each pāda.
+
+Sch. g.  न न र र
+Def.
+UUUUUU - U -- U -
+ननररघटिता तु मन्दाकिनी
+12.12.कुसुमविचित्रा (kusumavicitra): This metre contains twelve
+syllables of two na groups and two ya groups each coming
+alternately one after another (na ya na ya) in each pāda. So, here
+the 5th, 6th, 11th and 12th syllables of each päda are long and the
+others short. There should be a pause after the 6th and the last
+syllables of each pāda.
+Sch. g. न य न य
+     UUU U - - UU UU --
+Def. नयसहितौ न्यौ कुसुमविचित्रा
+
+12.13. तामरसम(tāmarasam): Syllables of one na group, two ja groups
+and one ya group form each pāda of this metre. So, here the 5th,
+8th, 11th and 12th syllables of each pāda are long and the others
+short. There should be a pause after the 5th and the last syllables of
+each pāda.
+Sch. g. न ज ज य
+     UU UU -UU- UU - -
+Def. इह वद तामरसं नजजा यः
+12.14.  मालती (mālatī): This metre has twelve syllables of one na
+group, two ja groups and one ra group in each pāda. So, here the
+5th, 8th, 10th and 12th syllables are long and the others short. Places
+of pause are same as in tamarasam (12.13).
+sch. g. न ज  ज र
+     UUU  U_UU _U_   U_
+Def. भवति नजावथ मालती जरौ
+12.15.मणिमाला (maṇimālā): Syllables of two ta groups and two ya
+groups coming alternately one after another form each pada of this
+metre. So, here the 3rd, 4th, 9th and 10th syllables of each pada are
+short and the others long. There should be a pause after the 6th and
+the last syllables of each pāda.
+110
+Chandovallarī
+
+
+Sch. g.
+त य तय
+      -  - U U --  -- UU- -
+Def. त्यौ त्यौ मणिमाला च्छिन्ना गुहवक्त्रैः
+12.16. जलधरमाला (jaladharamālā): This metre has twelve syllables
+of one ma group, one bha group, one sa group and one ma group in
+each pāda. So, here the 5th, 6th, 7th and 8th syllables of each pāda
+are short and the others long. There should be a pause after the 4th
+and the last syllables of each pāda.
+Sch. g.म भ स म
+     - -  -  - UU UU- -  -
+Def. मो भः स्मौ चेज्जलधरमालाऽब्ध्यन्त्यैः
+Metres with Thirteen Syllables
+13.1. प्रहर्षिणी(praharṣiṇī): This metre contains thirteen syllables of
+one ma group, one na group, one ja group, one ra group and one ga
+group in each pāda. So, here the 4th, 5th, 6th, 7th, 9th and 11th
+syllables of each pāda are short and the others long. There should
+be a pause after the 3rd and the last syllables of each pāda.
+
+
+Sch. g. म न ज र ग
+ - - - UUUU- U-U - -
+त्र्याशाभिर्मनजरगा प्रहर्षिणीयम्
+Def.
+13.2. रुचिरा(rucira): Thirteen syllables of one ja group, one bha
+group, one sa group, one ja group and one ga group form each
+pāda of this metre. So, here the 2nd, 4th, 9th, 11th and 13th syllables
+of each pāda are long and the others short. There should be a pause
+after the 4th and the last syllables of each pāda.
+
+Sch. g. ज भ स ज ग
+     U - U-  UU  UU- U-U-
+Def. जभी सजौ गिति रुचिरा चतुग्रहैः
+13.3. मत्तमयूरम(mattamyūram): In this metre syllables of one ma
+group, one ta group, one ya group, one sa group and one ga group
+form each pāda. So, here in each pada the 6th, 7th, 10th and 11th
+syllables are short and the others long. There should be a pause
+after the 4th and the last syllables of each pāda.
+Sch. g.म  त य सग
+Def.
+---- - UU- -UU-  -
+वेदैरन्ध्रेत यसगा मत्तमयूरम्
+Appendix IV
+111
+13.4.  चण्डी  (candi): Thirteen syllables of two na groups, two sa
+groups and one ga group form each pāda of this metre. So, here
+the 9th, 12th and 13th syllables of each pāda are long and the others
+short.
+
+Sch. g. न न स स ग
+Def.
+UUUUUUUU - UU -  -
+नयुगलसयुगलगैरिति चण्डी
+13.5. मञ्जुभाषिणी (mañjubhāṣiṇī): Each pāda of this metre is made
+up of thirteen syllables of two sa groups and two ja groups coming
+alternately one after another followed by a ga syllable (sa ja sa ja
+ga). So, here the 3rd, 5th, 9th, 11th and 13th syllables of each pada
+are long and the others short.
+Sch. g. स ज स ज ग
+Def.
+UU - U- U  UU - U - U-
+सजसा जगौ च यदि मञ्जुभाषिणी
+13.6. न्द्रिका (candrikā): This is a metre containing thirteen syllables
+of two na groups, two ta groups and one ga group in each pāda.
+Hence, the 7th, 8th, 10th, 11th and 13th syllables of each pada are
+long and the others short. There should be a pause after the 7th and
+the last syllables of each pāda.
+Sch. g. न न त त ग
+     UUUUUU - - U -- U -
+Def. ननततगुरुभिश्चन्द्रिकाश्चतुभिः
+13.7. कलहंस:: (kalahaṁsaḥ): Thirteen syllables of one sa group, one
+ja group, two sa groups and one ga group form each pada of this
+metre. So, here the 3rd, 5th, 9th, 12th and 13th syllables of each
+pāda are long and the others short. There should be a pause after
+the 6th and the last syllables of each pāda.
+Sch. g. स ज स स ग
+
+Def.
+UU - U-  U UU - UU--
+सजसा सगौ च कथितः कलहंसः
+13.8. प्रबोधिता (prabodhita): This metre contains thirteen syllables of
+two sa groups and two ja groups coming alternately one after another
+and one ga group in each pāda. So, here the 3rd, 5th, 9th, 11th and
+13th syllables of each pāda are long and the others short. This
+metre is the same as mañjubhāṣiṇī (13.5).
+Chandovallarī
+112
+Sch. g. स ज स ज ग
+Def.
+UU - U-  U UU- U-U-
+सजसा जगौ च भवति प्रबोधिता
+13.9. मृगेन्द्रमुखम्(mrgendramukham): This metre has thirteen syllables
+of one na group, two ja groups, one ra group and one ga group. So,
+here the 5th, 8th, 10th, 12th and 13th syllables of each pada are
+long and the others short.
+Sch. g. न ज ज र ग
+     UUU  U- UU- U-  U- -
+Def. भवति मृगेन्द्रमुखं नजौ जरौ गः
+Metres with Fourteen Syllables
+14.1.असम्बाधा(asambādhā): The metre containing fourteen syllables
+of one ma group, two ga groups, two na groups and one ma group
+in each pāda is called asambadhā. Here, the 6th, 7th, 8th, 9th, 10th
+and 11th syllables of each pāda are short and the others long. There
+should be a pause after the 5th and the last syllables of each
+pāda.
+Sch. g. म ग ग न न म
+     - -  - -- UUUU UU- - -
+Def. मो गौ नौ मश्चेच्छरनवभिरसम्बाधा
+14.2.वसन्ततिलकम्(vasantatilakam): The metre which contains
+fourteen syllables of one ta group, one bha group, two ja groups
+and two ga groups in each pada is called vasantatilakam. Here,
+the 1st, 2nd, 4th, 8th, 11th, 13th and 14th syllables of each pada are
+long and the others short. There should be a pause after the 8th and
+the last syllables of each pāda.
+Sch. g. त भ ज ज ग ग
+     -- U- UUU - UU - U-  -
+Def. ज्ञेयं वसन्ततिलकं तभजा जगौ गः
+14.3. अपराजिता(parājitā): The metre which contains fourteen
+syllables of two na groups, one ra group, one sa group, one la
+group and one ga group in each pāda is called aparājitā. Here, the
+7th, 9th, 12th and 14th syllables of each päda are long and the
+others short. There should be a pause after the 7th and the last
+syllables of each pāda.
+Appendix IV
+113
+Sch. g. न न र स लग 
+     UUUUUU -  U-UU- U -
+Def. ननरसलघुगैः स्वरैरपराजिता
+14.4. प्रहरणकलिका(praharaṇakalikā): Fourteen syllables of two na
+groups, one bha group, one na group, one la group and one ga
+group form each pada of this metre. So, here the 7th and 14th
+syllables of each pāda are long and the others short. Places of
+pause are the same as in aparājitā (14.3).
+Sch. g. न  न भ न ल ग
+     UUUUUU  - UUU UUU -
+Def. ननभनलगिति प्रहरणकलिका
+14.5. वासन्ती (vāsanti): The metre which contains fourteen syllables
+of one ma group, one ta group, one na group, one ma group and two
+ga groups in each pāda, is called vasantā. Here, the 6th, 7th, 8th
+and 9th syllables of each pāda are short and the others long. There
+should be a pause after the 4th, 6th and the last syllables of each
+pāda.
+Sch. g.म त न म ग ग
+Def.
+ -- - - - UU  UU- --  --
+मात्ते नो मो गौ यदि गदिता वासन्तीयम्
+14.6.. लोला (lolā): This metre contains fourteen syllables of one ma
+group, one sa group, one bha group, one ma group and two ga
+groups in each pāda. So, here the 5th, 11th and 12th syllables of
+each pāda are short and the others long. There should be a pause
+after the 7th and the last syllables of each päda.
+Sch. g.म स म भ ग ग
+Def.
+-  --  -U - -  - -  - UU- -
+द्विःसप्तच्छिदि लोला म्सौ म्भौ गौ चरणे चेत्
+14.7. नान्दीमुखी ((nändīmukhi): Fourteen syllables of two na groups,
+two ta groups and two ga groups form each pāda of this metre.
+Here, the 7th, 8th, 10th, 11th, 13th and 14th syllables of each pada
+are long and the others short. Places of pause are the same as in
+lolā (14.6).
+Sch. g.न न त त ग ग
+Def.
+ UU UU UU - - U  - -U - -
+स्वरभिदि यदि नौ तौ च नान्दीमुखी गौ
+114
+Chandovallarī
+Metres with Fifteen Syllables
+15.1. शशिकला (Saśikalā): The metre which contains fourteen short
+syllables and one long syllable at the end of each pāda is called
+śaśikalā. So, it contains fifteen syllables of four na groups and one
+sa group.
+स
+Sch. g. न न न न स
+      UU UUUUUUUUU UUU-
+Def. गुरुनिधनमनुलघुरिह शशिकला
+15.2. मालिनी (mālinī): Fifteen syllables of two na groups, one ma
+group and two ya groups form each pada of this metre. So, here
+the 1st, 2nd, 3rd, 4th, 5th, 6th, 10th and 13th syllables of each pāda
+are short and the others long. There should be a pause after the 5th
+and the last syllables of each paāda.
+य
+Sch.g. न न म य य
+     UUUUUU--  -U-   -U--
+Def. ननमयययुतेयं मालिनी भोगिलोकैः
+15.3. : लीलाखेल:(līlākhelaḥ): When fifteen long syllables form each
+pāda then the metre is called līlākhela. So, this metre contains
+syllables of five ma groups which, according to the rule is compared
+with two pāda of vidyunmālā (8.4) metre with one syllable less.
+Sch. g. म म म म म
+     ----  -- ----  - ----
+Def. एकन्यूनौ विद्युन्मालापादौ चेल्लीलाखेलः
+15.4. विपिनतिलकम् (vipinatilakam): Fifteen syllables of one na group,
+one sa group, one na group and two ra groups form each pada of
+this metre. So, here the 6th, 10th, 12th, 13th and 15th syllables of
+each pāda are long and the others short.
+Sch. g.  न स न र र
+     UUUUU-  UUU- U- -U-
+Def. विपिनतिलकं नसनरेफयुग्मैर्भवेत्
+15.5. तूणकम्(tūṇakam): This metre has fifteen syllables of three ra
+groups and two ja groups coming one after another (ra ja ra ja
+ra). So, here the 1st, 3rd, 5th, 7th, 9th, 11th, 13th and 15th syllables
+of each pāda are long and the others short. There should be a pause
+after the 4th, 8th, 12th and the last syllables of each pāda. One
+Appendix IV
+115
+pāda of this metre, according to rule, is comparable with two pādas
+of samānikā (8.5) minus the last syllable.
+
+Sch. g. र ज र ज र 
+     -U- U-U -U-U- U- U-
+Def. तूणकं समानिकापदद्वयं विनान्तिमम
+
+15.6.चन्द्रलेखा(candralekha): This metre has fifteen syllables of one
+ma group, one ra group, one ma group and two ya groups in each
+pāda. So here the 5th, 10th and 13th syllables of each pada are
+short and the others long. There should be a pause after the seventh
+and the last syllables of each päda.
+Sch. g. म र म य य
+     ---- U-- --U--U--
+Def. प्रौ मो यौ चेद्भवेयुः सप्ताष्टकैश्चन्द्रलेख
+
+15.7. चित्रा (citra): Fifteen syllables of three ma groups and two ya
+groups form each pāda of this metre. Hence, in each pada all the
+syllables are long except for the 10th and 13th, which are short. There
+should be a pause after the 8th and the last syllables of each pāda.
+Sch. g. म म म य य
+     ---- ---- -U- -U--
+Def. चित्रानाम च्छन्दश्चित्रं चेत्त्रयो मा यकारी
+Metres with Sixteen Syllables
+dilalanabor) motors 2.01
+16.1. चित्रम्(citram): Two pādas of samānikā (8.5) together form
+each pāda of this metre. The groups are ga la ra ja ga la ra ja.
+So, here the 1st, 3rd, 5th, 7th, 9th, 11th, 13th and 15th syllables of
+each pāda are long and the others short. There should be a pause
+after the 8th and the last syllables of each pāda, or after 4th, 8th,
+12th and the last syllables of each pāda.
+Sch. g. ग ल र ज ग ल र ज
+     -U-U-U- U-U- U-U- U
+Def. चित्रसंज्ञमीरितं समानिकापदद्वयन्तु
+
+16.2. ऋषभगजविलसितम्(rṣabhagajavilasitam): Sixteen syllables made
+up of one bha group, one ra group, three na groups and one ga
+group form each pāda of this metre. So, here the 1st, 4th, 6th and
+16th syllables of each pāda are long and the others short. There
+should be a pause after the 7th and the last syllables of each pada.
+
+116
+Sch. g. भ र न न न ग
+     -UU- U- UUUUUUUUU -
+Def. भ्रत्रिनगैः स्वरात्खमृषभगजविलसितम्
+16.3. चकिता (cakita): Sixteen syllables of one bha group, one sa
+group, one ma group, one ta group, one na group and one ga group
+form each pāda of this metre. So, here the 1st, 6th, 7th, 8th, 9th,
+10th, 11th and 16th syllables of each pāda are long and the others
+short. There should be a pause after the 8th and the last syllables of
+each pāda.
+ch. g. म स म त न ग
+     - UUUU- - -- UU U U-
+Def. भात्समतनगैरष्टच्छेदे स्यादिह चकिता
+
+16.4. पञ्चचामरम् (рañcacāmaram): Two pādas of pramāṇikā (8.6)
+metre put together would form one pāda of this metre. The
+arrangement of syllabic groups in each pāda of this metre is ja ra la
+ga ja ra la ga. Here, the 1st, 3rd, 5th, 7th, 9th, 11th, 13th and 15th
+syllables of each pāda are short and the others long. There should be
+a pause after the 4th, 8th, 12th and the last syllables of each pāda.
+Sch. g. ज र लग ज र ल ग
+     U-U -U-U- U- U-U-U-
+Def. प्रमाणिकापदद्वयं वदन्ति पञ्चचामरम्
+16.5. मदनललिता (madanalalitā): Sixteen syllables of one ma group,
+one bha group, one na group, one ma group, one na group and one
+ga group form each pada of this metre. So, here the 1st, 2nd, 3rd,
+4th, 10th, 11th, 12th and 16th syllables of each pāda are long and
+the others short. There should be a pause after the 4th, 6th and the
+last syllables of each pāda.
+Sch. g. म भ न म न ग
+      - - - - UUUUU- -- UUU-
+Def. म्भी नो नो गो मदनललिता वेदैः षड्तुभिः
+16.6.वाणिनी(vāṇinī): Sixteen syllables of one na group, one ja group,
+one bha group, one ja group, one ra group and one ga group form
+each pāda of this metre. So, here the 5th, 7th, 11th, 13th, 15th and
+16th syllables of each pāda are long and the others short.
+Sch. g. न ज भ ज र ग
+     UUUU- U- UUU -U- U- -
+Def. नजभजरैः सदा भवति वाणिनी गयुक्तैः
+
+Appendix IV
+117
+16.7. प्रवरललितम् (pravaralalitam): Sixteen syllables of one ya group,
+one ma group, one na group, one sa group, one ra group and one ga
+group form each pada of this metre. So, here the 1st, 7th, 8th, 9th,
+10th, 11th and 14th syllables of each pada are short and the others
+long.
+Sch. g.य म न स र ग
+     U-- --- UUU UU- -U--
+Def. यमौ नत्रौ गश्च प्रवरललित नाम वृत्तम्
+16.8. अचलधृति (acaladhṛtiḥ): When sixteen short syllables form each
+pāda, then the metre is called acaladhṛti. Here five na groups and
+one la group form each pada of this metre.
+Sch. g. न  न  न  न  न ल
+       UU UUUU UU UU UUU UUU
+Def. द्विगुणितवसुलघुभिरचल
+16.9. गरुडरुतम्(garuḍarutam): Sixteen syllables of one na group, one
+ja group, one bha group, one ja group, one ta group and one ga
+group form each pāda of this metre. So, here the 5th, 7th, 11th, 13th,
+14th and 16th syllables of each pāda are long and the others short.
+Sch. g. नज भजतग
+       UUUU- U- UUU- U- - U -
+Def. गरुडरुतं नजौ भजतगा यदा स्युस्तदा
+
+17.1. शिखरणी(śikhariṇī): Each pada of this metre is formed by the
+syllables of one ya group, one ma group, one na group, one sa
+group, one bha group, one la group and one ga group. Here, the
+2nd, 3rd, 4th, 5th, 6th, 12th, 13th and 17th syllables of each pada are long and the others short. There should be a pause after the 6th and the last syllables of each pāda. 
+Sch. g. य मन सभ लग
+       U- --  -- UUUUU - - UUU -
+Def. रसै रुद्रश्च्छिन्ना यमनसभला गः शिखर
+
+17.2.  पृथ्वी (pṛthi): Seventeen syllables of one ja group, one sa group,
+one ja group, one sa group, one ya group, one la group and one ga
+group form each pāda of this metre. So, here the 2nd, 6th, 8th,
+12th, 14th, 15th and 17th syllables of each pāda are long and the
+118
+Chandovallarī
+others short. There should be a pause after the 8th and the last
+syllables of each pāda.
+
+Sch. g. ज स ज सय लग
+     U-  UUU - U-UUU -U - - U-
+Def. जसौ जसयला वसुग्रहयतिश्च पृथ्वी गुरुः
+
+
+17.3. वंशपत्रपतितम(vaṁśapatrapatitam): This metre contains
+seventeen syllables of one bha group, one ra group, one na group,
+one bha group, one na group, one la group and one ga group in
+each pāda. So, here the 1st, 4th, 6th, 10th and 17th syllables of each
+pāda are long and the others short. There should be a pause after
+the 10th and the last syllables of each pāda. 
+Sch. g.भ र न भ न लग
+Def. दिङमुनि वंशपत्रपतितं भरनभनलगैः
+
+
+17.4.मन्दाक्रान्ता(mandākrāntā): Seventeen syllables of one ma group,
+one bha group, one na group, two ga groups and two ya groups
+form each pada of this metre. So, here the 5th, 6th, 7th, 8th, 9th,
+12th and 15th syllables of each pāda are short and the others long.
+There should be a pause after the 4th, 10th and the last syllables of
+each pāda.
+one
+Sch. g. म भ न ग ग य य
+     -- -  -   UUUUU- - U - - U- -
+Def. मन्दाक्रान्ताऽम्बुधिरसनगर्यो भनौ गौ ययुग्मम्
+17.5 हरिणी (hariṇī): Seventeen syllables of one na group, one sa
+group, one ma group, one ra group, one sa group, one la group and
+one ga group form each pada of this metre. So, here the 1st, 2nd,
+3rd, 4th, 5th, 11th, 13th, 14th and 16th syllables of each pada are
+short and the others long. There should be a pause after the 6th,
+10th and the last syllables of each pāda.
+.
+Sch. g. न स म र स लग
+Def
+U UUUU - - - --U-UU - -U-
+नसमरसला गः षड्वेदैर्हयैर्हरिणी मता
+17.6 न टकम्(narddaṭakam): Seventeen syllables of one na group,
+one ja group, one bha group, two ja groups, one la group and one
+ga group form each pada of this metre. So, here the 5th, 7th, 11th,
+14th and 17th syllables of each pada are long and the others short.
+Appendix IV
+119
+There should be a pause after the 8th and the last
+syllables of each pāda.
+
+Sch. g. न ज भ  ज लग
+     UU UU - U-  UUU - UU -UU-
+Def. यदि भवतो नजौ भजजला गुरु नर्द्दकम्
+
+17.7. कोकिलकम्(kokilakam): This metre has the same arrangement
+of gaṇas as the narddaṭaka (17.6) metre. The only difference
+between the two lies in the places of pause. The places of pause in
+case of 17.6 are the 8th and the last syllables of each pada; but
+here the places of pause are the 7th, 13th and the last syllables of
+each pāda.
+Sch. g.न  ज भ  ज ज ल ग
+     UU UU- U-U UU- UU - UU -
+ Def हयऋतुसागरैयतियुतं यदि कोकिलकम्
+17.8.  हारिणी (hāriṇī): Seventeen syllables of one ma group, one bha
+group, one na group, one ma group, one ya group, one la group and
+one ga group form each pada of this metre. So, here the 5th, 6th,
+7th, 8th, 9th, 13th and 16th syllables of each pāda are short and the
+others long. There should be a pause after the 4th, 10th and the last
+syllables of each pāda.
+Sch.g. म भ न म य लग 
+     -- --UUUU - --U-  -U-
+Def. वेदवश्चैभनमयला गश्चेत्तदा हारिणी
+
+17.9. भाराक्रान्ता(bhārākrāntā): Seventeen syllables of one ma group,
+one bha group, one na group, one ra group, one sa group, one la
+group and one ga group form each pada of this metre. So, here the
+1st, 2nd, 3rd, 4th, 10th, 12th, 15th and 17th syllables of each pada
+are long and the others short. The places of pause are same as in
+hāriņi (17.8).
+
+
+Sch. g. म भ न र स लग
+     - - - -UU UUU - U- U U-  U-
+Def. भाराक्रान्तामभनरसला गुरुः श्रुतिषड्हयैःप
+
+18.1. कुसुमितलतावेल्लिता  pylaesaràfe
+(kusumitalatävellitä): Eighteen syllables of
+one ma group, one ta group, one na group and three ya groups form
+120
+Chandovallarī
+each pāda of this metre. So, here the 6th, 7th, 8th, 9th, 10th, 13th
+and 16th syllables of each pāda are short and the others long. There
+should be a pause after the 5th, 11th and the last syllables of each
+pāda.
+
+Sch. g.म त न य य य
+     - -- --  UU UUU --  U-  -  U- -
+Def स्याद्भूतर्त्यश्चैः कुसुमितलतावेल्लिता म्तौ नयाँ यौ
+
+18.2.नन्दनम्(nandanam): Eighteen syllables of one na group, one ja
+group, one bha group, one ja group and two ra groups form each
+pāda of this metre. So, here the 5th, 7th, 11th, 13th, 15th, 16th and
+18th syllables of each pāda are long and the others short. There
+should be a pause after the 11th and the last syllables of each pāda.
+Sch. g. न ज भ र र 
+     UUUU - U- UUUU- U-U--   U-
+Def. नजभजरैस्तु रेफसहितैः शिवैर्हयैर्नन्दनम्
+
+ 
+18.3.नाराचम (ārācam): Eighteen syllables of two na groups and
+four ra groups form each pāda of this metre. So, here the 1st, 2nd,
+3rd, 4th, 5th, 6th, 8th, 11th, 14th and 17th syllables of each pada are
+short and the others long. There should be a pause after the 8th,
+13th, and the last syllables of each pāda. done to aidallye
+Sch. g. न न र र र र
+     UU UUUU  U--  U --U-- U-
+Def. इह नॅनरचतुष्कसृष्टं तु नाराचमाचक्षते
+18.4. 
+चित्रलेखा(citralekha): Eighteen syllables of one ma group, one
+bha group, one na group, one la group, two ga groups and two ya
+groups form each pāda of this metre. So, here the 5th, 6th, 7th, 8th,
+9th, 10th, 13th and 16th syllables of each pāda are short and the
+others long. There should be a pause after the 4th, 11th and the last
+syllables of each pāda.
+
+Sch. g.म भ न लग ग य य
+Def.
+- - - - UUUUUU  - -U - - U- -
+मन्दाक्रान्ता नयुगलजठरा कीर्तिता चित्रलेखा
+18.5  शार्दूलललितम् (śārdulalaltiam): Eighteen syllables of one ma
+group, one sa group, one ja group, one sa group, one ta group and
+one sa group form each pada of this metre. So, here the 1st, 2nd,
+3rd, 6th, 8th, 12th, 13th, 14th and 18th syllables of each pada are
+Appendix IV
+121
+long and the others short. There should be a pause after the 12th
+and the last syllables of each pāda.
+Sch. g.म स ज स त  स
+
+Def.
+- - -  UU- U- UUU -  --UU   U-
+मः से जः सतसा दिनेशॠतुभिः शार्दूलललितम्
+Metres with Nineteen Syllables
+19.1. मेघविस्फूर्जिता (meghavisphūrjitā): Nineteen syllables of one ya
+group, one ma group, one na group, one sa group, two ra groups
+and one ga group form each pada of this metre. So, here the 1st,
+7th, 8th, 9th, 10th, 11th, 14th and 17th syllables of each pada are
+short and the others long. There should be a pause after the 6th,
+12th and the last syllables of each pāda.
+
+Sch. g. य म न स र र ग
+     U- - -  -- UUUU - -U--   U-  -
+Def. रसर्वैश्वय्र्मोन्सौ ररगुरुयुतौ मेघविस्फूर्जिता स्यात्
+19.2छाया(chāyā): This metre is same as meghavisphūrjitā (19.1)
+with the exception of having two ta groups in place of two ra groups.
+So, here the 1st, 7th, 8th, 9th, 10th, 11th, 15th and 18th syllables of
+each pāda are short and the others long.
+
+Sch. g. य  म  न  स त त ग
+Def.
+U- --  -- UUUUU -  - -U- -  U-
+भवेत्सैव च्छाया तयुगगयुता स्याद्वादशान्ते यदा 
+19.3. शार्दूलविक्रीडितम्(särdülavikrīḍitam): Nineteen syllables of one
+ma group, one sa group, one ja group, one sa group, two ta groups
+and one ga group form each pāda of this metre. So, here the 4th,
+5th, 7th, 9th, 10th, 11th, 15th and 18th syllables of each pada are
+short and the others long. There should be a pause after the 12th
+and the last syllables of each pāda.
+
+Sch. g.म   स ज स त तग
+     - - -UU -U - UUU-  --U- - U-
+Def. सूर्याश्चैर्मेसजस्तताः सगुरवः शार्दूलविक्रीडितम्
+19.4. सुरसा (surasā): Nineteen syllables of one ma group, one ra
+group, one bha group, one na group, one ya group, one na group
+and one ga group form each pāda of this metre. So, here the 5th,
+8th, 9th, 10th, 11th, 12th, 13th, 16th, 17th and 18th syllables of each
+122
+Chandovallarī
+
+pāda are short and the others long. There should be a pause
+the 7th, 14th and the last syllables of each pāda.
+Sch. g. म र भ न य न ग
+     -  - - - U-- UUU U UU --U UU -
+Def. म्रौ नौ यो नो गुरुश्चेत्स्वरमुनिकरणैराह सुरसाम्
+after
+19.5. फुल्लदाम(phulladāma): Nineteen syllables of one ma group,
+two ga groups, two na groups, two ta groups and two ga groups
+form each pada of this metre. So, here the 6th, 7th, 8th, 9th, 10th,
+11th, 14th and 17th syllables of each pāda are short and the others
+long. There should be a pause after the 5th, 12th and the last syllables
+of each pāda.
+Sch. g.म ग ग न न त त ग ग
+     -  - - - - UUUUUU - - U--  U- -
+Def. मो गौ नौ तौ गौ शरहयतुरगैः फुल्लदाम प्रसिद्धम्
+
+Metres with Twenty Syllables
+20.1. सुवदना(suvadanā): Twenty syllables of one ma group, one ra
+group, one bha group, one na group, one ya group, one bha group,
+one la group and one ga group form each pada of this metre. So,
+here the 5th, 8th, 9th, 10th, 11th, 12th, 13th, 17th, 18th and 19th
+syllables of each pāda are short and the others long. There should
+be a pause after the 7th, 14th, and the last syllables of each pāda.
+Sch. g.म र भ   न य भ लग
+     - - - -U- -UUUUUU  -  - -  UUU -
+Def. ज्ञेया सप्ताश्वषड्भिर्मेरभनययुता भ्लो गः सुवदना
+20.2.
+गीतिका
+(gitikā): Twenty syllables of one sa group, two ja groups,
+one bha group, one ra group, one sa group, one la group and one
+ga group form each pada of this metre. So, here the 3rd, 5th, 8th,
+10th, 13th, 15th, 18th and 20th syllables of each pāda are long and
+the others short. There should be a pause after the 5th, 12th and the
+last syllables of each pāda.
+
+Sch. g. स ज ज भ र स ल ग
+Def.
+UU - U-  UU- U- U U-  U- UU - U -
+सजजा भरौ सलगा यदा कथिता तदा खलु गीतिका
+
+20.3. वृत्तम्(vrttam): Twenty syllables of three ra groups and three
+ja groups coming alternately one after another, one ga group and
+Appendix IV
+123
+one la group form each pada of this metre. So, here the 1st, 3rd,
+5th, 7th, 9th, 11th, 13th, 15th, 17th and 19th syllables of each pada
+are long and the others short.
+
+Sch. g. र ज र ज र ज गल
+     -U -U- U - U- U- U-  U- U- U-U
+Def. वृत्तमीदृशन्तु नामतो रजी रजा रजौ गुरुर्लेघुश्च
+20.4.शोभा(Sobha): Twenty syllables of one ya group, one ma group,
+two na groups, one ga group, two ra groups and one ga group form
+each pada of this metre. So, here the 1st, 7th, 8th, 9th, 10th, 11th,
+12th, 15th and 18th syllables of each pāda are short and the others
+long. There should be a pause after the 6th, 13th, and the last syllables
+of each paāda.
+Sch. g.य  म न न ग र र ग
+     U- --  --  UUUUUU - -U--  U-  -
+Def. रसाश्वाश्चैः शोभा नयुगगजठरा मेघविस्फूर्जिता चेत्
+Metres with Twenty-one Syllables
+21.1.नग्धरा(sragdhara): Twenty-one syllables of one ma group,
+one ra group, one bha group, one na group and three ya groups
+form each pāda of this metre. So, here the 1st, 2nd, 3rd, 4th, 6th,
+7th, 14th, 15th, 17th, 18th, 20th and 21st syllables of each pada are
+long and the others short. There should be a pause after the 7th,
+14th and 21st syllables of each pāda.
+Sch. g. म र भ न य य य
+     - - -- U-- UU UU UU-  -U-  -U- -
+Def. म्रभ्नैर्यानां त्रयेण त्रिमुनियतियुता स्रग्धरा कीर्तितेयम्
+21.2. सरसी(sarasi): Twenty-one syllables of one na group, one ja
+group, one bha group, three ja groups and one ra group form each
+pāda of this metre. So, here the 5th, 7th, 11th, 14th, 17th, 19th and
+21st syllables of each pāda are long and the others short. The places
+of pause are the same as in sragdhara (21.1).
+ Sch. g.न ज भ ज ज ज र
+Def.
+UUUU-   U-  UU U- -U- UU-  U-U-
+नजभजजा जरौ यदि तदा गदिता सरसी कवीश्वरैः
+124
+Chandovallarī
+Metres with Twenty-two Syllables
+22.1. हंसी(hamsi): Twenty-two syllables of two ma groups, two ga
+groups, four na groups and two ga groups form each pada of this
+metre. So, here the 1st, 2nd, 3rd, 4th, 5th, 6th, 7th, 8th, 21st and
+22nd syllables of each pāda are long and the others short. There
+should be a pause after the 8th and the last syllables of each pāda.
+Sch. g. म म ग ग न न न न ग ग
+     -  - -- -- - - U U UUUUUUU UUU  --
+Def. मौ गौ नश्चत्वारो गो गो वसुभुवनयतिरिति भवति हंसी
+
+22.2.  मदिरा (madira): Twenty-two syllables of seven bha groups and
+one ga group form each pada of this metre. Hence, the 1st, 4th,
+7th, 10th, 13th, 16th, 19th and 22nd syllables of each pāda are long
+and the others short.
+
+
+Sch. g. भ भ भ भ भ भ भ ग
+     - UU -UU-  UU- UU-UU- UU- UU-
+Def. सप्तभकारयुतैकगुरुगदितेयमुदारतरा मदिरा
+Metres with Twenty-three Syllables
+23.1.अद्रितनया(adritanaya): Twenty-three syllables of the groups
+na, ja, bha, ja, bha, ja, bha, la and ga form each pada of this
+metre. So, here the 5th, 7th, 11th, 13th, 17th, 19th and 23rd syllables
+of each pāda are long and the others short. There should be a pause
+after the 11th and the last syllables of each pāda.
+
+
+Sch. g. न  ज भ ज भ ज भ लग
+     UUUU -  U - UUU- U- U U U-U- UU-
+Def. नजभजभा जभौ लघुगुरू बुधैस्तु गदितेयमद्रितनया
+23.2.
+मत्ताक्रीडम(mattākrīḍam): Twenty-three syllables of two ma
+groups, two ga groups, fourteen la groups and one ga group form
+each pāda of this metre. So, here the 1st, 2nd, 3rd, 4th, 5th, 6th, 7th,
+8th and 23rd syllables of each pada are long and the others short.
+There should be a pause after the 8th, 13th and the last syllables of
+each pāda.
+
+Sch. g. म म ग गलललललललललललग
+     --  -- - -  --U U UUUUU UUUUUUU -
+Def. मत्ताक्रीडं वस्विष्वाशायति मयुगगयुगमनुलघुगुरुभिः 
+Appendix IV
+125
+
+Metres with Twenty-four Syllables
+
+24.1.  तन्वी(tanvi): Twenty-four syllables of one bha group, one ta
+group, one na group, one sa group, two bha groups, one na group
+and one ya group form each pada of this metre. So, here the 1st,
+4th, 5th, 12th, 13th, 16th, 23rd and 24th syllables of each pada are
+long and the others short. There should be a pause after the 5th,
+12th and the last syllables of each pāda.
+Sch. g.  भ त न स भ  भ न य
+Def.
+-UU-- U UUU UU -  -  UU -U UU UUU - -
+भूतमुनीनैयतिरिह भतनाः स्भी भनयाश्च यदि भवति तन्वी
+Metres with Twenty-five Syllables
+25.1.क्रौचपदा(krauñcapadā): Twenty-five syllables of one bha group,
+one ma group, one sa group, one bha group, twelve la groups and
+one ga group form each pada of this metre. So, here the 1st, 4th,
+5th, 6th, 9th, 10th and 25th syllables of each pāda are long and the
+others short. There should be a pause after the 5th, 10th, 18th and
+the last syllables of each pada.
+Sch. g.  भ  म स भ लललललललललललग
+      - UU-  - - UU -- UUUUUUUUUUUUUUU
+Def. क्रौञ्चपदा स्याद्भो मसभाश्चेदिषुशरवसुमुनियतिरिहलघुगैः
+
+Metres with Twenty-six Syllables
+26.1.भुजङ्गविजृम्भितम्(bhujangavijṛmbhitam): Twenty-six syllables of
+two ma groups, one ta group, three na groups, one ra group, one sa
+group, one la group and one ga group form each pada of this metre.
+So, here the 1st, 2nd, 3rd, 4th, 5th, 6th, 7th, 8th, 19th, 21st, 24th and
+26th syllables of each pāda are long and the others short. There
+should be a pause after the 8th, 19th and the last syllables of each
+pāda.
+Sch. g. म  म त न न न रस लग
+     -  ---   ---- UUUUUUUUUU U-U- UU- U-
+Def. वस्वीशाश्चैश्च्छेदोपेतं ममतनननयुगरलगैर्भुजङ्गविजृम्भितम्
+
+
+
+MATRA CHANDAS OR METRES OF SYLLABIC INSTANTS
+In the earlier sections we have dealt with samavrittas or metres having
+same number of syllables and same arrangements of sound in all the
+four lines. In this additional section a note on the metres regulated by
+the syllabic instants or mātrās is given.
+Among the metres regulated by syllabic instants āryā, vaitālīya and
+mātrāsamaka are the three major divisions. The most common variety
+of matravrittas is ārya. pathyā, vipulā, capalā, mukhacapalā,
+jaghanacapalā, gīti, upagīti, udgīti and äryägīti are the nine sub-varieties
+of aryā. The last four in the list are more popular than the earlier five.
+So, the definitions of arya and its four popular divisions are given here
+with examples.
+pa
+
+āryā
+In this variety the first and third quarters each contain twelve mātrās
+and the second eighteen mātrās and the fourth fifteen (12-18-12-15).
+The Āryāsaptasati of Govardhana is entirely composed in this metre.
+Example:
+जयति स नगाधिराजो निकेतने यस्य निर्जरस्तुत्या ।
+जगतः शुभाय जाता माता मातङ्गवदनस्य ॥
+jayati sa nagādhirājo niketane yasya nirjarastutyā
+jagataḥ śubhāya jātā mātā mätangavadanasya
+Devistotramañjarī of Vasishtha Ganapati Muni, 1
+
+gīti
+When the first and third quarters of a verse contain twelve mātrās
+each and the second and fourth have eighteen each (12-18-12-18)
+then the metre is called gīti.
+Example:
+श्रियमातनोतु सुकृतं पुष्णातु ततान्यघानि मुष्णातु ।
+दिशतु च भूयो भूयस्तव भगवानष्टमूर्तिरिष्टानि ॥
+127
+Mātrā Chandas or Metres with Syllabic Instants
+śriyamātanotu sukṛtaṁ puṣṇātu tatānyaghāni muṣṇātu
+diśatu ca bhūyo bhūyastava bhagavānaṣṭamurtiriṣṭāni
+ Śivaśatakam of Vasishtha Ganapati Muni, 1
+
+upagīti 
+The first and third quarters of this metre contain twelve mātrās each
+and the second and fourth contain fifteen each (12-15-12-15).
+Example:
+कश्चिदपि पापहारी न पुरश्चरितश्च ते मन्त्रः ।
+कं गुणमभिलक्ष्य मम प्रबुद्धयसेऽन्तर्जगन्मातः ।।
+kaścidapi pāpahārī na puraścaritaśca te mantraḥ
+kaṁ gunamabhilakṣya mama prabudhyase'ntarjaganmātaḥ
+Umāsahasram of Vasishtha Ganapati Muni, 341
+udgīti
+When the first and third quarters of a verse have twelve mātrās each
+and second has fifteen and the fourth has eighteen (12-15-12-18)
+then it is called udgīti.
+Example:
+नारायणस्य  सन्ततमुद्गतिः  संस्मृतिर्भक्त्या ।
+अर्चायामासक्तिर्दुस्तरसंसारसागरे तरणिः ।।
+nārāyaṇasya santatamudgītiḥ saṁsmṛtirbhaktyā
+arcāyāmāsaktirdustarasaṁsārasāgare taraṇiḥ
+Chandomañjari of Gangadasa
+āryāgīti
+The first and third quarters of this metre have twelve syllabic instants
+each and second and fourth contain twenty mātrās each.
+Example:
+विदधातु सम्पदं मे सकलजगन्नाथनयनहारिज्योत्स्नः |
+शीतोऽन्धकारहारी हासशशी कश्चिदङ्करहितो मातुः ।।
+vidadhātu sampadaṁ me sakalajagannāthanayanahārijyotsnaḥ
+śīto'ndhakārahārī hāsaśaśī kaścidankarahito mātuḥ
+Umāsahasram of Vasishtha Ganapati Muni, 776
+128
+Chandovallarī
+In the vaitālīya group the various metres are aupachandasika,
+āpātalikā, caruhāsinī and aparāntikā. Of these vaitālīya and
+aupachandasika are more popular. So, the definitions of these two
+with examples are given here:
+vaitālīya
+In vaitālīya, the first and the third lines contain fourteen mātrās in
+which after six mātrās the arrangement of syllables by short and long
+is: long-short-long-short-long. The second and fourth llines of this
+metre have sixteen syllabic instants in which after eight mātrās the
+arrangement of syllable by short and long is: long-short-long-short-
+long. The first six mātrās in the first and third lines and the first eight
+mātrās in the second and fourth lines can be a mixture of short or
+long syllables.
+Example:
+उपकारपरः स्वभावतः सततं सर्वजनस्य सज्जनः ।
+असतामनिशं तथाप्यहो गुरुहृद्रोगकारी तदुन्नतिः ।।
+upakāraparaḥ svabhāvataḥ satataṁ sarvajanasya sajjanaḥ
+asatāmaniśaṁ tathāpyaho guruhṛdrogakārī tadunnatiḥ
+Śiśupālavadham of Magha, 16.22
+aupachandasika
+This chanda is exactly like that of vaitālīya but each line here has one
+long syllable extra at the end. So, here the first and third lines have 16
+mātrās and, second and fourth lines have 18 mātrās.
+Example:
+जगदेतदनारतं पचन्तं महतोऽस्मादपि पुष्करान्महान्तम्
+तपसा निरुपाधिकेन गम्यं परमात्मानमजं शिवाख्यमीडे ।।
+jagadeteadanärataṁ pacantaṁ mahato'smādapi puṣkarānmahāntam
+tapasā nirupādhikena gamyaṁ paramātmānamajaṁ śivākhyamīḍe
+Śivaśatakam of Vasishtha Ganapati Muni, 51
+The mātrāsamaka goup has chandas like mātrāsamaka, vanavāsikā,
+viśloka, citrā, upacitrā, pādākulaka, gītyāryā, śikhā and cūlikā. Of
+129
+Mātrā Chandas or Metres with Syllabic Instants
+these mātrāsamaka and pādākulaka being popular, we provide the
+definitions of these two with examples.
+mātrāsamaka & pādākulaka
+The metre called mātrāsamaka consists of four quarters each of which
+contains sixteen syllabic instants. The most general variety of this
+metre is that in which the ninth syllabic instant is short and the last is
+long. The different varities of this metre arise from particular syllabic
+instants being short or long. A mixed variety of several varities of this
+metre gives rise to pādākulaka. In pādākulaka there is no other
+restriction than that each quarter should have sixteen syllabic instants.
+Example of mātrāsamaka
+छिन्नां भिन्नां सुतरां सन्नामन्नाभावादभितः खिन्नाम् ।
+एतां पातुं भरतक्षोणीं जाये जिष्णोः कुरु मां शक्तम् ॥
+chinnāaṁ bhinnāṁ sutarāṁ sannāmannābhāvādabhitaḥ khinnām
+etām pātuṁ bharatakṣonīm jāye jisnoḥ kuru māṁ śaktam
+Indrāṇīsaptaśati of Vasishtha Ganapati Muni, 399
+Example of pādākulaka
+शमयतु पापं दमयतु दुःखं हरतु विमोहं स्फुटयतु बोधम् ।
+प्रथयतु शक्तिं मन्दं हसितं मनसिजशासनकुलसुदृशो नः।।
+śamayatu pāpaṁ damayatu duḥkhaṁ
+haratu vimohaṁ sphuṭayatu bodham
+prathayatu saktiṁ mandaṁ hasitaṁ
+manasijaśāsanakulasudṛśo naḥ
+Umāsahasram of Vasishtha Ganapati Muni, 976
+
+EXAMPLES OF FOURTEEN VARIETIES OF UPAJATI
+Here we provide fourteen verses from Sri Aurobindo's Bhavānī Bhāratī
+to illustrate fourteen varities of upajāti as mentioned in the section
+II.2.3 on page twenty-five of this book.
+1. कीर्तिः kīrtih उ इ इ इ
+अनन्तशक्तयृद्धिमशेषमूर्ति
+को वक्ष्यतीमां तव सर्वशक्ते ।
+तेजस्त्वमेतद्बलिनां बलञ्च
+त्वं कोमलानामपि कोमलासि ।।
+anantaśaktṛyuddhimaśeṣamūrtim
+ko vakṣyatīmāṁ tava sarvaśakte
+tejastvametadbalināṁ balaṁ ca
+tvaṁ komalānāmapi komalāsi
+Bhavānī Bhāratī, 88
+2. वाणी vānī इ उ इ इ
+सान्द्रं तमिस्रावृतमार्तमन्धं
+ददर्श तद्भारतमार्यखण्डम् ।
+गूढा रजन्यामरिभिर्विनष्टा
+माता भृशं क्रन्दति भारतानाम् ।।
+sandram tamisravṛtamārtamandhaṁ
+dadarśa tadbharatamāryakhaṇḍam
+gūḍhā rajanyāmaribhirvinaṣṭā t
+mātā bhṛśaṁ krandati bhāratānām
+Bhavānī Bhārati, 33
+3. माला mālā उ उ इ इ
+नरास्थिमाला नृकपालकाञ्ची
+क्व सा कराली क्षुधिता च काली ।
+नग्ना च घोरा विवृतास्यभीमा
+यस्या विरावैः सहसोत्थितोऽस्मि ।।
+narasthimālā nṛkapālakāñcī
+kva sā karālī kṣudhită ca kālī
+nagna ca ghora vivṛtāsyabhīmā
+yasyā virāvaiḥ sahasotthito'smi
+Bhavānī Bhārati, 85
+4. शाला Śālā इ इ उ इ
+देहि क्रतून् देहि पिपासुरस्मि
+जानीहि दृष्ट्वा भज शक्तिमाद्याम् ।
+शिरांसि राज्ञां महतां तनूश्च
+भोक्तुं नदन्ती चरतीह काली ॥
+dehi kratūn dehi pipāsurasmi
+janihi dṛṣṭvā bhaja śaktimadyām
+śirāṁsi rājñāṁ mahatāṁ tanuśca
+bhoktum nadanti caratiha kālī
+Bhavānī Bhārati, 26
+Index to the Sources of Examples...
+135
+5. हंसी hamsī उ इ उ इ
+दशायुधाढ्या दशदिश्वगम्या
+पातासि मातर्दशबाहुरार्यान् ।
+सहस्रहस्तैरुपगुह्य पुत्रान्
+आस्से जगद्योनिरचिन्त्यवीर्या ॥
+daśayudhaḍhyā daśadiksvagamyā
+pātāsi mātardaśabāhurāryān
+sahasrahastairupaguhya putran
+asse jagadyoniracintyavīryā
+Bhavānī Bhāratī, 90
+6. माया māyā इ उ उ इ
+रक्तप्रवाहैरपि नास्मि तृप्ता
+शतैः सहस्रैरयुतैरजानाम् ।
+प्रदत्त भित्त्वा हृदयानि रक्तं
+सम्पूजयन्त्येवमजां करालीम् ॥
+raktapravahairapi nāsmi tṛptā
+śataiḥ sahasrairayutairajānām
+pradatta bhittvä hṛdayāni raktam
+sampujayantyevamajām karālīm
+Bhavānī Bhāratī, 27
+7. जाया jāyā उ उ उ इ
+सुखे निमग्नः शयने यदासं
+मधोश्च रथ्यासु मनश्चचार ।
+स चिन्तयामास कुलानि काव्यं
+दारांश्च भोगांश्च सुखं धनानि ॥
+sukhe nimagnaḥ śayane yadāsaṁ
+madhośca rathyāsu manaścacāra
+sa cintayāmāsa kulāni kavyaṁ
+dārāṁśca bhogāṁśca sukhaṁ dhanāni
+Bhavānī Bhārati, 1
+8. बाला bālā इ इ इ उ
+शक्तिः परा कोटिषु मानवानां
+मन्यश्रितानां भवसि प्रबुद्धा ।
+आर्यान् विपन्नानवतीर्य पासि
+युगे युगे युध्यस आर्यमातः ।।
+śaktiḥ parā koțiṣu mānavānāṁ
+manyuśritānāṁ bhavasi pravṛddhā
+aryān vipannāvatīrya pāsi
+yuge yuge yudhyasa āryamātaḥ
+Bhavānī Bhārati, 58
+9. आर्द्रा ārdrā उ इ इ उ
+कवे विलासिन् शृणु मातृवाक्यं
+काली करालीं भज पुत्र चण्डीम् |
+द्रष्टासि वै भारतमातरं तां
+घ्नतीमरातीन् भृशमाजिमध्ये ||
+kave vilāsin śṛņu mātṛvākyaṁ
+kālim karālim bhaja putra candim
+draṣṭāsi vai bhāratamātaraṁ tāṁ
+ghnatimarātin bhṛśamājimadhye
+Bhavānī Bhāratī, 30
+
+page no 136
+
+Chandovallarību
+10. भद्रा bhadrā इ उ इ उ
+सिन्धून् हिमाद्रिञ्च सुसौम्यभासा
+प्रकाशयन्ती सुदृढप्रतिष्ठा ।
+तिष्ठ प्रसन्ना चिरमार्यभूमौ
+महाप्रतापे जगतो हिताय ॥
+sindhun himadrim ca susaumyabhāsā
+prakāśayanti sudrḍhapratistha
+tistha prasanna ciramaryabhūmau
+mahāpratāpe jagato hitaya
+Bhavānī Bhāratī, 99
+11. प्रेमा premā उ उ इ उ
+सनातनान् रक्षति धर्ममार्गान्
+पुनः सहस्रांशुकुलार्यजन्मा ।
+लक्ष्मीः पुनः साप्यचला स्मितास्या
+समुज्ज्वला राजति भारतेषु ।।
+sanātanan rakṣati dharmamārgān
+fiat punaḥ sahasrāṁśukulāryajanmā
+laksmih punah sāpyacalā smitāsyā
+samujjvalā rājati bhārateṣu
+Bhavānī Bhāratī, 94
+12. रामा rāmā इ इ उ उ
+प्रीतिर्दया धैर्यमदम्यशौर्यं
+श्रद्धा तितिक्षा विविधाश्च विद्याः ।
+अनन्तरूपे त्वमसि प्रसीद
+चिरं वसार्ये हृदि भारतानाम् ॥
+prītirdaya dhairyamadamyaśauryaṁ
+śraddha titikṣā vividhāśca vidyāḥ
+anantarupe tvamasi prasīda
+ciram vasarye hṛdi bhāratānām
+Bhavānī Bhāratī, 98
+13.  ऋद्धिः rddhih उ इ उ उ
+समाकुलं भाविभिरास्यवर्यै-
+ब्रह्माणमद्राक्षमथाभ्ररूपम् ।
+सहस्रमक्षीणि ददर्श तस्मिन्
+प्रतीक्षमाणान्यभयं जनन्याः ||
+samakulaṁ bhāvibhirasyavaryair-
+brahmaṇamadrākṣamathābhrarüpam
+sahasramakṣini dadarśa tasmin
+pratikṣāmāṇānyabhayaṁ jananyaḥ
+Bhavānī Bhārati, 49
+14. बुद्धिः buddhih इ उ उ उ
+सुप्तेषु पुत्रेषु रणोत्सुकेषु
+निशाचरः शोणितमार्यमातुः ।
+पिबन् विनर्दस्यबलान् बली को
+विहंसि चाण्डाल कृतान्तभक्ष्य ।।
+supteşu putreṣu raṇotsukeşu
+niśācaraḥ śoṇitamaryamātuḥ
+piban vinardasyabalan balī ko
+vihamsi caṇḍāla kṛtantābhakṣya
+Bhavānī Bhāratī, 43
+
+
+
+
+
+Index to thoxample
+INDEX TO THE SOURCES OF THE EXAMPLES GIVEN IN THE BOOK
+128 05 aytedsuisto maal
+Divsed to muy
+Abhijñānaśākuntalam of Kalidasa 88
+Adhyātmarāmāyaṇam 14, 24, 39, 4380 to my
+Adityahṛdayastotram of Ramayana 15
+bila to unverdmemu
+Anandalahari of Shankaracharya 71 dalis to M
+Atmapañcakam of Shankaracharya 30
+Bālamukundāṣṭakam, 18
+Bhāminīvilāsa of Jagannatha 36, 51, 75, 80
+DominideM
+Bhāratistava of T.V. Kapali Sastri 28, 75 to midampEM
+eq
+Bhavānībhārati of Sri Aurobindo 27, 134, 135, 136 blife to matubedgeM
+Bhavanyaṣṭakam of Shankaracharya iii, 44
+Brahmavaivarta-purāṇam 16
+To AlmebuluM
+Aned To
+лій
+Chandomañjarī of Ganagadasa ii, 6, 8, 9, 12, 127 to
+Dakṣiņāmūrtistotram of Shankaracharya 58
+Daśakumāracaritam of Dandi 8766
+TA jud
+To mandr
+amstorget
+Devīmāhātmyam of Märkandeyapurāṇam 14, 19, 26, 82
+Devīstoramañjarī of Vasishtha Ganapati Muni 64, 126
+Devyaparādhakṣamāpanastotram of Shankaracharya 72
+Govindalīlāmṛtam of Krishnadasa Kaviraja 62
+Gurustotram of Viśvasäratantra 16, 79
+misV to nosvēmā
+0162
+Gurvaṣṭakam of Shanakaracharya 42 subaquo montotenamidamavi?
+Hanumannāṭakam of Hanuman 83 To save to ma dozavanje vie
