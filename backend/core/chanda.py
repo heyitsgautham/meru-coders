@@ -3,7 +3,7 @@
 """
 Created on Fri Jan 22 22:23:37 2021
 
-Chanda Identifier Module
+@author: Hrishikesh Terdalkar
 """
 
 ###############################################################################
@@ -72,60 +72,6 @@ class Chanda:
         'Pankti': {'syllables': 40, 'padas': 5, 'per_pada': 8, 'description': '5×8'},
         'Trishtubh': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11'},
         'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'}
-    }
-    
-    # Vedic meter variants - nicṛt (defective, -1 syllable) and bhurik (extended, +1 syllable)
-    # These are common variations found in the Rigveda and other Vedic texts
-    VEDIC_VARIANTS = {
-        # Triṣṭubh variants (standard: 11 syllables per pāda)
-        'Trishtubh_nicrt': {'syllables': 40, 'padas': 4, 'per_pada': 10, 'description': '4×10 (nicṛt)', 'base': 'Trishtubh'},
-        'Trishtubh_bhurik': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12 (bhurik)', 'base': 'Trishtubh'},
-        'Trishtubh_mixed': {'syllables': [42, 43, 44, 45], 'padas': 4, 'per_pada': [10, 11, 12], 'description': 'mixed pādas', 'base': 'Trishtubh'},
-        
-        # Jagatī variants (standard: 12 syllables per pāda)
-        'Jagati_nicrt': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11 (nicṛt)', 'base': 'Jagati'},
-        'Jagati_bhurik': {'syllables': 52, 'padas': 4, 'per_pada': 13, 'description': '4×13 (bhurik)', 'base': 'Jagati'},
-        
-        # Gāyatrī variants (standard: 8 syllables per pāda)
-        'Gayatri_nicrt': {'syllables': 21, 'padas': 3, 'per_pada': 7, 'description': '3×7 (nicṛt)', 'base': 'Gayatri'},
-        
-        # Anuṣṭubh variants (standard: 8 syllables per pāda)
-        'Anushtubh_nicrt': {'syllables': 28, 'padas': 4, 'per_pada': 7, 'description': '4×7 (nicṛt)', 'base': 'Anushtubh'},
-    }
-    
-    # Half-verse (ardha-ṛc) syllable counts for 2-pāda verses
-    VEDIC_HALF_VERSE = {
-        # Triṣṭubh half-verses (2 pādas)
-        22: {'meter': 'त्रिष्टुभ्', 'english': 'Trishtubh', 'type': 'ardha', 'per_pada': 11, 'description': '2×11'},
-        21: {'meter': 'त्रिष्टुभ् (निचृत्)', 'english': 'Trishtubh_nicrt', 'type': 'ardha_nicrt', 'per_pada': [10, 11], 'description': '10+11 or 11+10'},
-        20: {'meter': 'त्रिष्टुभ् (निचृत्)', 'english': 'Trishtubh_nicrt', 'type': 'ardha_nicrt', 'per_pada': 10, 'description': '2×10'},
-        23: {'meter': 'त्रिष्टुभ् (भूरिक्)', 'english': 'Trishtubh_bhurik', 'type': 'ardha_bhurik', 'per_pada': [11, 12], 'description': '11+12 or 12+11'},
-        
-        # Jagatī half-verses (2 pādas)
-        24: {'meter': 'जगती', 'english': 'Jagati', 'type': 'ardha', 'per_pada': 12, 'description': '2×12'},
-        
-        # Anuṣṭubh half-verses (2 pādas)
-        16: {'meter': 'अनुष्टुभ्', 'english': 'Anushtubh', 'type': 'ardha', 'per_pada': 8, 'description': '2×8'},
-        
-        # Gāyatrī (already 3 pādas, so 2 pādas is partial)
-        15: {'meter': 'गायत्री (आद्य)', 'english': 'Gayatri', 'type': 'partial', 'per_pada': [7, 8], 'description': 'first 2 pādas'},
-    }
-    
-    # Three-quarter verse (tri-pāda) syllable counts for 3-pāda verses
-    # NOTE: Only include counts that DON'T conflict with full verse meters
-    VEDIC_TRI_PADA = {
-        # Triṣṭubh tri-pāda (3 pādas of 11 = 33 syllables)
-        33: {'meter': 'त्रिष्टुभ्', 'english': 'Trishtubh', 'type': 'tri_pada', 'padas': 3, 'per_pada': 11, 'description': '3×11'},
-        # 32 is Anuṣṭubh (4×8), don't include here
-        34: {'meter': 'त्रिष्टुभ् (भूरिक्)', 'english': 'Trishtubh_bhurik', 'type': 'tri_pada_bhurik', 'padas': 3, 'per_pada': [11, 12], 'description': '11+11+12 or similar'},
-        
-        # Jagatī tri-pāda (3 pādas of 12 = 36 syllables)
-        # 36 is Bṛhatī (4×9), so handle carefully
-        35: {'meter': 'जगती (निचृत्)', 'english': 'Jagati_nicrt', 'type': 'tri_pada_nicrt', 'padas': 3, 'per_pada': [11, 12], 'description': '11+12+12 or similar'},
-        37: {'meter': 'जगती (भूरिक्)', 'english': 'Jagati_bhurik', 'type': 'tri_pada_bhurik', 'padas': 3, 'per_pada': [12, 13], 'description': '12+12+13 or similar'},
-        
-        # Note: 24 syllables = Gāyatrī (3×8), 32 = Anuṣṭubh (4×8), 36 = Bṛhatī (4×9)
-        # These are handled in full verse matching, not tri-pāda
     }
 
     def __init__(self, data_path, symbols='यरतनभजसमलग', syllabization_method='sanskrit_text'):
@@ -552,23 +498,8 @@ class Chanda:
 
     # ----------------------------------------------------------------------- #
 
-    def identify_vedic_meter(self, syllable_count, lg_pattern=None, pada_counts=None):
-        """
-        Identify Vedic meter by syllable count with support for:
-        - Full verses (4 pādas)
-        - Half-verses (2 pādas / ardha-ṛc)
-        - Nicṛt variants (defective, -1 syllable per pāda)
-        - Bhurik variants (extended, +1 syllable per pāda)
-        - Mixed pāda patterns (common in Rigveda)
-        
-        Args:
-            syllable_count: Total syllables in the verse/half-verse
-            lg_pattern: L-G pattern string (optional, for pattern verification)
-            pada_counts: List of syllable counts per pāda (optional, for mixed detection)
-        
-        Returns:
-            Tuple of (meter_name, meter_info_dict) or (None, None)
-        """
+    def identify_vedic_meter(self, syllable_count, lg_pattern=None):
+        """Identify Vedic meter by syllable count with ±1 tolerance and pattern matching"""
         # Map syllable counts to actual meter names (all 7 major Vedic meters)
         vedic_mapping = {
             24: 'गायत्री',      # Gayatri - 3×8
@@ -585,15 +516,12 @@ class Chanda:
             7: 'उष्णिक्',        # Ushnik pada
             8: 'गायत्री',       # Gayatri/Anushtubh pada
             9: 'बृहती',         # Brihati pada
-            10: 'त्रिष्टुभ् (निचृत्)',  # Trishtubh nicṛt pada
             11: 'त्रिष्टुभ्',   # Trishtubh pada
             12: 'जगती'         # Jagati pada
         }
         
         # Helper function to get English meter name for VEDIC_METERS lookup
         def get_english_name(sanskrit_name):
-            # Strip variant suffixes for lookup
-            base_name = sanskrit_name.split(' ')[0].split('(')[0].strip()
             name_map = {
                 'गायत्री': 'Gayatri',
                 'त्रिष्टुभ्': 'Trishtubh',
@@ -603,93 +531,9 @@ class Chanda:
                 'बृहती': 'Brihati',
                 'पङ्क्ति': 'Pankti'
             }
-            return name_map.get(base_name, base_name)
+            return name_map.get(sanskrit_name, sanskrit_name)
         
-        # PRIORITY 1: Full verse exact match (most important!)
-        # This catches standard meters like Anuṣṭubh (32), Gāyatrī (24), etc.
-        if syllable_count in vedic_mapping:
-            meter_name = vedic_mapping[syllable_count]
-            english_name = get_english_name(meter_name)
-            return meter_name, self.VEDIC_METERS.get(english_name)
-        
-        # PRIORITY 2: Check tri-pāda (3/4 verse) patterns
-        # This handles 3-pāda verses which are common in Vedic literature
-        # Only applies to counts NOT in vedic_mapping (e.g., 33 for Triṣṭubh tri-pāda)
-        if syllable_count in self.VEDIC_TRI_PADA:
-            tri_info = self.VEDIC_TRI_PADA[syllable_count]
-            meter_name = tri_info['meter']
-            return meter_name, {
-                'syllables': syllable_count,
-                'padas': tri_info.get('padas', 3),
-                'per_pada': tri_info['per_pada'],
-                'description': tri_info['description'],
-                'type': tri_info['type'],
-                'english': tri_info['english']
-            }
-        
-        # PRIORITY 3: Check half-verse (ardha-ṛc) patterns
-        # This handles 2-pāda verses which are common in quoted/partial verses
-        if syllable_count in self.VEDIC_HALF_VERSE:
-            half_info = self.VEDIC_HALF_VERSE[syllable_count]
-            meter_name = half_info['meter']
-            return meter_name, {
-                'syllables': syllable_count,
-                'padas': 2,
-                'per_pada': half_info['per_pada'],
-                'description': half_info['description'],
-                'type': half_info['type'],
-                'english': half_info['english']
-            }
-        
-        # PRIORITY 4: Check for mixed pāda patterns (e.g., 10+11 syllables)
-        if pada_counts and len(pada_counts) >= 2:
-            # Check if pādas suggest Triṣṭubh variant (10-12 syllables per pāda)
-            if all(10 <= p <= 12 for p in pada_counts):
-                total = sum(pada_counts)
-                if any(p == 10 for p in pada_counts):
-                    # Has nicṛt pāda(s)
-                    return 'त्रिष्टुभ् (निचृत्)', {
-                        'syllables': total,
-                        'padas': len(pada_counts),
-                        'per_pada': pada_counts,
-                        'description': f"mixed ({'+'.join(map(str, pada_counts))})",
-                        'type': 'nicrt_mixed'
-                    }
-                elif any(p == 12 for p in pada_counts):
-                    # Has bhurik pāda(s)
-                    return 'त्रिष्टुभ् (भूरिक्)', {
-                        'syllables': total,
-                        'padas': len(pada_counts),
-                        'per_pada': pada_counts,
-                        'description': f"mixed ({'+'.join(map(str, pada_counts))})",
-                        'type': 'bhurik_mixed'
-                    }
-        
-        # PRIORITY 5: Check variant forms (nicṛt, bhurik)
-        for variant_name, variant_info in self.VEDIC_VARIANTS.items():
-            expected = variant_info['syllables']
-            if isinstance(expected, list):
-                if syllable_count in expected:
-                    base_meter = variant_info['base']
-                    sanskrit_name = vedic_mapping.get(self.VEDIC_METERS.get(base_meter, {}).get('syllables', 0), base_meter)
-                    return f"{sanskrit_name} ({variant_info['description']})", variant_info
-            elif syllable_count == expected:
-                base_meter = variant_info['base']
-                # Get Sanskrit name for base meter
-                base_syllables = self.VEDIC_METERS.get(base_meter, {}).get('syllables', 0)
-                sanskrit_name = vedic_mapping.get(base_syllables, base_meter)
-                variant_suffix = variant_info['description'].split('(')[1].rstrip(')') if '(' in variant_info['description'] else ''
-                if variant_suffix:
-                    return f"{sanskrit_name} ({variant_suffix})", variant_info
-                return sanskrit_name, variant_info
-        
-        # PRIORITY 5: Allow ±1 syllable tolerance for edge cases
-        for expected_count, meter_name in vedic_mapping.items():
-            if abs(syllable_count - expected_count) == 1:
-                english_name = get_english_name(meter_name)
-                return meter_name, self.VEDIC_METERS.get(english_name)
-        
-        # PRIORITY 6: Pada-level matching with pattern verification
+        # First try pada-level matching with pattern verification
         if syllable_count in pada_mapping and lg_pattern:
             meter_name = pada_mapping[syllable_count]
             if meter_name in self.VEDIC_PADA_PATTERNS:
@@ -698,69 +542,26 @@ class Chanda:
                     english_name = get_english_name(meter_name)
                     return meter_name, self.VEDIC_METERS.get(english_name)
         
-        # PRIORITY 7: Pada-level without pattern (lowest confidence)
+        # Try full verse matching
+        # Exact match
+        if syllable_count in vedic_mapping:
+            meter_name = vedic_mapping[syllable_count]
+            english_name = get_english_name(meter_name)
+            return meter_name, self.VEDIC_METERS.get(english_name)
+        
+        # Allow ±1 syllable tolerance for edge cases (punctuation, sandhi)
+        for expected_count, meter_name in vedic_mapping.items():
+            if abs(syllable_count - expected_count) == 1:
+                english_name = get_english_name(meter_name)
+                return meter_name, self.VEDIC_METERS.get(english_name)
+        
+        # Try pada-level without pattern (less confident)
         if syllable_count in pada_mapping:
             meter_name = pada_mapping[syllable_count]
             english_name = get_english_name(meter_name)
             return meter_name, self.VEDIC_METERS.get(english_name)
         
         return None, None
-    
-    def identify_vedic_meter_from_lines(self, lines):
-        """
-        Identify Vedic meter from multiple lines (pādas).
-        Handles half-verses (2 lines) and full verses (4 lines).
-        Also detects nicṛt and bhurik variants.
-        
-        Args:
-            lines: List of text lines (pādas)
-        
-        Returns:
-            Tuple of (meter_name, meter_info, confidence)
-        """
-        if not lines:
-            return None, None, 0.0
-        
-        # Get syllable counts for each line
-        pada_counts = []
-        total_lg = ''
-        for line in lines:
-            _, lg_marks = self.mark_lg(line)
-            lg_str = ''.join(lg_marks)
-            pada_counts.append(len(lg_str))
-            total_lg += lg_str
-        
-        total_syllables = sum(pada_counts)
-        num_padas = len(pada_counts)
-        
-        # Use enhanced identify_vedic_meter with pāda information
-        meter_name, meter_info = self.identify_vedic_meter(
-            total_syllables, 
-            lg_pattern=total_lg,
-            pada_counts=pada_counts
-        )
-        
-        if meter_name:
-            # Calculate confidence based on how well pādas match expected pattern
-            confidence = 8.0  # Base confidence for Vedic meter match
-            
-            # Boost confidence for standard pāda counts
-            if num_padas == 2:  # Half-verse
-                if all(p == 11 for p in pada_counts):
-                    confidence = 9.0  # Perfect Triṣṭubh half-verse
-                elif all(p == 12 for p in pada_counts):
-                    confidence = 9.0  # Perfect Jagatī half-verse
-                elif all(p == 8 for p in pada_counts):
-                    confidence = 9.0  # Perfect Anuṣṭubh half-verse
-            elif num_padas == 4:  # Full verse
-                if total_syllables == 44 and all(p == 11 for p in pada_counts):
-                    confidence = 10.0  # Perfect Triṣṭubh
-                elif total_syllables == 48 and all(p == 12 for p in pada_counts):
-                    confidence = 10.0  # Perfect Jagatī
-            
-            return meter_name, meter_info, confidence
-        
-        return None, None, 0.0
 
     def pattern_matches_with_tolerance(self, pattern1, pattern2, tolerance=2):
         """Check if two L-G patterns match within tolerance"""
@@ -849,8 +650,6 @@ class Chanda:
         
         # Skip pada matching if we already have exact matches
         if not results:
-            # ENHANCED: Try non-uniform pada splits for Vedic variants (nicṛt, bhurik)
-            # This handles cases like 10+11 syllables for Triṣṭubh nicṛt half-verse
             for num_padas in [4, 3, 2]:
                 padas = self.split_into_padas(lg_pattern, num_padas)
                 if padas:
@@ -881,7 +680,6 @@ class Chanda:
                         # Also check for Vedic meters by pada structure
                         vedic_pada_meters = {
                             8: ('अनुष्टुभ्', 32),   # Anushtubh: 4×8
-                            10: ('त्रिष्टुभ् (निचृत्)', 40),  # Trishtubh nicṛt: 4×10
                             11: ('त्रिष्टुभ्', 44),  # Trishtubh: 4×11
                             12: ('जगती', 48),       # Jagati: 4×12
                         }
@@ -894,21 +692,6 @@ class Chanda:
                                     results.append(((meter_name, ('',)), 8.0, 'pada_vedic_sama'))
                                 elif similar_padas:
                                     results.append(((meter_name, ('',)), 6.5, 'pada_vedic_similar'))
-            
-            # ENHANCED: Check for Vedic tri-pāda (3 pādas)
-            if not results and syllable_count in self.VEDIC_TRI_PADA:
-                tri_info = self.VEDIC_TRI_PADA[syllable_count]
-                meter_name = tri_info['meter']
-                confidence = 8.0 if tri_info['type'] == 'tri_pada' else 7.0
-                results.append(((meter_name, ('',)), confidence, f"vedic_{tri_info['type']}"))
-            
-            # ENHANCED: Check for Vedic half-verses (2 pādas with unequal lengths)
-            # This handles nicṛt cases like 10+11 syllables
-            if not results and syllable_count in self.VEDIC_HALF_VERSE:
-                half_info = self.VEDIC_HALF_VERSE[syllable_count]
-                meter_name = half_info['meter']
-                confidence = 8.0 if half_info['type'] == 'ardha' else 7.0
-                results.append(((meter_name, ('',)), confidence, f"vedic_{half_info['type']}"))
         
         # Level 3: Syllable count matching - ONLY if no pada matches found
         # This is low-confidence fallback
@@ -1409,74 +1192,28 @@ class Chanda:
     def identify_verse_holistically(self, verse_lines):
         """
         Identify verse as a complete unit (Bug #2 fix)
-        Aggregates multiple lines and processes them together.
-        
-        ENHANCED: Now handles:
-        - Half-verses (2 pādas / ardha-ṛc)
-        - Nicṛt variants (defective pādas)
-        - Bhurik variants (extended pādas)
-        - Mixed pāda patterns
-        
-        Parameters
-        ----------
-        verse_lines : str or list
-            Either a single verse string or a list of lines
+        Aggregates multiple lines and processes them together
         """
-        if not verse_lines:
-            return {'found': False, 'meter': None, 'total_syllables': 0, 'lg_str': ''}
+        # Combine all lines in the verse
+        combined_text = ' '.join(verse_lines)
+        syllables, lg_marks = self.mark_lg(combined_text)
+        lg_str = ''.join(lg_marks)
         
-        # Handle both string and list input
-        if isinstance(verse_lines, str):
-            # Single string - split by newlines or treat as single line
-            lines = [l.strip() for l in verse_lines.split('\n') if l.strip()]
-            if not lines:
-                lines = [verse_lines]
-        else:
-            lines = verse_lines
+        # Calculate total syllables
+        total_syllables = len(lg_str)
         
-        # Get syllable counts and L-G patterns for each line separately
-        pada_counts = []
-        pada_patterns = []
-        combined_lg = ''
-        
-        for line in lines:
-            if not line.strip():
-                continue
-            syllables, lg_marks = self.mark_lg(line)
-            lg_str = ''.join(lg_marks)
-            pada_counts.append(len(lg_str))
-            pada_patterns.append(lg_str)
-            combined_lg += lg_str
-        
-        total_syllables = sum(pada_counts)
-        num_padas = len(pada_counts)
-        
-        # Use enhanced identify_vedic_meter with pāda information
-        meter_name, meter_info = self.identify_vedic_meter(
-            total_syllables, 
-            lg_pattern=combined_lg,
-            pada_counts=pada_counts
-        )
+        # Try to identify by total syllable count with pattern
+        meter_name, meter_info = self.identify_vedic_meter(total_syllables, lg_str)
         
         result = {
             'found': False,
             'meter': meter_name,
-            'meter_info': meter_info,
             'total_syllables': total_syllables,
-            'num_padas': num_padas,
-            'pada_counts': pada_counts,
-            'lg_str': combined_lg
+            'lg_str': lg_str
         }
         
         if meter_name:
             result['found'] = True
-            
-            # Add additional info about variant type
-            if meter_info and isinstance(meter_info, dict):
-                if 'type' in meter_info:
-                    result['variant_type'] = meter_info['type']
-                if 'description' in meter_info:
-                    result['description'] = meter_info['description']
         
         return result
 
@@ -1834,15 +1571,9 @@ class Chanda:
                     meter_name = match_item
                     meter_tuple = (match_item, ('',))
                 
-                # Categorize matches by type for priority ordering
-                # Vedic matches (half-verse, nicṛt, bhurik) get pada-level priority
-                if match_type in ['pada_sama', 'pada_vishama', 'pada_exact_sama', 'pada_similar', 
-                                  'pada_vedic_sama', 'pada_vedic_similar']:
+                if match_type in ['pada_sama', 'pada_vishama']:
                     pada_matches.append((meter_tuple, confidence, match_type))
-                elif match_type.startswith('vedic_'):
-                    # All Vedic matches (vedic_ardha, vedic_ardha_nicrt, etc.) get high priority
-                    pada_matches.append((meter_tuple, confidence, match_type))
-                elif match_type in ['syllable_count']:
+                elif match_type in ['vedic_syllable', 'syllable_count']:
                     syllable_matches.append((meter_tuple, confidence, match_type))
                 elif match_type == 'fuzzy':
                     fuzzy_matches.append((meter_tuple, confidence, match_type))
