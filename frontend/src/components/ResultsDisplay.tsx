@@ -403,7 +403,6 @@ function LineAnalysisCard({
 
 export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
   const [showSanskrit, setShowSanskrit] = useState(false);
-  const [meterLanguage, setMeterLanguage] = useState<'devanagari' | 'english'>('devanagari');
 
   if (!result.success) {
     return (
@@ -426,7 +425,7 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
     <div className="mt-10 animate-fadeIn" style={{ width: '100%', maxWidth: '100%' }}>
       <div className="bg-white border-2 border-gray-300 rounded-3xl p-12 shadow-lg" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-10 pb-8 border-b-2 border-gray-200 bg-gray-50 -mx-12 -mt-12 px-12 pt-12 rounded-t-3xl">
+        <div className="flex items-center justify-between pb-8 border-b-2 border-gray-200 bg-gray-50 -mx-12 -mt-12 px-12 pt-12 rounded-t-3xl">
           <h2 className="text-2xl font-bold text-[var(--color-text-main)]">Analysis Results</h2>
           <div className="flex items-center gap-4">
             {result.result_path && (
@@ -448,39 +447,9 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             )}
           </div>
         </div>
-
-        {/* Meters Identified Section */}
-        {sortedMeters.length > 0 && (
-          <div className="mb-8 bg-gray-50 p-8 rounded-2xl border-2 border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-gray-800 text-xl">Meters Identified</h3>
-              <button
-                onClick={() => setMeterLanguage(prev => prev === 'devanagari' ? 'english' : 'devanagari')}
-                className="language-toggle-btn"
-              >
-                {meterLanguage === 'devanagari' ? 'Show English' : 'Show Sanskrit'}
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {sortedMeters.map(([meter, count]) => {
-                const iast = getMeterEnglish(meter);
-                return (
-                  <div
-                    key={meter}
-                    className="flex items-center gap-3 px-5 py-3 bg-white border-2 border-gray-200 rounded-xl shadow-sm"
-                  >
-                    <span className="font-bold text-gray-800" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '1.125rem' }}>
-                      {meterLanguage === 'devanagari' ? meter : iast}
-                    </span>
-                    <span className="text-sm text-gray-700 bg-gray-100 px-3 py-1.5 rounded-lg font-semibold border border-gray-300">
-                      {count} line{count > 1 ? 's' : ''}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        
+        {/* Spacer after header */}
+        <div className="mt-10" />
 
         {/* Summary Section - Only show in verse mode, not line-by-line */}
         {result.summary && verseResults.length > 0 && <SummarySection summary={result.summary} />}
@@ -600,26 +569,19 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             </details>
           ) : (
             <>
-              {/* Identified Meter - Single div at top for line-by-line mode */}
+              {/* Identified Chanda - Single div at top for line-by-line mode */}
               {sortedMeters.length > 0 && (
-                <div className="mb-8 p-8 rounded-2xl border-3 border-orange-500 shadow-lg" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' }}>
+                <div className="mb-8 p-8 rounded-2xl" style={{ background: '#fffbf5' }}>
                   <h4 className="text-xl font-bold text-orange-700 mb-6 flex items-center gap-2">
-                    🕉️ Identified Meter
+                    🕉️ Identified Chanda
                   </h4>
-                  <div className="bg-white rounded-xl p-6 shadow-md">
+                  <div className="rounded-xl p-6 border-2 border-orange-300" style={{ background: '#fff7ed' }}>
                     {(() => {
                       const primaryMeter = sortedMeters[0][0];
                       const lineCount = sortedMeters[0][1];
                       const englishName = getMeterEnglish(primaryMeter);
                       const totalLines = lineResults.length;
                       const confidencePercent = Math.round((lineCount / totalLines) * 100);
-                      
-                      let confidenceClass = 'bg-green-600';
-                      if (confidencePercent < 50) {
-                        confidenceClass = 'bg-red-500';
-                      } else if (confidencePercent < 80) {
-                        confidenceClass = 'bg-amber-500';
-                      }
 
                       return (
                         <div className="flex items-center gap-4 flex-wrap">
@@ -629,7 +591,7 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
                           {englishName && englishName !== primaryMeter && (
                             <span className="text-xl text-gray-600 italic">({englishName})</span>
                           )}
-                          <span className={`${confidenceClass} text-white px-4 py-1.5 rounded-full text-sm font-semibold`}>
+                          <span className="px-5 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: '#f97316', color: '#ffffff' }}>
                             {confidencePercent}% Match
                           </span>
                         </div>

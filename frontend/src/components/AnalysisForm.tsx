@@ -2,8 +2,12 @@ import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText } from
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
-import { useSchemes, useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText } from "../hooks/useApi";
+import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText } from "../hooks/useApi";
 import type { AnalysisMode, IdentifyResponse } from "../types/api";
+
+// Fixed analysis settings
+const ANALYSIS_MODE: AnalysisMode = "line";
+const OUTPUT_SCRIPT = "";
 
 interface AnalysisFormProps {
   initialText?: string;
@@ -12,8 +16,6 @@ interface AnalysisFormProps {
 
 export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormProps) {
   const [text, setText] = useState(initialText);
-  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("line");
-  const [outputScript, setOutputScript] = useState("");
   const [activeTab, setActiveTab] = useState<"text" | "image" | "file">("text");
   
   // Image/File state
@@ -33,7 +35,6 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   const [resultType, setResultType] = useState<"text" | "image" | "file">("text");
   
   // API hooks
-  const { schemes } = useSchemes();
   const { connected } = useAPIInfo();
   const { loading: textLoading, error: textError, identify: identifyText } = useIdentifyText();
   const { loading: fileLoading, error: fileError, identify: identifyFile } = useIdentifyFile();
@@ -102,7 +103,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
     setResult(null);
     
     try {
-      const response = await identifyText(extractedText, analysisMode, outputScript);
+      const response = await identifyText(extractedText, ANALYSIS_MODE, OUTPUT_SCRIPT);
       setResultType("text");
       setResult(response);
     } catch (err) {
@@ -122,14 +123,14 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
           alert("Please enter some Sanskrit text");
           return;
         }
-        response = await identifyText(text, analysisMode, outputScript);
+        response = await identifyText(text, ANALYSIS_MODE, OUTPUT_SCRIPT);
         setResultType("text");
       } else if (activeTab === "file") {
         if (!selectedFile) {
           alert("Please select a file");
           return;
         }
-        response = await identifyFile(selectedFile, analysisMode, outputScript);
+        response = await identifyFile(selectedFile, ANALYSIS_MODE, OUTPUT_SCRIPT);
         setResultType("file");
       } else {
         return; // Image tab has its own flow
@@ -479,74 +480,25 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
 
         {/* Bottom Action Row - Only show for text and file tabs */}
         {activeTab !== "image" && (
-          <div className="analysis-row mt-8 pt-6 border-t border-[var(--color-border-subtle)] bg-[#fdf8f3] -mx-8 px-8 py-6 -mb-8 rounded-b-[20px]">
-            {/* Analysis Mode */}
-            <div className="flex-1 field-group mb-0">
-              <label className="block text-[var(--color-text-main)] mb-3 font-semibold text-base">
-                Analysis Mode
-              </label>
-              <div className="relative">
-                <select
-                  value={analysisMode}
-                  onChange={(e) => setAnalysisMode(e.target.value as AnalysisMode)}
-                  className="w-full h-[52px] rounded-[14px] border-2 border-[var(--color-border-subtle)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-0 focus:shadow-[0_0_0_3px_rgba(255,153,51,0.2)] bg-white text-[var(--color-text-main)] appearance-none cursor-pointer transition-all duration-300 hover:border-[var(--color-border-strong)] text-base font-medium px-5"
-                >
-                  <option value="line">Line by Line</option>
-                  <option value="verse">Full Verse</option>
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none bg-[var(--color-primary-soft)] p-1.5 rounded-full">
-                  <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Output Script */}
-            <div className="flex-1 field-group mb-0">
-              <label className="block text-[var(--color-text-main)] mb-3 font-semibold text-base">
-                Output Script
-              </label>
-              <div className="relative">
-                <select
-                  value={outputScript}
-                  onChange={(e) => setOutputScript(e.target.value)}
-                  className="w-full h-[52px] rounded-[14px] border-2 border-[var(--color-border-subtle)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-0 focus:shadow-[0_0_0_3px_rgba(255,153,51,0.2)] bg-white text-[var(--color-text-main)] appearance-none cursor-pointer transition-all duration-300 hover:border-[var(--color-border-strong)] text-base font-medium px-5"
-                >
-                  {schemes.map((scheme) => (
-                    <option key={scheme.value} value={scheme.value}>
-                      {scheme.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none bg-[var(--color-primary-soft)] p-1.5 rounded-full">
-                  <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
+          <div className="mt-8 pt-6 border-t border-[var(--color-border-subtle)] bg-[#fdf8f3] -mx-8 px-8 py-6 -mb-8 rounded-b-[20px] flex justify-center">
             {/* Identify Button */}
-            <div className="flex-shrink-0 self-end">
-              <button 
-                className="identify-btn h-[52px] px-8 text-base"
-                onClick={handleSubmit}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Analyzing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    <span>Identify Chanda</span>
-                  </>
-                )}
-              </button>
-            </div>
+            <button 
+              className="identify-btn h-[52px] px-8 text-base"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  <span>Identify Chanda</span>
+                </>
+              )}
+            </button>
           </div>
         )}
 

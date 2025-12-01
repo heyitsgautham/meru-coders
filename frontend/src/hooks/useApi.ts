@@ -11,7 +11,6 @@ import type {
   IdentifyResponse,
   AnalysisMode,
   OCRAvailability,
-  OCRExtractResponse,
 } from '../types/api';
 
 // Hook for loading schemes
