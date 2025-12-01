@@ -257,42 +257,56 @@ function LineAnalysisCard({
   }
 
   return (
-    <div className="p-8 bg-white rounded-2xl border-2 border-gray-300 shadow-md" style={{ minWidth: '100%' }}>
+    <div className="p-8 rounded-2xl shadow-md" style={{ minWidth: '100%', backgroundColor: '#FFF9F2', border: '2px solid #E1B88E' }}>
       {/* Analysis Table */}
       {validPairs.length > 0 && (
         <div className="overflow-x-auto mb-6">
-          <table className="w-full border-collapse text-center shadow-md" style={{ minWidth: '100%', fontSize: '1.25rem' }}>
+          <table className="w-full border-collapse text-center shadow-md" style={{ minWidth: '100%', fontSize: '1.25rem', border: '4px solid #C68642' }}>
             <thead>
               <tr>
-                <th className="border-2 border-gray-300 px-6 py-5 text-left font-bold text-gray-800 bg-gray-200 whitespace-nowrap min-w-[160px]" style={{ borderRight: '3px solid #6b7280', fontSize: '1.25rem' }}>
+                <th className="px-6 py-5 text-left font-bold whitespace-nowrap min-w-[160px]" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
                   Akṣarāṇi
                 </th>
-                {validPairs.map((pair, idx) => (
-                  <th key={idx} className="border-2 border-gray-300 px-6 py-5 font-bold bg-orange-400 text-gray-900" style={{ fontSize: '1.25rem', fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-                    {showSanskrit ? pair.syllable : transliterateToIAST(pair.syllable)}
-                  </th>
-                ))}
+                {validPairs.map((pair, idx) => {
+                  const isGanaBoundary = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
+                  return (
+                    <th key={idx} className="px-6 py-5 font-bold" style={{ 
+                      border: '2px solid #E1B88E', 
+                      borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
+                      fontSize: '1.25rem', 
+                      fontFamily: "'Noto Sans Devanagari', sans-serif", 
+                      backgroundColor: '#FFE0BF', 
+                      color: '#000000' 
+                    }}>
+                      {showSanskrit ? pair.syllable : transliterateToIAST(pair.syllable)}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
               {/* L/G Row */}
               <tr>
-                <td className="border-2 border-gray-300 px-6 py-5 text-left font-bold text-gray-800 bg-gray-200 whitespace-nowrap" style={{ borderRight: '3px solid #6b7280', fontSize: '1.25rem' }}>
+                <td className="px-6 py-5 text-left font-bold whitespace-nowrap" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
                   Laghu-Guru
                 </td>
                 {validPairs.map((pair, idx) => {
                   const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
                   const sanskritLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'ग' : 'ल';
                   const englishLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'G' : 'L';
+                  const isGanaBoundary = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
                   return (
                     <td 
                       key={idx} 
-                      className={`border-2 border-gray-300 px-6 py-5 font-bold ${
-                        isLaghu 
-                          ? 'bg-blue-100 text-blue-800' 
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                      style={{ fontSize: '1.25rem', fontFamily: "'Noto Sans Devanagari', monospace" }}
+                      className="px-6 py-5 font-bold"
+                      style={{ 
+                        border: '2px solid #E1B88E',
+                        borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
+                        fontSize: '1.25rem', 
+                        fontFamily: "'Noto Sans Devanagari', monospace",
+                        backgroundColor: isLaghu ? '#E8F4FD' : '#FFF9F2',
+                        color: isLaghu ? '#2563EB' : '#C2185B'
+                      }}
                     >
                       {showSanskrit ? sanskritLG : englishLG}
                     </td>
@@ -303,7 +317,7 @@ function LineAnalysisCard({
               {/* Gana Row */}
               {ganaString && (
                 <tr>
-                  <td className="border-2 border-gray-300 px-6 py-5 text-left font-bold text-gray-800 bg-gray-200 whitespace-nowrap" style={{ borderRight: '3px solid #6b7280', fontSize: '1.25rem' }}>
+                  <td className="px-6 py-5 text-left font-bold whitespace-nowrap" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
                     Gaṇa
                   </td>
                   {(() => {
@@ -315,12 +329,20 @@ function LineAnalysisCard({
                       if (cellsUsed < validPairs.length) {
                         const spanCount = Math.min(3, validPairs.length - cellsUsed);
                         const englishGana = GANA_MAP[ganaChar] || ganaChar;
+                        const isLastGana = cellsUsed + spanCount >= validPairs.length;
                         cells.push(
                           <td 
                             key={gIdx}
                             colSpan={spanCount}
-                            className="border-2 border-gray-300 px-6 py-5 bg-green-100 text-green-800 font-bold"
-                            style={{ fontSize: '1.25rem', fontFamily: "'Noto Sans Devanagari', sans-serif" }}
+                            className="px-6 py-5 font-bold"
+                            style={{ 
+                              border: '2px solid #E1B88E', 
+                              borderRight: !isLastGana ? '4px solid #C68642' : '2px solid #E1B88E',
+                              fontSize: '1.25rem', 
+                              fontFamily: "'Noto Sans Devanagari', sans-serif", 
+                              backgroundColor: '#E7F5E8', 
+                              color: '#2D5A30' 
+                            }}
                           >
                             {showSanskrit ? ganaChar : englishGana}
                           </td>
@@ -335,7 +357,8 @@ function LineAnalysisCard({
                         <td 
                           key="remaining"
                           colSpan={validPairs.length - cellsUsed}
-                          className="border-2 border-gray-300 px-6 py-5 bg-white"
+                          style={{ border: '2px solid #E1B88E', backgroundColor: '#FFF9F2' }}
+                          className="px-6 py-5"
                         />
                       );
                     }
@@ -349,10 +372,10 @@ function LineAnalysisCard({
         </div>
       )}
 
-      {/* Meter Result */}
-      <div className="pt-5 mt-5 border-t-2 border-gray-300">
-        <span className="font-bold text-orange-600" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '1.5rem' }}>
-          {meterDisplay}
+      {/* Chanda Result */}
+      <div className="pt-5 mt-5" style={{ borderTop: '2px solid #E1B88E' }}>
+        <span className="font-bold" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '1.5rem', color: '#3E2815' }}>
+          Chanda - <span style={{ color: '#E57F1B' }}>{meterDisplay}</span>
         </span>
       </div>
     </div>

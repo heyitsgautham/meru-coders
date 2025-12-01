@@ -443,7 +443,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  <span>Identify Meter</span>
+                  <span>Identify Chanda</span>
                 </>
               )}
             </button>
