@@ -21,3 +21,6 @@ frontend/config.js
 backend/uploads/results/*.json
 backend/uploads/results/*.txt
 backend/uploads/photos/
+
+node_modules/
+build/
