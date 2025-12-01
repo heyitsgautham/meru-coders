@@ -7,6 +7,7 @@ venv/
 repos/
 repo_summary/
 .DS_Store
+new-frontend/
 
 # Cloud Run generated files
 gcp_config.py
@@ -19,3 +20,4 @@ frontend/config.js
 
 backend/uploads/results/*.json
 backend/uploads/results/*.txt
+backend/uploads/photos/
