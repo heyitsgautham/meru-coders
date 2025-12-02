@@ -115,7 +115,8 @@ def create_app():
             },
             'ocr_available': {
                 'tesseract': app.tesseract_ocr is not None,
-                'cloud_vision': app.cloud_vision_ocr is not None
+                'cloud_vision': app.cloud_vision_ocr is not None,
+                'primary': 'cloud_vision' if app.cloud_vision_ocr else ('tesseract' if app.tesseract_ocr else 'none')
             },
             'features': {
                 'sandhi_splitting': True,

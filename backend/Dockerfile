@@ -27,6 +27,9 @@ RUN cp /app/backend/config/settings.sample.py /app/backend/config/settings.py
 # Copy data files
 COPY backend/data/ /app/backend/data/
 
+# Copy GCP credentials for Cloud Vision OCR
+COPY backend/secrets/ /app/backend/secrets/
+
 # Create necessary directories
 RUN mkdir -p /app/backend/uploads/photos \
     /app/backend/uploads/texts \

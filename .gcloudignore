@@ -35,7 +35,7 @@ experiments/
 reference/
 
 # Secrets (but NOT config.js - we need that for deploy!)
-backend/secrets/
+# backend/secrets/ - NOT ignored, needed for Cloud Vision OCR
 client_secret.json
 
 # Unnecessary directories
