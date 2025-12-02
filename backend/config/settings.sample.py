@@ -43,7 +43,11 @@ class Settings:
     
     # OCR configuration
     TESSERACT_LANGUAGES = ["san", "hin", "eng"]
-    CLIENT_SECRET = BASE_DIR / "client_secret.json"
+    # GCP credentials for Cloud Vision OCR (service account JSON)
+    GCP_CREDENTIALS = os.environ.get(
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        str(BASE_DIR / "secrets" / "gcp-credentials.json")
+    )
     
     # Chanda configuration
     # Options: "auto" (uses ICU if available), "icu", "sanskrit_text"
@@ -66,4 +70,4 @@ DATA_PATH = Settings.DATA_DIR
 TMP_PATH = Settings.TMP_PATH
 APPLICATION_NAME = Settings.APPLICATION_NAME
 SECRET_KEY = Settings.SECRET_KEY
-CLIENT_SECRET = Settings.CLIENT_SECRET
+GCP_CREDENTIALS = Settings.GCP_CREDENTIALS
