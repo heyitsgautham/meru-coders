@@ -66,12 +66,15 @@ The patterns of laghu and guru syllables determine the type of chandas (meter). 
 ## Success Metrics
 
 ### Current Status
-✅ **100% SUCCESS RATE** - All tests passing for SIH 2025 Grand Finale!
+✅ **EXCELLENT ACCURACY** - All core tests passing for SIH 2025 Grand Finale!
 
-**Test Results** (as of November 19, 2025):
+**Test Results** (as of December 1, 2025):
 - **test_all_fixes.py**: 8/8 PASS (100%)
 - **test_authentic_meters.py**: 6/6 PASS (100%)
-- **Multi-level matching**: 5/7 PASS (71.4%)
+- **test_csv_accuracy.py** (147 real verses from dataset):
+  - 📊 **First-Line Accuracy**: 144/147 (98.0%)
+  - 📋 **All-Lines Accuracy**: 133/147 (90.5%) | Individual lines: 483/499 (96.8%)
+  - 🕉️ **Verse-Level Accuracy**: 140/147 (95.2%)
 
 ### Achievement Summary
 **All major chandas types correctly identified:**
@@ -155,6 +158,7 @@ The patterns of laghu and guru syllables determine the type of chandas (meter). 
 
 2. **Test Aggressively**: 
    - Run `PYTHONPATH=. python tests/test_all_fixes.py` after EVERY change
+   - Run `python tests/test_csv_accuracy.py --all` for comprehensive regression testing
    - Benchmark performance with `timeit` for critical paths
    - Validate against GRETIL corpus for real-world accuracy
 
@@ -239,6 +243,36 @@ The patterns of laghu and guru syllables determine the type of chandas (meter). 
 
 ## Testing Strategy
 - All the test files are in the tests/ folder 
+
+### Regression Testing Commands
+Run these commands from the `backend/` directory after EVERY change:
+
+```bash
+# Core functionality test (must pass 100%)
+PYTHONPATH=. python tests/test_all_fixes.py
+
+# Comprehensive CSV accuracy test (REQUIRED - run with --all)
+python tests/test_csv_accuracy.py --all
+```
+
+**Required Accuracy Thresholds (Regression Baseline)**:
+| Metric | Threshold | Current |
+|--------|-----------|---------|
+| First-Line Accuracy | ≥ 95% | 98.0% |
+| All-Lines Accuracy | ≥ 85% | 90.5% |
+| Verse-Level Accuracy | ≥ 90% | 95.2% |
+| Individual Line Accuracy | ≥ 95% | 96.8% |
+
+⚠️ **CRITICAL**: Any PR that drops accuracy below these thresholds must be rejected or fixed.
+
+### test_csv_accuracy.py Usage
+```bash
+python tests/test_csv_accuracy.py          # First-line accuracy only (fastest)
+python tests/test_csv_accuracy.py --all    # ALL THREE accuracy types (recommended)
+python tests/test_csv_accuracy.py --verse  # Verse-level analysis only
+python tests/test_csv_accuracy.py -v       # Verbose mode (show mismatches)
+python tests/test_csv_accuracy.py --all -v # Full analysis with details
+```
 
 ### Validation Approach
 1. Compare against expert-annotated texts

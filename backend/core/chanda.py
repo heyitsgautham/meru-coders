@@ -65,13 +65,22 @@ class Chanda:
         M: f'{G}{G}{G}'
     }
     VEDIC_METERS = {
+        # Standard Vedic meters
         'Gayatri': {'syllables': 24, 'padas': 3, 'per_pada': 8, 'description': '3×8'},
         'Ushnik': {'syllables': 28, 'padas': 4, 'per_pada': 7, 'description': '4×7'},
         'Anushtubh': {'syllables': 32, 'padas': 4, 'per_pada': 8, 'description': '4×8'},
         'Brihati': {'syllables': 36, 'padas': 4, 'per_pada': 9, 'description': '4×9'},
         'Pankti': {'syllables': 40, 'padas': 5, 'per_pada': 8, 'description': '5×8'},
         'Trishtubh': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11'},
-        'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'}
+        'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'},
+        # Gāyatrī variants (Nicṛt, Bhurik, Virāṭ)
+        'Nicrt_Gayatri': {'syllables': 21, 'padas': 3, 'per_pada': 7, 'description': '3×7 (निचृत्)'},
+        'Bhurik_Gayatri': {'syllables': 27, 'padas': 3, 'per_pada': 9, 'description': '3×9 (भुरिक्)'},
+        # Triṣṭubh variants
+        'Nicrt_Trishtubh': {'syllables': 40, 'padas': 4, 'per_pada': 10, 'description': '4×10 (निचृत्)'},
+        'Virat_Trishtubh': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12 (विराट्)'},
+        # Jagatī variants  
+        'Nicrt_Jagati': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11 (निचृत्)'},
     }
 
     def __init__(self, data_path, symbols='यरतनभजसमलग', syllabization_method='sanskrit_text'):
@@ -326,6 +335,206 @@ class Chanda:
     # Preprocessing and Normalization Functions
     # ----------------------------------------------------------------------- #
 
+    def is_valid_sanskrit_input(self, text):
+        """
+        Check if the input text contains valid Sanskrit/Indic script characters.
+        
+        This method validates that the input is actually Sanskrit text (in any
+        supported script like Devanagari, IAST, SLP1, etc.) and not random
+        ASCII characters, English text, or gibberish.
+        
+        Args:
+            text: Input text string
+        
+        Returns:
+            tuple: (is_valid: bool, reason: str)
+        """
+        if not text or not text.strip():
+            return False, "खाली पाठ (Empty input)"
+        
+        text = text.strip()
+        
+        # Minimum length check - single characters or very short strings are not valid verses
+        # A valid Sanskrit word/phrase should have at least 2-3 characters
+        MIN_LENGTH_ASCII = 3  # Minimum for romanized: "om", "aum", etc.
+        MIN_LENGTH_DEVANAGARI = 2  # Minimum for Devanagari: "ॐ" is special case
+        
+        # Common English words to reject - these should NOT be treated as Sanskrit
+        # Including common words, greetings, and patterns
+        COMMON_ENGLISH_WORDS = {
+            # Basic pronouns and articles
+            'i', 'me', 'my', 'you', 'your', 'he', 'she', 'it', 'we', 'they', 'them',
+            'a', 'an', 'the',
+            # Common verbs
+            'is', 'are', 'was', 'were', 'be', 'been', 'being', 'am',
+            'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing',
+            'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'shall',
+            'go', 'goes', 'went', 'going', 'come', 'comes', 'came', 'coming',
+            'get', 'gets', 'got', 'getting', 'make', 'makes', 'made', 'making',
+            'see', 'saw', 'seen', 'look', 'looked', 'looking',
+            'know', 'knows', 'knew', 'think', 'thinks', 'thought',
+            'want', 'wants', 'wanted', 'need', 'needs', 'needed',
+            'say', 'says', 'said', 'tell', 'tells', 'told',
+            'give', 'gives', 'gave', 'take', 'takes', 'took',
+            # Greetings and common phrases
+            'hello', 'hi', 'hey', 'bye', 'goodbye', 'thanks', 'thank', 'please',
+            'yes', 'no', 'ok', 'okay', 'sorry', 'welcome',
+            # Common nouns
+            'man', 'men', 'woman', 'women', 'child', 'children', 'people', 'person',
+            'day', 'days', 'time', 'times', 'year', 'years', 'way', 'ways',
+            'world', 'life', 'hand', 'part', 'place', 'case', 'week', 'work',
+            'thing', 'things', 'word', 'words', 'text', 'name', 'number',
+            'home', 'house', 'room', 'car', 'water', 'money', 'point',
+            # Common adjectives
+            'good', 'bad', 'new', 'old', 'big', 'small', 'great', 'little',
+            'long', 'short', 'high', 'low', 'right', 'wrong', 'first', 'last',
+            'own', 'same', 'different', 'large', 'early', 'young',
+            'important', 'few', 'public', 'able', 'quick', 'brown', 'lazy', 'red',
+            'blue', 'green', 'black', 'white', 'fast', 'slow',
+            # Question words and conjunctions
+            'what', 'which', 'who', 'whom', 'whose', 'where', 'when', 'why', 'how',
+            'this', 'that', 'these', 'those', 'here', 'there',
+            'all', 'each', 'every', 'both', 'more', 'most', 'other', 'some', 'such',
+            'not', 'only', 'so', 'than', 'too', 'very', 'just', 'also', 'now',
+            'but', 'and', 'or', 'if', 'because', 'as', 'until', 'while', 'although',
+            # Prepositions
+            'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
+            'into', 'through', 'during', 'before', 'after', 'above', 'below',
+            'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under',
+            'again', 'further', 'then', 'once',
+            # Common animals (for pangram detection)
+            'dog', 'dogs', 'cat', 'cats', 'fox', 'bird', 'fish',
+            # Tech/test words
+            'test', 'testing', 'sample', 'example', 'demo', 'input', 'output',
+            'result', 'results', 'check', 'data', 'file', 'code', 'error',
+            'help', 'info', 'user', 'system', 'type', 'like', 'use', 'used',
+            # Misc common words
+            'fm', 'am', 'pm', 'vs', 'etc', 'ie', 'eg', 'abc', 'xyz', 'qwerty',
+            'one', 'two', 'three', 'four', 'five', 'many', 'much', 'well',
+            'even', 'back', 'any', 'our', 'still', 'find', 'since',
+            'jumps', 'jumped', 'over', 'under', 'around', 'lazy'
+        }
+        
+        # Check for Devanagari characters (U+0900 to U+097F)
+        devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097F')
+        
+        # Check for other Indic scripts (Bengali, Telugu, Tamil, etc.)
+        other_indic_chars = sum(1 for c in text if (
+            '\u0980' <= c <= '\u09FF' or  # Bengali
+            '\u0A00' <= c <= '\u0A7F' or  # Gurmukhi
+            '\u0A80' <= c <= '\u0AFF' or  # Gujarati
+            '\u0B00' <= c <= '\u0B7F' or  # Oriya
+            '\u0B80' <= c <= '\u0BFF' or  # Tamil
+            '\u0C00' <= c <= '\u0C7F' or  # Telugu
+            '\u0C80' <= c <= '\u0CFF' or  # Kannada
+            '\u0D00' <= c <= '\u0D7F'     # Malayalam
+        ))
+        
+        # Check for IAST/romanized Sanskrit characters
+        # IAST uses Latin letters with diacritics: ā ī ū ṛ ṝ ḷ ḹ ṃ ḥ ñ ṅ ṭ ḍ ṇ ś ṣ
+        iast_diacritics = set('āīūṛṝḷḹṃḥñṅṭḍṇśṣĀĪŪṚṜḶḸṂḤÑṄṬḌṆŚṢ')
+        iast_chars = sum(1 for c in text if c in iast_diacritics)
+        
+        # Check for basic Latin vowels that are common in Sanskrit transliteration
+        latin_vowels = set('aeiouAEIOU')
+        latin_chars = sum(1 for c in text if c.isalpha() and c.isascii())
+        latin_vowel_count = sum(1 for c in text if c in latin_vowels)
+        
+        # Total meaningful characters (excluding spaces, punctuation, numbers)
+        total_alpha = sum(1 for c in text if c.isalpha() or '\u0900' <= c <= '\u0D7F')
+        
+        if total_alpha == 0:
+            return False, "कोई वर्ण नहीं मिला (No alphabetic characters found)"
+        
+        # Special case: ॐ (Om) is valid even though it's a single character
+        if text == 'ॐ' or text.lower() in ['om', 'aum']:
+            return True, "ॐ (Om mantra)"
+        
+        # Minimum length validation
+        if devanagari_chars > 0 or other_indic_chars > 0:
+            # Indic script
+            if len(text) < MIN_LENGTH_DEVANAGARI:
+                return False, f"पाठ बहुत छोटा है (Text too short - minimum {MIN_LENGTH_DEVANAGARI} characters for Indic script)"
+        else:
+            # ASCII/romanized
+            if len(text) < MIN_LENGTH_ASCII:
+                return False, f"पाठ बहुत छोटा है (Text too short - minimum {MIN_LENGTH_ASCII} characters)"
+        
+        # *** ENGLISH TEXT DETECTION ***
+        # Check if input contains common English words
+        if devanagari_chars == 0 and other_indic_chars == 0 and iast_chars == 0:
+            # Pure ASCII input - check for English words
+            text_lower = text.lower()
+            words = re.findall(r'[a-z]+', text_lower)
+            
+            if words:
+                english_word_count = sum(1 for word in words if word in COMMON_ENGLISH_WORDS)
+                total_words = len(words)
+                
+                # If more than 30% of words are common English words, reject
+                if total_words > 0 and english_word_count / total_words > 0.3:
+                    return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text, not Sanskrit)"
+                
+                # If there are 2 or more English words, reject
+                if english_word_count >= 2:
+                    return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text, not Sanskrit)"
+                
+                # Check for repeated words (like "hello hello hello")
+                word_counts = {}
+                for word in words:
+                    word_counts[word] = word_counts.get(word, 0) + 1
+                
+                # If any word repeats 3+ times, likely not Sanskrit verse
+                for word, count in word_counts.items():
+                    if count >= 3 and word in COMMON_ENGLISH_WORDS:
+                        return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text with repeated words)"
+        
+        # Calculate ratios
+        devanagari_ratio = devanagari_chars / len(text)
+        indic_ratio = (devanagari_chars + other_indic_chars) / len(text)
+        iast_ratio = (iast_chars + latin_chars) / len(text) if iast_chars > 0 else 0
+        
+        # Case 1: Has Devanagari - definitely valid
+        if devanagari_ratio > 0.3:
+            return True, "देवनागरी लिपि (Devanagari script detected)"
+        
+        # Case 2: Has other Indic script - valid
+        if indic_ratio > 0.3:
+            return True, "भारतीय लिपि (Indic script detected)"
+        
+        # Case 3: Has IAST diacritics - valid romanized Sanskrit
+        if iast_chars > 0 and iast_ratio > 0.1:
+            return True, "IAST लिप्यन्तरण (IAST transliteration detected)"
+        
+        # Case 4: Pure ASCII without IAST diacritics
+        # This is tricky - could be SLP1 or Harvard-Kyoto, or could be gibberish
+        # Check for vowel ratio (Sanskrit has high vowel density)
+        if latin_chars > 0 and latin_vowel_count > 0:
+            vowel_ratio = latin_vowel_count / latin_chars
+            
+            # Sanskrit typically has vowel ratio of 0.3-0.5
+            # Gibberish like "djajjkvdskldsjlsdfjkl" has very low vowel ratio
+            if vowel_ratio < 0.15:
+                return False, "अमान्य पाठ - स्वर अनुपात न्यून (Invalid text - vowel ratio too low for Sanskrit)"
+            
+            # Check for common Sanskrit consonant clusters
+            # Valid SLP1/HK: "dharma", "karma", "yoga" etc.
+            # Invalid: "djajjkvdskl" (impossible consonant clusters)
+            text_lower = text.lower()
+            impossible_clusters = ['dj', 'kv', 'jj', 'fj', 'vd', 'ld', 'jl', 'fk', 'dk']
+            cluster_count = sum(1 for cluster in impossible_clusters if cluster in text_lower)
+            
+            if cluster_count >= 2:
+                return False, "अमान्य पाठ - असंभव व्यञ्जन संयोग (Invalid text - impossible consonant clusters)"
+            
+            # If vowel ratio is reasonable, assume it might be valid transliteration
+            if vowel_ratio >= 0.25:
+                return True, "संभावित लिप्यन्तरण (Possible transliteration)"
+            else:
+                return False, "अनिश्चित पाठ - कृपया देवनागरी में प्रविष्ट करें (Uncertain text - please enter in Devanagari)"
+        
+        return False, "अमान्य पाठ (Invalid text format)"
+
     def detect_vedic_markers(self, text):
         """Detect if text contains Vedic markers"""
         vedic_markers = ['ॐ', 'ओ३म्', 'भूर्भुवः स्वः', 'भूः', 'भुवः', 'स्वः']
@@ -498,32 +707,63 @@ class Chanda:
 
     # ----------------------------------------------------------------------- #
 
-    def identify_vedic_meter(self, syllable_count, lg_pattern=None):
-        """Identify Vedic meter by syllable count with ±1 tolerance and pattern matching"""
-        # Map syllable counts to actual meter names (all 7 major Vedic meters)
+    def identify_vedic_meter(self, syllable_count, lg_pattern=None, allow_ambiguous=False):
+        """Identify Vedic meter by syllable count with ±1 tolerance and pattern matching
+        
+        Supports standard Vedic meters and their variants:
+        - Nicṛt (निचृत्): Shortened form (-1 syllable per pada)
+        - Bhurik (भुरिक्): Extended form (+1 syllable per pada)
+        - Virāṭ (विराट्): Further extended form
+        
+        Args:
+            syllable_count: Number of syllables
+            lg_pattern: L-G pattern string (optional)
+            allow_ambiguous: If False, skip 21/27 syllable counts which conflict
+                            with classical pada meters like Sragdharā (21 per pada).
+                            Set to True only for verse-level holistic identification.
+        """
+        # Map syllable counts to actual meter names
+        # Includes standard meters AND common variants (Nicṛt, Bhurik)
         vedic_mapping = {
-            24: 'गायत्री',      # Gayatri - 3×8
-            28: 'उष्णिक्',       # Ushnik - 4×7
-            32: 'अनुष्टुभ्',     # Anushtubh - 4×8 (Vedic, different from classical)
-            36: 'बृहती',        # Brihati - 4×9
-            40: 'पङ्क्ति',       # Pankti - 5×8
-            44: 'त्रिष्टुभ्',    # Trishtubh - 4×11
-            48: 'जगती'         # Jagati - 4×12
+            # Gāyatrī family (3 padas) - ONLY if allow_ambiguous is True
+            # 21: 'निचृद्गायत्री',   # Conflicts with Sragdharā pada (21 per pada)
+            24: 'गायत्री',        # Standard Gayatri - 3×8
+            # 27: 'भुरिग्गायत्री',   # Conflicts with some classical meters
+            # Uṣṇik family (4 padas)
+            28: 'उष्णिक्',         # Ushnik - 4×7
+            # Anuṣṭubh family (4 padas)
+            32: 'अनुष्टुभ्',       # Anushtubh - 4×8
+            # Bṛhatī family (4 padas)
+            36: 'बृहती',          # Brihati - 4×9
+            # Paṅkti family (5 padas)
+            40: 'पङ्क्ति',         # Pankti - 5×8
+            # Triṣṭubh family (4 padas)
+            44: 'त्रिष्टुभ्',      # Trishtubh - 4×11
+            # Jagatī family (4 padas)
+            48: 'जगती',           # Jagati - 4×12
         }
+        
+        # Add ambiguous syllable counts only when explicitly allowed
+        # (e.g., for verse-level holistic identification with confirmed structure)
+        if allow_ambiguous:
+            vedic_mapping[21] = 'निचृद्गायत्री'  # Nicrt Gayatri - 3×7
+            vedic_mapping[27] = 'भुरिग्गायत्री'  # Bhurik Gayatri - 3×9
         
         # For pada-level identification (single pada, not full verse)
         pada_mapping = {
-            7: 'उष्णिक्',        # Ushnik pada
-            8: 'गायत्री',       # Gayatri/Anushtubh pada
-            9: 'बृहती',         # Brihati pada
-            11: 'त्रिष्टुभ्',   # Trishtubh pada
-            12: 'जगती'         # Jagati pada
+            7: 'उष्णिक्',          # Ushnik pada OR Nicrt Gayatri pada
+            8: 'गायत्री',         # Gayatri/Anushtubh pada
+            9: 'बृहती',           # Brihati pada OR Bhurik Gayatri pada
+            11: 'त्रिष्टुभ्',     # Trishtubh pada
+            12: 'जगती'           # Jagati pada
         }
         
         # Helper function to get English meter name for VEDIC_METERS lookup
         def get_english_name(sanskrit_name):
             name_map = {
                 'गायत्री': 'Gayatri',
+                'निचृद्गायत्री': 'Nicrt_Gayatri',      # 3×7 = 21 syllables
+                'भुरिग्गायत्री': 'Bhurik_Gayatri',     # 3×9 = 27 syllables
                 'त्रिष्टुभ्': 'Trishtubh',
                 'जगती': 'Jagati',
                 'उष्णिक्': 'Ushnik',
@@ -576,6 +816,151 @@ class Chanda:
         if is_last:
             return True
         return False
+
+    def detect_verse_structure(self, verse_lines):
+        """
+        Detect the structural properties of a verse for Vedic meter identification.
+        
+        This method analyzes the verse to determine if it matches expected Vedic
+        meter structures (4×11 for Triṣṭubh, 4×12 for Jagatī, etc.).
+        
+        Args:
+            verse_lines: List of verse lines (padas)
+        
+        Returns:
+            dict with:
+                - syllables_per_pada: list of syllable counts per pada
+                - total_syllables: total syllable count
+                - expected_vedic_meter: detected Vedic meter name (or None)
+                - is_sama: True if all padas have equal syllables
+                - vedic_structure_confirmed: True if structure matches Vedic expectations
+                - pada_similarity_score: 0.0-1.0 score of L-G pattern similarity across padas
+                - majority_match_count: number of padas matching the most common pattern
+        """
+        # Get L-G patterns for each pada
+        pada_patterns = []
+        syllables_per_pada = []
+        
+        for line in verse_lines:
+            _, lg_marks = self.mark_lg(line)
+            lg_str = ''.join(lg_marks)
+            pada_patterns.append(lg_str)
+            syllables_per_pada.append(len(lg_str))
+        
+        total_syllables = sum(syllables_per_pada)
+        num_padas = len(verse_lines)
+        
+        # Check if all padas have equal syllables (sama structure)
+        is_sama = len(set(syllables_per_pada)) == 1 if syllables_per_pada else False
+        
+        # Define expected Vedic meter structures
+        vedic_structures = {
+            'त्रिष्टुभ्': {'total': 44, 'padas': 4, 'per_pada': 11},
+            'जगती': {'total': 48, 'padas': 4, 'per_pada': 12},
+            'अनुष्टुभ्': {'total': 32, 'padas': 4, 'per_pada': 8},
+            'गायत्री': {'total': 24, 'padas': 3, 'per_pada': 8},
+            'उष्णिक्': {'total': 28, 'padas': 4, 'per_pada': 7},
+            'बृहती': {'total': 36, 'padas': 4, 'per_pada': 9},
+            'पङ्क्ति': {'total': 40, 'padas': 5, 'per_pada': 8},
+        }
+        
+        # Determine expected Vedic meter based on structure
+        expected_vedic_meter = None
+        vedic_structure_confirmed = False
+        
+        for meter_name, structure in vedic_structures.items():
+            # Check total syllable count (allow ±1 tolerance for sandhi/punctuation)
+            if abs(total_syllables - structure['total']) <= 1:
+                # Check pada count
+                if num_padas == structure['padas']:
+                    # Check per-pada syllable count (allow ±1 tolerance per pada)
+                    pada_matches = sum(
+                        1 for s in syllables_per_pada 
+                        if abs(s - structure['per_pada']) <= 1
+                    )
+                    # Require at least 3/4 padas to match (majority rule)
+                    if pada_matches >= (num_padas * 0.75):
+                        expected_vedic_meter = meter_name
+                        vedic_structure_confirmed = True
+                        break
+        
+        # Calculate pada pattern similarity (for Vedic verses, padas should be similar)
+        pada_similarity_score = 0.0
+        majority_match_count = 0
+        
+        if len(pada_patterns) >= 2 and all(len(p) > 0 for p in pada_patterns):
+            # Find the most common pada length
+            common_length = max(set(syllables_per_pada), key=syllables_per_pada.count)
+            matching_padas = [p for p in pada_patterns if len(p) == common_length]
+            
+            if len(matching_padas) >= 2:
+                # Calculate average pairwise similarity
+                total_similarity = 0
+                comparisons = 0
+                
+                for i, p1 in enumerate(matching_padas):
+                    for p2 in matching_padas[i+1:]:
+                        # Levenshtein distance normalized by length
+                        dist = Lev.distance(p1, p2)
+                        max_len = max(len(p1), len(p2))
+                        similarity = 1.0 - (dist / max_len) if max_len > 0 else 0.0
+                        total_similarity += similarity
+                        comparisons += 1
+                
+                if comparisons > 0:
+                    pada_similarity_score = total_similarity / comparisons
+            
+            # Count padas matching the first pada pattern (within tolerance)
+            if matching_padas:
+                reference_pada = matching_padas[0]
+                majority_match_count = sum(
+                    1 for p in matching_padas 
+                    if Lev.distance(p, reference_pada) <= 2
+                )
+        
+        return {
+            'syllables_per_pada': syllables_per_pada,
+            'total_syllables': total_syllables,
+            'expected_vedic_meter': expected_vedic_meter,
+            'is_sama': is_sama,
+            'vedic_structure_confirmed': vedic_structure_confirmed,
+            'pada_similarity_score': pada_similarity_score,
+            'majority_match_count': majority_match_count,
+            'num_padas': num_padas,
+            'pada_patterns': pada_patterns
+        }
+
+    def is_pada_level_meter(self, meter_name):
+        """
+        Check if a meter is a pada-level (single-pada) meter.
+        
+        Pada-level meters should NOT override verse-level Vedic meters.
+        A meter is considered pada-level if it appears only in SINGLE_CHANDA
+        but never in MULTI_CHANDA.
+        
+        Args:
+            meter_name: Name of the meter (string or tuple)
+        
+        Returns:
+            bool: True if this is a pada-level only meter
+        """
+        if isinstance(meter_name, tuple):
+            meter_name = meter_name[0]
+        
+        # Check if meter exists in SINGLE_CHANDA
+        in_single = any(
+            meter_name in [m[0] if isinstance(m, tuple) else m for m in meters]
+            for meters in self.SINGLE_CHANDA.values()
+        )
+        
+        # Check if meter exists in MULTI_CHANDA
+        in_multi = any(
+            meter_name in [m[0] if isinstance(m, tuple) else m for m in meters]
+            for meters in self.MULTI_CHANDA.values()
+        )
+        
+        # Pada-level if in single but not in multi
+        return in_single and not in_multi
     
     def get_method_info(self):
         """Return information about which syllabization method is being used"""
@@ -587,9 +972,120 @@ class Chanda:
                 'Multi-level confidence scoring',
                 'Vedic meter recognition',
                 'Fuzzy matching',
-                'Sandhi resolution'
+                'Sandhi resolution',
+                'Prose detection (Gadya vs Padya)'
             ]
         }
+
+    ###########################################################################
+    # Prose Detection (Gadya vs Padya)
+    ###########################################################################
+
+    def is_padya(self, lg_pattern, syllable_count, confidence_scores=None):
+        """
+        Determine if the input text is likely poetry (Padya) or prose (Gadya).
+        
+        Sanskrit literature has two forms:
+        - Padya (पद्य): Poetry with metrical structure following Chandas
+        - Gadya (गद्य): Prose without any metrical constraints
+        
+        This method uses multiple heuristics to determine if a given text
+        follows a recognizable metrical pattern.
+        
+        IMPORTANT: The challenge is that short prose can accidentally match
+        metrical patterns. We use STRICT criteria to avoid false positives:
+        - Only exact pattern matches are considered "definite poetry"
+        - Syllable-count-only matches are treated as "uncertain"
+        - Very short texts (< minimum verse length) are marked as uncertain
+        
+        Args:
+            lg_pattern: L-G pattern string
+            syllable_count: Number of syllables in the text
+            confidence_scores: Dict of meter_name -> (confidence, match_type)
+        
+        Returns:
+            tuple: (is_poetry: bool, reason: str, confidence: float)
+                - is_poetry: True if text appears to be Padya
+                - reason: Explanation for the classification
+                - confidence: 0.0-1.0 confidence in the classification
+        """
+        # Thresholds for prose detection
+        MIN_SYLLABLES_FOR_PADA = 6  # Minimum syllables for a valid pada
+        MIN_SYLLABLES_FOR_VERSE = 16  # Minimum for a half-shloka (2 padas of 8)
+        HIGH_CONFIDENCE_THRESHOLD = 9.0  # Exact pattern match
+        MEDIUM_CONFIDENCE_THRESHOLD = 7.0  # Pada-level match
+        
+        # Criterion 1: Too few syllables - not enough for any valid meter
+        if syllable_count < MIN_SYLLABLES_FOR_PADA:
+            return False, f"टिप्पणी: केवल {syllable_count} अक्षर - किसी भी छन्द के लिए अपर्याप्त (Too few syllables for any valid meter)", 0.9
+        
+        # Criterion 2: Check confidence scores for EXACT pattern matches
+        if confidence_scores:
+            # Get the highest confidence score and its match type
+            max_confidence = 0
+            best_match_type = ''
+            for meter_name, (conf, match_type) in confidence_scores.items():
+                if conf > max_confidence:
+                    max_confidence = conf
+                    best_match_type = match_type
+            
+            # HIGH CONFIDENCE: Exact pattern match (10.0) or exact regex (9.0)
+            # These are DEFINITE poetry - the L-G pattern matches a known meter
+            if max_confidence >= HIGH_CONFIDENCE_THRESHOLD:
+                if best_match_type in ['exact_pattern', 'exact_regex', 'pada_exact_sama']:
+                    return True, "उच्च विश्वास के साथ छन्द मिला (High confidence - exact pattern match)", 0.95
+                elif best_match_type in ['vedic_syllable_priority', 'vedic_syllable_secondary']:
+                    # Vedic by syllable count - only confident if it's a standard verse length
+                    if syllable_count in {24, 32, 44, 48}:
+                        return True, "वैदिक छन्द अक्षर संख्या से मेल (Vedic meter by syllable count)", 0.85
+                    else:
+                        return True, "संभावित वैदिक छन्द (Possible Vedic meter)", 0.7
+            
+            # MEDIUM CONFIDENCE: Pada-level structural matches
+            if max_confidence >= MEDIUM_CONFIDENCE_THRESHOLD:
+                if best_match_type in ['pada_similar', 'pada_vedic_sama', 'pada_vedic_similar']:
+                    return True, "पाद संरचना से छन्द मिला (Meter matched by pada structure)", 0.8
+                else:
+                    return True, "मध्यम विश्वास के साथ छन्द मिला (Medium confidence meter match)", 0.7
+            
+            # LOW CONFIDENCE: Only syllable-count matches
+            # These are UNCERTAIN - prose can accidentally match syllable counts
+            if max_confidence >= 5.0 and max_confidence < MEDIUM_CONFIDENCE_THRESHOLD:
+                # Be skeptical of syllable-count-only matches, especially for short texts
+                if syllable_count < MIN_SYLLABLES_FOR_VERSE:
+                    return False, f"टिप्पणी: केवल अक्षर संख्या से मेल ({syllable_count}) - छोटा पाठ, सम्भवतः गद्य (Only syllable count match - short text, likely prose)", 0.6
+                else:
+                    # Longer text with syllable match - uncertain
+                    return True, "अक्षर संख्या से संभावित छन्द (Possible meter by syllable count - uncertain)", 0.5
+            
+            # VERY LOW CONFIDENCE: Likely prose
+            if max_confidence > 0 and max_confidence < 5.0:
+                return False, f"टिप्पणी: न्यून विश्वास ({max_confidence:.1f}) - सम्भवतः गद्य (Low confidence - likely prose)", 0.7
+        
+        # No confidence scores available - use structural heuristics
+        
+        # Criterion 3: Check for full Vedic meter syllable counts (complete verses)
+        vedic_verse_counts = {24, 28, 32, 36, 40, 44, 48}
+        if syllable_count in vedic_verse_counts:
+            return True, "वैदिक छन्द अक्षर संख्या से मेल - पूर्ण श्लोक (Matches full Vedic verse syllable count)", 0.6
+        
+        # Criterion 4: Very short text without exact match - uncertain/prose
+        if syllable_count < MIN_SYLLABLES_FOR_VERSE:
+            return False, "टिप्पणी: छोटा पाठ, कोई निश्चित छन्द नहीं (Short text without definite meter pattern)", 0.6
+        
+        # Criterion 5: Check for standard verse structures
+        # 4-pada meters: 32, 44, 48, etc. (must be exact for high confidence)
+        if syllable_count >= 24 and syllable_count % 4 == 0:
+            pada_length = syllable_count // 4
+            if pada_length in {8, 11, 12}:  # Common Vedic pada lengths
+                return True, f"4-पाद वैदिक संरचना संभव (4-pada Vedic structure possible)", 0.5
+        
+        # Criterion 6: Very long text without any match - likely prose
+        if syllable_count > 30 and not confidence_scores:
+            return False, "टिप्पणी: लम्बा पाठ, कोई छन्द प्रतिरूप नहीं - सम्भवतः गद्य (Long text with no meter pattern - likely prose)", 0.7
+        
+        # Default: Uncertain - mark as uncertain prose
+        return False, "टिप्पणी: कोई निश्चित छन्द प्रतिरूप नहीं मिला (No definite meter pattern matched)", 0.5
 
     ###########################################################################
     # Multi-level Matching System (Priority 2 Enhancement)
@@ -1192,7 +1688,10 @@ class Chanda:
     def identify_verse_holistically(self, verse_lines):
         """
         Identify verse as a complete unit (Bug #2 fix)
-        Aggregates multiple lines and processes them together
+        Aggregates multiple lines and processes them together.
+        
+        ENHANCED: Now includes structure detection to properly prioritize
+        Vedic meters over pada-level exact matches.
         """
         # Combine all lines in the verse
         combined_text = ' '.join(verse_lines)
@@ -1202,14 +1701,22 @@ class Chanda:
         # Calculate total syllables
         total_syllables = len(lg_str)
         
+        # ENHANCED: Detect verse structure first
+        structure = self.detect_verse_structure(verse_lines)
+        
         # Try to identify by total syllable count with pattern
         meter_name, meter_info = self.identify_vedic_meter(total_syllables, lg_str)
+        
+        # ENHANCED: If structure confirms a Vedic meter, use that
+        if structure['vedic_structure_confirmed'] and structure['expected_vedic_meter']:
+            meter_name = structure['expected_vedic_meter']
         
         result = {
             'found': False,
             'meter': meter_name,
             'total_syllables': total_syllables,
-            'lg_str': lg_str
+            'lg_str': lg_str,
+            'structure': structure  # Include structure for use in aggregation
         }
         
         if meter_name:
@@ -1288,38 +1795,111 @@ class Chanda:
             for line_idx, line_result in enumerate(line_results):
                 _result = line_result['result']
                 
-                # Bug #2 Fix: Use holistic verse analysis to boost scores
+                # Bug #2 Fix + ENHANCED: Use holistic verse analysis with structure detection
                 # Apply boost once at the start of each verse
-                # BUT: Don't apply Vedic boost if there's a consistent classical meter
+                # When structure confirms Vedic meter, use high boost to override pada-level matches
                 if not holistic_boost_applied and verse_aggregate_idx < len(verse_aggregates):
                     current_aggregate = verse_aggregates[verse_aggregate_idx]
-                    if current_aggregate['holistic']['found']:
-                        vedic_meter = current_aggregate['holistic']['meter']
+                    holistic_result = current_aggregate['holistic']
+                    
+                    if holistic_result['found']:
+                        vedic_meter = holistic_result['meter']
+                        structure = holistic_result.get('structure', {})
+                        vedic_structure_confirmed = structure.get('vedic_structure_confirmed', False)
                         
                         # Check if there's a consistent classical meter across all verse lines
-                        # Get line indices for this verse (groups of 4)
                         verse_start = verse_aggregate_idx * 4
                         verse_end = min(verse_start + 4, len(line_results))
+                        num_lines = verse_end - verse_start
                         
-                        # Find classical meters that appear in ALL lines of this verse
+                        # ENHANCED: Check for consistent classical meters using MAJORITY RULE
+                        # A classical meter wins over Vedic if it has EXACT pattern matches
+                        # in at least 3 out of 4 lines (majority rule)
+                        # 
+                        # This handles:
+                        # - True sama classical meters (Indravajrā with same pattern in all lines)
+                        # - Upajāti (Indravajrā/Upendravajrā mix - both exact matches)
+                        # - Vedic meters with varied patterns (no consistent exact matches)
                         classical_meters_in_lines = []
+                        exact_match_meters_per_line = []  # Only meters with exact pattern match
+                        pada_level_meters_found = set()  # Track pada-level meters to suppress
+                        
                         for idx in range(verse_start, verse_end):
                             if idx < len(line_results):
                                 lr = line_results[idx]['result']
+                                confidence_scores = lr.get('confidence_scores', {})
+                                
                                 if lr.get('found') and lr.get('chanda'):
-                                    # Get first meter (most confident) that's not the Vedic meter
-                                    line_meters = [c[0] for c in lr['chanda'] if c[0] != vedic_meter]
+                                    line_meters = []
+                                    exact_meters = []
+                                    for c in lr['chanda']:
+                                        meter_name = c[0] if isinstance(c, tuple) else c
+                                        if meter_name != vedic_meter:
+                                            # Check if this is a pada-level meter
+                                            if self.is_pada_level_meter(meter_name):
+                                                pada_level_meters_found.add(meter_name)
+                                            else:
+                                                line_meters.append(meter_name)
+                                                # Check if it's an EXACT pattern match (confidence >= 9.0)
+                                                # Include both true exact (10.0) and regex exact (9.0)
+                                                if meter_name in confidence_scores:
+                                                    conf, match_type = confidence_scores[meter_name]
+                                                    if conf >= 9.0:
+                                                        exact_meters.append(meter_name)
                                     classical_meters_in_lines.append(set(line_meters))
+                                    exact_match_meters_per_line.append(set(exact_meters))
+                                else:
+                                    classical_meters_in_lines.append(set())
+                                    exact_match_meters_per_line.append(set())
                         
-                        # If we have meters from all lines, find intersection
+                        # Find classical meters with MAJORITY exact matches (≥3/4 or ≥2/3 lines)
                         has_consistent_classical = False
-                        if classical_meters_in_lines and len(classical_meters_in_lines) == (verse_end - verse_start):
-                            common_classical = set.intersection(*classical_meters_in_lines)
-                            has_consistent_classical = len(common_classical) > 0
+                        common_classical = set()
                         
-                        # Only apply Vedic boost if there's NO consistent classical meter
-                        if not has_consistent_classical:
-                            ongoing_score[vedic_meter] += 4.0
+                        if exact_match_meters_per_line and len(exact_match_meters_per_line) == num_lines:
+                            # Count how many lines each meter appears in with exact match
+                            meter_counts = {}
+                            for line_meters in exact_match_meters_per_line:
+                                for meter in line_meters:
+                                    meter_counts[meter] = meter_counts.get(meter, 0) + 1
+                            
+                            # Find meters with majority (≥75%) of lines having exact match
+                            threshold = max(3, int(num_lines * 0.75))  # At least 3 out of 4
+                            majority_meters = [m for m, count in meter_counts.items() if count >= threshold]
+                            
+                            if majority_meters:
+                                common_classical = set(majority_meters)
+                                has_consistent_classical = True
+                        
+                        # ENHANCED: Apply Vedic boost ONLY when:
+                        # 1. Structure confirms Vedic meter (4×11, 4×12, etc.), AND
+                        # 2. There is NO consistent classical meter (majority exact matches)
+                        #
+                        # This ensures:
+                        # - Triṣṭubh beats vidhvaṅkamālā (no majority exact matches for classical)
+                        # - But Indravajrā (majority exact matches) beats Triṣṭubh
+                        if vedic_structure_confirmed and not has_consistent_classical:
+                            # Structure confirmed (4×11, 4×12, etc.) AND no consistent classical meter:
+                            # Apply high boost to Vedic meter to beat pada-level matches
+                            ongoing_score[vedic_meter] += 8.0  # Results in ~12.0 total confidence
+                            
+                            # Suppress pada-level meters from ongoing_score
+                            for pada_meter in pada_level_meters_found:
+                                if pada_meter in ongoing_score:
+                                    # Reduce score significantly but don't remove entirely
+                                    # This keeps them as "secondary" matches for display
+                                    ongoing_score[pada_meter] *= 0.3
+                        elif vedic_structure_confirmed and has_consistent_classical:
+                            # Structure matches Vedic but classical meter has majority exact matches
+                            # Don't boost Vedic - let classical win
+                            pass
+                        elif num_lines >= 3 and not has_consistent_classical:
+                            # Multiple lines (≥3) but no Vedic structure confirmation
+                            # Apply small boost only if no consistent classical
+                            ongoing_score[vedic_meter] += 2.0
+                        # For single/dual lines (num_lines < 3): Don't boost Vedic at all
+                        # Let exact pattern matches determine the meter
+                    
                     holistic_boost_applied = True
                 
                 if _result['found']:
@@ -1464,6 +2044,44 @@ class Chanda:
                 - found: boolean indicating if the Chanda was found or not
                 - ...
         """
+        
+        # =====================================================================
+        # INPUT VALIDATION - Reject non-Sanskrit/gibberish text
+        # =====================================================================
+        is_valid_input, validation_reason = self.is_valid_sanskrit_input(line)
+        if not is_valid_input:
+            return {
+                'found': False,
+                'is_padya': False,
+                'is_valid_input': False,
+                'validation_error': validation_reason,
+                'padya_reason': validation_reason,
+                'padya_confidence': 0.0,
+                'prose_message': f"अमान्य आदान: {validation_reason} (Invalid input: {validation_reason})",
+                'syllables': [],
+                'lg': [],
+                'gana': '',
+                'length': 0,
+                'matra': 0,
+                'chanda': [],
+                'jaati': [],
+                'display_scheme': None,
+                'display_line': line,
+                'display_syllables': [],
+                'display_lg': [],
+                'display_gana': '',
+                'display_length': 0,
+                'display_matra': 0,
+                'display_chanda': '',
+                'display_chanda_primary': '',
+                'display_chanda_alternate': '',
+                'display_chanda_alternate_count': 0,
+                'display_chanda_hidden_count': 0,
+                'display_jaati': '',
+                'fuzzy': [],
+                'confidence_scores': {}
+            }
+        # =====================================================================
 
         lines, scheme = self.process_text(line)
         output_scheme = scheme if scheme != sanscript.DEVANAGARI else None
@@ -1514,9 +2132,23 @@ class Chanda:
         vedic_priority_confidence = 0.0
         
         # Check if this verse matches a Vedic meter by syllable count
+        # NOTE: Only include meters that make sense for SINGLE-LINE identification.
+        # Nicṛt Gāyatrī (21) and Bhurik Gāyatrī (27) are 3-pada verse meters,
+        # not single-line meters. A 21-syllable single line is more likely
+        # Sragdharā (21 per pada) than Nicṛt Gāyatrī (3×7 verse).
         syllable_count = len(lg_str)
-        vedic_syllable_counts = {24: 'गायत्री', 28: 'उष्णिक्', 32: 'अनुष्टुभ्', 
-                                  36: 'बृहती', 40: 'पङ्क्ति', 44: 'त्रिष्टुभ्', 48: 'जगती'}
+        vedic_syllable_counts = {
+            # Only meters where syllable count = single pada OR full verse with 4 padas
+            24: 'गायत्री',        # Standard Gāyatrī - 3×8 (also valid as single input)
+            28: 'उष्णिक्',         # Uṣṇik - 4×7
+            32: 'अनुष्टुभ्',       # Anuṣṭubh - 4×8
+            36: 'बृहती',          # Bṛhatī - 4×9
+            40: 'पङ्क्ति',         # Paṅkti - 5×8
+            44: 'त्रिष्टुभ्',      # Triṣṭubh - 4×11
+            48: 'जगती'           # Jagatī - 4×12
+            # NOT included: 21 (Nicṛt Gāyatrī) - conflicts with Sragdharā pada
+            # NOT included: 27 (Bhurik Gāyatrī) - needs 3-pada verse structure
+        }
         
         if syllable_count in vedic_syllable_counts:
             vedic_priority_meter = vedic_syllable_counts[syllable_count]
@@ -1798,6 +2430,39 @@ class Chanda:
         answer['matra'] = full_matra
         answer['chanda'] = chanda
         answer['jaati'] = jaati
+        
+        # =====================================================================
+        # PROSE DETECTION (Gadya vs Padya)
+        # =====================================================================
+        # Determine if the text is likely poetry (Padya) or prose (Gadya)
+        # This helps users understand when input doesn't match any known meter
+        # =====================================================================
+        is_poetry, padya_reason, padya_confidence = self.is_padya(
+            lg_str, 
+            len(lg_str), 
+            confidence_map if confidence_map else None
+        )
+        
+        answer['is_padya'] = is_poetry
+        answer['padya_reason'] = padya_reason
+        answer['padya_confidence'] = padya_confidence
+        
+        # If not poetry and no chanda found, add a helpful message
+        if not is_poetry and not found:
+            answer['prose_message'] = (
+                "यह पाठ गद्य (Gadya/Prose) प्रतीत होता है। "
+                "गद्य में कोई निश्चित छन्द नहीं होता। "
+                "(This text appears to be prose. Prose does not follow any specific meter.)"
+            )
+        elif not is_poetry and found:
+            # Low confidence match - might be prose with accidental pattern
+            answer['prose_message'] = (
+                f"टिप्पणी: {padya_reason} "
+                "(Note: Low confidence - text may be prose with accidental pattern match.)"
+            )
+        else:
+            answer['prose_message'] = None
+        # =====================================================================
 
         answer['display_scheme'] = output_scheme
         answer['display_line'] = display_line
@@ -2127,6 +2792,14 @@ class Chanda:
             f"\tChanda: {line_result['display_chanda']}",
             f"\tJaati: {line_result['display_jaati']} "
         ]
+        
+        # Add prose detection information if available
+        if 'is_padya' in line_result:
+            padya_status = "पद्य (Poetry)" if line_result['is_padya'] else "गद्य (Prose)"
+            output_lines.append(f"\tType: {padya_status}")
+            if line_result.get('prose_message'):
+                output_lines.append(f"\tNote: {line_result['prose_message']}")
+        
         if line_result['fuzzy']:
             best_match = line_result['fuzzy'][0]
             output_lines.extend([
