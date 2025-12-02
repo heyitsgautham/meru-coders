@@ -3,8 +3,8 @@
  * Displays meter identification results with language toggle
  */
 
-import { useState } from 'react';
-import { Download, ChevronDown, ChevronUp, FileText, AlertCircle, X } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, FileText, AlertCircle, X } from 'lucide-react';
 import { getDownloadURL } from '../services/api';
 import type { IdentifyResponse, LineResult, Summary } from '../types/api';
 
@@ -256,15 +256,69 @@ function LineAnalysisCard({
     meterDisplay = firstFuzzy.display_chanda || '-';
   }
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollability = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener('resize', checkScrollability);
+    return () => window.removeEventListener('resize', checkScrollability);
+  }, [checkScrollability, validPairs]);
+
+  const scrollLeft = () => {
+    scrollContainerRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    scrollContainerRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
+  };
+
   return (
     <div className="p-8 rounded-2xl shadow-md" style={{ minWidth: '100%', backgroundColor: '#FFF9F2', border: '2px solid #E1B88E' }}>
       {/* Analysis Table */}
       {validPairs.length > 0 && (
-        <div className="overflow-x-auto mb-6">
-          <table className="w-full border-collapse text-center shadow-md" style={{ minWidth: '100%', fontSize: '1.25rem', border: '4px solid #C68642' }}>
+        <div className="mb-6" style={{ position: 'relative' }}>
+          {/* Left scroll indicator */}
+          {canScrollLeft && (
+            <button
+              onClick={scrollLeft}
+              className="bg-white/90 hover:bg-white shadow-md rounded-full p-1 transition-all"
+              style={{ position: 'absolute', left: '-12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, border: '2px solid #C68642' }}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-5 h-5 text-[#C68642]" />
+            </button>
+          )}
+          {/* Right scroll indicator */}
+          {canScrollRight && (
+            <button
+              onClick={scrollRight}
+              className="bg-white/90 hover:bg-white shadow-md rounded-full p-1 transition-all"
+              style={{ position: 'absolute', right: '-12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, border: '2px solid #C68642' }}
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-5 h-5 text-[#C68642]" />
+            </button>
+          )}
+          <div
+            ref={scrollContainerRef}
+            className="analysis-table-wrapper"
+            onScroll={checkScrollability}
+          >
+          <table className="w-full border-collapse text-center shadow-md" style={{ fontSize: '1.25rem', border: '4px solid #C68642' }}>
             <thead>
               <tr>
-                <th className="px-6 py-5 text-left font-bold whitespace-nowrap min-w-[160px]" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
+                <th className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
                   Akṣarāṇi
                 </th>
                 {validPairs.map((pair, idx) => {
@@ -276,7 +330,8 @@ function LineAnalysisCard({
                       fontSize: '1.25rem', 
                       fontFamily: "'Noto Sans Devanagari', sans-serif", 
                       backgroundColor: '#FFE0BF', 
-                      color: '#000000' 
+                      color: '#000000',
+                      minWidth: '60px'
                     }}>
                       {showSanskrit ? pair.syllable : transliterateToIAST(pair.syllable)}
                     </th>
@@ -287,7 +342,7 @@ function LineAnalysisCard({
             <tbody>
               {/* L/G Row */}
               <tr>
-                <td className="px-6 py-5 text-left font-bold whitespace-nowrap" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
+                <td className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
                   Laghu-Guru
                 </td>
                 {validPairs.map((pair, idx) => {
@@ -305,7 +360,8 @@ function LineAnalysisCard({
                         fontSize: '1.25rem', 
                         fontFamily: "'Noto Sans Devanagari', monospace",
                         backgroundColor: isLaghu ? '#E8F4FD' : '#FFF9F2',
-                        color: isLaghu ? '#2563EB' : '#C2185B'
+                        color: isLaghu ? '#2563EB' : '#C2185B',
+                        minWidth: '60px'
                       }}
                     >
                       {showSanskrit ? sanskritLG : englishLG}
@@ -317,7 +373,7 @@ function LineAnalysisCard({
               {/* Gana Row */}
               {ganaString && (
                 <tr>
-                  <td className="px-6 py-5 text-left font-bold whitespace-nowrap" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815' }}>
+                  <td className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
                     Gaṇa
                   </td>
                   {(() => {
@@ -388,6 +444,7 @@ function LineAnalysisCard({
               )}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

@@ -2237,3 +2237,36 @@ button:disabled {
   color: white !important;
   border-color: #f97316 !important;
 }
+
+/* Analysis table scrollable container */
+.analysis-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) var(--color-bg);
+  border-radius: 8px;
+}
+
+.analysis-table-wrapper table {
+  width: 100%;
+  min-width: fit-content;
+}
+
+.analysis-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.analysis-table-wrapper::-webkit-scrollbar-track {
+  background: var(--color-card-inner);
+  border-radius: 4px;
+}
+
+.analysis-table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+.analysis-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
