@@ -39,6 +39,9 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   
+  // Drag and drop state
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  
   // Results state
   const [result, setResult] = useState<IdentifyResponse | null>(null);
   const [resultType, setResultType] = useState<"text" | "image" | "file">("text");
@@ -84,13 +87,62 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
-      setExtractedText(null); // Reset extracted text when new image selected
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      processImageFile(file);
+    }
+  };
+
+  // Process image file (shared between select and drag-drop)
+  const processImageFile = (file: File) => {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+    setSelectedImage(file);
+    setExtractedText(null); // Reset extracted text when new image selected
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle drag events for image upload
+  const handleImageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleImageDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(true);
+  };
+
+  const handleImageDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only set to false if we're leaving the drop zone entirely
+    if (e.currentTarget.contains(e.relatedTarget as Node)) {
+      return;
+    }
+    setIsDraggingImage(false);
+  };
+
+  const handleImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      processImageFile(file);
     }
   };
 
@@ -291,8 +343,16 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                 />
                 <div 
                   onClick={() => !selectedImage && imageInputRef.current?.click()}
-                  className={`group border-2 border-dashed border-[var(--color-border-subtle)] rounded-[20px] p-8 bg-gradient-to-b from-white to-[#fdf8f3] transition-all duration-300 ${
-                    !selectedImage ? 'cursor-pointer hover:from-white hover:to-[var(--color-primary-soft)] hover:border-[var(--color-primary)] hover:shadow-xl' : ''
+                  onDragOver={handleImageDragOver}
+                  onDragEnter={handleImageDragEnter}
+                  onDragLeave={handleImageDragLeave}
+                  onDrop={handleImageDrop}
+                  className={`group border-2 border-dashed rounded-[20px] p-8 bg-gradient-to-b transition-all duration-300 ${
+                    isDraggingImage 
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] shadow-xl scale-[1.02]' 
+                      : selectedImage 
+                        ? 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3]'
+                        : 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3] cursor-pointer hover:from-white hover:to-[var(--color-primary-soft)] hover:border-[var(--color-primary)] hover:shadow-xl'
                   }`}
                 >
                   {imagePreview ? (
@@ -331,7 +391,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                             handleExtractText();
                           }}
                           disabled={extractLoading}
-                          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base disabled:opacity-50"
+                          className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base disabled:opacity-50 flex items-center gap-2"
                         >
                           {extractLoading ? (
                             <>
@@ -354,7 +414,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                             e.stopPropagation();
                             handleRemoveImage();
                           }}
-                          className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-red-400 text-red-500 rounded-full hover:bg-red-50 hover:border-red-500 transition-all duration-300 font-semibold text-base"
+                          className="px-8 py-3 bg-[var(--color-primary-soft)] text-[var(--color-primary-dark)] border border-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg font-semibold text-base flex items-center gap-2"
                         >
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -365,12 +425,14 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-6">
-                      <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                      <div className={`p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg transition-all duration-300 ${
+                        isDraggingImage ? 'scale-110 shadow-xl' : 'group-hover:shadow-xl group-hover:scale-110'
+                      }`}>
                         <Image className="w-10 h-10 text-white" />
                       </div>
                       <div className="text-center">
                         <p className="text-lg font-semibold text-[var(--color-text-main)] mb-2">
-                          Drop your image here
+                          {isDraggingImage ? 'Drop your image here!' : 'Drop your image here'}
                         </p>
                         <p className="text-[var(--color-text-muted)] text-base mb-1">
                           or click to browse
@@ -379,7 +441,9 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                           Supports PNG, JPG, JPEG (max 10MB)
                         </p>
                       </div>
-                      <button className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base group-hover:scale-105">
+                      <button className={`px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base ${
+                        isDraggingImage ? 'scale-105' : 'group-hover:scale-105'
+                      }`}>
                         Choose File
                       </button>
                     </div>
@@ -396,7 +460,17 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                   </h3>
                   
                   {/* Text Content */}
-                  <div className="text-xl font-semibold text-[var(--color-text-main)] leading-loose mb-8 whitespace-pre-wrap p-8 bg-white rounded-[16px] border border-[var(--color-border-subtle)]">
+                  <div 
+                    className="text-center mb-8 whitespace-pre-wrap p-8 bg-white rounded-[16px] border border-[var(--color-border-subtle)]" 
+                    style={{ 
+                      fontFamily: "'Crimson Text', 'Merriweather', Georgia, 'Times New Roman', serif",
+                      fontSize: '25px',
+                      fontWeight: 400,
+                      color: '#4a2c10',
+                      lineHeight: 1.75,
+                      letterSpacing: '0.02em'
+                    }}
+                  >
                     {extractedText}
                   </div>
                   
