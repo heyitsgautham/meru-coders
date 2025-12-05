@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { AnalysisForm } from "./components/AnalysisForm";
 import { ExamplesView } from "./components/ExamplesView";
 import { AboutView } from "./components/AboutView";
+import { DatasetsView } from "./components/DatasetsView";
 import { MandalaBackground } from "./components/MandalaBackground";
 import { LandingPage } from "./views/LandingPage";
 import type { ViewType } from "./types/api";
@@ -99,6 +100,11 @@ export default function App() {
           {currentView === "examples" && (
             <div style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>
               <ExamplesView onSelectExample={handleSelectExample} />
+            </div>
+          )}
+          {currentView === "datasets" && (
+            <div style={{ width: '90%', maxWidth: '1600px', margin: '0 auto' }}>
+              <DatasetsView />
             </div>
           )}
           {currentView === "about" && (

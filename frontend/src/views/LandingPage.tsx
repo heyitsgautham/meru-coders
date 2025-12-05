@@ -194,9 +194,9 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             </div>
             
             <div style={{
-              backgroundColor: '#faf7f2',
+              backgroundColor: '#fffbf5',
+              padding: '20px',
               borderRadius: '12px',
-              padding: '24px',
               marginBottom: '24px',
               border: '1px solid #e8e0d5'
             }}>
@@ -207,7 +207,8 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
                 lineHeight: 1.6,
                 margin: 0
               }}>
-                धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः
+                धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः<br />
+                मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय
               </p>
             </div>
             

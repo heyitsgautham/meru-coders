@@ -198,7 +198,63 @@ export type AnalysisMode = 'line' | 'verse';
 export type IdentificationMode = 'auto' | 'vedic' | 'classical';
 
 // View type for navigation
-export type ViewType = 'home' | 'examples' | 'about';
+export type ViewType = 'home' | 'examples' | 'datasets' | 'about';
 
 // Input tab type
 export type InputTab = 'text' | 'image' | 'file';
+
+// Dataset types
+export interface DatasetInfo {
+  id: string;
+  name: string;
+  description: string;
+  source: string;
+  sourceReference: string;
+  rowCount: number;
+  dataType: 'verses' | 'meter_definitions';
+  hasSloka: boolean;
+  slokaColumn: string | null;
+  chandasColumn: string | null;
+  patternColumn: string | null;
+  patternType?: 'lg_pattern' | 'syllable_count' | 'matra_count';
+  isMerged?: boolean;
+  uniqueChandas: string[];
+}
+
+export interface DatasetsListResponse {
+  success: boolean;
+  datasets?: DatasetInfo[];
+  sources?: string[];
+  sourceDescriptions?: Record<string, string>;
+  error?: string;
+}
+
+export interface DatasetRow {
+  sloka: string | null;
+  chandas: string | null;
+  pattern: string | null;
+  source: string;
+  category?: string;
+  raw: Record<string, string>;
+}
+
+export interface DatasetResponse {
+  success: boolean;
+  datasetId?: string;
+  name?: string;
+  description?: string;
+  source?: string;
+  sourceReference?: string;
+  dataType?: 'verses' | 'meter_definitions';
+  patternType?: 'lg_pattern' | 'syllable_count' | 'matra_count';
+  columns?: string[];
+  slokaColumn?: string | null;
+  chandasColumn?: string | null;
+  patternColumn?: string | null;
+  rows?: DatasetRow[];
+  totalCount?: number;
+  limit?: number;
+  offset?: number;
+  hasMore?: boolean;
+  error?: string;
+}

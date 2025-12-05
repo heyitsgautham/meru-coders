@@ -11,6 +11,8 @@ import type {
   IdentificationMode,
   OCRExtractResponse,
   FileExtractResponse,
+  DatasetsListResponse,
+  DatasetResponse,
 } from '../types/api';
 
 // Get API URL from environment or use default
@@ -204,4 +206,33 @@ export function getDefaultSchemes(): SchemeOption[] {
     { value: 'slp1', label: 'SLP1' },
     { value: 'wx', label: 'WX Notation' },
   ];
+}
+
+/**
+ * Get list of available datasets
+ */
+export async function getDatasets(): Promise<DatasetsListResponse> {
+  return request<DatasetsListResponse>('/datasets');
+}
+
+/**
+ * Get dataset contents with pagination and filtering
+ */
+export async function getDataset(
+  datasetId: string,
+  options: {
+    limit?: number;
+    offset?: number;
+    chandas?: string;
+  } = {}
+): Promise<DatasetResponse> {
+  const params = new URLSearchParams();
+  if (options.limit) params.set('limit', options.limit.toString());
+  if (options.offset) params.set('offset', options.offset.toString());
+  if (options.chandas) params.set('chandas', options.chandas);
+  
+  const queryString = params.toString();
+  const endpoint = `/datasets/${datasetId}${queryString ? `?${queryString}` : ''}`;
+  
+  return request<DatasetResponse>(endpoint);
 }
