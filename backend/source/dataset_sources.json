@@ -1,0 +1,115 @@
+{
+  "datasets": {
+    "rigveda": {
+      "id": "rigveda",
+      "name": "Rigveda with Meters",
+      "filename": "rigveda-with-meters.csv",
+      "description": "Complete Rigveda verses with identified chandas, seers, and deities",
+      "source": "GRETIL / Vedaweb",
+      "rowCount": 10384,
+      "columns": {
+        "sloka": "verse_text",
+        "chandas": "meter",
+        "additional": ["mandala", "sukta", "rik", "lg_pattern", "syllable_count", "seer", "divinity"]
+      },
+      "slokaColumn": "verse_text",
+      "chandasColumn": "meter",
+      "sourceReference": "Rigveda Samhita - Digital Corpus from GRETIL and Vedaweb projects"
+    },
+    "chandovallari": {
+      "id": "chandovallari",
+      "name": "Chandovallari Collection",
+      "filename": "chandovallari.csv",
+      "description": "Classical Sanskrit poetry examples with chandas identification",
+      "source": "Chandovallari (Classical Treatise)",
+      "rowCount": 620,
+      "columns": {
+        "sloka": "Shloka ",
+        "chandas": "chanda",
+        "additional": ["L/G", "Gana"]
+      },
+      "slokaColumn": "Shloka ",
+      "chandasColumn": "chanda",
+      "sourceReference": "Chandovallari - A treatise on Sanskrit prosody with classical examples"
+    },
+    "chandas_vedanga": {
+      "id": "chandas_vedanga",
+      "name": "Chandas as Vedanga",
+      "filename": "chandas-as-vedanga.csv",
+      "description": "Vedic chandas classification (Daivi, Asuri, Prajapatya) with examples",
+      "source": "Vedanga Literature",
+      "rowCount": 497,
+      "columns": {
+        "sloka": "examples",
+        "chandas": "chandas_name",
+        "additional": ["S.No.", "chandas_class", "syllables"]
+      },
+      "slokaColumn": "examples",
+      "chandasColumn": "chandas_name",
+      "sourceReference": "Vedanga texts - Chandas as one of the six limbs of the Vedas"
+    },
+    "iitk_meters": {
+      "id": "iitk_meters",
+      "name": "IITK Meter Definitions",
+      "description": "Comprehensive collection of Sama, Vishama, and Ardhasama meter definitions with L-G patterns",
+      "source": "IIT Kanpur Sanskrit Project",
+      "dataType": "meter_definitions",
+      "mergedFrom": ["sama_iitk", "vishama_iitk", "ardhasama_iitk"],
+      "files": [
+        {"filename": "chanda_sama-iitk.csv", "category": "Sama (Uniform)", "chandasColumn": "वृत्त", "patternColumn": "लक्षण (raw)"},
+        {"filename": "chanda_vishama-iitk.csv", "category": "Vishama (Varied)", "chandasColumn": "वृत्त", "patternColumn": "लक्षण (raw)"},
+        {"filename": "chanda_ardhasama-iitk.csv", "category": "Ardhasama (Half-uniform)", "chandasColumn": "वृत्त", "patternColumn": "लक्षण (raw)"}
+      ],
+      "chandasColumn": "वृत्त",
+      "patternColumn": "लक्षण (raw)",
+      "patternType": "lg_pattern",
+      "sourceReference": "IIT Kanpur Sanskrit Meter Database - Combined Sama, Vishama, and Ardhasama meters"
+    },
+    "matra_iitk": {
+      "id": "matra_iitk",
+      "name": "Matra Meters (IITK)",
+      "filename": "chanda_matra-iitk.csv",
+      "description": "Matra-based meter definitions with matra counts per pada",
+      "source": "IIT Kanpur Sanskrit Project",
+      "rowCount": 9,
+      "dataType": "meter_definitions",
+      "columns": {
+        "sloka": null,
+        "chandas": "वृत्त",
+        "pattern": "मात्रा",
+        "additional": []
+      },
+      "slokaColumn": null,
+      "chandasColumn": "वृत्त",
+      "patternColumn": "मात्रा",
+      "patternType": "matra_count",
+      "sourceReference": "IIT Kanpur Sanskrit Meter Database - Matra meters collection"
+    },
+    "jaati_iitk": {
+      "id": "jaati_iitk",
+      "name": "Jaati Classification (IITK)",
+      "filename": "chanda_jaati-iitk.csv",
+      "description": "Jaati-based classification mapping syllable counts to meter categories",
+      "source": "IIT Kanpur Sanskrit Project",
+      "rowCount": 28,
+      "dataType": "meter_definitions",
+      "columns": {
+        "sloka": null,
+        "chandas": "जाति",
+        "pattern": "अक्षरसंख्या",
+        "additional": []
+      },
+      "slokaColumn": null,
+      "chandasColumn": "जाति",
+      "patternColumn": "अक्षरसंख्या",
+      "patternType": "syllable_count",
+      "sourceReference": "IIT Kanpur Sanskrit Meter Database - Jaati classification"
+    }
+  },
+  "sourceDescriptions": {
+    "GRETIL / Vedaweb": "Göttingen Register of Electronic Texts in Indian Languages (GRETIL) and VedaWeb project digital corpus",
+    "Chandovallari (Classical Treatise)": "A classical Sanskrit treatise on prosody containing examples of various meters",
+    "Vedanga Literature": "Chandas is one of the six Vedangas (limbs of the Vedas), dealing with prosody and meter",
+    "IIT Kanpur Sanskrit Project": "Digital Sanskrit resources maintained by IIT Kanpur's Sanskrit computational linguistics group"
+  }
+}
