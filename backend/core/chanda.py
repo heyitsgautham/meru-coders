@@ -1356,8 +1356,32 @@ class Chanda:
         # If actual is longer than expected, it's multiple padas
         actual_len = len(actual_lg)
         if actual_len > expected_syllables and expected_syllables > 0:
-            num_padas = actual_len // expected_syllables
-            if actual_len % expected_syllables == 0 and num_padas <= 4:
+            # Calculate how many padas this could represent
+            # Allow for ±1-2 syllables tolerance for Vedic meters
+            num_padas_exact = actual_len // expected_syllables
+            remainder = actual_len % expected_syllables
+            
+            # Check for exact match OR near-match (within 1-2 syllables of n*expected)
+            is_near_match = False
+            num_padas = num_padas_exact
+            
+            if remainder == 0 and num_padas <= 4:
+                # Exact match
+                is_near_match = True
+            elif num_padas_exact >= 2 and num_padas_exact <= 4:
+                # Check if we're close to an exact multiple
+                expected_total = num_padas_exact * expected_syllables
+                next_expected_total = (num_padas_exact + 1) * expected_syllables
+                
+                # Allow ±2 syllables tolerance
+                if abs(actual_len - expected_total) <= 2:
+                    is_near_match = True
+                    num_padas = num_padas_exact
+                elif abs(actual_len - next_expected_total) <= 2 and (num_padas_exact + 1) <= 4:
+                    is_near_match = True
+                    num_padas = num_padas_exact + 1
+            
+            if is_near_match and num_padas <= 4:
                 # Repeat pattern for multiple padas
                 padas_info = meter_info.get('padas', {})
                 
@@ -2874,6 +2898,50 @@ class Chanda:
         line_results = []
         verse_results = []
         pragatha_detected = None  # Will hold Pragātha info if detected
+
+        # =====================================================================
+        # VEDIC SINGLE-DANDA HANDLING
+        # =====================================================================
+        # Vedic verses often have a single danda (।) in the middle to mark
+        # a caesura or half-verse boundary, but this should NOT split the verse
+        # into separate lines. Only double danda (॥) marks verse end in Vedic.
+        # 
+        # Example: Nasadiya Sukta (RV 10.129.1) is 44 syllables (Triṣṭubh)
+        # "नासदासीन्नो सदासीत्तदानीं ... यत् । किमावरीवः ... गभीरम्"
+        # Should be treated as ONE verse, not two separate lines.
+        # =====================================================================
+        if mode in ['vedic', 'auto']:
+            # Check if text has single danda but no double danda
+            single_danda_count = text.count('।')
+            double_danda_count = text.count('॥')
+            newline_count = text.count('\n')
+            
+            # If only single dandas and no newlines/double dandas, 
+            # this might be a Vedic verse with caesura marking
+            if single_danda_count >= 1 and double_danda_count == 0 and newline_count == 0:
+                # Remove single dandas temporarily and count syllables using chanda engine
+                text_no_danda = text.replace('।', ' ').replace('  ', ' ')
+                
+                # Use our own syllable counting (more accurate than text_classifier)
+                try:
+                    _, lg_marks = self.mark_lg(text_no_danda)
+                    # Count non-empty lg marks
+                    total_syllables = sum(1 for lg in lg_marks if lg)
+                except:
+                    total_syllables = 0
+                
+                # Vedic meters: 24 (Gāyatrī), 32 (Anuṣṭubh), 36 (Bṛhatī), 
+                # 40 (Paṅkti), 44 (Triṣṭubh), 48 (Jagatī)
+                vedic_syllable_counts = {24, 32, 36, 40, 44, 48}
+                # Also allow ±3 tolerance (Vedic verses can have slight variations)
+                is_vedic_count = any(
+                    abs(total_syllables - vc) <= 3 for vc in vedic_syllable_counts
+                )
+                
+                if is_vedic_count:
+                    # Replace single dandas with spaces to prevent splitting
+                    text = text_no_danda
+        # =====================================================================
 
         # =====================================================================
         # EARLY VALIDATION - Check ORIGINAL text BEFORE transliteration

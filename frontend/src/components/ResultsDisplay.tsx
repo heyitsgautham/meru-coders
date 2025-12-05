@@ -602,60 +602,7 @@ function LineAnalysisCard({
         </span>
       </div>
 
-      {/* Pattern Validation Display */}
-      {result.pattern_validation && (
-        <div className="mt-4 p-4 rounded-lg" style={{
-          backgroundColor: result.pattern_validation.is_valid ? '#E8F5E9' : '#FFF3E0',
-          border: `2px solid ${result.pattern_validation.is_valid ? '#4CAF50' : '#FF9800'}`
-        }}>
-          <div className="flex items-center gap-2 mb-2">
-            <span style={{
-              fontSize: '1.2rem',
-              color: result.pattern_validation.is_valid ? '#2E7D32' : '#E65100'
-            }}>
-              {result.pattern_validation.is_valid ? '✓' : '⚠'}
-            </span>
-            <span className="font-bold" style={{
-              fontFamily: "'Noto Sans Devanagari', sans-serif",
-              fontSize: '1.1rem',
-              color: result.pattern_validation.is_valid ? '#2E7D32' : '#E65100'
-            }}>
-              Pattern Validation: {(result.pattern_validation.match_percentage ?? 0).toFixed(1)}% Match
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-2 text-sm" style={{ fontFamily: 'monospace' }}>
-            <div className="flex gap-2">
-              <span className="font-semibold" style={{ color: '#3E2815', minWidth: '80px' }}>Expected:</span>
-              <span style={{
-                color: '#5D4037',
-                letterSpacing: '0.15em',
-                wordBreak: 'break-all'
-              }}>
-                {result.pattern_validation.expected_pattern || 'N/A'}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <span className="font-semibold" style={{ color: '#3E2815', minWidth: '80px' }}>Actual:</span>
-              <span style={{
-                color: '#5D4037',
-                letterSpacing: '0.15em',
-                wordBreak: 'break-all'
-              }}>
-                {result.pattern_validation.actual_pattern || 'N/A'}
-              </span>
-            </div>
-            {result.pattern_validation.mismatches && result.pattern_validation.mismatches.length > 0 && (
-              <div className="flex gap-2 mt-1">
-                <span className="font-semibold" style={{ color: '#E65100', minWidth: '80px' }}>Mismatches:</span>
-                <span style={{ color: '#E65100' }}>
-                  {result.pattern_validation.mismatches.length} position(s): [{result.pattern_validation.mismatches.slice(0, 10).join(', ')}{result.pattern_validation.mismatches.length > 10 ? '...' : ''}]
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Pattern Validation Display - Removed to avoid confusing users with technical details */}
     </div>
   );
 }
