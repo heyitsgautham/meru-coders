@@ -8,6 +8,7 @@ repos/
 repo_summary/
 .DS_Store
 new-frontend/
+.env
 
 # Cloud Run generated files
 gcp_config.py
@@ -26,3 +27,5 @@ backend/uploads/texts/
 node_modules/
 build/
 ocr.ipynb
+seed
+    

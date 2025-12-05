@@ -1,4 +1,4 @@
-# Copilot Instructions - Chandojñānam Project
+# Copilot Instructions - Meru Coders Project
 
 ## Project Overview
 
@@ -280,6 +280,240 @@ python tests/test_csv_accuracy.py --all -v # Full analysis with details
 3. Verify with Sanskrit scholars
 4. Test with various script inputs (Devanagari, IAST, regional scripts)
 
+## 🤖 Copilot-Friendly API (For Automated Testing)
+
+**IMPORTANT FOR COPILOT**: Instead of running complex terminal commands to test Sanskrit meter identification, use these REST API endpoints. They save tokens and provide clean, structured responses.
+
+### API Base URL
+- **Local Development**: `http://localhost:5000/api`
+- **Start Server**: `cd backend && python run.py`
+
+### Option 1: Copilot-Optimized Endpoints (Recommended for Testing)
+
+These endpoints return **simplified, clean JSON** optimized for quick testing and validation.
+
+#### Quick API Endpoint (Single Line Analysis)
+
+**Endpoint**: `POST /api/copilot/quick`
+
+**Use Case**: Fast meter identification for a single line or verse fragment.
+
+**Request**:
+```bash
+curl -X POST http://localhost:5000/api/copilot/quick \
+  -H "Content-Type: application/json" \
+  -d '{"text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"}'
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "meter": "अनुष्टुभ्",
+  "meter_iast": "Anuṣṭubh",
+  "lg_pattern": "GLGLGLGLGLGLGLGL",
+  "gana_pattern": "RJSMRJSM",
+  "syllable_count": 16,
+  "matra_count": 24,
+  "confidence": 10.0,
+  "jaati": "Anushtubh"
+}
+```
+
+#### Full Analysis API Endpoint (Multi-line Verses)
+
+**Endpoint**: `POST /api/copilot/analyze`
+
+**Use Case**: Comprehensive analysis with line-by-line breakdown, verse-level analysis, and confidence scores.
+
+**Request**:
+```bash
+curl -X POST http://localhost:5000/api/copilot/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः\nमामकाः पाण्डवाश्चैव किमकुर्वत संजय"}'
+```
+
+**Response** (truncated for brevity):
+```json
+{
+  "success": true,
+  "input": {
+    "text": "...",
+    "detected_script": "devanagari"
+  },
+  "analysis": {
+    "mode": "verse",
+    "total_lines": 2,
+    "lines": [
+      {
+        "line_number": 1,
+        "text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
+        "lg_pattern": "GLGLGLGLGLGLGLGL",
+        "gana_pattern": "...",
+        "syllable_count": 16,
+        "matra_count": 24,
+        "primary_meter": "अनुष्टुभ्",
+        "identified_meters": [{"name": "अनुष्टुभ्", "confidence": 10.0}],
+        "jaati": ["Anushtubh"]
+      }
+    ]
+  },
+  "verse_analysis": {
+    "combined_meter": "अनुष्टुभ्",
+    "structure": "2×8 (Anushtubh family)",
+    "is_sama": true
+  },
+  "summary": {
+    "primary_meter": "अनुष्टुभ्",
+    "confidence": "high"
+  }
+}
+```
+
+#### Batch Analysis API Endpoint (Multiple Verses)
+
+**Endpoint**: `POST /api/copilot/batch`
+
+**Use Case**: Analyze multiple verses in one request.
+
+**Request**:
+```bash
+curl -X POST http://localhost:5000/api/copilot/batch \
+  -H "Content-Type: application/json" \
+  -d '{"verses": ["धर्मक्षेत्रे कुरुक्षेत्रे", "वसुदेवसुतं देवं", "यदा यदा हि धर्मस्य"]}'
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "results": [
+    {"verse_index": 0, "meter": "अनुष्टुभ्", "confidence": 10.0},
+    {"verse_index": 1, "meter": "अनुष्टुभ्", "confidence": 10.0},
+    {"verse_index": 2, "meter": "अनुष्टुभ्", "confidence": 10.0}
+  ],
+  "summary": {
+    "total_verses": 3,
+    "meter_distribution": {"अनुष्टुभ्": 3}
+  }
+}
+```
+
+### Option 2: Frontend-Compatible Endpoint (Same as UI)
+
+This endpoint returns the **exact same format** that the frontend/UI displays.
+
+**Endpoint**: `POST /api/identify/text`
+
+**Use Case**: When you need to see the exact data the frontend shows, including fuzzy matches, formatted summaries, etc.
+
+**Request**:
+```bash
+curl -X POST http://localhost:5000/api/identify/text \
+  -H "Content-Type: application/json" \
+  -d '{"text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "text_mode": "line"}'
+```
+
+**Response** (matches frontend exactly):
+```json
+{
+  "success": true,
+  "result": {
+    "line": [
+      {
+        "line": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
+        "result": {
+          "found": true,
+          "display_chanda": "अनुष्टुभ् (पाद 1-2) | अनुष्टुभ् (पाद 3-4)",
+          "display_chanda_primary": "अनुष्टुभ्",
+          "display_syllables": ["धर्", "म", "क्षे", "त्रे", ...],
+          "display_lg": ["ग", "ल", "ग", "ग", ...],
+          "display_gana": "...",
+          "display_length": 16,
+          "display_matra": 24,
+          "fuzzy": [["similar_meter", 0.95], ...]
+        }
+      }
+    ]
+  },
+  "summary": {
+    "count": {"line": 1, "match_line": 1},
+    "line": {"match": {"chanda": {"अनुष्टुभ्": 1}}}
+  },
+  "summary_formatted": "Lines: 1 | Matched: 1 (100%)\nMeters: अनुष्टुभ् (1)"
+}
+```
+
+### Which Endpoint to Use?
+
+| Use Case | Recommended Endpoint |
+|----------|---------------------|
+| Quick meter check | `/api/copilot/quick` |
+| Full verse analysis | `/api/copilot/analyze` |
+| Batch processing | `/api/copilot/batch` |
+| Debug frontend issues | `/api/identify/text` |
+| Compare with UI output | `/api/identify/text` |
+
+### Python Usage Example (For Copilot Testing)
+
+```python
+import requests
+
+def identify_meter(text):
+    """Quick meter identification using the Copilot API."""
+    response = requests.post(
+        "http://localhost:5000/api/copilot/quick",
+        json={"text": text}
+    )
+    return response.json()
+
+# Example usage
+result = identify_meter("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः")
+print(f"Meter: {result['meter']}")
+print(f"L-G Pattern: {result['lg_pattern']}")
+print(f"Syllables: {result['syllable_count']}")
+```
+
+### Direct Python Usage (No Server Required)
+
+For testing without starting a server, use the Chanda class directly:
+
+```python
+import sys
+sys.path.insert(0, '/path/to/meru-coders')
+
+from backend.core import Chanda
+from backend.config import settings
+
+# Initialize
+chanda = Chanda(data_path=str(settings.DATA_DIR))
+
+# Identify a line
+result = chanda.identify_line("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः")
+print(f"Meter: {result['display_chanda_primary']}")
+print(f"L-G: {''.join(result['display_lg'])}")
+print(f"Syllables: {result['display_length']}")
+```
+
+### API Test File
+Run the API tests with:
+```bash
+cd backend && PYTHONPATH=. python tests/test_copilot_api.py
+```
+
+### Response Fields Reference
+
+| Field | Description |
+|-------|-------------|
+| `meter` | Identified meter name (Devanagari) |
+| `meter_iast` | Meter name in IAST transliteration |
+| `lg_pattern` | Laghu-Guru pattern (L=short, G=long) |
+| `gana_pattern` | Gana representation (Y,R,T,N,B,J,S,M) |
+| `syllable_count` | Number of syllables |
+| `matra_count` | Total matra (weight) count |
+| `confidence` | Confidence score (0-10, higher=better) |
+| `jaati` | Meter family (Anushtubh, Trishtubh, etc.) |
+
 ## SIH Presentation Points
 
 ### Key Innovations
@@ -314,11 +548,7 @@ python tests/test_csv_accuracy.py --all -v # Full analysis with details
 ## Technical Implementation Notes
 
 ### Key Files
-- `chanda.py` - Core engine (1,300+ lines)
-  - Lines 175-219: `normalize_vedic_characters()` - Vedic Unicode handling
-  - Lines 221-240: `preprocess_vedic_text()` - Text preprocessing
-  - Lines 396-520: Multi-level matching functions
-  - Lines 1220-1265: Enhanced `identify_line()` with confidence scoring
+- `chanda.py` - Core engine
 - `webapp.py` - Flask web application with OCR integration
 - `data/` - 1,920 meters across 6 CSV files
 - `tests/` - Comprehensive test suite with authentic verses

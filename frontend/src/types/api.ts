@@ -73,6 +73,32 @@ export interface FuzzyMatch {
   similarity: number;
 }
 
+// Meter information from database
+export interface MeterInfo {
+  name?: string;
+  expected_pattern?: string;
+  expected_syllables?: number;
+  expected_matras?: number;
+  gana_notation?: string;
+  meter_type?: 'vedic' | 'sama' | 'ardhasama' | 'vishama';
+  yati?: string;
+  padas?: Record<string, {
+    pattern: string;
+    syllables: number;
+    matras: number;
+    gana: string;
+  }>;
+}
+
+// Pattern validation result
+export interface PatternValidation {
+  is_valid?: boolean | null;
+  expected_pattern?: string | null;
+  actual_pattern?: string | null;
+  match_percentage?: number | null;
+  mismatches?: Array<[number | string, string, string]>;
+}
+
 // Analysis result for a single line
 export interface AnalysisResult {
   found: boolean;
@@ -82,6 +108,15 @@ export interface AnalysisResult {
   display_lg?: string[];
   display_gana?: string;
   fuzzy?: FuzzyMatch[];
+  // Validation fields for handling invalid input (e.g., English text)
+  is_valid_input?: boolean;
+  validation_error?: string;
+  is_padya?: boolean;
+  padya_reason?: string;
+  prose_message?: string;
+  // Pattern validation fields (new)
+  meter_info?: MeterInfo | null;
+  pattern_validation?: PatternValidation | null;
 }
 
 // Line result item
@@ -100,6 +135,7 @@ export interface VerseResult {
 export interface MeterResult {
   line?: LineResult[];
   verse?: VerseResult[];
+  effective_mode?: string;  // The actual mode used (vedic/classical) when auto-detect is chosen
 }
 
 // Summary count
@@ -128,7 +164,10 @@ export interface Summary {
 export interface InputInfo {
   text?: string;
   mode?: string;
+  text_mode?: string;
   output_scheme?: string;
+  identification_mode?: string;
+  enable_sandhi?: boolean;
 }
 
 // Identification response (text, image, file)
@@ -148,11 +187,15 @@ export interface IdentifyResponse {
 export interface IdentifyTextRequest {
   text: string;
   mode?: 'line' | 'verse';
+  identification_mode?: IdentificationMode;
   output_scheme?: string;
   enable_sandhi?: boolean;
 }
 
 export type AnalysisMode = 'line' | 'verse';
+
+// Identification mode for Vedic vs Classical detection
+export type IdentificationMode = 'auto' | 'vedic' | 'classical';
 
 // View type for navigation
 export type ViewType = 'home' | 'examples' | 'about';

@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 05 08:28:33 2022
-
-@author: Hrishikesh Terdalkar
-"""
+ 
 
 import sys
 from indic_transliteration.sanscript import transliterate

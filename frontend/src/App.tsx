@@ -91,7 +91,7 @@ export default function App() {
         
         <main className="flex-1 py-16 px-6">
           {currentView === "home" && (
-            <AnalysisForm 
+            <AnalysisForm
               initialText={textFromExample}
               onTextChange={handleTextChange}
             />

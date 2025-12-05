@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 22 22:23:37 2021
-
-@author: Hrishikesh Terdalkar
-"""
+ 
 
 ###############################################################################
 

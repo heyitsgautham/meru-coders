@@ -3,8 +3,8 @@
  * Displays meter identification results with language toggle
  */
 
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, FileText, AlertCircle, X } from 'lucide-react';
+import { useState } from 'react';
+import { Download, ChevronDown, ChevronUp, FileText, AlertCircle, X } from 'lucide-react';
 import { getDownloadURL } from '../services/api';
 import type { IdentifyResponse, LineResult, Summary } from '../types/api';
 
@@ -65,28 +65,94 @@ const GANA_MAP: Record<string, string> = {
   'ल': 'L', 'ग': 'G'
 };
 
+// Educational information about each gaṇa (prosodic foot)
+// Each gaṇa represents a specific L-G pattern of 3 syllables
+const GANA_INFO: Record<string, { pattern: string; meaning: string; mnemonic: string; description: string }> = {
+  'य': {
+    pattern: 'LGG',
+    meaning: 'Yagaṇa (यगण)',
+    mnemonic: 'यमाता (ya-mā-tā)',
+    description: 'Light-Heavy-Heavy pattern. First syllable is laghu (short), followed by two guru (long) syllables. Common in meters like Indravajrā.'
+  },
+  'र': {
+    pattern: 'GLG',
+    meaning: 'Ragaṇa (रगण)',
+    mnemonic: 'राजभा (rā-ja-bhā)',
+    description: 'Heavy-Light-Heavy pattern. Heavy syllable, followed by light, then heavy. Creates a galloping rhythm.'
+  },
+  'त': {
+    pattern: 'GGL',
+    meaning: 'Tagaṇa (तगण)',
+    mnemonic: 'ताराज (tā-rā-ja)',
+    description: 'Heavy-Heavy-Light pattern. Two heavy syllables followed by a light one. Often used at the end of pādas.'
+  },
+  'न': {
+    pattern: 'LLL',
+    meaning: 'Nagaṇa (नगण)',
+    mnemonic: 'नभसा (na-bha-sā)',
+    description: 'Light-Light-Light pattern. Three short syllables creating a rapid, light rhythm. Gives swift movement to verses.'
+  },
+  'भ': {
+    pattern: 'GLL',
+    meaning: 'Bhagaṇa (भगण)',
+    mnemonic: 'भानुस (bhā-nu-sa)',
+    description: 'Heavy-Light-Light pattern. Heavy syllable followed by two light ones. Creates a "falling" rhythmic pattern.'
+  },
+  'ज': {
+    pattern: 'LGL',
+    meaning: 'Jagaṇa (जगण)',
+    mnemonic: 'जभान (ja-bhā-na)',
+    description: 'Light-Heavy-Light pattern. Light syllable encased by heavy ones. Traditionally considered inauspicious to start a verse with.'
+  },
+  'स': {
+    pattern: 'LLG',
+    meaning: 'Sagaṇa (सगण)',
+    mnemonic: 'सलगा (sa-la-gā)',
+    description: 'Light-Light-Heavy pattern. Two light syllables followed by a heavy one. Creates a "rising" rhythmic pattern.'
+  },
+  'म': {
+    pattern: 'GGG',
+    meaning: 'Magaṇa (मगण)',
+    mnemonic: 'मातारा (mā-tā-rā)',
+    description: 'Heavy-Heavy-Heavy pattern. Three heavy syllables creating the most weighty and solemn rhythm. Common in stately meters.'
+  },
+  // Single syllable markers
+  'ल': {
+    pattern: 'L',
+    meaning: 'Laghu (लघु)',
+    mnemonic: 'Short syllable',
+    description: 'A single short/light syllable. Has 1 mātrā (mora). Ends in a short vowel without following consonant cluster.'
+  },
+  'ग': {
+    pattern: 'G',
+    meaning: 'Guru (गुरु)',
+    mnemonic: 'Long syllable',
+    description: 'A single long/heavy syllable. Has 2 mātrās (morae). Has a long vowel, diphthong, or short vowel followed by conjunct consonants.'
+  }
+};
+
 // Transliterate Devanagari to IAST - improved algorithm
 function transliterateToIAST(text: string): string {
   let result = '';
   const chars = Array.from(text);
-  
+
   for (let i = 0; i < chars.length; i++) {
     const char = chars[i];
     const nextChar = chars[i + 1];
-    
+
     // Check if this is a consonant
     const isConsonant = /[क-ह]/.test(char);
-    
+
     if (DEVA_TO_IAST[char] !== undefined) {
       result += DEVA_TO_IAST[char];
-      
+
       // Add inherent 'a' after consonant if no vowel sign or halant follows
       if (isConsonant && nextChar) {
         const isVowelSign = /[ा-ौ]/.test(nextChar);
         const isHalant = nextChar === '्';
         const isAnusvara = nextChar === 'ं';
         const isVisarga = nextChar === 'ः';
-        
+
         if (!isVowelSign && !isHalant && !isAnusvara && !isVisarga) {
           result += 'a';
         }
@@ -98,7 +164,7 @@ function transliterateToIAST(text: string): string {
       result += char;
     }
   }
-  
+
   return result;
 }
 
@@ -118,7 +184,7 @@ function extractTopMeter(lineItem: LineResult): string | null {
     if (primaryMeters.length > 0) {
       const meterMatch = primaryMeters[0].match(/^(.+?)\s*\[[\d.]+\]$/);
       let topMeter = meterMatch ? meterMatch[1].trim() : primaryMeters[0];
-      
+
       // Remove transliteration if present
       const parenMatch = topMeter.match(/^(.+?)\s*\([^)]+\)$/);
       if (parenMatch) {
@@ -143,7 +209,7 @@ function extractTopMeter(lineItem: LineResult): string | null {
 // Build top meter counts from line results
 function buildMeterCounts(lineResults: LineResult[]): Record<string, number> {
   const counts: Record<string, number> = {};
-  
+
   lineResults.forEach(lineItem => {
     const topMeter = extractTopMeter(lineItem);
     if (topMeter) {
@@ -154,14 +220,80 @@ function buildMeterCounts(lineResults: LineResult[]): Record<string, number> {
   return counts;
 }
 
+// Meter structure information
+interface MeterStructureInfo {
+  totalPadas: number;
+  syllablesPerPada: number | string;
+  totalSyllables: number;
+  ganaPattern: string | null;
+  structureNote?: string;
+}
+
+// Known meter structures
+const METER_STRUCTURES: Record<string, Partial<MeterStructureInfo>> = {
+  'अनुष्टुभ्': { totalPadas: 4, syllablesPerPada: 8, totalSyllables: 32, structureNote: '4×8 syllables (Śloka meter)' },
+  'गायत्री': { totalPadas: 3, syllablesPerPada: 8, totalSyllables: 24, structureNote: '3×8 syllables (Vedic)' },
+  'त्रिष्टुभ्': { totalPadas: 4, syllablesPerPada: 11, totalSyllables: 44, structureNote: '4×11 syllables (Vedic)' },
+  'जगती': { totalPadas: 4, syllablesPerPada: 12, totalSyllables: 48, structureNote: '4×12 syllables (Vedic)' },
+  'उष्णिक्': { totalPadas: 4, syllablesPerPada: 7, totalSyllables: 28, structureNote: '4×7 syllables' },
+  'बृहती': { totalPadas: 4, syllablesPerPada: 9, totalSyllables: 36, structureNote: '4×9 syllables' },
+  'पङ्क्ति': { totalPadas: 5, syllablesPerPada: 8, totalSyllables: 40, structureNote: '5×8 syllables' },
+  'वसन्ततिलका': { totalPadas: 4, syllablesPerPada: 14, totalSyllables: 56, structureNote: '4×14 syllables' },
+  'मन्दाक्रान्ता': { totalPadas: 4, syllablesPerPada: 17, totalSyllables: 68, structureNote: '4×17 syllables' },
+  'शार्दूलविक्रीडित': { totalPadas: 4, syllablesPerPada: 19, totalSyllables: 76, structureNote: '4×19 syllables' },
+  'स्रग्धरा': { totalPadas: 4, syllablesPerPada: 21, totalSyllables: 84, structureNote: '4×21 syllables' },
+  'इन्द्रवज्रा': { totalPadas: 4, syllablesPerPada: 11, totalSyllables: 44, structureNote: '4×11 syllables' },
+  'उपेन्द्रवज्रा': { totalPadas: 4, syllablesPerPada: 11, totalSyllables: 44, structureNote: '4×11 syllables' },
+  'मालिनी': { totalPadas: 4, syllablesPerPada: 15, totalSyllables: 60, structureNote: '4×15 syllables' },
+  'शालिनी': { totalPadas: 4, syllablesPerPada: 11, totalSyllables: 44, structureNote: '4×11 syllables' },
+};
+
+// Get meter structure information
+function getMeterStructure(meterName: string, lineResults: LineResult[]): MeterStructureInfo | null {
+  // Check if we have predefined structure
+  const knownStructure = METER_STRUCTURES[meterName];
+
+  if (knownStructure) {
+    // Try to extract gana pattern from first line result
+    let ganaPattern: string | null = null;
+    if (lineResults.length > 0 && lineResults[0].result?.display_gana) {
+      ganaPattern = lineResults[0].result.display_gana;
+    }
+
+    return {
+      totalPadas: knownStructure.totalPadas || 4,
+      syllablesPerPada: knownStructure.syllablesPerPada || '-',
+      totalSyllables: knownStructure.totalSyllables || 0,
+      ganaPattern,
+      structureNote: knownStructure.structureNote,
+    };
+  }
+
+  // Calculate from line results if no predefined structure
+  if (lineResults.length > 0) {
+    const firstResult = lineResults[0].result;
+    const syllableCount = firstResult?.display_syllables?.length || 0;
+    const ganaPattern = firstResult?.display_gana || null;
+
+    return {
+      totalPadas: lineResults.length,
+      syllablesPerPada: syllableCount,
+      totalSyllables: syllableCount * lineResults.length,
+      ganaPattern,
+    };
+  }
+
+  return null;
+}
+
 // Summary Section Component
 function SummarySection({ summary }: { summary: Summary }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const lineCount = summary.count?.line || 0;
   const matchCount = summary.count?.match_line || 0;
-  const chandaCount = summary.line?.match?.chanda 
-    ? Object.keys(summary.line.match.chanda).length 
+  const chandaCount = summary.line?.match?.chanda
+    ? Object.keys(summary.line.match.chanda).length
     : 0;
 
   return (
@@ -177,7 +309,7 @@ function SummarySection({ summary }: { summary: Summary }) {
           <ChevronDown className="w-5 h-5 text-[var(--color-text-muted)]" />
         )}
       </button>
-      
+
       {isOpen && (
         <div className="p-6 border-t border-[var(--color-border-subtle)] bg-white">
           <div className="grid grid-cols-3 gap-5 mb-6">
@@ -219,13 +351,56 @@ function SummarySection({ summary }: { summary: Summary }) {
   );
 }
 
+// Pada sizes for known meters (syllables per pada)
+const METER_PADA_SIZES: Record<string, number> = {
+  'अनुष्टुभ्': 8,
+  'गायत्री': 8,
+  'त्रिष्टुभ्': 11,
+  'जगती': 12,
+  'उष्णिक्': 7,
+  'बृहती': 9,
+  'पङ्क्ति': 8,
+  'वसन्ततिलका': 14,
+  'मन्दाक्रान्ता': 17,
+  'शार्दूलविक्रीडित': 19,
+  'स्रग्धरा': 21,
+  'इन्द्रवज्रा': 11,
+  'उपेन्द्रवज्रा': 11,
+  'मालिनी': 15,
+  'शालिनी': 11,
+  'भुजङ्गप्रयात': 12,
+};
+
+// Get pada size from meter name
+function getPadaSize(meterName: string): number {
+  // Check known meters
+  for (const [meter, size] of Object.entries(METER_PADA_SIZES)) {
+    if (meterName.includes(meter)) {
+      return size;
+    }
+  }
+  // Default to 8 (most common)
+  return 8;
+}
+
+// Split array into chunks of given size
+function splitIntoPadas<T>(arr: T[], padaSize: number): T[][] {
+  const padas: T[][] = [];
+  for (let i = 0; i < arr.length; i += padaSize) {
+    padas.push(arr.slice(i, i + padaSize));
+  }
+  return padas;
+}
+
 // Line Analysis Card Component
-function LineAnalysisCard({ 
-  lineItem, 
-  showSanskrit 
-}: { 
-  lineItem: LineResult; 
+function LineAnalysisCard({
+  lineItem,
+  showSanskrit,
+  padaOffset = 0
+}: {
+  lineItem: LineResult;
   showSanskrit: boolean;
+  padaOffset?: number;
 }) {
   const result = lineItem.result || {};
   const syllables = result.display_syllables || [];
@@ -242,209 +417,181 @@ function LineAnalysisCard({
 
   // Get identified meter
   let meterDisplay = 'No match found';
+  let meterName = '';
 
   if (result.display_chanda_primary && result.display_chanda_primary.trim()) {
     const primaryMeters = result.display_chanda_primary.split('|').map(m => m.trim());
     const firstMeter = primaryMeters[0];
     const meterMatch = firstMeter.match(/^(.+?)\s*\[[\d.]+\]$/);
     meterDisplay = meterMatch ? meterMatch[1].trim() : firstMeter;
+    // Extract just the meter name without pada info
+    const nameMatch = meterDisplay.match(/^([^\s(]+)/);
+    meterName = nameMatch ? nameMatch[1] : meterDisplay;
   } else if (result.found && result.display_chanda) {
     const meters = result.display_chanda.split('/').map(m => m.trim());
     meterDisplay = meters[0];
+    const nameMatch = meterDisplay.match(/^([^\s(]+)/);
+    meterName = nameMatch ? nameMatch[1] : meterDisplay;
   } else if (result.fuzzy && result.fuzzy.length > 0) {
     const firstFuzzy = result.fuzzy[0];
     meterDisplay = firstFuzzy.display_chanda || '-';
   }
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  // Split syllables into padas based on meter
+  const padaSize = getPadaSize(meterName);
+  const padas = splitIntoPadas(validPairs, padaSize);
 
-  const checkScrollability = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkScrollability();
-    window.addEventListener('resize', checkScrollability);
-    return () => window.removeEventListener('resize', checkScrollability);
-  }, [checkScrollability, validPairs]);
-
-  const scrollLeft = () => {
-    scrollContainerRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
-  };
-
-  const scrollRight = () => {
-    scrollContainerRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
-  };
+  // Split gana string into padas (each pada typically has ganas = padaSize / 3)
+  const ganaChars = Array.from(ganaString);
+  const ganasPerPada = Math.ceil(padaSize / 3);
+  const ganaPadas = splitIntoPadas(ganaChars, ganasPerPada);
 
   return (
     <div className="p-8 rounded-2xl shadow-md" style={{ minWidth: '100%', backgroundColor: '#FFF9F2', border: '2px solid #E1B88E' }}>
-      {/* Analysis Table */}
-      {validPairs.length > 0 && (
-        <div className="mb-6" style={{ position: 'relative' }}>
-          {/* Left scroll indicator */}
-          {canScrollLeft && (
-            <button
-              onClick={scrollLeft}
-              className="bg-white/90 hover:bg-white shadow-md rounded-full p-1 transition-all"
-              style={{ position: 'absolute', left: '-12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, border: '2px solid #C68642' }}
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="w-5 h-5 text-[#C68642]" />
-            </button>
-          )}
-          {/* Right scroll indicator */}
-          {canScrollRight && (
-            <button
-              onClick={scrollRight}
-              className="bg-white/90 hover:bg-white shadow-md rounded-full p-1 transition-all"
-              style={{ position: 'absolute', right: '-12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, border: '2px solid #C68642' }}
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="w-5 h-5 text-[#C68642]" />
-            </button>
-          )}
-          <div
-            ref={scrollContainerRef}
-            className="analysis-table-wrapper"
-            onScroll={checkScrollability}
-          >
-          <table className="w-full border-collapse text-center shadow-md" style={{ fontSize: '1.25rem', border: '4px solid #C68642' }}>
-            <thead>
-              <tr>
-                <th className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
-                  Akṣarāṇi
-                </th>
-                {validPairs.map((pair, idx) => {
-                  const isGanaBoundary = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
-                  return (
-                    <th key={idx} className="px-6 py-5 font-bold" style={{ 
-                      border: '2px solid #E1B88E', 
-                      borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
-                      fontSize: '1.25rem', 
-                      fontFamily: "'Noto Sans Devanagari', sans-serif", 
-                      backgroundColor: '#FFE0BF', 
-                      color: '#000000',
-                      minWidth: '60px'
-                    }}>
-                      {showSanskrit ? pair.syllable : transliterateToIAST(pair.syllable)}
+      {/* Analysis Tables - One per Pada */}
+      {padas.length > 0 && (
+        <div className="space-y-4 mb-6">
+          {padas.map((padaPairs, padaIndex) => (
+            <div key={padaIndex} className="overflow-x-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-semibold text-[#C68642] bg-[#FFE0BF] px-3 py-1 rounded-full">
+                  पाद {padaOffset + padaIndex + 1}
+                </span>
+              </div>
+              <table className="w-full border-collapse text-center shadow-md" style={{ fontSize: '1.25rem', border: '4px solid #C68642' }}>
+                <thead>
+                  <tr>
+                    <th className="px-4 py-3 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '100px' }}>
+                      Akṣarāṇi
                     </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {/* L/G Row */}
-              <tr>
-                <td className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
-                  Laghu-Guru
-                </td>
-                {validPairs.map((pair, idx) => {
-                  const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
-                  const sanskritLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'ग' : 'ल';
-                  const englishLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'G' : 'L';
-                  const isGanaBoundary = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
-                  return (
-                    <td 
-                      key={idx} 
-                      className="px-6 py-5 font-bold"
-                      style={{ 
-                        border: '2px solid #E1B88E',
-                        borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
-                        fontSize: '1.25rem', 
-                        fontFamily: "'Noto Sans Devanagari', monospace",
-                        backgroundColor: isLaghu ? '#E8F4FD' : '#FFF9F2',
-                        color: isLaghu ? '#2563EB' : '#C2185B',
-                        minWidth: '60px'
-                      }}
-                    >
-                      {showSanskrit ? sanskritLG : englishLG}
+                    {padaPairs.map((pair, idx) => {
+                      const isGanaBoundary = (idx + 1) % 3 === 0 && idx < padaPairs.length - 1;
+                      return (
+                        <th key={idx} className="px-4 py-3 font-bold" style={{
+                          border: '2px solid #E1B88E',
+                          borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
+                          fontSize: '1.1rem',
+                          fontFamily: "'Noto Sans Devanagari', sans-serif",
+                          backgroundColor: '#FFE0BF',
+                          color: '#000000',
+                          minWidth: '50px'
+                        }}>
+                          {showSanskrit ? pair.syllable : transliterateToIAST(pair.syllable)}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* L/G Row */}
+                  <tr>
+                    <td className="px-4 py-3 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '100px' }}>
+                      Laghu-Guru
                     </td>
-                  );
-                })}
-              </tr>
+                    {padaPairs.map((pair, idx) => {
+                      const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
+                      const sanskritLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'ग' : 'ल';
+                      const englishLG = (pair.lg === 'ग' || pair.lg === 'G') ? 'G' : 'L';
+                      const isGanaBoundary = (idx + 1) % 3 === 0 && idx < padaPairs.length - 1;
+                      return (
+                        <td
+                          key={idx}
+                          className="px-4 py-3 font-bold"
+                          style={{
+                            border: '2px solid #E1B88E',
+                            borderRight: isGanaBoundary ? '4px solid #C68642' : '2px solid #E1B88E',
+                            fontSize: '1.1rem',
+                            fontFamily: "'Noto Sans Devanagari', monospace",
+                            backgroundColor: isLaghu ? '#E8F4FD' : '#FFF9F2',
+                            color: isLaghu ? '#2563EB' : '#C2185B',
+                            minWidth: '50px'
+                          }}
+                        >
+                          {showSanskrit ? sanskritLG : englishLG}
+                        </td>
+                      );
+                    })}
+                  </tr>
 
-              {/* Gana Row */}
-              {ganaString && (
-                <tr>
-                  <td className="px-6 py-5 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1.25rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '140px' }}>
-                    Gaṇa
-                  </td>
-                  {(() => {
-                    const ganaChars = Array.from(ganaString);
-                    const cells: JSX.Element[] = [];
-                    let cellsUsed = 0;
+                  {/* Gana Row */}
+                  {ganaPadas[padaIndex] && ganaPadas[padaIndex].length > 0 && (
+                    <tr>
+                      <td className="px-4 py-3 text-left font-bold" style={{ border: '2px solid #E1B88E', borderRight: '4px solid #C68642', fontSize: '1rem', backgroundColor: '#FFE0BF', color: '#3E2815', whiteSpace: 'nowrap', minWidth: '100px' }}>
+                        Gaṇa
+                      </td>
+                      {(() => {
+                        const padaGanas = ganaPadas[padaIndex] || [];
+                        const cells: JSX.Element[] = [];
+                        let cellsUsed = 0;
 
-                    ganaChars.forEach((ganaChar, gIdx) => {
-                      if (cellsUsed < validPairs.length) {
-                        const remainingSyllables = validPairs.length - cellsUsed;
-                        const spanCount = Math.min(3, remainingSyllables);
-                        const englishGana = GANA_MAP[ganaChar] || ganaChar;
-                        const isLastGana = cellsUsed + spanCount >= validPairs.length;
-                        
-                        // Only show gana if this group has exactly 3 syllables
-                        // Don't show gana for incomplete groups (1 or 2 syllables at the end)
-                        if (spanCount === 3) {
+                        padaGanas.forEach((ganaChar, gIdx) => {
+                          if (cellsUsed < padaPairs.length) {
+                            const remainingSyllables = padaPairs.length - cellsUsed;
+                            const spanCount = Math.min(3, remainingSyllables);
+                            const englishGana = GANA_MAP[ganaChar] || ganaChar;
+                            const isLastGana = cellsUsed + spanCount >= padaPairs.length;
+
+                            // Get educational tooltip info
+                            const ganaInfo = GANA_INFO[ganaChar];
+                            const tooltipText = ganaInfo
+                              ? `${ganaInfo.meaning}\nPattern: ${ganaInfo.pattern}\nMnemonic: ${ganaInfo.mnemonic}\n\n${ganaInfo.description}`
+                              : '';
+
+                            if (spanCount === 3) {
+                              cells.push(
+                                <td
+                                  key={gIdx}
+                                  colSpan={spanCount}
+                                  className="px-4 py-3 font-bold cursor-help"
+                                  title={tooltipText}
+                                  style={{
+                                    border: '2px solid #E1B88E',
+                                    borderRight: !isLastGana ? '4px solid #C68642' : '2px solid #E1B88E',
+                                    fontSize: '1.1rem',
+                                    fontFamily: "'Noto Sans Devanagari', sans-serif",
+                                    backgroundColor: '#E7F5E8',
+                                    color: '#2D5A30'
+                                  }}
+                                >
+                                  {showSanskrit ? ganaChar : englishGana}
+                                </td>
+                              );
+                            } else {
+                              cells.push(
+                                <td
+                                  key={gIdx}
+                                  colSpan={spanCount}
+                                  className="px-4 py-3"
+                                  style={{
+                                    border: '2px solid #E1B88E',
+                                    backgroundColor: '#FFF9F2'
+                                  }}
+                                />
+                              );
+                            }
+                            cellsUsed += spanCount;
+                          }
+                        });
+
+                        if (cellsUsed < padaPairs.length) {
                           cells.push(
-                            <td 
-                              key={gIdx}
-                              colSpan={spanCount}
-                              className="px-6 py-5 font-bold"
-                              style={{ 
-                                border: '2px solid #E1B88E', 
-                                borderRight: !isLastGana ? '4px solid #C68642' : '2px solid #E1B88E',
-                                fontSize: '1.25rem', 
-                                fontFamily: "'Noto Sans Devanagari', sans-serif", 
-                                backgroundColor: '#E7F5E8', 
-                                color: '#2D5A30' 
-                              }}
-                            >
-                              {showSanskrit ? ganaChar : englishGana}
-                            </td>
-                          );
-                        } else {
-                          // For incomplete groups (1 or 2 syllables), show empty cell
-                          cells.push(
-                            <td 
-                              key={gIdx}
-                              colSpan={spanCount}
-                              className="px-6 py-5"
-                              style={{ 
-                                border: '2px solid #E1B88E', 
-                                backgroundColor: '#FFF9F2'
-                              }}
+                            <td
+                              key="remaining"
+                              colSpan={padaPairs.length - cellsUsed}
+                              style={{ border: '2px solid #E1B88E', backgroundColor: '#FFF9F2' }}
+                              className="px-4 py-3"
                             />
                           );
                         }
-                        cellsUsed += spanCount;
-                      }
-                    });
 
-                    // Fill remaining if any
-                    if (cellsUsed < validPairs.length) {
-                      cells.push(
-                        <td 
-                          key="remaining"
-                          colSpan={validPairs.length - cellsUsed}
-                          style={{ border: '2px solid #E1B88E', backgroundColor: '#FFF9F2' }}
-                          className="px-6 py-5"
-                        />
-                      );
-                    }
-
-                    return cells;
-                  })()}
-                </tr>
-              )}
-            </tbody>
-          </table>
-          </div>
+                        return cells;
+                      })()}
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ))}
         </div>
       )}
 
@@ -454,6 +601,61 @@ function LineAnalysisCard({
           Chanda - <span style={{ color: '#E57F1B' }}>{meterDisplay}</span>
         </span>
       </div>
+
+      {/* Pattern Validation Display */}
+      {result.pattern_validation && (
+        <div className="mt-4 p-4 rounded-lg" style={{
+          backgroundColor: result.pattern_validation.is_valid ? '#E8F5E9' : '#FFF3E0',
+          border: `2px solid ${result.pattern_validation.is_valid ? '#4CAF50' : '#FF9800'}`
+        }}>
+          <div className="flex items-center gap-2 mb-2">
+            <span style={{
+              fontSize: '1.2rem',
+              color: result.pattern_validation.is_valid ? '#2E7D32' : '#E65100'
+            }}>
+              {result.pattern_validation.is_valid ? '✓' : '⚠'}
+            </span>
+            <span className="font-bold" style={{
+              fontFamily: "'Noto Sans Devanagari', sans-serif",
+              fontSize: '1.1rem',
+              color: result.pattern_validation.is_valid ? '#2E7D32' : '#E65100'
+            }}>
+              Pattern Validation: {(result.pattern_validation.match_percentage ?? 0).toFixed(1)}% Match
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2 text-sm" style={{ fontFamily: 'monospace' }}>
+            <div className="flex gap-2">
+              <span className="font-semibold" style={{ color: '#3E2815', minWidth: '80px' }}>Expected:</span>
+              <span style={{
+                color: '#5D4037',
+                letterSpacing: '0.15em',
+                wordBreak: 'break-all'
+              }}>
+                {result.pattern_validation.expected_pattern || 'N/A'}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <span className="font-semibold" style={{ color: '#3E2815', minWidth: '80px' }}>Actual:</span>
+              <span style={{
+                color: '#5D4037',
+                letterSpacing: '0.15em',
+                wordBreak: 'break-all'
+              }}>
+                {result.pattern_validation.actual_pattern || 'N/A'}
+              </span>
+            </div>
+            {result.pattern_validation.mismatches && result.pattern_validation.mismatches.length > 0 && (
+              <div className="flex gap-2 mt-1">
+                <span className="font-semibold" style={{ color: '#E65100', minWidth: '80px' }}>Mismatches:</span>
+                <span style={{ color: '#E65100' }}>
+                  {result.pattern_validation.mismatches.length} position(s): [{result.pattern_validation.mismatches.slice(0, 10).join(', ')}{result.pattern_validation.mismatches.length > 10 ? '...' : ''}]
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -477,6 +679,48 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
   const verseResults = result.result?.verse || [];
   const meterCounts = buildMeterCounts(lineResults);
   const sortedMeters = Object.entries(meterCounts).sort((a, b) => b[1] - a[1]);
+
+  // Check if all lines have invalid input (e.g., English text)
+  const allInvalidInput = lineResults.length > 0 && lineResults.every(
+    (line) => line.result?.is_valid_input === false
+  );
+  const firstValidationError = lineResults.find(line => line.result?.validation_error)?.result?.validation_error;
+
+  // If all input is invalid, show a helpful error message
+  if (allInvalidInput) {
+    return (
+      <div className="mt-10 animate-fadeIn" style={{ width: '100%', maxWidth: '100%' }}>
+        <div className="bg-white border-2 border-amber-300 rounded-3xl p-12 shadow-lg" style={{ width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
+          <div className="text-center">
+            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-12 h-12 text-amber-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-amber-700 mb-4">Invalid Input Detected</h2>
+            <p className="text-lg text-gray-700 mb-6">
+              {firstValidationError || 'The provided text does not appear to be valid Sanskrit.'}
+            </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-left">
+              <h4 className="font-semibold text-amber-800 mb-3">💡 Tips for best results:</h4>
+              <ul className="list-disc list-inside text-gray-700 space-y-2">
+                <li>Enter text in <strong>Devanagari script</strong> (देवनागरी) for best accuracy</li>
+                <li>IAST/Roman transliteration is also supported (e.g., "dharmakṣetre kurukṣetre")</li>
+                <li>Avoid entering plain English text or non-Sanskrit content</li>
+                <li>Sanskrit verses should contain valid syllable patterns</li>
+              </ul>
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="mt-8 px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-semibold transition-colors"
+              >
+                Try Again
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-10 animate-fadeIn" style={{ width: '100%', maxWidth: '100%' }}>
@@ -504,7 +748,7 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             )}
           </div>
         </div>
-        
+
         {/* Spacer after header */}
         <div className="mt-10" />
 
@@ -543,54 +787,133 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
 
         {/* IMPORTANT: Show Verse Meter (Primary Result) FIRST when available */}
         {/* This is crucial for Vedic meters (Gāyatrī, Triṣṭubh, etc.) */}
-        {verseResults.length > 0 && (
+        {verseResults.length > 0 && verseResults.some(v => v.chanda && Array.isArray(v.chanda[0]) && v.chanda[0].length > 0) && (
           <div className="mb-8 p-8 rounded-2xl border-3 border-orange-500 shadow-lg" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' }}>
-            <h4 className="text-xl font-bold text-orange-700 mb-6 flex items-center gap-2">
-              🕉️ Verse Meter (Primary Result)
-            </h4>
-            {verseResults.map((verse, vIndex) => (
-              <div key={vIndex} className="bg-white rounded-xl p-6 mb-4 shadow-md">
-                {verse.chanda && verse.chanda[0] && (() => {
-                  const meterNames = verse.chanda[0];
-                  const score = verse.chanda[1];
-                  const primaryMeter = meterNames[0];
-                  const englishName = getMeterEnglish(primaryMeter);
-                  
-                  // Calculate confidence as percentage
-                  const numLines = lineResults.length || 1;
-                  const scorePerLine = score / Math.max(numLines, 1);
-                  const confidencePercent = Math.min(100, Math.round((scorePerLine / 2.0) * 100));
-                  
-                  let confidenceClass = 'bg-green-600';
-                  if (confidencePercent < 50) {
-                    confidenceClass = 'bg-red-500';
-                  } else if (confidencePercent < 80) {
-                    confidenceClass = 'bg-amber-500';
-                  }
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-xl font-bold text-orange-700 flex items-center gap-2">
+                🕉️ Verse Meter (Primary Result)
+              </h4>
+              {/* Show detection mode indicator - shows effective mode when auto-detect is used */}
+              {(() => {
+                const requestedMode = result.input?.identification_mode || 'auto';
+                const effectiveMode = result.result?.effective_mode;
+                const isAutoDetect = requestedMode === 'auto';
 
-                  return (
-                    <>
-                      <div className="flex items-center gap-4 flex-wrap">
-                        <span className="text-3xl font-bold text-orange-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-                          {primaryMeter}
-                        </span>
-                        {englishName && englishName !== primaryMeter && (
-                          <span className="text-xl text-gray-600 italic">({englishName})</span>
-                        )}
-                        <span className={`${confidenceClass} text-white px-4 py-1.5 rounded-full text-sm font-semibold`}>
-                          {confidencePercent}% Match
-                        </span>
+                // Determine display mode
+                const displayMode = effectiveMode || requestedMode;
+                const modeLabel = displayMode === 'vedic' ? 'Vedic' : displayMode === 'classical' ? 'Classical' : 'Auto-detect';
+
+                // Style based on effective mode
+                const modeStyle = displayMode === 'vedic'
+                  ? 'bg-purple-100 text-purple-700 border border-purple-300'
+                  : displayMode === 'classical'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    : 'bg-gray-100 text-gray-700 border border-gray-300';
+
+                return (
+                  <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${modeStyle}`}>
+                    {isAutoDetect && effectiveMode
+                      ? `Auto → ${modeLabel}`
+                      : `Mode: ${modeLabel}`}
+                  </span>
+                );
+              })()}
+            </div>
+            {/* Consolidate all verse results into a single display */}
+            {(() => {
+              // Aggregate all verse results - combine scores for same meters
+              const meterScores: Record<string, number> = {};
+              let totalScore = 0;
+
+              verseResults.forEach(verse => {
+                if (verse.chanda && Array.isArray(verse.chanda[0])) {
+                  const meterName = verse.chanda[0][0];
+                  const score = verse.chanda[1] || 0;
+                  meterScores[meterName] = (meterScores[meterName] || 0) + score;
+                  totalScore += score;
+                }
+              });
+
+              // Get unique meters sorted by score
+              const sortedMeters = Object.entries(meterScores)
+                .sort((a, b) => b[1] - a[1]);
+
+              if (sortedMeters.length === 0) return null;
+
+              const primaryMeter = sortedMeters[0][0];
+              const primaryScore = sortedMeters[0][1];
+              const englishName = getMeterEnglish(primaryMeter);
+
+              // Calculate confidence based on total score vs total lines
+              // Backend normalizes exact match scores to ~1.0 per line
+              // A perfect match gives score 1.0 per line, boosts can increase it
+              const numLines = lineResults.length || 1;
+              const scorePerLine = primaryScore / Math.max(numLines, 1);
+              // Score of 1.0 per line = 100% confidence (exact match)
+              // Scale: 0.0 = 0%, 1.0+ = 100%
+              const confidencePercent = Math.min(100, Math.round(scorePerLine * 100));
+
+              let confidenceClass = 'bg-green-600';
+              if (confidencePercent < 50) {
+                confidenceClass = 'bg-red-500';
+              } else if (confidencePercent < 80) {
+                confidenceClass = 'bg-amber-500';
+              }
+
+              // Get meter structure info
+              const meterStructure = getMeterStructure(primaryMeter, lineResults);
+
+              return (
+                <div className="bg-white rounded-xl p-6 shadow-md">
+                  <div className="flex items-center gap-4 flex-wrap mb-4">
+                    <span className="text-3xl font-bold text-orange-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+                      {primaryMeter}
+                    </span>
+                    {englishName && englishName !== primaryMeter && (
+                      <span className="text-xl text-gray-600 italic">({englishName})</span>
+                    )}
+                    <span className={`${confidenceClass} text-white px-4 py-1.5 rounded-full text-sm font-semibold`}>
+                      {confidencePercent}% Match
+                    </span>
+                  </div>
+
+                  {/* Meter Structure Info */}
+                  {meterStructure && (
+                    <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-700">{meterStructure.totalPadas}</div>
+                          <div className="text-gray-600">Pādas</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-700">{meterStructure.syllablesPerPada}</div>
+                          <div className="text-gray-600">Syllables/Pāda</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-700">{meterStructure.totalSyllables}</div>
+                          <div className="text-gray-600">Total Syllables</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-orange-700">{meterStructure.ganaPattern || '-'}</div>
+                          <div className="text-gray-600">Gaṇa Pattern</div>
+                        </div>
                       </div>
-                      {meterNames.length > 1 && (
-                        <div className="mt-3 text-gray-600">
-                          <small>Alternates: {meterNames.slice(1).join(', ')}</small>
+                      {meterStructure.structureNote && (
+                        <div className="mt-3 text-center text-gray-600 text-xs">
+                          {meterStructure.structureNote}
                         </div>
                       )}
-                    </>
-                  );
-                })()}
-              </div>
-            ))}
+                    </div>
+                  )}
+
+                  {sortedMeters.length > 1 && (
+                    <div className="mt-4 text-gray-600">
+                      <small>Alternates: {sortedMeters.slice(1).map(m => m[0]).join(', ')}</small>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
             <p className="mt-4 p-4 bg-white/70 rounded-xl text-gray-600 text-sm border-l-4 border-orange-500 text-center">
               <em>Note: For Vedic meters (Gāyatrī, Triṣṭubh, Jagatī, etc.), the verse-level identification is the primary result. Line-by-line patterns below show individual pāda analysis.</em>
             </p>
@@ -600,10 +923,10 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
         {/* Line-by-Line Analysis (secondary when verse results exist) */}
         {lineResults.length > 0 && (
           verseResults.length > 0 ? (
-            <details className="mt-6">
-              <summary className="cursor-pointer font-semibold text-gray-700 p-4 bg-gray-100 rounded-xl mb-4 hover:bg-gray-200 transition-colors">
+            <div className="mt-6">
+              <h3 className="font-semibold text-gray-700 p-4 bg-gray-100 rounded-xl mb-4">
                 Line-by-Line Analysis (Pāda Details)
-              </summary>
+              </h3>
               <div className="bg-gray-50 p-8 rounded-2xl border-2 border-gray-200">
                 <div className="flex items-center justify-end mb-6">
                   <button
@@ -614,16 +937,30 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
                   </button>
                 </div>
                 <div className="space-y-6">
-                  {lineResults.map((lineItem, index) => (
-                    <LineAnalysisCard
-                      key={index}
-                      lineItem={lineItem}
-                      showSanskrit={showSanskrit}
-                    />
-                  ))}
+                  {lineResults.map((lineItem, index) => {
+                    // Calculate padaOffset based on previous lines' padas
+                    // Use the identified meter's syllables per pada, not hardcoded 8
+                    const padaOffset = lineResults.slice(0, index).reduce((acc, item) => {
+                      const syllables = item.result?.display_syllables || [];
+                      const lgArray = item.result?.display_lg || [];
+                      const validCount = syllables.filter((_, i) => lgArray[i] && lgArray[i].trim() !== '').length;
+                      // Get the meter name and look up its pada size
+                      const meterName = item.result?.display_chanda_primary?.split(' ')[0] || '';
+                      const padaSize = getPadaSize(meterName);
+                      return acc + Math.ceil(validCount / padaSize);
+                    }, 0);
+                    return (
+                      <LineAnalysisCard
+                        key={index}
+                        lineItem={lineItem}
+                        showSanskrit={showSanskrit}
+                        padaOffset={padaOffset}
+                      />
+                    );
+                  })}
                 </div>
               </div>
-            </details>
+            </div>
           ) : (
             <>
               {/* Identified Chanda - Single div at top for line-by-line mode */}
@@ -669,13 +1006,27 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
                   </button>
                 </div>
                 <div className="space-y-6">
-                  {lineResults.map((lineItem, index) => (
-                    <LineAnalysisCard
-                      key={index}
-                      lineItem={lineItem}
-                      showSanskrit={showSanskrit}
-                    />
-                  ))}
+                  {lineResults.map((lineItem, index) => {
+                    // Calculate padaOffset based on previous lines' padas
+                    // Use the identified meter's syllables per pada, not hardcoded 8
+                    const padaOffset = lineResults.slice(0, index).reduce((acc, item) => {
+                      const syllables = item.result?.display_syllables || [];
+                      const lgArray = item.result?.display_lg || [];
+                      const validCount = syllables.filter((_, i) => lgArray[i] && lgArray[i].trim() !== '').length;
+                      // Get the meter name and look up its pada size
+                      const meterName = item.result?.display_chanda_primary?.split(' ')[0] || '';
+                      const padaSize = getPadaSize(meterName);
+                      return acc + Math.ceil(validCount / padaSize);
+                    }, 0);
+                    return (
+                      <LineAnalysisCard
+                        key={index}
+                        lineItem={lineItem}
+                        showSanskrit={showSanskrit}
+                        padaOffset={padaOffset}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </>

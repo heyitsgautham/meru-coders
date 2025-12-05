@@ -10,6 +10,7 @@ import type {
   Example,
   IdentifyResponse,
   AnalysisMode,
+  IdentificationMode,
   OCRAvailability,
   FileExtractResponse,
   FileInfo,
@@ -58,7 +59,7 @@ export function useExamples() {
 
   const loadExamples = useCallback(async () => {
     if (loaded) return;
-    
+
     setLoading(true);
     setError(null);
 
@@ -126,14 +127,15 @@ export function useIdentifyText() {
   const identify = useCallback(async (
     text: string,
     mode: AnalysisMode = 'line',
-    outputScheme: string = ''
+    outputScheme: string = '',
+    identificationMode: IdentificationMode = 'auto'
   ) => {
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const response = await api.identifyFromText(text, mode, outputScheme);
+      const response = await api.identifyFromText(text, mode, outputScheme, identificationMode);
       setResult(response);
       return response;
     } catch (err) {
@@ -162,14 +164,15 @@ export function useIdentifyImage() {
   const identify = useCallback(async (
     file: File,
     mode: AnalysisMode = 'line',
-    outputScheme: string = ''
+    outputScheme: string = '',
+    identificationMode: IdentificationMode = 'auto'
   ) => {
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const response = await api.identifyFromImage(file, mode, outputScheme);
+      const response = await api.identifyFromImage(file, mode, outputScheme, identificationMode);
       setResult(response);
       return response;
     } catch (err) {
@@ -234,14 +237,15 @@ export function useIdentifyFile() {
   const identify = useCallback(async (
     file: File,
     mode: AnalysisMode = 'line',
-    outputScheme: string = ''
+    outputScheme: string = '',
+    identificationMode: IdentificationMode = 'auto'
   ) => {
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const response = await api.identifyFromFile(file, mode, outputScheme);
+      const response = await api.identifyFromFile(file, mode, outputScheme, identificationMode);
       setResult(response);
       return response;
     } catch (err) {

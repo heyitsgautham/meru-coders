@@ -53,8 +53,14 @@ def register_routes(app):
                 "text": "Sanskrit text in Devanagari or other scheme",
                 "output_scheme": "devanagari|iast|itrans|...",
                 "text_mode": "verse|line",
+                "identification_mode": "auto|vedic|classical",
                 "enable_sandhi": true|false
             }
+        
+        identification_mode options:
+            - auto: Smart detection (default) - tries both and picks best
+            - vedic: For Rigveda/Vedic texts - syllable-count based identification
+            - classical: For Kavya/classical poetry - L-G pattern based identification
         
         Returns:
             JSON with identified meters and analysis results
@@ -72,9 +78,11 @@ def register_routes(app):
             # Accept both 'text_mode' and 'mode' for compatibility with frontend
             text_mode = data.get('text_mode') or data.get('mode', 'line')
             enable_sandhi = data.get('enable_sandhi', False)
+            # New: identification_mode for Vedic vs Classical detection
+            identification_mode = data.get('identification_mode', 'auto')
             verse_mode = (text_mode == 'verse')
             
-            logger.info(f"Analyzing text (mode: {text_mode}, sandhi: {enable_sandhi})")
+            logger.info(f"Analyzing text (text_mode: {text_mode}, id_mode: {identification_mode}, sandhi: {enable_sandhi})")
             
             # Perform meter identification
             result = app.chanda.identify_from_text(
@@ -83,7 +91,8 @@ def register_routes(app):
                 fuzzy=True,
                 save_path=settings.RESULTS_DIR,
                 scheme=output_scheme,
-                use_sandhi=enable_sandhi
+                use_sandhi=enable_sandhi,
+                mode=identification_mode
             )
             
             # Generate summary
@@ -108,6 +117,7 @@ def register_routes(app):
                     'text': text,
                     'output_scheme': output_scheme,
                     'text_mode': text_mode,
+                    'identification_mode': identification_mode,
                     'enable_sandhi': enable_sandhi
                 }
             })
@@ -136,12 +146,14 @@ def register_routes(app):
         """
         try:
             # Get OCR engine preference
+            identification_mode = 'auto'  # Default
             if request.is_json:
                 data = request.get_json()
                 ocr_engine = data.get('ocr_engine', 'tesseract')
                 output_scheme = data.get('output_scheme', None)
                 text_mode = data.get('text_mode', 'line')
                 enable_sandhi = data.get('enable_sandhi', False)
+                identification_mode = data.get('identification_mode', 'auto')
                 
                 # Handle base64 encoded image
                 if 'image_data' in data:
@@ -185,6 +197,7 @@ def register_routes(app):
                 output_scheme = request.form.get('output_scheme', None)
                 text_mode = request.form.get('text_mode', 'line')
                 enable_sandhi = request.form.get('enable_sandhi', 'false').lower() == 'true'
+                identification_mode = request.form.get('identification_mode', 'auto')
             
             # Perform OCR - Cloud Vision first, fallback to Tesseract
             text = None
@@ -223,7 +236,8 @@ def register_routes(app):
                 fuzzy=True,
                 save_path=settings.RESULTS_DIR,
                 scheme=output_scheme,
-                use_sandhi=enable_sandhi
+                use_sandhi=enable_sandhi,
+                mode=identification_mode
             )
             
             # Generate summary
@@ -254,7 +268,8 @@ def register_routes(app):
                     'ocr_engine': ocr_engine,
                     'output_scheme': output_scheme,
                     'text_mode': text_mode,
-                    'enable_sandhi': enable_sandhi
+                    'enable_sandhi': enable_sandhi,
+                    'identification_mode': identification_mode
                 }
             })
             
@@ -330,6 +345,7 @@ def register_routes(app):
             output_scheme = request.form.get('output_scheme', None)
             text_mode = request.form.get('text_mode', 'line')
             enable_sandhi = request.form.get('enable_sandhi', 'false').lower() == 'true'
+            identification_mode = request.form.get('identification_mode', 'auto')
             
             logger.info(f"Analyzing file: {filename} ({extraction_result.file_type.value}, {extraction_result.page_count} pages)")
             
@@ -341,7 +357,8 @@ def register_routes(app):
                 fuzzy=True,
                 save_path=settings.RESULTS_DIR,
                 scheme=output_scheme,
-                use_sandhi=enable_sandhi
+                use_sandhi=enable_sandhi,
+                mode=identification_mode
             )
             
             # Generate summary
@@ -373,7 +390,8 @@ def register_routes(app):
                     'filename': filename,
                     'output_scheme': output_scheme,
                     'text_mode': text_mode,
-                    'enable_sandhi': enable_sandhi
+                    'enable_sandhi': enable_sandhi,
+                    'identification_mode': identification_mode
                 }
             })
             
