@@ -26,6 +26,25 @@ export interface OCRExtractResponse {
   error?: string;
 }
 
+// File info from extraction
+export interface FileInfo {
+  filename: string;
+  file_type: 'docx' | 'txt';
+  page_count: number;
+  encoding?: string;
+}
+
+// File extraction response (for DOCX, TXT)
+export interface FileExtractResponse {
+  success: boolean;
+  text?: string;
+  file_info?: FileInfo;
+  warnings?: string[];  // Warnings like CID encoding issues
+  error?: string;
+  error_code?: string;
+  details?: string;
+}
+
 // API Info response
 export interface APIInfoResponse {
   success: boolean;

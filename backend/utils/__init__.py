@@ -3,6 +3,10 @@
 """
 Utility Scripts Package
 
-Contains data management, benchmarking, and TTS utilities for the
-Sanskrit Meter Identification System.
+Contains data management, benchmarking, TTS utilities, and file processing
+for the Sanskrit Meter Identification System.
 """
+
+from .file_processor import FileProcessor, FileProcessingError
+
+__all__ = ['FileProcessor', 'FileProcessingError']

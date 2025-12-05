@@ -9,6 +9,7 @@ import type {
   IdentifyResponse,
   AnalysisMode,
   OCRExtractResponse,
+  FileExtractResponse,
 } from '../types/api';
 
 // Get API URL from environment or use default
@@ -97,6 +98,19 @@ export async function extractTextFromImage(file: File): Promise<OCRExtractRespon
   formData.append('image_file', file);
   
   return request<OCRExtractResponse>('/ocr/extract', {
+    method: 'POST',
+    body: formData,
+  });
+}
+
+/**
+ * Extract text from document file (DOCX, TXT) - no meter analysis
+ */
+export async function extractTextFromFile(file: File): Promise<FileExtractResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  return request<FileExtractResponse>('/file/extract', {
     method: 'POST',
     body: formData,
   });

@@ -11,6 +11,9 @@ from flask import Flask
 from flask_cors import CORS
 from pathlib import Path
 import logging
+import atexit
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from backend.config import settings
 from backend.core import Chanda
@@ -109,6 +112,7 @@ def create_app():
                 'identify_text': f'{settings.API_PREFIX}/identify/text',
                 'identify_image': f'{settings.API_PREFIX}/identify/image',
                 'identify_file': f'{settings.API_PREFIX}/identify/file',
+                'file_extract': f'{settings.API_PREFIX}/file/extract',
                 'ocr_extract': f'{settings.API_PREFIX}/ocr/extract',
                 'download': f'{settings.API_PREFIX}/download/<filename>',
                 'examples': f'{settings.API_PREFIX}/examples'
@@ -122,9 +126,39 @@ def create_app():
                 'sandhi_splitting': True,
                 'fuzzy_matching': True,
                 'verse_mode': True,
-                'multiple_schemes': True
+                'multiple_schemes': True,
+                'multi_format_upload': True  # DOCX, TXT support
             }
         }
+    
+    # Initialize background scheduler for upload cleanup
+    app.logger.info("Initializing upload cleanup scheduler...")
+    try:
+        from backend.utils.cleanup import scheduled_cleanup_job
+        
+        scheduler = BackgroundScheduler(daemon=True)
+        scheduler.add_job(
+            func=lambda: scheduled_cleanup_job(app),
+            trigger='interval',
+            minutes=settings.CLEANUP_INTERVAL_MINUTES,
+            id='upload_cleanup',
+            name='Upload files cleanup job',
+            replace_existing=True
+        )
+        scheduler.start()
+        app.scheduler = scheduler
+        
+        # Register shutdown handler
+        atexit.register(lambda: scheduler.shutdown(wait=False))
+        
+        app.logger.info(
+            f"Upload cleanup scheduler started "
+            f"(interval: {settings.CLEANUP_INTERVAL_MINUTES}min, "
+            f"max file age: {settings.FILE_MAX_AGE_MINUTES}min)"
+        )
+    except Exception as e:
+        app.logger.warning(f"Failed to initialize cleanup scheduler: {e}")
+        app.scheduler = None
     
     app.logger.info("Flask REST API application initialized successfully")
     return app

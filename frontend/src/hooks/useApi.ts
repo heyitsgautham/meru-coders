@@ -11,6 +11,8 @@ import type {
   IdentifyResponse,
   AnalysisMode,
   OCRAvailability,
+  FileExtractResponse,
+  FileInfo,
 } from '../types/api';
 
 // Hook for loading schemes
@@ -257,4 +259,54 @@ export function useIdentifyFile() {
   }, []);
 
   return { result, loading, error, identify, reset };
+}
+
+// Hook for file text extraction (DOCX, TXT) - no analysis
+export function useExtractFile() {
+  const [text, setText] = useState<string | null>(null);
+  const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
+
+  const extract = useCallback(async (file: File): Promise<FileExtractResponse> => {
+    setLoading(true);
+    setError(null);
+    setErrorCode(null);
+    setErrorDetails(null);
+    setText(null);
+    setFileInfo(null);
+
+    try {
+      const response = await api.extractTextFromFile(file);
+      if (response.success && response.text !== undefined) {
+        setText(response.text);
+        setFileInfo(response.file_info || null);
+        return response;
+      } else {
+        setError(response.error || 'File extraction failed');
+        setErrorCode(response.error_code || null);
+        setErrorDetails(response.details || null);
+        throw new Error(response.error || 'File extraction failed');
+      }
+    } catch (err) {
+      if (err instanceof Error && !error) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [error]);
+
+  const reset = useCallback(() => {
+    setText(null);
+    setFileInfo(null);
+    setError(null);
+    setErrorCode(null);
+    setErrorDetails(null);
+  }, []);
+
+  return { text, fileInfo, loading, error, errorCode, errorDetails, extract, reset };
 }

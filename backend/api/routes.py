@@ -14,6 +14,12 @@ from flask import request, jsonify, send_from_directory, current_app
 from werkzeug.utils import secure_filename
 
 from backend.config import settings
+from backend.utils.file_processor import (
+    get_processor,
+    FileProcessingError,
+    FileType,
+    ExtractionResult
+)
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +29,10 @@ def allowed_file(filename, allowed_extensions):
     """Check if file has an allowed extension."""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
+# Extended allowed extensions for multi-format support
+ALLOWED_DOCUMENT_EXTENSIONS = {'pdf', 'docx', 'txt', 'text'}
 
 
 def register_routes(app):
@@ -258,7 +268,10 @@ def register_routes(app):
     @app.route(f'{settings.API_PREFIX}/identify/file', methods=['POST'])
     def identify_file():
         """
-        Identify meter from an uploaded text file.
+        Identify meter from an uploaded document file.
+        
+        Supports: PDF (text-based), DOCX, TXT
+        Max file size: 10MB
         
         Request: Multipart form data with 'text_file' field
         Additional fields:
@@ -269,18 +282,25 @@ def register_routes(app):
         try:
             if 'text_file' not in request.files:
                 return jsonify({
-                    'error': 'No text file provided'
+                    'success': False,
+                    'error': 'No file provided',
+                    'error_code': 'NO_FILE'
                 }), 400
             
             file = request.files['text_file']
             if file.filename == '':
                 return jsonify({
-                    'error': 'Empty filename'
+                    'success': False,
+                    'error': 'Empty filename',
+                    'error_code': 'EMPTY_FILENAME'
                 }), 400
             
-            if not allowed_file(file.filename, settings.ALLOWED_TEXT_EXTENSIONS):
+            # Check extension first (fast validation)
+            if not allowed_file(file.filename, ALLOWED_DOCUMENT_EXTENSIONS):
                 return jsonify({
-                    'error': f'Invalid file type. Allowed: {settings.ALLOWED_TEXT_EXTENSIONS}'
+                    'success': False,
+                    'error': f'Unsupported file type. Allowed: PDF, DOCX, TXT',
+                    'error_code': 'INVALID_TYPE'
                 }), 400
             
             # Save uploaded file
@@ -288,15 +308,30 @@ def register_routes(app):
             filepath = settings.TEXTS_DIR / filename
             file.save(filepath)
             
-            # Read text content
-            text = filepath.read_text(encoding='utf-8')
+            # Use file processor for text extraction
+            processor = get_processor()
+            
+            try:
+                extraction_result = processor.process_file(
+                    filepath,
+                    validate_sanskrit=True
+                )
+            except FileProcessingError as e:
+                return jsonify({
+                    'success': False,
+                    'error': e.message,
+                    'error_code': e.error_code,
+                    'details': e.details
+                }), 400
+            
+            text = extraction_result.text
             
             # Get parameters
             output_scheme = request.form.get('output_scheme', None)
             text_mode = request.form.get('text_mode', 'line')
             enable_sandhi = request.form.get('enable_sandhi', 'false').lower() == 'true'
             
-            logger.info(f"Analyzing file: {filename}")
+            logger.info(f"Analyzing file: {filename} ({extraction_result.file_type.value}, {extraction_result.page_count} pages)")
             
             # Perform meter identification
             verse_mode = (text_mode == 'verse')
@@ -328,6 +363,12 @@ def register_routes(app):
                 'result_path': result_path,
                 'summary': summary,
                 'summary_formatted': summary_formatted,
+                'file_info': {
+                    'filename': filename,
+                    'file_type': extraction_result.file_type.value,
+                    'page_count': extraction_result.page_count,
+                    'encoding': extraction_result.encoding
+                },
                 'input': {
                     'filename': filename,
                     'output_scheme': output_scheme,
@@ -340,7 +381,95 @@ def register_routes(app):
             logger.exception(f"Error in identify_file: {e}")
             return jsonify({
                 'success': False,
-                'error': str(e)
+                'error': str(e),
+                'error_code': 'INTERNAL_ERROR'
+            }), 500
+    
+    @app.route(f'{settings.API_PREFIX}/file/extract', methods=['POST'])
+    def extract_file():
+        """
+        Extract text from a document file (no meter analysis).
+        
+        Supports: PDF (text-based), DOCX, TXT
+        Max file size: 10MB
+        
+        Request: Multipart form data with 'file' field
+        
+        Returns:
+            JSON with extracted text and file info
+        """
+        try:
+            if 'file' not in request.files:
+                return jsonify({
+                    'success': False,
+                    'error': 'No file provided',
+                    'error_code': 'NO_FILE'
+                }), 400
+            
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({
+                    'success': False,
+                    'error': 'Empty filename',
+                    'error_code': 'EMPTY_FILENAME'
+                }), 400
+            
+            # Check extension first (fast validation)
+            if not allowed_file(file.filename, ALLOWED_DOCUMENT_EXTENSIONS):
+                return jsonify({
+                    'success': False,
+                    'error': f'Unsupported file type. Allowed: PDF, DOCX, TXT',
+                    'error_code': 'INVALID_TYPE'
+                }), 400
+            
+            # Save uploaded file
+            filename = secure_filename(file.filename)
+            filepath = settings.TEXTS_DIR / filename
+            file.save(filepath)
+            
+            logger.info(f"Extracting text from file: {filename}")
+            
+            # Use file processor for text extraction
+            processor = get_processor()
+            
+            try:
+                extraction_result = processor.process_file(
+                    filepath,
+                    validate_sanskrit=True
+                )
+            except FileProcessingError as e:
+                return jsonify({
+                    'success': False,
+                    'error': e.message,
+                    'error_code': e.error_code,
+                    'details': e.details
+                }), 400
+            
+            logger.info(f"Extracted {len(extraction_result.text)} characters from {filename}")
+            
+            response_data = {
+                'success': True,
+                'text': extraction_result.text,
+                'file_info': {
+                    'filename': filename,
+                    'file_type': extraction_result.file_type.value,
+                    'page_count': extraction_result.page_count,
+                    'encoding': extraction_result.encoding
+                }
+            }
+            
+            # Include warnings if any (e.g., CID encoding issues)
+            if extraction_result.warnings:
+                response_data['warnings'] = extraction_result.warnings
+            
+            return jsonify(response_data)
+            
+        except Exception as e:
+            logger.exception(f"Error in extract_file: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e),
+                'error_code': 'INTERNAL_ERROR'
             }), 500
     
     @app.route(f'{settings.API_PREFIX}/download/<filename>', methods=['GET'])

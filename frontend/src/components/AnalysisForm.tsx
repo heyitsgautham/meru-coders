@@ -2,8 +2,8 @@ import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText } from
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
-import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText } from "../hooks/useApi";
-import type { AnalysisMode, IdentifyResponse } from "../types/api";
+import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile } from "../hooks/useApi";
+import type { AnalysisMode, IdentifyResponse, FileInfo } from "../types/api";
 
 // Fixed analysis settings
 const ANALYSIS_MODE: AnalysisMode = "line";
@@ -34,6 +34,11 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   // OCR extracted text state
   const [extractedText, setExtractedText] = useState<string | null>(null);
   
+  // File extracted text state (for DOCX/TXT)
+  const [fileExtractedText, setFileExtractedText] = useState<string | null>(null);
+  const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+  const [fileWarnings, setFileWarnings] = useState<string[]>([]);
+  
   // Refs for file inputs
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +46,7 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   
   // Drag and drop state
   const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
   
   // Results state
   const [result, setResult] = useState<IdentifyResponse | null>(null);
@@ -49,11 +55,18 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   // API hooks
   const { connected } = useAPIInfo();
   const { loading: textLoading, error: textError, identify: identifyText } = useIdentifyText();
-  const { loading: fileLoading, error: fileError, identify: identifyFile } = useIdentifyFile();
+  const { loading: fileLoading, error: fileError } = useIdentifyFile();
   const { loading: extractLoading, error: extractError, extract: extractTextFromImage } = useExtractText();
+  const { 
+    loading: fileExtractLoading, 
+    error: fileExtractError, 
+    errorDetails: fileExtractErrorDetails,
+    extract: extractTextFromFile,
+    reset: resetFileExtract 
+  } = useExtractFile();
   
   const isLoading = textLoading || fileLoading;
-  const error = textError || fileError || extractError;
+  const error = textError || fileError || extractError || fileExtractError;
 
   // Save activeTab to localStorage when it changes
   useEffect(() => {
@@ -150,7 +163,132 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
+      processDocumentFile(file);
+    }
+  };
+
+  // Process document file (DOCX, TXT)
+  const processDocumentFile = (file: File) => {
+    // Validate file extension
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['docx', 'txt', 'text'];
+    
+    if (!ext || !allowedExtensions.includes(ext)) {
+      alert('Please select a DOCX or TXT file');
+      return;
+    }
+    
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      return;
+    }
+    
+    setSelectedFile(file);
+    setFileExtractedText(null);
+    setFileInfo(null);
+    resetFileExtract();
+  };
+
+  // Handle drag events for file upload
+  const handleFileDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleFileDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingFile(true);
+  };
+
+  const handleFileDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.currentTarget.contains(e.relatedTarget as Node)) {
+      return;
+    }
+    setIsDraggingFile(false);
+  };
+
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingFile(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      processDocumentFile(file);
+    }
+  };
+
+  // Handle file text extraction
+  const handleExtractFileText = async () => {
+    if (!selectedFile) return;
+    
+    try {
+      const response = await extractTextFromFile(selectedFile);
+      if (response.success && response.text) {
+        setFileExtractedText(response.text);
+        setFileInfo(response.file_info || null);
+        setFileWarnings(response.warnings || []);
+      }
+    } catch (err) {
+      console.error("File extraction failed:", err);
+    }
+  };
+
+  // Handle "Identify Chandas" from extracted file text
+  const handleIdentifyFromFile = async () => {
+    if (!fileExtractedText) return;
+    
+    // Set the text and switch to text tab
+    setText(fileExtractedText);
+    setActiveTab("text");
+    setResult(null);
+    
+    try {
+      const response = await identifyText(fileExtractedText, ANALYSIS_MODE, OUTPUT_SCRIPT);
+      setResultType("text");
+      setResult(response);
+    } catch (err) {
+      console.error("Analysis failed:", err);
+    }
+  };
+
+  // Clear file and reset state
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setFileExtractedText(null);
+    setFileInfo(null);
+    setFileWarnings([]);
+    resetFileExtract();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Get file type icon based on extension
+  const getFileTypeIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'docx':
+        return '📝';
+      default:
+        return '📃';
+    }
+  };
+
+  // Get file type label
+  const getFileTypeLabel = (fileType: string) => {
+    switch (fileType) {
+      case 'docx':
+        return 'Word Document';
+      case 'txt':
+        return 'Text File';
+      default:
+        return 'Document';
     }
   };
 
@@ -200,15 +338,8 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
         }
         response = await identifyText(text, ANALYSIS_MODE, OUTPUT_SCRIPT);
         setResultType("text");
-      } else if (activeTab === "file") {
-        if (!selectedFile) {
-          alert("Please select a file");
-          return;
-        }
-        response = await identifyFile(selectedFile, ANALYSIS_MODE, OUTPUT_SCRIPT);
-        setResultType("file");
       } else {
-        return; // Image tab has its own flow
+        return; // Image and File tabs have their own flows
       }
       
       setResult(response);
@@ -501,82 +632,225 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
           )}
 
           {activeTab === "file" && (
-            <div>
-              <label className="block text-[var(--color-text-main)] mb-3 font-semibold text-base">
-                Upload Document File
-              </label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".txt,.text"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="group border-2 border-dashed border-[var(--color-border-subtle)] rounded-[20px] p-12 bg-gradient-to-b from-white to-[#fdf8f3] hover:from-white hover:to-[var(--color-primary-soft)] transition-all duration-300 cursor-pointer hover:border-[var(--color-primary)] hover:shadow-xl"
-              >
-                {selectedFile ? (
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="relative">
-                      <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg">
+            <div className="space-y-6">
+              {/* File Upload Area */}
+              <div>
+                <label className="block text-[var(--color-text-main)] mb-3 font-semibold text-base">
+                  Upload Document File
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".docx,.txt,.text"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <div 
+                  onClick={() => !selectedFile && fileInputRef.current?.click()}
+                  onDragOver={handleFileDragOver}
+                  onDragEnter={handleFileDragEnter}
+                  onDragLeave={handleFileDragLeave}
+                  onDrop={handleFileDrop}
+                  className={`group border-2 border-dashed rounded-[20px] p-8 bg-gradient-to-b transition-all duration-300 ${
+                    isDraggingFile 
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] shadow-xl scale-[1.02]' 
+                      : selectedFile 
+                        ? 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3]'
+                        : 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3] cursor-pointer hover:from-white hover:to-[var(--color-primary-soft)] hover:border-[var(--color-primary)] hover:shadow-xl'
+                  }`}
+                >
+                  {selectedFile ? (
+                    <div className="flex flex-col items-center gap-6">
+                      <div className="relative">
+                        <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg">
+                          <span className="text-4xl">{getFileTypeIcon(selectedFile.name)}</span>
+                        </div>
+                        {/* Remove button */}
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveFile();
+                          }}
+                          className="absolute -top-3 -right-3 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                          title="Remove file"
+                        >
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-semibold text-[var(--color-text-main)] mb-1">
+                          {selectedFile.name}
+                        </p>
+                        <p className="text-sm text-[var(--color-text-muted)]">
+                          {(selectedFile.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                      
+                      {/* Extract Text Button - only show when no extracted text */}
+                      {!fileExtractedText && (
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExtractFileText();
+                          }}
+                          disabled={fileExtractLoading}
+                          className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base disabled:opacity-50 flex items-center gap-2"
+                        >
+                          {fileExtractLoading ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              <span>Extracting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="w-5 h-5" />
+                              <span>Extract Text</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                      
+                      {/* Clear File Button - only show after text extraction */}
+                      {fileExtractedText && (
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveFile();
+                          }}
+                          className="px-8 py-3 bg-[var(--color-primary-soft)] text-[var(--color-primary-dark)] border border-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg font-semibold text-base flex items-center gap-2"
+                        >
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Clear File</span>
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-6">
+                      <div className={`p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg transition-all duration-300 ${
+                        isDraggingFile ? 'scale-110 shadow-xl' : 'group-hover:shadow-xl group-hover:scale-110'
+                      }`}>
                         <Upload className="w-10 h-10 text-white" />
                       </div>
-                      <div className="absolute -top-2 -right-2 p-2 bg-green-500 rounded-full shadow-md">
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
+                      <div className="text-center">
+                        <p className="text-lg font-semibold text-[var(--color-text-main)] mb-2">
+                          {isDraggingFile ? 'Drop your file here!' : 'Drop your file here'}
+                        </p>
+                        <p className="text-[var(--color-text-muted)] text-base mb-1">
+                          or click to browse
+                        </p>
+                        <p className="text-[var(--color-text-muted)] text-sm">
+                          Supports DOCX, TXT (max 10MB)
+                        </p>
+                      </div>
+                      <button className={`px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base ${
+                        isDraggingFile ? 'scale-105' : 'group-hover:scale-105'
+                      }`}>
+                        Choose File
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* File Extraction Error Display */}
+              {fileExtractError && (
+                <div className="mt-4 p-5 bg-red-50 border-2 border-red-200 rounded-[16px] flex items-start gap-4">
+                  <div className="p-2 bg-red-100 rounded-full">
+                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-red-700 mb-1">Extraction Failed</p>
+                    <p className="text-red-600">{fileExtractError}</p>
+                    {fileExtractErrorDetails && (
+                      <p className="text-sm text-red-500 mt-2">{fileExtractErrorDetails}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {/* Extracted Text Display - Styled with theme border */}
+              {fileExtractedText && (
+                <div className="mt-8 p-8 bg-[#fdf8f3] border-2 border-[var(--color-primary)] rounded-[20px] shadow-md">
+                  {/* Extracted Text Heading with File Info */}
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-2xl font-bold text-[var(--color-text-main)]">
+                      Extracted Text
+                    </h3>
+                    {fileInfo && (
+                      <div className="flex items-center gap-4 text-sm text-[var(--color-text-muted)]">
+                        <span className="px-3 py-1 bg-white rounded-full border border-[var(--color-border-subtle)]">
+                          {getFileTypeLabel(fileInfo.file_type)}
+                        </span>
+                        {fileInfo.page_count > 1 && (
+                          <span className="px-3 py-1 bg-white rounded-full border border-[var(--color-border-subtle)]">
+                            {fileInfo.page_count} pages
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Warning Banner for CID encoding issues */}
+                  {fileWarnings.length > 0 && (
+                    <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-[12px] flex items-start gap-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-amber-700">Extraction Warning</p>
+                        {fileWarnings.map((warning, idx) => (
+                          <p key={idx} className="text-sm text-amber-600 mt-1">{warning}</p>
+                        ))}
                       </div>
                     </div>
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-[var(--color-text-main)] mb-1">
-                        {selectedFile.name}
-                      </p>
-                      <p className="text-sm text-[var(--color-text-muted)]">
-                        Click to change file
-                      </p>
-                    </div>
+                  )}
+                  
+                  {/* Text Content */}
+                  <div 
+                    className="text-center mb-8 whitespace-pre-wrap p-8 bg-white rounded-[16px] border border-[var(--color-border-subtle)] max-h-[400px] overflow-y-auto" 
+                    style={{ 
+                      fontFamily: "'Crimson Text', 'Merriweather', Georgia, 'Times New Roman', serif",
+                      fontSize: '25px',
+                      fontWeight: 400,
+                      color: '#4a2c10',
+                      lineHeight: 1.75,
+                      letterSpacing: '0.02em'
+                    }}
+                  >
+                    {fileExtractedText}
+                  </div>
+                  
+                  {/* Button Row */}
+                  <div className="flex items-center gap-4">
+                    {/* Identify Chandas Button */}
                     <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedFile(null);
-                      }}
-                      className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 font-medium hover:underline px-4 py-2 rounded-full hover:bg-red-50 transition-colors"
+                      onClick={handleIdentifyFromFile}
+                      disabled={textLoading}
+                      className="identify-btn h-[52px] px-8 text-base"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      Remove File
+                      {textLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Analyzing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          <span>Identify Chandas</span>
+                        </>
+                      )}
                     </button>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                      <Upload className="w-10 h-10 text-white" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-[var(--color-text-main)] mb-2">
-                        Drop your file here
-                      </p>
-                      <p className="text-[var(--color-text-muted)] text-base mb-1">
-                        or click to browse
-                      </p>
-                      <p className="text-[var(--color-text-muted)] text-sm">
-                        Supports TXT files only
-                      </p>
-                    </div>
-                    <button className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base group-hover:scale-105">
-                      Choose File
-                    </button>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Bottom Action Row - Only show for text and file tabs */}
-        {activeTab !== "image" && (
+        {/* Bottom Action Row - Only show for text tab */}
+        {activeTab === "text" && (
           <div className="mt-8 pt-6 border-t border-[var(--color-border-subtle)] bg-[#fdf8f3] -mx-8 px-8 py-6 -mb-8 rounded-b-[20px] flex justify-center">
             {/* Identify Button */}
             <button 
