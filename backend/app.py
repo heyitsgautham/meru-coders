@@ -9,6 +9,8 @@ Sanskrit Meter Identification System backend.
 
 from flask import Flask
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from pathlib import Path
 import logging
 import atexit
@@ -47,11 +49,42 @@ def create_app():
     CORS(app, resources={
         r"/api/*": {
             "origins": settings.CORS_ORIGINS,
-            "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True
         }
     })
+    
+    # Initialize rate limiter
+    app.logger.info("Initializing rate limiter...")
+    limiter = Limiter(
+        app=app,
+        key_func=get_remote_address,
+        default_limits=[settings.RATELIMIT_DEFAULT],
+        storage_uri=settings.RATELIMIT_STORAGE_URL
+    )
+    app.limiter = limiter
+    
+    # Initialize Supabase client
+    app.logger.info("Initializing Supabase client...")
+    try:
+        from supabase import create_client, Client
+        if settings.SUPABASE_URL and settings.SUPABASE_SERVICE_KEY:
+            app.supabase: Client = create_client(
+                settings.SUPABASE_URL,
+                settings.SUPABASE_SERVICE_KEY
+            )
+            # Expose via config for auth module
+            app.config['SUPABASE_CLIENT'] = app.supabase
+            app.logger.info("Supabase client initialized successfully")
+        else:
+            app.logger.warning("Supabase credentials not configured")
+            app.supabase = None
+            app.config['SUPABASE_CLIENT'] = None
+    except Exception as e:
+        app.logger.error(f"Failed to initialize Supabase client: {e}")
+        app.supabase = None
+        app.config['SUPABASE_CLIENT'] = None
     
     # Initialize core components
     app.logger.info("Initializing Chanda Analyzer...")

@@ -61,6 +61,13 @@ def register_routes(app):
     from backend.api.chatbot import chatbot_bp
     app.register_blueprint(chatbot_bp)
     
+    # Register auth and contribution blueprints
+    from backend.auth.routes import auth_bp
+    from backend.contributions.routes import contribution_bp
+    
+    app.register_blueprint(auth_bp, url_prefix=f'{settings.API_PREFIX}/auth')
+    app.register_blueprint(contribution_bp, url_prefix=f'{settings.API_PREFIX}')
+    
     @app.route(f'{settings.API_PREFIX}/identify/text', methods=['POST'])
     def identify_text():
         """
