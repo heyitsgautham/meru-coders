@@ -57,6 +57,10 @@ def register_routes(app):
         app: Flask application instance
     """
     
+    # Register chatbot blueprint
+    from backend.api.chatbot import chatbot_bp
+    app.register_blueprint(chatbot_bp)
+    
     @app.route(f'{settings.API_PREFIX}/identify/text', methods=['POST'])
     def identify_text():
         """

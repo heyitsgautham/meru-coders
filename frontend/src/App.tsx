@@ -6,6 +6,8 @@ import { AboutView } from "./components/AboutView";
 import { DatasetsView } from "./components/DatasetsView";
 import { MandalaBackground } from "./components/MandalaBackground";
 import { LandingPage } from "./views/LandingPage";
+import { ChatBotProvider } from "./contexts/ChatBotContext";
+import FloatingChatbot from "./components/chat/FloatingChatbot";
 import type { ViewType } from "./types/api";
 
 const STORAGE_KEY_VIEW = 'chanda_currentView';
@@ -76,44 +78,49 @@ export default function App() {
 
   // Show main application
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col">
-      {/* Subtle mandala background (very faded) */}
-      <div className="fixed inset-0 opacity-[0.03] pointer-events-none">
-        <MandalaBackground />
-      </div>
+    <ChatBotProvider>
+      <div className="min-h-screen relative overflow-hidden flex flex-col">
+        {/* Subtle mandala background (very faded) */}
+        <div className="fixed inset-0 opacity-[0.03] pointer-events-none">
+          <MandalaBackground />
+        </div>
 
-      {/* Content - improved vertical centering */}
-      <div className="relative z-10 flex-1 flex flex-col">
-        <Header 
-          currentView={currentView} 
-          onViewChange={setCurrentView}
-          onGoToLanding={handleGoToLanding}
-        />
-        
-        <main className="flex-1 py-16 px-6">
-          {currentView === "home" && (
-            <AnalysisForm
-              initialText={textFromExample}
-              onTextChange={handleTextChange}
-            />
-          )}
-          {currentView === "examples" && (
-            <div style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>
-              <ExamplesView onSelectExample={handleSelectExample} />
-            </div>
-          )}
-          {currentView === "datasets" && (
-            <div style={{ width: '90%', maxWidth: '1600px', margin: '0 auto' }}>
-              <DatasetsView />
-            </div>
-          )}
-          {currentView === "about" && (
-            <div style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
-              <AboutView />
-            </div>
-          )}
-        </main>
+        {/* Content - improved vertical centering */}
+        <div className="relative z-10 flex-1 flex flex-col">
+          <Header
+            currentView={currentView}
+            onViewChange={setCurrentView}
+            onGoToLanding={handleGoToLanding}
+          />
+
+          <main className="flex-1 py-16 px-6">
+            {currentView === "home" && (
+              <AnalysisForm
+                initialText={textFromExample}
+                onTextChange={handleTextChange}
+              />
+            )}
+            {currentView === "examples" && (
+              <div style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>
+                <ExamplesView onSelectExample={handleSelectExample} />
+              </div>
+            )}
+            {currentView === "datasets" && (
+              <div style={{ width: '90%', maxWidth: '1600px', margin: '0 auto' }}>
+                <DatasetsView />
+              </div>
+            )}
+            {currentView === "about" && (
+              <div style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
+                <AboutView />
+              </div>
+            )}
+          </main>
+        </div>
+
+        {/* Floating Chatbot - Available on all screens */}
+        <FloatingChatbot />
       </div>
-    </div>
+    </ChatBotProvider>
   );
 }
