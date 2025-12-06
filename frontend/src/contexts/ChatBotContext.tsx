@@ -81,7 +81,9 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
             content: message,
             timestamp: new Date().toISOString(),
             has_image: !!image,
-            has_audio: !!audio
+            has_audio: !!audio,
+            image_data: image,  // Store image data for display
+            audio_data: audio   // Store audio data for display
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -137,17 +139,29 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
     const setPersona = useCallback((newPersona: 'default' | 'krishna') => {
         setPersonaState(newPersona);
 
-        // Add system message about persona change
-        const systemMessage: ChatMessage = {
-            role: 'assistant',
-            content: newPersona === 'krishna'
-                ? '🕉️ Namaste, dear one. I am Krishna, here to guide you through the beauty of Sanskrit prosody.'
-                : '📚 Switching to default Chandas Expert mode. How may I help you understand Sanskrit meters?',
-            timestamp: new Date().toISOString(),
-            type: 'system'
-        };
-
-        setMessages(prev => [...prev, systemMessage]);
+        // Only show greeting if no user messages have been sent yet
+        setMessages(prev => {
+            const hasUserMessages = prev.some(msg => msg.role === 'user');
+            
+            if (hasUserMessages) {
+                // Middle of conversation - don't show any greeting
+                return prev;
+            }
+            
+            // First message - replace any existing greeting with new persona's greeting
+            const greetingMessage: ChatMessage = {
+                role: 'assistant',
+                content: newPersona === 'krishna'
+                    ? '🕉️ Namaste, dear one. I am Krishna, here to guide you through the beauty of Sanskrit prosody.'
+                    : '📚 Welcome! I am your Sanskrit Prosody Expert. How may I help you understand Sanskrit meters?',
+                timestamp: new Date().toISOString(),
+                type: 'system'
+            };
+            
+            // Remove any existing system messages and add the new greeting
+            const filteredMessages = prev.filter(msg => msg.type !== 'system');
+            return [...filteredMessages, greetingMessage];
+        });
     }, []);
 
     const toggleChatbot = useCallback(() => {
@@ -175,8 +189,11 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
             if (response.success && response.messages) {
                 setMessages(response.messages);
             }
-        } catch (error) {
-            console.error('Error loading history:', error);
+        } catch (error: any) {
+            // Silently handle 404 errors (conversation doesn't exist yet)
+            if (error?.response?.status !== 404) {
+                console.error('Error loading history:', error);
+            }
         }
     }, []);
 

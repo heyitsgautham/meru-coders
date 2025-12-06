@@ -15,6 +15,8 @@ export interface ChatMessage {
     confidence?: number;
     has_image?: boolean;
     has_audio?: boolean;
+    image_data?: string; // base64 image data for display
+    ocr_text?: string;   // extracted OCR text
     persona?: string;
     meter_data?: MeterData;
     agentic_action?: string;
@@ -110,7 +112,10 @@ export class ChatbotService {
             const response = await axios.get(`${CHATBOT_API}/history/${conversationId}`);
             return response.data;
         } catch (error: any) {
-            console.error('Error fetching history:', error);
+            // Don't log 404 errors - they're expected for new conversations
+            if (error?.response?.status !== 404) {
+                console.error('Error fetching history:', error);
+            }
             return {
                 success: false,
                 error: error.response?.data?.error || error.message || 'Failed to fetch history'

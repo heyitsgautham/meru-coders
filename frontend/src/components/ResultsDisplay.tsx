@@ -643,19 +643,13 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="w-12 h-12 text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold text-amber-700 mb-4">Invalid Input Detected</h2>
-            <p className="text-lg text-gray-700 mb-6">
-              {firstValidationError || 'The provided text does not appear to be valid Sanskrit.'}
+            <h2 className="text-2xl font-bold text-amber-700 mb-4">Invalid Input</h2>
+            <p className="text-lg text-gray-700 mb-2">
+              Please enter valid Sanskrit text.
             </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-left">
-              <h4 className="font-semibold text-amber-800 mb-3">💡 Tips for best results:</h4>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Enter text in <strong>Devanagari script</strong> (देवनागरी) for best accuracy</li>
-                <li>IAST/Roman transliteration is also supported (e.g., "dharmakṣetre kurukṣetre")</li>
-                <li>Avoid entering plain English text or non-Sanskrit content</li>
-                <li>Sanskrit verses should contain valid syllable patterns</li>
-              </ul>
-            </div>
+            <p className="text-base text-gray-600">
+              Use Devanagari (देवनागरी) or IAST with diacritics (dharmakṣetre)
+            </p>
             {onClose && (
               <button
                 onClick={onClose}

@@ -31,14 +31,27 @@ const FloatingChatbot: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const shouldAutoScrollRef = useRef(true);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom only when user sends a message, not during AI response
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Only auto-scroll if the last message is from the user
+    if (messages.length > 0 && shouldAutoScrollRef.current) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'user') {
+        // User just sent a message - scroll to bottom
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
+      // Don't auto-scroll for assistant messages - let user read from top
+    }
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() && !selectedImage && !audioBlob) return;
+    // Auto-add a default prompt if image is selected but no message
+    const messageToSend = inputMessage.trim() ||
+      (selectedImage ? 'Analyse the chanda' : '');
+
+    if (!messageToSend && !selectedImage && !audioBlob) return;
 
     let imageBase64: string | undefined;
     let audioBase64: string | undefined;
@@ -53,13 +66,14 @@ const FloatingChatbot: React.FC = () => {
       audioBase64 = await blobToBase64(audioBlob);
     }
 
-    await sendMessage(inputMessage, imageBase64, audioBase64);
-
-    // Reset input
+    // Reset input IMMEDIATELY to clear preview
     setInputMessage('');
     setSelectedImage(null);
     setImagePreview(null);
     setAudioBlob(null);
+
+    // Send message after clearing UI
+    await sendMessage(messageToSend, imageBase64, audioBase64);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -210,6 +224,22 @@ const FloatingChatbot: React.FC = () => {
             className={`message ${msg.role === 'user' ? 'message-user' : 'message-assistant'}`}
           >
             <div className="message-content">
+              {/* Display Image if Available (for user messages) */}
+              {msg.role === 'user' && msg.image_data && (
+                <div className="message-image-container">
+                  <img
+                    src={msg.image_data}
+                    alt="Uploaded content"
+                    className="message-image"
+                  />
+                  {msg.ocr_text && (
+                    <div className="ocr-text-badge">
+                      📄 OCR Extracted
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="markdown-content">
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
@@ -294,6 +324,9 @@ const FloatingChatbot: React.FC = () => {
       {/* Image Preview */}
       {imagePreview && (
         <div className="image-preview-container">
+          <div className="image-preview-hint">
+            📷 Image will be processed with OCR - Press Send to analyze
+          </div>
           <img src={imagePreview} alt="Selected" className="image-preview" />
           <button
             onClick={() => {
@@ -329,39 +362,46 @@ const FloatingChatbot: React.FC = () => {
             className="hidden"
           />
 
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="input-action-btn"
-            aria-label="Upload image"
-            title="Upload image"
-          >
-            <ImageIcon size={20} />
-          </button>
+          <div className="input-icons-stack">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="input-action-btn"
+              aria-label="Upload image"
+              title="Upload image"
+            >
+              <ImageIcon size={20} />
+            </button>
 
-          <button
-            onClick={isRecording ? handleStopRecording : handleStartRecording}
-            className={`input-action-btn ${isRecording ? 'recording' : ''}`}
-            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-            title={isRecording ? 'Stop recording' : 'Start voice recording'}
-          >
-            <Mic size={20} />
-          </button>
+            <button
+              onClick={isRecording ? handleStopRecording : handleStartRecording}
+              className={`input-action-btn ${isRecording ? 'recording' : ''}`}
+              aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+              title={isRecording ? 'Stop recording' : 'Start voice recording'}
+            >
+              <Mic size={20} />
+            </button>
+          </div>
 
           <textarea
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask about chandas, meters, or upload an image..."
+            placeholder={
+              selectedImage
+                ? "Optional: Add a question (default: 'Analyse the chanda')"
+                : "Ask about chandas, meters, or upload an image..."
+            }
             className="chatbot-textarea"
-            rows={1}
+            rows={3}
             disabled={isLoading}
           />
 
           <button
             onClick={handleSendMessage}
-            disabled={isLoading || (!inputMessage.trim() && !selectedImage && !audioBlob)}
+            disabled={isLoading}
             className="send-btn"
             aria-label="Send message"
+            title={selectedImage && !inputMessage.trim() ? "Will extract text via OCR and analyze chanda" : "Send message"}
           >
             <Send size={20} />
           </button>

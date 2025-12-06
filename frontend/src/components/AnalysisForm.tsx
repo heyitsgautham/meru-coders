@@ -868,24 +868,15 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
 
           {/* Identification Mode Selector - Only show for text tab */}
           {activeTab === "text" && (
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[var(--color-primary)]" />
-                  <span className="text-sm font-semibold text-[var(--color-text-main)]">Detection Mode</span>
-                </div>
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  {MODE_INFO[identificationMode].description}
-                </span>
-              </div>
-              <div className="inline-flex rounded-lg border border-[var(--color-border-subtle)] p-1 bg-[#faf7f4]">
+            <div className="mt-8 flex flex-col items-center">
+              <div className="inline-flex rounded-xl border-2 border-[var(--color-border-subtle)] p-1.5 bg-[#faf7f4] shadow-sm">
                 {(Object.keys(MODE_INFO) as IdentificationMode[]).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setIdentificationMode(mode)}
-                    className={`px-5 py-2 rounded-md text-sm font-medium transition-all duration-200 ${identificationMode === mode
-                        ? "bg-white text-[var(--color-primary-dark)] shadow-sm border border-[var(--color-primary-light)]"
-                        : "text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]"
+                    className={`px-8 py-3.5 rounded-lg text-lg font-semibold transition-all duration-200 ${identificationMode === mode
+                        ? "bg-white text-[var(--color-primary-dark)] shadow-md border-2 border-[var(--color-primary-light)]"
+                        : "text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] hover:bg-white/50"
                       }`}
                   >
                     {MODE_INFO[mode].label}
