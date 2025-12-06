@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Test script for Chandojnanam Enhancement
+Test script for Meru_Coders Enhancement
 Tests all 8 test cases mentioned in the implementation checklist
 
 @author: Implementation Checklist Tests

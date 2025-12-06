@@ -9,7 +9,7 @@ All verses have been syllable-count verified and sourced from:
 - Bhagavad Gita (Anushtubh)
 - Classical kavya (other meters)
 
-@author: Chandojnanam Enhancement Project
+@author: Meru_Coders Enhancement Project
 @date: November 2025
 """
 

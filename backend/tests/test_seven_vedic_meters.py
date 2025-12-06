@@ -15,7 +15,7 @@ Tests whether the model correctly predicts:
 
 These are the 7 canonical Vedic meters mentioned in the SIH 2025 problem statement.
 
-@author: Chandojnanam Test Suite
+@author: Meru_Coders Test Suite
 @date: December 2025
 """
 
