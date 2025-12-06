@@ -40,7 +40,7 @@ const getAPIBaseURL = (): string => {
   return 'http://localhost:5000/api';
 };
 
-const API_BASE_URL = getAPIBaseURL();
+export const API_BASE_URL = getAPIBaseURL();
 // Get base URL without /api suffix for constructing full URLs
 const API_SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
 
@@ -53,10 +53,13 @@ console.log('API Server URL:', API_SERVER_URL);
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
+
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
@@ -238,6 +241,27 @@ export async function getDataset(
   const endpoint = `/datasets/${datasetId}${queryString ? `?${queryString}` : ''}`;
 
   return request<DatasetResponse>(endpoint);
+}
+
+/**
+ * Get approved user contributions for datasets page
+ */
+export async function getApprovedContributions(
+  options: {
+    limit?: number;
+    offset?: number;
+    type?: 'verse' | 'meter_definition';
+  } = {}
+): Promise<{ success: boolean; contributions: any[]; count: number; error?: string }> {
+  const params = new URLSearchParams();
+  if (options.limit) params.set('limit', options.limit.toString());
+  if (options.offset) params.set('offset', options.offset.toString());
+  if (options.type) params.set('type', options.type);
+
+  const queryString = params.toString();
+  const endpoint = `/contributions/approved${queryString ? `?${queryString}` : ''}`;
+
+  return request(endpoint);
 }
 
 /**
