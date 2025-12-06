@@ -1,10 +1,17 @@
 import { ArrowRight, BookOpen, Sparkles, Database, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface LandingPageProps {
   onLaunchApp: () => void;
 }
 
 export function LandingPage({ onLaunchApp }: LandingPageProps) {
+  const navigate = useNavigate();
+  
+  const handleLaunch = () => {
+    navigate('/app');
+  };
+  
   return (
     <div style={{ 
       minHeight: '100vh', 
@@ -44,7 +51,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           </span>
           
           <button 
-            onClick={onLaunchApp}
+            onClick={handleLaunch}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -131,7 +138,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             
             <div style={{ display: 'flex', gap: '16px' }}>
               <button 
-                onClick={onLaunchApp}
+                onClick={handleLaunch}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -741,7 +748,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             Free to use, no registration required.
           </p>
           <button 
-            onClick={onLaunchApp}
+            onClick={handleLaunch}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

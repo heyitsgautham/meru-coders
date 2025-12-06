@@ -1,4 +1,6 @@
-import { Home } from "lucide-react";
+import { Home, User, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import type { ViewType } from "../types/api";
 
 interface HeaderProps {
@@ -8,12 +10,23 @@ interface HeaderProps {
 }
 
 export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps) {
+  const { user, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  
   const navItems: { name: string; view: ViewType }[] = [
     { name: 'Home', view: 'home' },
     { name: 'Examples', view: 'examples' },
     { name: 'Datasets', view: 'datasets' },
     { name: 'About', view: 'about' }
   ];
+
+  const handleProfileClick = () => {
+    if (isAdmin) {
+      navigate('/admin');
+    } else {
+      navigate('/profile');
+    }
+  };
 
   return (
     <header className="bg-white sticky top-0 z-50 transition-all duration-300 shadow-sm" style={{ width: '100%' }}>
@@ -49,6 +62,25 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
                 {item.name}
               </button>
             ))}
+            
+            {/* Auth Navigation */}
+            {user ? (
+              <button
+                onClick={handleProfileClick}
+                className="nav-link flex items-center gap-1"
+              >
+                <User className="w-4 h-4" />
+                {isAdmin ? 'Admin' : 'Profile'}
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="nav-link flex items-center gap-1"
+              >
+                <LogIn className="w-4 h-4" />
+                Login / Signup
+              </Link>
+            )}
           </nav>
         </div>
       </div>
