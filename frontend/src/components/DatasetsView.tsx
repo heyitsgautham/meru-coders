@@ -673,6 +673,10 @@ export function DatasetsView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // User contributions state
+  const [userContributions, setUserContributions] = useState<any[]>([]);
+  const [contributionsLoading, setContributionsLoading] = useState(false);
+
   const [selectedDataset, setSelectedDataset] = useState<DatasetInfo | null>(null);
   const [datasetRows, setDatasetRows] = useState<DatasetRow[]>([]);
   const [datasetLoading, setDatasetLoading] = useState(false);
@@ -705,6 +709,24 @@ export function DatasetsView() {
       }
     }
     loadDatasets();
+  }, []);
+
+  // Load user contributions
+  useEffect(() => {
+    async function loadContributions() {
+      try {
+        setContributionsLoading(true);
+        const response = await api.getApprovedContributions({ limit: 100, type: 'verse' });
+        if (response.success && response.contributions) {
+          setUserContributions(response.contributions);
+        }
+      } catch (err) {
+        console.error('Failed to load contributions:', err);
+      } finally {
+        setContributionsLoading(false);
+      }
+    }
+    loadContributions();
   }, []);
 
   // Load dataset contents
@@ -911,15 +933,98 @@ export function DatasetsView() {
         {!selectedDataset ? (
           <>
             {filteredDatasets.length > 0 ? (
-              <div style={styles.cardsGrid}>
-                {filteredDatasets.map(dataset => (
-                  <DatasetCard
-                    key={dataset.id}
-                    dataset={dataset}
-                    onClick={() => handleSelectDataset(dataset)}
-                  />
-                ))}
-              </div>
+              <>
+                <div style={styles.cardsGrid}>
+                  {filteredDatasets.map(dataset => (
+                    <DatasetCard
+                      key={dataset.id}
+                      dataset={dataset}
+                      onClick={() => handleSelectDataset(dataset)}
+                    />
+                  ))}
+                </div>
+
+                {/* User Contributions Section */}
+                {userContributions.length > 0 && (
+                  <div style={{ marginTop: '64px' }}>
+                    <div style={{ ...styles.pageHeader, paddingTop: '0', paddingBottom: '24px' }}>
+                      <h2 style={{ ...styles.pageTitle, fontSize: '1.875rem' }}>
+                        🌟 User Contributions
+                      </h2>
+                      <p style={styles.pageSubtitle}>
+                        Community-contributed verses approved by our team
+                      </p>
+                    </div>
+
+                    <div style={styles.cardsGrid}>
+                      {userContributions.slice(0, 12).map((contrib, idx) => {
+                        const verse = contrib.data;
+                        return (
+                          <div
+                            key={contrib.id || idx}
+                            style={{
+                              ...styles.card,
+                              borderLeft: '4px solid #10b981',
+                            }}
+                          >
+                            <div style={styles.cardHeader}>
+                              <h3 style={styles.cardTitle}>
+                                {verse.meter || 'Unknown Meter'}
+                              </h3>
+                              <span
+                                style={{
+                                  ...styles.cardBadge,
+                                  background: '#d1fae5',
+                                  color: '#065f46',
+                                }}
+                              >
+                                Community
+                              </span>
+                            </div>
+                            <div style={styles.cardBody}>
+                              <p style={{
+                                fontSize: '1.125rem',
+                                color: '#78350f',
+                                lineHeight: 1.8,
+                                fontFamily: 'serif',
+                                marginBottom: '12px',
+                                whiteSpace: 'pre-wrap',
+                              }}>
+                                {verse.verse_text?.substring(0, 200)}
+                                {verse.verse_text?.length > 200 ? '...' : ''}
+                              </p>
+                              {verse.source && (
+                                <p style={{
+                                  fontSize: '0.875rem',
+                                  color: '#92400e',
+                                  marginTop: '8px',
+                                }}>
+                                  Source: {verse.source}
+                                </p>
+                              )}
+                            </div>
+                            <div style={styles.cardFooter}>
+                              <span style={styles.cardMeta}>
+                                Submitted by {contrib.submitted_by?.username || 'User'}
+                              </span>
+                              <span style={styles.cardMeta}>
+                                {new Date(contrib.reviewed_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {contributionsLoading && (
+                      <div style={{ textAlign: 'center', padding: '32px', color: '#92400e' }}>
+                        <Loader2 size={24} style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                        <p style={{ marginTop: '8px' }}>Loading contributions...</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             ) : (
               <div style={styles.emptyState}>
                 <div style={styles.emptyIcon}>
