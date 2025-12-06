@@ -10,11 +10,21 @@ import base64
 import csv
 import json
 import logging
+import asyncio
+import uuid
 from pathlib import Path
 from flask import request, jsonify, send_from_directory, current_app
 from werkzeug.utils import secure_filename
 
 from backend.config import settings
+
+# Import edge-tts for text-to-speech functionality
+try:
+    import edge_tts
+    EDGE_TTS_AVAILABLE = True
+except ImportError:
+    EDGE_TTS_AVAILABLE = False
+    logging.warning("edge-tts not available. TTS functionality will be disabled.")
 
 # Path to source datasets
 SOURCE_DIR = Path(__file__).parent.parent / 'source'
@@ -825,6 +835,120 @@ def register_routes(app):
             }), 400
         except Exception as e:
             logger.exception(f"Error getting dataset {dataset_id}: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+    
+    @app.route(f'{settings.API_PREFIX}/tts/generate', methods=['POST'])
+    def generate_tts():
+        """
+        Generate text-to-speech audio for Sanskrit/Hindi text.
+        
+        Request JSON:
+            {
+                "text": "Sanskrit text to convert to speech",
+                "voice": "male|female" (optional, defaults to "male")
+            }
+        
+        Returns:
+            JSON with audio file URL
+        """
+        if not EDGE_TTS_AVAILABLE:
+            return jsonify({
+                'success': False,
+                'error': 'Text-to-speech functionality is not available. Please install edge-tts.'
+            }), 503
+        
+        try:
+            data = request.get_json()
+            
+            if not data or 'text' not in data:
+                return jsonify({
+                    'success': False,
+                    'error': 'Missing required field: text'
+                }), 400
+            
+            text = data['text'].strip()
+            if not text:
+                return jsonify({
+                    'success': False,
+                    'error': 'Text cannot be empty'
+                }), 400
+            
+            # Voice selection - Hindi neural voices work well for Sanskrit
+            voice_type = data.get('voice', 'male')
+            voices = {
+                "female": "hi-IN-SwaraNeural",
+                "male": "hi-IN-MadhurNeural"
+            }
+            voice = voices.get(voice_type, voices['male'])
+            
+            # Generate unique filename
+            filename = f"tts_{uuid.uuid4().hex}.mp3"
+            output_path = settings.AUDIO_DIR / filename
+            
+            # Ensure audio directory exists
+            settings.AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+            
+            # Generate speech using edge-tts
+            async def generate_speech():
+                communicate = edge_tts.Communicate(text, voice)
+                await communicate.save(str(output_path))
+            
+            # Run async function
+            asyncio.run(generate_speech())
+            
+            logger.info(f"TTS audio generated: {filename}")
+            
+            return jsonify({
+                'success': True,
+                'audio_url': f'{settings.API_PREFIX}/tts/audio/{filename}',
+                'filename': filename
+            })
+            
+        except Exception as e:
+            logger.exception(f"Error in generate_tts: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+    
+    @app.route(f'{settings.API_PREFIX}/tts/audio/<filename>', methods=['GET'])
+    def serve_tts_audio(filename):
+        """
+        Serve generated TTS audio files.
+        
+        Args:
+            filename: Name of the audio file
+        
+        Returns:
+            Audio file with proper mimetype and CORS headers
+        """
+        try:
+            audio_path = settings.AUDIO_DIR / filename
+            
+            if not audio_path.exists():
+                return jsonify({
+                    'success': False,
+                    'error': 'Audio file not found'
+                }), 404
+            
+            response = send_from_directory(
+                settings.AUDIO_DIR,
+                filename,
+                mimetype='audio/mpeg'
+            )
+            
+            # Add explicit headers for better browser compatibility
+            response.headers['Accept-Ranges'] = 'bytes'
+            response.headers['Cache-Control'] = 'no-cache'
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            
+            return response
+            
+        except Exception as e:
+            logger.exception(f"Error serving TTS audio: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)

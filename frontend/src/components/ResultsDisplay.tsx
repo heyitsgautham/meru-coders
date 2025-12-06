@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Download, ChevronDown, ChevronUp, FileText, AlertCircle, X } from 'lucide-react';
 import { getDownloadURL } from '../services/api';
 import type { IdentifyResponse, LineResult, Summary } from '../types/api';
+import { TextToSpeech } from './TextToSpeech';
 
 interface ResultsDisplayProps {
   result: IdentifyResponse;
@@ -731,6 +732,34 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             </pre>
           </div>
         )}
+
+        {/* Text-to-Speech Component - Shows after identification */}
+        {(() => {
+          // Extract the original text for TTS
+          let textForTTS = '';
+
+          if (result.input?.text) {
+            textForTTS = result.input.text;
+          } else if (result.ocr_text) {
+            textForTTS = result.ocr_text;
+          } else if (result.file_text) {
+            textForTTS = result.file_text;
+          } else if (lineResults.length > 0) {
+            // Fallback: extract text from line results
+            textForTTS = lineResults.map(line => line.line).join('\n');
+          }
+
+          // Only show TTS if we have text
+          if (textForTTS.trim()) {
+            return (
+              <TextToSpeech
+                text={textForTTS}
+                label="🔊 Listen to Sanskrit Recitation"
+              />
+            );
+          }
+          return null;
+        })()}
 
         {/* IMPORTANT: Show Verse Meter (Primary Result) FIRST when available */}
         {/* This is crucial for Vedic meters (Gāyatrī, Triṣṭubh, etc.) */}

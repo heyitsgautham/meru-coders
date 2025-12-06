@@ -23,6 +23,9 @@ python-magic>=0.4.27
 # Background Job Scheduling
 APScheduler>=3.10.0
 
+# Text-to-Speech Support
+edge-tts>=6.1.0
+
 # Optional: Hybrid syllabization (ICU-based) for improved accuracy
 # Provides 50% better syllable counting vs sanskrit_text
 # Install with: pip install PyICU regex

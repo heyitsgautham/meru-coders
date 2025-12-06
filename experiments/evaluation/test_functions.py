@@ -10,15 +10,15 @@ import sys
 from indic_transliteration.sanscript import transliterate
 
 ###############################################################################
-# Chandojnanam Identify
+# Meru_Coders Identify
 
-CHANDOJNANAM_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
-sys.path.insert(0, CHANDOJNANAM_PATH)
+Meru_Coders_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
+sys.path.insert(0, Meru_Coders_PATH)
 import chanda
 
 
-def chandojnanam_identify(text):
-    MI = chanda.Chanda(f"{CHANDOJNANAM_PATH}/data")
+def Meru_Coders_identify(text):
+    MI = chanda.Chanda(f"{Meru_Coders_PATH}/data")
     lr, vr = MI.identify_from_text(text, verse=True, fuzzy=True)
     return lr, vr
 

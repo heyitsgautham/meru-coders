@@ -111,6 +111,7 @@ def cleanup_uploads(
     photos_dir: Path,
     texts_dir: Path,
     results_dir: Path,
+    audio_dir: Path,
     max_age_minutes: float,
     dry_run: bool = False
 ) -> dict:
@@ -121,6 +122,7 @@ def cleanup_uploads(
         photos_dir: Path to photos upload directory
         texts_dir: Path to texts upload directory
         results_dir: Path to results directory
+        audio_dir: Path to TTS audio files directory
         max_age_minutes: Maximum age of files in minutes
         dry_run: If True, only log what would be deleted
         
@@ -139,6 +141,7 @@ def cleanup_uploads(
         ("photos", photos_dir),
         ("texts", texts_dir),
         ("results", results_dir),
+        ("audio", audio_dir),  # Added TTS audio cleanup
     ]
     
     stats = {}
@@ -185,6 +188,7 @@ def scheduled_cleanup_job(app):
                 photos_dir=settings.PHOTOS_DIR,
                 texts_dir=settings.TEXTS_DIR,
                 results_dir=settings.RESULTS_DIR,
+                audio_dir=settings.AUDIO_DIR,  # Added TTS audio cleanup
                 max_age_minutes=settings.FILE_MAX_AGE_MINUTES,
                 dry_run=False
             )

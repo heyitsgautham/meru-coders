@@ -314,3 +314,48 @@ export function useExtractFile() {
 
   return { text, fileInfo, loading, error, errorCode, errorDetails, extract, reset };
 }
+
+// Hook for text-to-speech generation
+export function useTTS() {
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const generate = useCallback(async (text: string, voice: 'male' | 'female' = 'male') => {
+    setLoading(true);
+    setError(null);
+    setAudioUrl(null);
+
+    console.log('🔊 useTTS: Starting generation...', { text: text.substring(0, 30), voice });
+
+    try {
+      const response = await api.generateTTS(text, voice);
+      console.log('🔊 useTTS: API response:', response);
+
+      if (response.success && response.audio_url) {
+        console.log('🔊 useTTS: Setting audioUrl to:', response.audio_url);
+        setAudioUrl(response.audio_url);
+        return response;
+      } else {
+        const errorMsg = response.error || 'TTS generation failed';
+        console.error('🔊 useTTS: Generation failed:', errorMsg);
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'TTS generation failed';
+      console.error('🔊 useTTS: Exception:', message);
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setAudioUrl(null);
+    setError(null);
+  }, []);
+
+  return { audioUrl, loading, error, generate, reset };
+}

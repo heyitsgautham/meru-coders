@@ -41,8 +41,11 @@ const getAPIBaseURL = (): string => {
 };
 
 const API_BASE_URL = getAPIBaseURL();
+// Get base URL without /api suffix for constructing full URLs
+const API_SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
 
 console.log('API Base URL:', API_BASE_URL);
+console.log('API Server URL:', API_SERVER_URL);
 
 /**
  * Make an API request
@@ -114,7 +117,7 @@ export async function extractTextFromImage(file: File): Promise<OCRExtractRespon
 export async function extractTextFromFile(file: File): Promise<FileExtractResponse> {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   return request<FileExtractResponse>('/file/extract', {
     method: 'POST',
     body: formData,
@@ -230,9 +233,46 @@ export async function getDataset(
   if (options.limit) params.set('limit', options.limit.toString());
   if (options.offset) params.set('offset', options.offset.toString());
   if (options.chandas) params.set('chandas', options.chandas);
-  
+
   const queryString = params.toString();
   const endpoint = `/datasets/${datasetId}${queryString ? `?${queryString}` : ''}`;
-  
+
   return request<DatasetResponse>(endpoint);
+}
+
+/**
+ * Generate text-to-speech audio for Sanskrit text
+ */
+export async function generateTTS(
+  text: string,
+  voice: 'male' | 'female' = 'male'
+): Promise<{ success: boolean; audio_url?: string; filename?: string; error?: string }> {
+  const response = await request<{ success: boolean; audio_url?: string; filename?: string; error?: string }>('/tts/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text,
+      voice,
+    }),
+  });
+
+  // Convert relative audio URL to absolute URL
+  // Backend returns: /api/tts/audio/filename.mp3
+  // We need: http://localhost:5000/api/tts/audio/filename.mp3
+  if (response.success && response.audio_url) {
+    // Use API_SERVER_URL (without /api) since backend URL already includes /api
+    response.audio_url = `${API_SERVER_URL}${response.audio_url}`;
+    console.log('TTS Audio URL converted to:', response.audio_url);
+  }
+
+  return response;
+}
+
+/**
+ * Get TTS audio URL
+ */
+export function getTTSAudioURL(filename: string): string {
+  return `${API_BASE_URL}/tts/audio/${filename}`;
 }

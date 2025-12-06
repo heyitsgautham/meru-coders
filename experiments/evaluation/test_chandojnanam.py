@@ -5,15 +5,15 @@
 import sys
 
 ###############################################################################
-# Chandojnanam Evaluation
+# Meru_Coders Evaluation
 
-CHANDOJNANAM_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
-sys.path.insert(0, CHANDOJNANAM_PATH)
+Meru_Coders_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
+sys.path.insert(0, Meru_Coders_PATH)
 import chanda
 
 
-def chandojnanam_identify(text):
-    MI = chanda.Chanda(f"{CHANDOJNANAM_PATH}/data")
+def Meru_Coders_identify(text):
+    MI = chanda.Chanda(f"{Meru_Coders_PATH}/data")
     lr, vr = MI.identify_from_text(text, verse=True, fuzzy=True)
     return lr, vr
 
@@ -33,15 +33,15 @@ for corpus in corpora:
     for source in sources:
         answers_file = f"{corpus}/answers.txt"
         source_file = f"{corpus}/{corpus}.wikisource.{source}clean.txt"
-        output_file = f"{corpus}/chandojnanam.{source}meters.txt"
-        output_result_file = f"{corpus}/chandojnanam.{source}evaluation.txt"
-        output_truth_file = f"{corpus}/chandojnanam.{source}actual.txt"
+        output_file = f"{corpus}/Meru_Coders.{source}meters.txt"
+        output_result_file = f"{corpus}/Meru_Coders.{source}evaluation.txt"
+        output_truth_file = f"{corpus}/Meru_Coders.{source}actual.txt"
 
         # answers_file = f"{corpus}/answers.{source}.txt"
         # source_file = f"{corpus}/{corpus}.{source}.txt"
-        # output_file = f"{corpus}/chandojnanam.{source}.meters.txt"
-        # output_result_file = f"{corpus}/chandojnanam.{source}.evaluation.txt"
-        # output_truth_file = f"{corpus}/chandojnanam.{source}.actual.txt"
+        # output_file = f"{corpus}/Meru_Coders.{source}.meters.txt"
+        # output_result_file = f"{corpus}/Meru_Coders.{source}.evaluation.txt"
+        # output_truth_file = f"{corpus}/Meru_Coders.{source}.actual.txt"
 
         with open(answers_file) as f:
             answers = [
@@ -51,7 +51,7 @@ for corpus in corpora:
         with open(source_file) as f:
             content = f.read()
 
-        lr, vr = chandojnanam_identify(content)
+        lr, vr = Meru_Coders_identify(content)
 
         with open(output_file, mode="w") as f:
             f.write("\n".join([
