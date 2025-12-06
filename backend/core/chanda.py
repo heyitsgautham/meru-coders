@@ -615,21 +615,26 @@ class Chanda:
         
         # *** ENGLISH TEXT DETECTION ***
         # Check if input contains common English words
-        if devanagari_chars == 0 and other_indic_chars == 0 and iast_chars == 0:
-            # Pure ASCII input - check for English words
+        # CRITICAL: Reject English text that is NOT IAST transliteration
+        # IAST has diacritics (ā, ī, ū, ṛ, ṝ, ḷ, ḹ, ṃ, ḥ, ñ, ṅ, ṭ, ḍ, ṇ, ś, ṣ)
+        # Plain English has NO diacritics - this is the key distinction
+        if devanagari_chars == 0 and other_indic_chars == 0:
+            # Pure ASCII/Latin input - check if it's English vs IAST
             text_lower = text.lower()
             words = re.findall(r'[a-z]+', text_lower)
             
-            if words:
+            # If NO IAST diacritics present, this is likely English, not Sanskrit
+            if iast_chars == 0 and words:
                 english_word_count = sum(1 for word in words if word in COMMON_ENGLISH_WORDS)
                 total_words = len(words)
                 
-                # If more than 30% of words are common English words, reject
-                if total_words > 0 and english_word_count / total_words > 0.3:
-                    return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text, not Sanskrit)"
+                # Stricter thresholds when NO diacritics present
+                # If even ONE common English word exists, reject (since no diacritics = not IAST)
+                if english_word_count >= 1:
+                    return False, "अंग्रेजी पाठ प्रतीत होता है - संस्कृत के लिए IAST लिप्यन्तरण में diakritik चिह्न आवश्यक हैं (Appears to be English text - Sanskrit IAST requires diacritical marks)"
                 
-                # If there are 2 or more English words, reject
-                if english_word_count >= 2:
+                # If more than 20% of words are common English words, reject
+                if total_words > 0 and english_word_count / total_words > 0.2:
                     return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text, not Sanskrit)"
                 
                 # Check for repeated words (like "hello hello hello")
@@ -637,10 +642,20 @@ class Chanda:
                 for word in words:
                     word_counts[word] = word_counts.get(word, 0) + 1
                 
-                # If any word repeats 3+ times, likely not Sanskrit verse
+                # If any word repeats 2+ times and it's an English word, reject
                 for word, count in word_counts.items():
-                    if count >= 3 and word in COMMON_ENGLISH_WORDS:
+                    if count >= 2 and word in COMMON_ENGLISH_WORDS:
                         return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text with repeated words)"
+            
+            # If IAST diacritics ARE present, be more lenient
+            # Some Sanskrit words transliterated might coincidentally match English words
+            elif iast_chars > 0 and words:
+                english_word_count = sum(1 for word in words if word in COMMON_ENGLISH_WORDS)
+                total_words = len(words)
+                
+                # With diacritics present, only reject if majority are English words
+                if total_words > 0 and english_word_count / total_words > 0.6:
+                    return False, "अंग्रेजी पाठ प्रतीत होता है (Appears to be English text, not Sanskrit)"
         
         # Calculate ratios
         devanagari_ratio = devanagari_chars / len(text)
