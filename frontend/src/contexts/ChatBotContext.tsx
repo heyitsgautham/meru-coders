@@ -142,12 +142,12 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
         // Only show greeting if no user messages have been sent yet
         setMessages(prev => {
             const hasUserMessages = prev.some(msg => msg.role === 'user');
-            
+
             if (hasUserMessages) {
                 // Middle of conversation - don't show any greeting
                 return prev;
             }
-            
+
             // First message - replace any existing greeting with new persona's greeting
             const greetingMessage: ChatMessage = {
                 role: 'assistant',
@@ -157,7 +157,7 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
                 timestamp: new Date().toISOString(),
                 type: 'system'
             };
-            
+
             // Remove any existing system messages and add the new greeting
             const filteredMessages = prev.filter(msg => msg.type !== 'system');
             return [...filteredMessages, greetingMessage];

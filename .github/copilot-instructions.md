@@ -72,9 +72,9 @@ The patterns of laghu and guru syllables determine the type of chandas (meter). 
 - **test_all_fixes.py**: 8/8 PASS (100%)
 - **test_authentic_meters.py**: 6/6 PASS (100%)
 - **test_csv_accuracy.py** (147 real verses from dataset):
-  - 📊 **First-Line Accuracy**: 144/147 (98.0%)
-  - 📋 **All-Lines Accuracy**: 133/147 (90.5%) | Individual lines: 483/499 (96.8%)
-  - 🕉️ **Verse-Level Accuracy**: 140/147 (95.2%)
+  - 📊 **First-Line Accuracy**: 146/147 (99.3%)
+  - 📋 **All-Lines Accuracy**: 134/147 (91.2%) | Individual lines: 484/499 (97.2%)
+  - 🕉️ **Verse-Level Accuracy**: 139/147 (94.6%)
 
 ### Achievement Summary
 **All major chandas types correctly identified:**
@@ -254,14 +254,6 @@ PYTHONPATH=. python tests/test_all_fixes.py
 # Comprehensive CSV accuracy test (REQUIRED - run with --all)
 python tests/test_csv_accuracy.py --all
 ```
-
-**Required Accuracy Thresholds (Regression Baseline)**:
-| Metric | Threshold | Current |
-|--------|-----------|---------|
-| First-Line Accuracy | ≥ 95% | 98.0% |
-| All-Lines Accuracy | ≥ 85% | 90.5% |
-| Verse-Level Accuracy | ≥ 90% | 95.2% |
-| Individual Line Accuracy | ≥ 95% | 96.8% |
 
 ⚠️ **CRITICAL**: Any PR that drops accuracy below these thresholds must be rejected or fixed.
 

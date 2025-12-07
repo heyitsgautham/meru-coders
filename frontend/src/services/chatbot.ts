@@ -5,8 +5,8 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const CHATBOT_API = `${API_BASE_URL}/api/chatbot`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const CHATBOT_API = `${API_BASE_URL}/chatbot`;
 
 export interface ChatMessage {
     role: 'user' | 'assistant';

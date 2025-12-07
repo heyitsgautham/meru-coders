@@ -31,8 +31,56 @@ except ImportError:
     icu = None
     regex = None
 
-# size of LRU cache
+# size of LRU cache (currently unused - see mark_lg/transform methods)
 MAX_CACHE = 1024
+
+###############################################################################
+# CONFIGURATION CONSTANTS
+###############################################################################
+
+# Confidence thresholds for meter matching (0.0 - 10.0 scale)
+CONFIDENCE_EXACT_PATTERN = 10.0      # Exact L-G pattern match
+CONFIDENCE_EXACT_REGEX = 9.0         # Regex pattern match with wildcards
+CONFIDENCE_VEDIC_PRIMARY = 11.0      # Vedic meter by syllable count (no classical match)
+CONFIDENCE_VEDIC_SECONDARY = 9.5     # Vedic meter as fallback (classical match exists)
+CONFIDENCE_PADA_EXACT = 9.0          # Exact pada-level pattern match (sama)
+CONFIDENCE_PADA_SIMILAR = 7.5        # Similar pada-level pattern (within tolerance)
+CONFIDENCE_PADA_VEDIC_SAMA = 8.0     # Vedic meter with sama pada structure
+CONFIDENCE_PADA_VEDIC_SIMILAR = 6.5  # Vedic meter with similar pada structure
+CONFIDENCE_VEDIC_SYLLABLE = 6.0      # Vedic meter by syllable count alone
+CONFIDENCE_SYLLABLE_COUNT = 4.0      # Fallback match by syllable count only
+CONFIDENCE_FUZZY_MIN = 1.0           # Minimum fuzzy match confidence
+CONFIDENCE_FUZZY_MAX = 4.0           # Maximum fuzzy match confidence
+
+# Prose/Poetry detection thresholds
+MIN_SYLLABLES_FOR_PADA = 6          # Minimum syllables for a valid pada
+MIN_SYLLABLES_FOR_VERSE = 16        # Minimum for a half-shloka (2 padas of 8)
+CONFIDENCE_THRESHOLD_HIGH = 9.0     # High confidence = exact pattern match
+CONFIDENCE_THRESHOLD_MEDIUM = 7.0   # Medium confidence = pada/structural match
+
+# Pattern validation thresholds
+PATTERN_MATCH_TOLERANCE = 90        # Minimum match percentage (90%) for valid pattern
+PATTERN_MISMATCH_MAX = 2            # Maximum L-G differences for pada matching
+SYLLABLE_TOLERANCE_VEDIC = 6        # ±6 syllables for Vedic meter detection
+SYLLABLE_TOLERANCE_PADA = 2         # ±2 syllables for pada-level matching
+
+# Display and result filtering
+CONFIDENCE_DISPLAY_PRIMARY = 0.8    # Show as primary if ≥80% of max confidence
+CONFIDENCE_DISPLAY_ALTERNATE = 7.0  # Show as alternate if ≥7.0 confidence
+MAX_FUZZY_RESULTS = 10              # Maximum fuzzy matches to return
+
+# Input validation (for English word detection)
+MIN_LENGTH_ASCII = 3                # Minimum length for romanized Sanskrit
+MIN_LENGTH_DEVANAGARI = 2           # Minimum length for Devanagari script
+VOWEL_RATIO_MIN = 0.15              # Minimum vowel ratio for valid Sanskrit
+VOWEL_RATIO_NORMAL = 0.25           # Normal vowel ratio for Sanskrit (0.3-0.5)
+ENGLISH_WORD_THRESHOLD = 0.2        # Max 20% English words allowed (no diacritics)
+ENGLISH_WORD_THRESHOLD_IAST = 0.6   # Max 60% English words allowed (with IAST diacritics)
+
+# Vedic meter detection
+VEDIC_SYLLABLE_TOLERANCE_MIN = 2    # Minimum tolerance for Vedic syllable matching
+VEDIC_SYLLABLE_TOLERANCE_MAX = 6    # Maximum tolerance for Vedic syllable matching
+PANKTI_SIGNAL_THRESHOLD = 3.0       # Minimum score for Paṅkti meter detection
 
 ###############################################################################
 
@@ -290,13 +338,15 @@ class Chanda:
 
     ###########################################################################
 
-    @functools.lru_cache(maxsize=MAX_CACHE)
     def mark_lg(self, text):
         """
         Mark Laghu-Guru using selected syllabization method
 
         @return:
             Returns a flattened list of Laghu-Guru marks.
+        
+        Note: LRU cache removed - returns unhashable types (nested lists).
+        Consider implementing custom caching if performance is critical.
         """
         # Preprocess text for Vedic markers
         if self.detect_vedic_markers(text):
@@ -957,11 +1007,27 @@ class Chanda:
             english_name = get_english_name(meter_name)
             return meter_name, self.VEDIC_METERS.get(english_name)
         
-        # Allow ±1 syllable tolerance for edge cases (punctuation, sandhi)
+        # Allow ±2 syllable tolerance for Vedic texts with accent marks
+        # Vedic accent marks (Udātta, Anudātta) can cause syllable count variations
+        # Find the CLOSEST match within ±2 tolerance
+        # When distances are equal, prefer LARGER meter (accent removal tends to reduce count)
+        best_match = None
+        best_difference = float('inf')
+        best_expected_count = 0
+        
         for expected_count, meter_name in vedic_mapping.items():
-            if abs(syllable_count - expected_count) == 1:
-                english_name = get_english_name(meter_name)
-                return meter_name, self.VEDIC_METERS.get(english_name)
+            difference = abs(syllable_count - expected_count)
+            if difference <= 2:
+                # Prefer match with smaller difference, or larger expected count if equal
+                if (difference < best_difference or 
+                    (difference == best_difference and expected_count > best_expected_count)):
+                    best_difference = difference
+                    best_match = meter_name
+                    best_expected_count = expected_count
+        
+        if best_match:
+            english_name = get_english_name(best_match)
+            return best_match, self.VEDIC_METERS.get(english_name)
         
         # Try pada-level without pattern (less confident)
         if syllable_count in pada_mapping:
@@ -1177,11 +1243,7 @@ class Chanda:
                 - reason: Explanation for the classification
                 - confidence: 0.0-1.0 confidence in the classification
         """
-        # Thresholds for prose detection
-        MIN_SYLLABLES_FOR_PADA = 6  # Minimum syllables for a valid pada
-        MIN_SYLLABLES_FOR_VERSE = 16  # Minimum for a half-shloka (2 padas of 8)
-        HIGH_CONFIDENCE_THRESHOLD = 9.0  # Exact pattern match
-        MEDIUM_CONFIDENCE_THRESHOLD = 7.0  # Pada-level match
+        # Use configured thresholds (defined at module level)
         
         # Criterion 1: Too few syllables - not enough for any valid meter
         if syllable_count < MIN_SYLLABLES_FOR_PADA:
@@ -1199,7 +1261,7 @@ class Chanda:
             
             # HIGH CONFIDENCE: Exact pattern match (10.0) or exact regex (9.0)
             # These are DEFINITE poetry - the L-G pattern matches a known meter
-            if max_confidence >= HIGH_CONFIDENCE_THRESHOLD:
+            if max_confidence >= CONFIDENCE_THRESHOLD_HIGH:
                 if best_match_type in ['exact_pattern', 'exact_regex', 'pada_exact_sama']:
                     return True, "उच्च विश्वास के साथ छन्द मिला (High confidence - exact pattern match)", 0.95
                 elif best_match_type in ['vedic_syllable_priority', 'vedic_syllable_secondary']:
@@ -1210,7 +1272,7 @@ class Chanda:
                         return True, "संभावित वैदिक छन्द (Possible Vedic meter)", 0.7
             
             # MEDIUM CONFIDENCE: Pada-level structural matches
-            if max_confidence >= MEDIUM_CONFIDENCE_THRESHOLD:
+            if max_confidence >= CONFIDENCE_THRESHOLD_MEDIUM:
                 if best_match_type in ['pada_similar', 'pada_vedic_sama', 'pada_vedic_similar']:
                     return True, "पाद संरचना से छन्द मिला (Meter matched by pada structure)", 0.8
                 else:
@@ -1218,7 +1280,7 @@ class Chanda:
             
             # LOW CONFIDENCE: Only syllable-count matches
             # These are UNCERTAIN - prose can accidentally match syllable counts
-            if max_confidence >= 5.0 and max_confidence < MEDIUM_CONFIDENCE_THRESHOLD:
+            if max_confidence >= 5.0 and max_confidence < CONFIDENCE_THRESHOLD_MEDIUM:
                 # Be skeptical of syllable-count-only matches, especially for short texts
                 if syllable_count < MIN_SYLLABLES_FOR_VERSE:
                     return False, f"टिप्पणी: केवल अक्षर संख्या से मेल ({syllable_count}) - छोटा पाठ, सम्भवतः गद्य (Only syllable count match - short text, likely prose)", 0.6
@@ -1492,7 +1554,7 @@ class Chanda:
         match_pct = (match_count / max_len) * 100
         
         return {
-            'is_valid': match_pct >= 90,  # Allow 10% tolerance
+            'is_valid': match_pct >= PATTERN_MATCH_TOLERANCE,  # Allow 10% tolerance
             'expected_pattern': expected,
             'actual_pattern': actual_lg,
             'match_percentage': round(match_pct, 1),
@@ -1507,14 +1569,33 @@ class Chanda:
         not just syllable count. This prevents false positives like matching
         any 16-syllable pattern to anuṣṭubh.
         
-        Matching levels (in priority order):
-        1. Exact match (confidence: 10.0)
-        2. Pada-level match with pattern verification (confidence: 8.0)
-        3. Syllable count matching (confidence: 5.0-7.0) - DISABLED for pada matches
-        4. Fuzzy match with Levenshtein distance (confidence: 1.0-4.0)
+        CONFIDENCE SCORING SYSTEM (0.0 - 10.0 scale):
+        ================================================
+        Level 1: Exact Matches (Highest Priority)
+        - 10.0: Exact L-G pattern match (CONFIDENCE_EXACT_PATTERN)
+        - 9.0:  Regex pattern match with wildcards (CONFIDENCE_EXACT_REGEX)
+        
+        Level 2: Structural Matches (High Priority)
+        - 9.0:  Exact pada-level sama pattern (CONFIDENCE_PADA_EXACT)
+        - 8.0:  Vedic meter with sama pada structure (CONFIDENCE_PADA_VEDIC_SAMA)
+        - 7.5:  Similar pada-level pattern (CONFIDENCE_PADA_SIMILAR)
+        - 6.5:  Vedic meter with similar pada structure (CONFIDENCE_PADA_VEDIC_SIMILAR)
+        
+        Level 3: Syllable Count Matches (Medium Priority)
+        - 6.0:  Vedic meter by syllable count (CONFIDENCE_VEDIC_SYLLABLE)
+        - 4.0:  Generic syllable count match (CONFIDENCE_SYLLABLE_COUNT)
+        
+        Level 4: Fuzzy Matches (Low Priority - optional)
+        - 1.0-4.0: Levenshtein distance-based match (CONFIDENCE_FUZZY_MIN to CONFIDENCE_FUZZY_MAX)
+        
+        Args:
+            lg_pattern (str): L-G pattern to match
+            fuzzy (bool): Enable fuzzy matching (default: False)
+            max_fuzzy (int): Maximum fuzzy results to return (default: 10)
         
         Returns:
             List of tuples: [(meter_names, confidence_score, match_type), ...]
+            Sorted by confidence (descending)
         """
         results = []
         syllable_count = len(lg_pattern)
@@ -1542,7 +1623,7 @@ class Chanda:
                     # Check if padas are similar (allow 1-2 differences per pada)
                     # This is more lenient than exact sama but still structural
                     similar_padas = all(
-                        Lev.distance(pada, first_pada) <= 2 
+                        Lev.distance(pada, first_pada) <= PATTERN_MISMATCH_MAX 
                         for pada in padas
                     )
                     
@@ -1903,13 +1984,16 @@ class Chanda:
 
     ###########################################################################
 
-    @functools.lru_cache(maxsize=MAX_CACHE)
     def transform(
         self, source_line, signature,
         replace_cost=1, delete_cost=1, insert_cost=1, max_diff=3
     ):
         """
         Find possible transformations of source string to fit the signature
+        
+        Note: LRU cache removed - returns unhashable types (nested lists).
+        This method is called during fuzzy matching which is opt-in, 
+        so performance impact is acceptable.
         """
         syllables, lg_marks = self.mark_lg(source_line)
         # Note: Can avoid this conversion to save time, if needed
@@ -2194,7 +2278,7 @@ class Chanda:
         # Based on empirical analysis: Paṅkti has exclusive endings/refrains, Pragātha doesn't
         if 34 <= total_syllables <= 46:
             pankti_score = self._detect_pankti_signals(text, total_syllables)
-            if pankti_score >= 3.0:
+            if pankti_score >= PANKTI_SIGNAL_THRESHOLD:
                 # Strong Paṅkti signal - use Paṅkti or Mahāpaṅkti
                 if total_syllables >= 43:
                     result['meter'] = 'महापङ्क्ति'

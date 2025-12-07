@@ -875,8 +875,8 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
                     key={mode}
                     onClick={() => setIdentificationMode(mode)}
                     className={`px-8 py-3.5 rounded-lg text-lg font-semibold transition-all duration-200 ${identificationMode === mode
-                        ? "bg-white text-[var(--color-primary-dark)] shadow-md border-2 border-[var(--color-primary-light)]"
-                        : "text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] hover:bg-white/50"
+                      ? "bg-white text-[var(--color-primary-dark)] shadow-md border-2 border-[var(--color-primary-light)]"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] hover:bg-white/50"
                       }`}
                   >
                     {MODE_INFO[mode].label}
