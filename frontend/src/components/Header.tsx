@@ -1,4 +1,4 @@
-import { Home, User, LogIn } from "lucide-react";
+import { Home, User, LogIn, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import type { ViewType } from "../types/api";
@@ -26,6 +26,10 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
     } else {
       navigate('/profile');
     }
+  };
+
+  const handleCommunityClick = () => {
+    navigate('/community');
   };
 
   return (
@@ -62,6 +66,15 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
                 {item.name}
               </button>
             ))}
+            
+            {/* Community Link */}
+            <button
+              onClick={handleCommunityClick}
+              className="nav-link flex items-center gap-1"
+            >
+              <Users className="w-4 h-4" />
+              Community
+            </button>
             
             {/* Auth Navigation */}
             {user ? (
