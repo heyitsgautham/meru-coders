@@ -64,9 +64,11 @@ def register_routes(app):
     # Register auth and contribution blueprints
     from backend.auth.routes import auth_bp
     from backend.contributions.routes import contribution_bp
+    from backend.api.community import community_bp
     
     app.register_blueprint(auth_bp, url_prefix=f'{settings.API_PREFIX}/auth')
     app.register_blueprint(contribution_bp, url_prefix=f'{settings.API_PREFIX}')
+    app.register_blueprint(community_bp, url_prefix=f'{settings.API_PREFIX}/community')
     
     @app.route(f'{settings.API_PREFIX}/identify/text', methods=['POST'])
     def identify_text():

@@ -11,6 +11,7 @@ import Profile from "./components/Profile";
 import ContributionForm from "./components/ContributionForm";
 import AdminPanel from "./components/AdminPanel";
 import FloatingChatbot from "./components/chat/FloatingChatbot";
+import { CommunityPage } from "./components/community";
 
 export default function App() {
   return (
@@ -33,6 +34,9 @@ export default function App() {
             {/* User Routes */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/contribute" element={<ContributionForm />} />
+            
+            {/* Community */}
+            <Route path="/community" element={<CommunityPage />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminPanel />} />
