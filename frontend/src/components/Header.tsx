@@ -70,7 +70,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
             {/* Community Link */}
             <button
               onClick={handleCommunityClick}
-              className="nav-link flex items-center gap-1"
+              className={`nav-link flex items-center gap-1 ${currentView === 'community' ? 'active' : ''}`}
             >
               <Users className="w-4 h-4" />
               Community
