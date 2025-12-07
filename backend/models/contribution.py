@@ -245,7 +245,7 @@ class ContributionModel:
     
     def get_user_contributions(self, user_id, limit=50, offset=0):
         """
-        Get all contributions by a specific user
+        Get all contributions by a specific user (pending, approved, and rejected)
         
         Args:
             user_id: User ID
@@ -253,7 +253,7 @@ class ContributionModel:
             offset: Pagination offset
         
         Returns:
-            List of user's contributions
+            List of user's contributions from all statuses
         """
         try:
             if not self.supabase:
@@ -262,17 +262,43 @@ class ContributionModel:
                     'error': 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.',
                     'contributions': []
                 }
-            result = self.supabase.table('pending_contributions')\
+            
+            # Get all pending contributions (including rejected ones)
+            pending_result = self.supabase.table('pending_contributions')\
                 .select('*')\
                 .eq('submitted_by', user_id)\
                 .order('submitted_at', desc=True)\
-                .range(offset, offset + limit - 1)\
                 .execute()
+            
+            # Get all approved contributions
+            approved_result = self.supabase.table('approved_contributions')\
+                .select('*')\
+                .eq('submitted_by', user_id)\
+                .order('reviewed_at', desc=True)\
+                .execute()
+            
+            # Combine and sort by most recent
+            all_contributions = []
+            
+            if pending_result.data:
+                all_contributions.extend(pending_result.data)
+            
+            if approved_result.data:
+                all_contributions.extend(approved_result.data)
+            
+            # Sort by created/reviewed date (most recent first)
+            all_contributions.sort(
+                key=lambda x: x.get('reviewed_at') or x.get('submitted_at') or '',
+                reverse=True
+            )
+            
+            # Apply pagination
+            paginated = all_contributions[offset:offset + limit]
             
             return {
                 'success': True,
-                'contributions': result.data or [],
-                'count': len(result.data) if result.data else 0
+                'contributions': paginated,
+                'count': len(all_contributions)
             }
             
         except Exception as e:

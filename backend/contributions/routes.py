@@ -12,11 +12,21 @@ contribution_bp = contributions_bp
 contribution_model = ContributionModel()
 
 
+def _user_id(user):
+    """Return user id from dict or Supabase user object."""
+    if isinstance(user, dict):
+        return user.get('id') or user.get('sub')
+    # Handle Supabase User object
+    return getattr(user, 'id', None)
+
+
 @contributions_bp.route('/submit', methods=['POST'])
 @require_auth
 def submit_contribution(current_user):
     """Submit a new contribution (verse or meter definition)"""
     try:
+        from flask import current_app
+        
         data = request.get_json()
         
         # Validate required fields
@@ -36,9 +46,20 @@ def submit_contribution(current_user):
                 'error': 'Invalid contribution_type. Must be "verse" or "meter_definition"'
             }), 400
         
+        # Extract user ID safely
+        user_id = _user_id(current_user)
+        current_app.logger.info(f"Submit contribution: user_type={type(current_user).__name__}, user_id={user_id}, contribution_type={contribution_type}")
+        
+        if not user_id:
+            current_app.logger.error(f"Unable to extract user ID from: {current_user}")
+            return jsonify({
+                'success': False,
+                'error': 'Unable to identify user'
+            }), 401
+        
         # Create contribution via Supabase
         result = contribution_model.submit_contribution(
-            user_id=current_user['id'],
+            user_id=user_id,
             contribution_type=contribution_type,
             data=contribution_data
         )
@@ -47,6 +68,8 @@ def submit_contribution(current_user):
         return jsonify(result), status_code
         
     except Exception as e:
+        from flask import current_app
+        current_app.logger.error(f"Submit contribution error: {e}", exc_info=True)
         return jsonify({
             'success': False,
             'error': str(e)
@@ -58,11 +81,27 @@ def submit_contribution(current_user):
 def get_my_contributions(current_user):
     """Get all contributions by the current user"""
     try:
-        result = contribution_model.get_user_contributions(current_user['id'])
+        from flask import current_app
+        
+        user_id = _user_id(current_user)
+        current_app.logger.info(f"Get my contributions: user_type={type(current_user).__name__}, user_id={user_id}")
+        
+        if not user_id:
+            current_app.logger.error(f"Unable to extract user ID from: {current_user}")
+            return jsonify({
+                'success': False,
+                'error': 'Unable to identify user'
+            }), 401
+        
+        result = contribution_model.get_user_contributions(user_id)
+        current_app.logger.info(f"User contributions result: success={result.get('success')}, count={result.get('count')}")
+        
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
         
     except Exception as e:
+        from flask import current_app
+        current_app.logger.error(f"Get my contributions error: {e}", exc_info=True)
         return jsonify({
             'success': False,
             'error': str(e)
@@ -97,7 +136,7 @@ def approve_contribution(current_user, contribution_id):
         
         result = contribution_model.approve_contribution(
             contribution_id=contribution_id,
-            admin_id=current_user['id'],
+            admin_id=_user_id(current_user),
             review_notes=review_notes
         )
 
@@ -122,7 +161,7 @@ def reject_contribution(current_user, contribution_id):
         
         result = contribution_model.reject_contribution(
             contribution_id=contribution_id,
-            admin_id=current_user['id'],
+            admin_id=_user_id(current_user),
             review_notes=review_notes
         )
 
@@ -157,3 +196,9 @@ def get_approved_contributions():
             'success': False,
             'error': str(e)
         }), 500
+
+
+# Aliases to support `/api/contributions/*` paths used by the frontend
+@contributions_bp.route('/contributions/approved', methods=['GET'])
+def get_approved_contributions_alias():
+    return get_approved_contributions()

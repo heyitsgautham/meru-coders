@@ -676,6 +676,7 @@ export function DatasetsView() {
   // User contributions state
   const [userContributions, setUserContributions] = useState<any[]>([]);
   const [contributionsLoading, setContributionsLoading] = useState(false);
+  const [showContributions, setShowContributions] = useState(false);
 
   const [selectedDataset, setSelectedDataset] = useState<DatasetInfo | null>(null);
   const [datasetRows, setDatasetRows] = useState<DatasetRow[]>([]);
@@ -759,6 +760,7 @@ export function DatasetsView() {
   // Handlers
   const handleSelectDataset = useCallback((dataset: DatasetInfo) => {
     setSelectedDataset(dataset);
+    setShowContributions(false);
     setChandasFilter('');
     setChandasSearch('');
     setCurrentPage(1);
@@ -766,8 +768,17 @@ export function DatasetsView() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [loadDatasetContents]);
 
+  const handleSelectContributions = useCallback(() => {
+    setShowContributions(true);
+    setSelectedDataset(null);
+    setCurrentPage(1);
+    setTotalCount(userContributions.length);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [userContributions.length]);
+
   const handleCloseDataset = useCallback(() => {
     setSelectedDataset(null);
+    setShowContributions(false);
     setDatasetRows([]);
     setChandasFilter('');
     setChandasSearch('');
@@ -930,7 +941,7 @@ export function DatasetsView() {
         </div>
 
         {/* Dataset Cards or Detail View */}
-        {!selectedDataset ? (
+        {!selectedDataset && !showContributions ? (
           <>
             {filteredDatasets.length > 0 ? (
               <>
@@ -942,86 +953,44 @@ export function DatasetsView() {
                       onClick={() => handleSelectDataset(dataset)}
                     />
                   ))}
+                  
+                  {/* Community Contributions Card */}
+                  {userContributions.length > 0 && !sourceFilter && (
+                    <div
+                      onClick={handleSelectContributions}
+                      style={{
+                        ...styles.card,
+                        borderLeft: '4px solid #10b981',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => {
+                        Object.assign(e.currentTarget.style, styles.cardHover);
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.borderColor = '#10b981';
+                      }}
+                    >
+                      <h3 style={styles.cardTitle}>🌟 Community Contributions</h3>
+                      <p style={styles.cardDescription}>
+                        User-contributed verses that have been reviewed and approved by our team. 
+                        Browse contributions from community members.
+                      </p>
+                      <div style={styles.cardMeta}>
+                        <span style={styles.cardSource}>Community</span>
+                        <span style={styles.cardCount}>
+                          {userContributions.length} {userContributions.length === 1 ? 'verse' : 'verses'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* User Contributions Section */}
-                {userContributions.length > 0 && (
-                  <div style={{ marginTop: '64px' }}>
-                    <div style={{ ...styles.pageHeader, paddingTop: '0', paddingBottom: '24px' }}>
-                      <h2 style={{ ...styles.pageTitle, fontSize: '1.875rem' }}>
-                        🌟 User Contributions
-                      </h2>
-                      <p style={styles.pageSubtitle}>
-                        Community-contributed verses approved by our team
-                      </p>
-                    </div>
-
-                    <div style={styles.cardsGrid}>
-                      {userContributions.slice(0, 12).map((contrib, idx) => {
-                        const verse = contrib.data;
-                        return (
-                          <div
-                            key={contrib.id || idx}
-                            style={{
-                              ...styles.card,
-                              borderLeft: '4px solid #10b981',
-                            }}
-                          >
-                            <div style={styles.cardHeader}>
-                              <h3 style={styles.cardTitle}>
-                                {verse.meter || 'Unknown Meter'}
-                              </h3>
-                              <span
-                                style={{
-                                  ...styles.cardBadge,
-                                  background: '#d1fae5',
-                                  color: '#065f46',
-                                }}
-                              >
-                                Community
-                              </span>
-                            </div>
-                            <div style={styles.cardBody}>
-                              <p style={{
-                                fontSize: '1.125rem',
-                                color: '#78350f',
-                                lineHeight: 1.8,
-                                fontFamily: 'serif',
-                                marginBottom: '12px',
-                                whiteSpace: 'pre-wrap',
-                              }}>
-                                {verse.verse_text?.substring(0, 200)}
-                                {verse.verse_text?.length > 200 ? '...' : ''}
-                              </p>
-                              {verse.source && (
-                                <p style={{
-                                  fontSize: '0.875rem',
-                                  color: '#92400e',
-                                  marginTop: '8px',
-                                }}>
-                                  Source: {verse.source}
-                                </p>
-                              )}
-                            </div>
-                            <div style={styles.cardFooter}>
-                              <span style={styles.cardMeta}>
-                                Submitted by {contrib.submitted_by?.username || 'User'}
-                              </span>
-                              <span style={styles.cardMeta}>
-                                {new Date(contrib.reviewed_at).toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {contributionsLoading && (
-                      <div style={{ textAlign: 'center', padding: '32px', color: '#92400e' }}>
-                        <Loader2 size={24} style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }} />
-                        <p style={{ marginTop: '8px' }}>Loading contributions...</p>
-                      </div>
-                    )}
+                {contributionsLoading && (
+                  <div style={{ textAlign: 'center', padding: '32px', color: '#92400e' }}>
+                    <Loader2 size={24} style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                    <p style={{ marginTop: '8px' }}>Loading contributions...</p>
                   </div>
                 )}
               </>
@@ -1037,7 +1006,114 @@ export function DatasetsView() {
               </div>
             )}
           </>
-        ) : (
+        ) : showContributions ? (
+          <>
+            {/* Back Button */}
+            <button
+              onClick={handleCloseDataset}
+              style={styles.backButton}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#ecddc8';
+                e.currentTarget.style.color = '#78350f';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f5ead8';
+                e.currentTarget.style.color = '#92400e';
+              }}
+            >
+              <ArrowLeft size={18} />
+              Back to datasets
+            </button>
+
+            {/* Detail Header */}
+            <div style={styles.detailHeader}>
+              <h2 style={styles.detailTitle}>🌟 Community Contributions</h2>
+              <p style={styles.detailDescription}>
+                User-contributed verses that have been reviewed and approved by our team
+              </p>
+              <div style={styles.detailMeta}>
+                <span style={styles.detailMetaItem}>
+                  📚 Community Collection
+                </span>
+                <span style={styles.detailMetaItem}>
+                  📊 {userContributions.length.toLocaleString()} entries
+                </span>
+              </div>
+            </div>
+
+            {/* Contributions Table */}
+            <div style={styles.tableContainer}>
+              {contributionsLoading ? (
+                <div style={{ ...styles.loadingContainer, padding: '60px 20px' }}>
+                  <Loader2 size={32} color="#d97706" style={{ animation: 'spin 1s linear infinite' }} />
+                  <p style={{ ...styles.loadingText, fontSize: '1rem' }}>Loading contributions...</p>
+                </div>
+              ) : userContributions.length === 0 ? (
+                <div style={styles.emptyState}>
+                  <p style={styles.emptyText}>No approved contributions yet</p>
+                </div>
+              ) : (
+                <>
+                  <table style={styles.table}>
+                    <thead style={styles.tableHeader}>
+                      <tr>
+                        <th style={{ ...styles.tableHeaderCell, width: '60px' }}>#</th>
+                        <th style={{ ...styles.tableHeaderCell, width: '180px' }}>Meter</th>
+                        <th style={styles.tableHeaderCell}>Verse</th>
+                        <th style={{ ...styles.tableHeaderCell, width: '140px' }}>Contributor</th>
+                        <th style={{ ...styles.tableHeaderCell, width: '120px' }}>Approved</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userContributions
+                        .slice((currentPage - 1) * limit, currentPage * limit)
+                        .map((contrib, index) => (
+                          <tr
+                            key={contrib.id}
+                            style={styles.tableRow}
+                          >
+                            <td style={{ ...styles.tableCell, ...styles.tableCellNumber }}>
+                              {(currentPage - 1) * limit + index + 1}
+                            </td>
+                            <td style={styles.tableCell}>
+                              <span style={styles.chandasTag}>
+                                {contrib.data?.meter_name || contrib.data?.meter || '—'}
+                              </span>
+                            </td>
+                            <td style={styles.tableCell}>
+                              <div style={styles.slokaText}>
+                                {contrib.data?.verse_text || '—'}
+                              </div>
+                            </td>
+                            <td style={{ ...styles.tableCell, ...styles.sourceText }}>
+                              {contrib.submitted_by?.username || 'Anonymous'}
+                            </td>
+                            <td style={{ ...styles.tableCell, fontSize: '0.8rem', color: '#92400e' }}>
+                              {new Date(contrib.reviewed_at).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+
+                  {Math.ceil(userContributions.length / limit) > 1 && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(userContributions.length / limit)}
+                      onPageChange={(page) => {
+                        setCurrentPage(page);
+                        window.scrollTo({ top: 200, behavior: 'smooth' });
+                      }}
+                      totalCount={userContributions.length}
+                      limit={limit}
+                      offset={(currentPage - 1) * limit}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </>
+        ) : selectedDataset ? (
           <>
             {/* Back Button */}
             <button
@@ -1132,7 +1208,7 @@ export function DatasetsView() {
               )}
             </div>
           </>
-        )}
+        ) : null}
       </div>
 
       {/* Keyframes for spinner */}

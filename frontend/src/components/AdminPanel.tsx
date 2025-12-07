@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../services/api';
 import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Alert, AlertDescription } from './ui/alert';
 import { Badge } from './ui/badge';
+import { Header } from './Header';
+import type { ViewType } from '../types/api';
 import { 
   Table,
   TableBody,
@@ -44,6 +44,7 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [viewing, setViewing] = useState<Contribution | null>(null);
+  const [currentView, setCurrentView] = useState<ViewType>('home');
 
   const previewText = (text?: string, max = 80) => {
     if (!text) return '—';
@@ -153,8 +154,17 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="profile-admin-page">
-      <div className="page-shell">
+    <>
+      <Header 
+        currentView={currentView}
+        onViewChange={(view) => {
+          setCurrentView(view);
+          navigate('/app');
+        }}
+      />
+
+      <div className="profile-admin-page">
+        <div className="page-shell">
         <div className="page-header">
           <div>
             <h1 className="page-title">Admin Panel</h1>
@@ -289,7 +299,6 @@ export default function AdminPanel() {
             )}
           </div>
         </div>
-      </div>
 
       {viewing && (
         <div className="modal-overlay" role="dialog" aria-modal="true">
@@ -362,6 +371,8 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

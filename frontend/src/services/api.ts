@@ -300,3 +300,10 @@ export async function generateTTS(
 export function getTTSAudioURL(filename: string): string {
   return `${API_BASE_URL}/tts/audio/${filename}`;
 }
+
+/**
+ * Get user's own contributions
+ */
+export async function getMyContributions(): Promise<{ success: boolean; contributions: any[]; error?: string }> {
+  return request('/contributions/my-contributions');
+}
