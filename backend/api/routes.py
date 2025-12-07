@@ -945,10 +945,15 @@ def register_routes(app):
                     'error': 'Audio file not found'
                 }), 404
             
+            # Check if download is requested
+            download = request.args.get('download', 'false').lower() == 'true'
+            
             response = send_from_directory(
                 settings.AUDIO_DIR,
                 filename,
-                mimetype='audio/mpeg'
+                mimetype='audio/mpeg',
+                as_attachment=download,
+                download_name='sanskrit_recitation.mp3' if download else None
             )
             
             # Add explicit headers for better browser compatibility

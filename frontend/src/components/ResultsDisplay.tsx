@@ -251,36 +251,43 @@ const METER_STRUCTURES: Record<string, Partial<MeterStructureInfo>> = {
 
 // Get meter structure information
 function getMeterStructure(meterName: string, lineResults: LineResult[]): MeterStructureInfo | null {
-  // Check if we have predefined structure
-  const knownStructure = METER_STRUCTURES[meterName];
-
-  if (knownStructure) {
-    // Try to extract gana pattern from first line result
-    let ganaPattern: string | null = null;
-    if (lineResults.length > 0 && lineResults[0].result?.display_gana) {
-      ganaPattern = lineResults[0].result.display_gana;
-    }
-
-    return {
-      totalPadas: knownStructure.totalPadas || 4,
-      syllablesPerPada: knownStructure.syllablesPerPada || '-',
-      totalSyllables: knownStructure.totalSyllables || 0,
-      ganaPattern,
-      structureNote: knownStructure.structureNote,
-    };
-  }
-
-  // Calculate from line results if no predefined structure
+  // ALWAYS calculate from actual line results first (CRITICAL FIX)
+  // This ensures we show the actual syllable count, not the theoretical meter definition
   if (lineResults.length > 0) {
     const firstResult = lineResults[0].result;
-    const syllableCount = firstResult?.display_syllables?.length || 0;
+
+    // Count only VALID syllables (those with L-G marks) - CRITICAL FIX
+    // This matches how LineAnalysisCard displays syllables
+    const firstSyllables = firstResult?.display_syllables || [];
+    const firstLgArray = firstResult?.display_lg || [];
+    const validFirstSyllables = firstSyllables.filter((_, idx) =>
+      firstLgArray[idx] && firstLgArray[idx].trim() !== ''
+    ).length;
+
     const ganaPattern = firstResult?.display_gana || null;
 
+    // Calculate actual total syllables from all lines (only valid syllables)
+    let actualTotalSyllables = 0;
+    lineResults.forEach(line => {
+      const syllables = line.result?.display_syllables || [];
+      const lgArray = line.result?.display_lg || [];
+      // Count only syllables that have corresponding L-G marks
+      const validCount = syllables.filter((_, idx) =>
+        lgArray[idx] && lgArray[idx].trim() !== ''
+      ).length;
+      actualTotalSyllables += validCount;
+    });
+
+    // Check if we have predefined structure (for reference/validation only)
+    const knownStructure = METER_STRUCTURES[meterName];
+
+    // Use ACTUAL data, not predefined structure
     return {
-      totalPadas: lineResults.length,
-      syllablesPerPada: syllableCount,
-      totalSyllables: syllableCount * lineResults.length,
+      totalPadas: lineResults.length,  // Actual number of lines/padas
+      syllablesPerPada: validFirstSyllables,  // Valid syllables per pada from first line
+      totalSyllables: actualTotalSyllables,  // Total valid syllables from all lines
       ganaPattern,
+      structureNote: knownStructure?.structureNote,  // Keep the note for reference
     };
   }
 
@@ -758,37 +765,7 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
         {/* IMPORTANT: Show Verse Meter (Primary Result) FIRST when available */}
         {/* This is crucial for Vedic meters (Gāyatrī, Triṣṭubh, etc.) */}
         {verseResults.length > 0 && verseResults.some(v => v.chanda && Array.isArray(v.chanda[0]) && v.chanda[0].length > 0) && (
-          <div className="mb-8 p-8 rounded-2xl border-3 border-orange-500 shadow-lg" style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="text-xl font-bold text-orange-700 flex items-center gap-2">
-                🕉️ Verse Meter (Primary Result)
-              </h4>
-              {/* Show detection mode indicator - shows effective mode when auto-detect is used */}
-              {(() => {
-                const requestedMode = result.input?.identification_mode || 'auto';
-                const effectiveMode = result.result?.effective_mode;
-                const isAutoDetect = requestedMode === 'auto';
-
-                // Determine display mode
-                const displayMode = effectiveMode || requestedMode;
-                const modeLabel = displayMode === 'vedic' ? 'Vedic' : displayMode === 'classical' ? 'Classical' : 'Auto-detect';
-
-                // Style based on effective mode
-                const modeStyle = displayMode === 'vedic'
-                  ? 'bg-purple-100 text-purple-700 border border-purple-300'
-                  : displayMode === 'classical'
-                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
-                    : 'bg-gray-100 text-gray-700 border border-gray-300';
-
-                return (
-                  <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${modeStyle}`}>
-                    {isAutoDetect && effectiveMode
-                      ? `Auto → ${modeLabel}`
-                      : `Mode: ${modeLabel}`}
-                  </span>
-                );
-              })()}
-            </div>
+          <div className="mb-8">
             {/* Consolidate all verse results into a single display */}
             {(() => {
               // Aggregate all verse results - combine scores for same meters
@@ -815,78 +792,62 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
               const englishName = getMeterEnglish(primaryMeter);
 
               // Calculate confidence based on total score vs total lines
-              // Backend normalizes exact match scores to ~1.0 per line
-              // A perfect match gives score 1.0 per line, boosts can increase it
               const numLines = lineResults.length || 1;
               const scorePerLine = primaryScore / Math.max(numLines, 1);
-              // Score of 1.0 per line = 100% confidence (exact match)
-              // Scale: 0.0 = 0%, 1.0+ = 100%
               const confidencePercent = Math.min(100, Math.round(scorePerLine * 100));
 
-              let confidenceClass = 'bg-green-600';
+              let confidenceLabel = 'High';
+              let confidenceColor = '#16A34A'; // green-600
               if (confidencePercent < 50) {
-                confidenceClass = 'bg-red-500';
+                confidenceLabel = 'Low';
+                confidenceColor = '#EF4444'; // red-500
               } else if (confidencePercent < 80) {
-                confidenceClass = 'bg-amber-500';
+                confidenceLabel = 'Medium';
+                confidenceColor = '#F59E0B'; // amber-500
               }
 
               // Get meter structure info
               const meterStructure = getMeterStructure(primaryMeter, lineResults);
 
               return (
-                <div className="bg-white rounded-xl p-6 shadow-md">
-                  <div className="flex items-center gap-4 flex-wrap mb-4">
-                    <span className="text-3xl font-bold text-orange-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-                      {primaryMeter}
-                    </span>
-                    {englishName && englishName !== primaryMeter && (
-                      <span className="text-xl text-gray-600 italic">({englishName})</span>
-                    )}
-                    <span className={`${confidenceClass} text-white px-4 py-1.5 rounded-full text-sm font-semibold`}>
-                      {confidencePercent}% Match
-                    </span>
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
+                  {/* Meter name with checkmark */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-3">
+                        <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+                          {primaryMeter}
+                        </h3>
+                        {englishName && englishName !== primaryMeter && (
+                          <span className="text-xl text-gray-600">({englishName})</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Meter Structure Info */}
-                  {meterStructure && (
-                    <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-700">{meterStructure.totalPadas}</div>
-                          <div className="text-gray-600">Pādas</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-700">{meterStructure.syllablesPerPada}</div>
-                          <div className="text-gray-600">Syllables/Pāda</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-700">{meterStructure.totalSyllables}</div>
-                          <div className="text-gray-600">Total Syllables</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-700">{meterStructure.ganaPattern || '-'}</div>
-                          <div className="text-gray-600">Gaṇa Pattern</div>
-                        </div>
+                  {/* Syllables and Confidence - Side by side boxes */}
+                  <div className="flex gap-6">
+                    <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
+                      <div className="text-sm font-medium text-gray-500 mb-2">Syllables</div>
+                      <div className="text-3xl font-bold text-gray-900">
+                        {meterStructure ? `${meterStructure.totalSyllables} (${meterStructure.syllablesPerPada}×${meterStructure.totalPadas})` : '-'}
                       </div>
-                      {meterStructure.structureNote && (
-                        <div className="mt-3 text-center text-gray-600 text-xs">
-                          {meterStructure.structureNote}
-                        </div>
-                      )}
                     </div>
-                  )}
-
-                  {sortedMeters.length > 1 && (
-                    <div className="mt-4 text-gray-600">
-                      <small>Alternates: {sortedMeters.slice(1).map(m => m[0]).join(', ')}</small>
+                    <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
+                      <div className="text-sm font-medium text-gray-500 mb-2">Confidence</div>
+                      <div className="text-3xl font-bold" style={{ color: confidenceColor }}>
+                        {confidenceLabel}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })()}
-            <p className="mt-4 p-4 bg-white/70 rounded-xl text-gray-600 text-sm border-l-4 border-orange-500 text-center">
-              <em>Note: For Vedic meters (Gāyatrī, Triṣṭubh, Jagatī, etc.), the verse-level identification is the primary result. Line-by-line patterns below show individual pāda analysis.</em>
-            </p>
           </div>
         )}
 
@@ -933,13 +894,11 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
             </div>
           ) : (
             <>
-              {/* Identified Chanda - Single div at top for line-by-line mode */}
+              {/* Identified Chanda - Clean minimal design */}
               {sortedMeters.length > 0 && (
-                <div className="mb-8 p-8 rounded-2xl border-2 border-orange-300" style={{ background: '#FFF6EA' }}>
-                  <h4 className="text-xl font-bold text-orange-700 mb-6 flex items-center gap-2">
-                    🕉️ Identified Chanda
-                  </h4>
-                  <div className="rounded-xl p-6 border-2 border-orange-300" style={{ background: '#FFF6EA' }}>
+                <div className="mb-8">
+                  <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
+                    {/* Meter name with checkmark */}
                     {(() => {
                       const primaryMeter = sortedMeters[0][0];
                       const lineCount = sortedMeters[0][1];
@@ -947,18 +906,55 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
                       const totalLines = lineResults.length;
                       const confidencePercent = Math.round((lineCount / totalLines) * 100);
 
+                      let confidenceLabel = 'High';
+                      let confidenceColor = '#16A34A'; // green-600
+                      if (confidencePercent < 50) {
+                        confidenceLabel = 'Low';
+                        confidenceColor = '#EF4444'; // red-500
+                      } else if (confidencePercent < 80) {
+                        confidenceLabel = 'Medium';
+                        confidenceColor = '#F59E0B'; // amber-500
+                      }
+
+                      // Get meter structure info
+                      const meterStructure = getMeterStructure(primaryMeter, lineResults);
+
                       return (
-                        <div className="flex items-center gap-4 flex-wrap">
-                          <span className="text-3xl font-bold text-orange-700" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-                            {primaryMeter}
-                          </span>
-                          {englishName && englishName !== primaryMeter && (
-                            <span className="text-xl text-gray-600 italic">({englishName})</span>
-                          )}
-                          <span className="px-5 py-2 rounded-full text-sm font-semibold" style={{ backgroundColor: '#f97316', color: '#ffffff' }}>
-                            {confidencePercent}% Match
-                          </span>
-                        </div>
+                        <>
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="flex items-baseline gap-3">
+                                <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
+                                  {primaryMeter}
+                                </h3>
+                                {englishName && englishName !== primaryMeter && (
+                                  <span className="text-xl text-gray-600">({englishName})</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Syllables and Confidence - Side by side boxes */}
+                          <div className="flex gap-6">
+                            <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
+                              <div className="text-sm font-medium text-gray-500 mb-2">Syllables</div>
+                              <div className="text-3xl font-bold text-gray-900">
+                                {meterStructure ? `${meterStructure.totalSyllables} (${meterStructure.syllablesPerPada}×${meterStructure.totalPadas})` : '-'}
+                              </div>
+                            </div>
+                            <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
+                              <div className="text-sm font-medium text-gray-500 mb-2">Confidence</div>
+                              <div className="text-3xl font-bold" style={{ color: confidenceColor }}>
+                                {confidenceLabel}
+                              </div>
+                            </div>
+                          </div>
+                        </>
                       );
                     })()}
                   </div>

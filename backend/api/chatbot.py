@@ -548,26 +548,63 @@ def chat():
                     client = gcp_speech.SpeechClient()
                     
                     audio = gcp_speech.RecognitionAudio(content=audio_bytes)
-                    config = gcp_speech.RecognitionConfig(
+                    
+                    # Step 1: Language Detection Configuration
+                    # Use RecognitionConfig with language detection enabled
+                    detection_config = gcp_speech.RecognitionConfig(
                         encoding=gcp_speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
                         sample_rate_hertz=48000,
-                        language_code="auto",  # Automatic language detection
-                        alternative_language_codes=["sa-IN", "hi-IN", "en-IN"],  # Sanskrit, Hindi, English
+                        language_code="en-US",  # Primary language hint
+                        alternative_language_codes=["hi-IN", "sa-IN"],  # Hindi and Sanskrit alternatives
                         enable_automatic_punctuation=True,
-                        model="latest_long",  # Use latest model for better accuracy
+                        model="latest_long",
                     )
                     
-                    response = client.recognize(config=config, audio=audio)
+                    response = None
                     
-                    if response.results:
-                        extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
-                        logger.info(f"Speech-to-Text extracted: {extracted_audio_text}")
-                    else:
-                        logger.warning("Speech-to-Text found no speech in audio")
+                    # Try transcription with the detection config
+                    try:
+                        logger.info("Attempting speech recognition with language detection...")
+                        response = client.recognize(config=detection_config, audio=audio)
+                        
+                        if response.results:
+                            # Extract transcription and detected language
+                            extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
+                            
+                            # Log detected language if available
+                            if response.results[0].language_code:
+                                detected_lang = response.results[0].language_code
+                                logger.info(f"Detected language: {detected_lang}")
+                            
+                            logger.info(f"Speech-to-Text extracted: {extracted_audio_text}")
+                        else:
+                            # Fallback: Try with auto-detect encoding if WEBM_OPUS fails
+                            logger.warning("No results with WEBM_OPUS, trying auto-detect encoding...")
+                            fallback_config = gcp_speech.RecognitionConfig(
+                                encoding=gcp_speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
+                                language_code="en-US",
+                                alternative_language_codes=["hi-IN", "sa-IN"],
+                                enable_automatic_punctuation=True,
+                                model="latest_long",
+                            )
+                            response = client.recognize(config=fallback_config, audio=audio)
+                            
+                            if response.results:
+                                extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
+                                logger.info(f"Speech-to-Text extracted (fallback): {extracted_audio_text}")
+                            else:
+                                logger.warning("Speech-to-Text found no speech in audio")
+                                return jsonify({
+                                    'success': False,
+                                    'error': 'Could not understand the audio. Please speak clearly or use text/image input.'
+                                }), 400
+                                
+                    except Exception as recognition_error:
+                        logger.error(f"Recognition error: {str(recognition_error)}")
                         return jsonify({
                             'success': False,
-                            'error': 'Could not understand the audio. Please speak clearly or use text/image input.'
-                        }), 400
+                            'error': 'Audio transcription failed. Please try again or use text/image input.'
+                        }), 500
                         
                 except Exception as stt_error:
                     logger.error(f"Speech-to-Text error: {str(stt_error)}")

@@ -101,10 +101,13 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
   };
 
   const handleDownload = () => {
-    if (audioUrl && audioRef.current) {
+    if (audioUrl) {
+      // Add download=true query parameter to trigger file download
+      const downloadUrl = `${audioUrl}?download=true`;
       const a = document.createElement('a');
-      a.href = audioUrl;
+      a.href = downloadUrl;
       a.download = 'sanskrit_recitation.mp3';
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

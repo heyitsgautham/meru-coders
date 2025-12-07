@@ -98,7 +98,27 @@ const FloatingChatbot: React.FC = () => {
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+
+      // Determine the best supported MIME type for audio recording
+      const mimeTypes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4'
+      ];
+
+      let selectedMimeType = 'audio/webm'; // fallback
+      for (const mimeType of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          selectedMimeType = mimeType;
+          console.log('Using MIME type:', mimeType);
+          break;
+        }
+      }
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: selectedMimeType
+      });
       mediaRecorderRef.current = mediaRecorder;
 
       const chunks: Blob[] = [];
@@ -107,7 +127,7 @@ const FloatingChatbot: React.FC = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: selectedMimeType });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
