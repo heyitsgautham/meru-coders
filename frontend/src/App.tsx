@@ -10,6 +10,7 @@ import OAuthCallback from "./components/OAuthCallback";
 import Profile from "./components/Profile";
 import ContributionForm from "./components/ContributionForm";
 import AdminPanel from "./components/AdminPanel";
+import FloatingChatbot from "./components/chat/FloatingChatbot";
 
 export default function App() {
   return (
@@ -39,6 +40,9 @@ export default function App() {
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          
+          {/* Global Floating Chatbot - Available on all pages */}
+          <FloatingChatbot />
         </ChatBotProvider>
       </AuthProvider>
     </BrowserRouter>
