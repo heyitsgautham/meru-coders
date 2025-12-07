@@ -4,6 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
+const redact = (token?: string | null) =>
+  token ? `${token.slice(0, 4)}...${token.slice(-4)} (len=${token.length})` : '<empty>';
+
 export default function OAuthCallback() {
   const [error, setError] = useState<string | null>(null);
   const { completeOAuth } = useAuth();
@@ -12,15 +15,55 @@ export default function OAuthCallback() {
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
-        // Exchange the code from URL hash for a session
-        // This is needed because Supabase OAuth returns a code that needs to be exchanged
+        console.info('[OAuthCallback] location', {
+          hash: window.location.hash,
+          search: window.location.search,
+          origin: window.location.origin,
+        });
+
+        // Try hash tokens first (implicit flow)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
+
+        // Also check query param code (PKCE flow)
+        const searchParams = new URLSearchParams(window.location.search);
+        const authCode = searchParams.get('code');
+        if (authCode) {
+          console.info('[OAuthCallback] Found auth code in query, exchanging for session');
+          const { data, error } = await supabase.auth.exchangeCodeForSession(authCode);
+          if (error) {
+            console.error('[OAuthCallback] exchangeCodeForSession error', error);
+            setError('Failed to complete OAuth (code exchange)');
+            setTimeout(() => navigate('/login'), 3000);
+            return;
+          }
+          if (data?.session) {
+            console.info('[OAuthCallback] Session obtained via code exchange', {
+              userId: data.session.user?.id,
+              expires_at: data.session.expires_at,
+            });
+            const { error: authError } = await completeOAuth(
+              data.session.access_token,
+              data.session.refresh_token
+            );
+            if (authError) {
+              console.error('[OAuthCallback] OAuth completion error after code exchange', authError);
+              setError(authError);
+              setTimeout(() => navigate('/login'), 3000);
+              return;
+            }
+            navigate('/app');
+            return;
+          }
+        }
         
         // If we have tokens in the URL, use them directly
         if (accessToken) {
-          console.log('Found tokens in URL hash, completing OAuth...');
+          console.info('[OAuthCallback] Found tokens in URL hash', {
+            accessToken: redact(accessToken),
+            refreshToken: redact(refreshToken),
+          });
           
           // Set the session in Supabase client
           const { data: { session }, error: sessionError } = await supabase.auth.setSession({
@@ -29,26 +72,37 @@ export default function OAuthCallback() {
           });
 
           if (sessionError) {
-            console.error('Session error:', sessionError);
+            console.error('[OAuthCallback] Session error', sessionError);
             setError('Failed to authenticate with Google');
             setTimeout(() => navigate('/login'), 3000);
             return;
           }
 
           if (!session) {
+            console.error('[OAuthCallback] Supabase setSession returned no session');
             setError('Failed to create session');
             setTimeout(() => navigate('/login'), 3000);
             return;
           }
 
+          console.info('[OAuthCallback] Supabase session established', {
+            expires_at: session.expires_at,
+            tokenType: session.token_type,
+            userId: session.user?.id,
+          });
+
           // Complete the OAuth flow by exchanging tokens with backend
+          console.info('[OAuthCallback] Calling completeOAuth', {
+            accessToken: redact(session.access_token),
+            refreshToken: redact(session.refresh_token),
+          });
           const { error: authError } = await completeOAuth(
             session.access_token,
             session.refresh_token
           );
 
           if (authError) {
-            console.error('OAuth completion error:', authError);
+            console.error('[OAuthCallback] OAuth completion error', authError);
             setError(authError);
             setTimeout(() => navigate('/login'), 3000);
             return;
@@ -60,23 +114,34 @@ export default function OAuthCallback() {
         }
         
         // Fallback: try to get existing session
+        console.info('[OAuthCallback] No tokens in hash, attempting getSession');
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError || !session) {
-          console.error('No session found:', sessionError);
+          console.error('[OAuthCallback] No session found via getSession', sessionError);
           setError('No session found');
           setTimeout(() => navigate('/login'), 3000);
           return;
         }
 
+        console.info('[OAuthCallback] Existing session found', {
+          expires_at: session.expires_at,
+          tokenType: session.token_type,
+          userId: session.user?.id,
+        });
+
         // Complete the OAuth flow
+        console.info('[OAuthCallback] Completing OAuth with existing session', {
+          accessToken: redact(session.access_token),
+          refreshToken: redact(session.refresh_token),
+        });
         const { error: authError } = await completeOAuth(
           session.access_token,
           session.refresh_token
         );
 
         if (authError) {
-          console.error('OAuth completion error:', authError);
+          console.error('[OAuthCallback] OAuth completion error (existing session)', authError);
           setError(authError);
           setTimeout(() => navigate('/login'), 3000);
           return;
@@ -85,7 +150,7 @@ export default function OAuthCallback() {
         // Success! Redirect to app
         navigate('/app');
       } catch (err) {
-        console.error('OAuth callback error:', err);
+        console.error('[OAuthCallback] Unexpected error', err);
         setError('An unexpected error occurred');
         setTimeout(() => navigate('/login'), 3000);
       }

@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { API_BASE_URL } from '../services/api';
+import { supabase } from '../lib/supabase';
+
+const redactToken = (token?: string | null) =>
+  token ? `${token.slice(0, 4)}...${token.slice(-4)} (len=${token.length})` : '<empty>';
 
 interface AppUser {
   id: string;
@@ -40,6 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const parsed = JSON.parse(storedUser) as AppUser;
       setUser(parsed);
       setIsAdmin(!!parsed.is_admin);
+      console.info('[AuthContext] Loaded stored session', {
+        userId: parsed.id,
+        username: parsed.username,
+        isAdmin: parsed.is_admin,
+      });
     }
     setLoading(false);
   }, []);
@@ -51,10 +60,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('appUser', JSON.stringify(stored));
       if (token) localStorage.setItem('authToken', token);
       if (refresh) localStorage.setItem('refreshToken', refresh);
+      console.info('[AuthContext] Persisted session', {
+        userId: appUser.id,
+        username: appUser.username,
+        isAdmin: appUser.is_admin,
+        accessToken: redactToken(token),
+        refreshToken: redactToken(refresh),
+      });
     } else {
       localStorage.removeItem('appUser');
       localStorage.removeItem('authToken');
       localStorage.removeItem('refreshToken');
+      console.info('[AuthContext] Cleared session from storage');
     }
   };
 
@@ -69,6 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(appUser);
     setIsAdmin(!!appUser.is_admin);
     persistSession(appUser, appUser.access_token || undefined, appUser.refresh_token || undefined);
+    console.info('[AuthContext] Auth response handled', {
+      userId: appUser.id,
+      username: appUser.username,
+      isAdmin: appUser.is_admin,
+      accessToken: redactToken(appUser.access_token),
+      refreshToken: redactToken(appUser.refresh_token),
+    });
     return appUser;
   };
 
@@ -126,12 +150,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const startOAuth = async (provider = 'google'): Promise<AuthResult> => {
     try {
       const redirect_to = typeof window !== 'undefined' ? `${window.location.origin}/oauth/callback` : undefined;
-      const data = await postJson('/auth/oauth/start', { provider, redirect_to });
-      if (data.url) {
-        window.location.href = data.url;
-        return { error: null };
+      console.info('[AuthContext] Starting OAuth via supabase-js (PKCE)', {
+        provider,
+        redirect_to,
+        apiBase: API_BASE_URL,
+      });
+
+      // Use frontend Supabase client so PKCE code_verifier is stored in localStorage.
+      // This avoids the "code_verifier missing" error seen when backend initiated the flow.
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: redirect_to,
+          skipBrowserRedirect: false,
+        },
+      });
+
+      if (error) {
+        console.error('[AuthContext] supabase signInWithOAuth error', error);
+        return { error: error.message };
       }
-      return { error: 'Unable to start OAuth flow' };
+
+      // When skipBrowserRedirect is false (default), supabase will redirect automatically.
+      // If it ever returns a URL (older versions), handle it here.
+      if (data?.url) {
+        console.info('[AuthContext] Redirecting to provider URL (manual fallback)', { url: data.url });
+        window.location.href = data.url;
+      }
+      return { error: null };
     } catch (error) {
       console.error('OAuth start error:', error);
       return { error: error instanceof Error ? error.message : 'Unable to start OAuth' };
@@ -140,6 +186,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const completeOAuth = async (accessToken: string, refreshToken?: string | null): Promise<AuthResult> => {
     try {
+      console.info('[AuthContext] Completing OAuth', {
+        accessToken: redactToken(accessToken),
+        refreshToken: redactToken(refreshToken),
+        apiBase: API_BASE_URL,
+      });
       const data = await postJson('/auth/oauth/exchange', { access_token: accessToken, refresh_token: refreshToken });
       handleAuthResponse(data);
       return { error: null };

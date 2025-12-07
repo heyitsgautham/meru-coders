@@ -22,6 +22,15 @@ def _generate_email(username: str) -> str:
     return f"{username}@{EMAIL_DOMAIN}"
 
 
+def _redact(token: str | None, keep: int = 4) -> str:
+    """Redact sensitive tokens for logging."""
+    if not token:
+        return "<empty>"
+    prefix = token[:keep]
+    suffix = token[-keep:] if len(token) > keep else ""
+    return f"{prefix}...{suffix} (len={len(token)})"
+
+
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 
@@ -304,6 +313,14 @@ def oauth_start():
         redirect_to = data.get('redirect_to') or f"{FRONTEND_URL}/oauth/callback"
 
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
+        current_app.logger.info(
+            "OAuth start request: provider=%s redirect_to=%s has_supabase=%s origin=%s",
+            provider,
+            redirect_to,
+            bool(supabase),
+            request.headers.get('Origin')
+        )
+
         oauth_response = supabase.auth.sign_in_with_oauth({
             'provider': provider,
             'options': {
@@ -314,6 +331,12 @@ def oauth_start():
         url = getattr(oauth_response, 'url', None)
         if url is None and isinstance(oauth_response, dict):
             url = oauth_response.get('url')
+
+        current_app.logger.info(
+            "OAuth start response: url=%s response_type=%s",
+            url,
+            type(oauth_response).__name__
+        )
 
         if not url:
             return jsonify({
@@ -344,6 +367,13 @@ def oauth_exchange():
         access_token = data.get('access_token')
         refresh_token = data.get('refresh_token')
 
+        current_app.logger.info(
+            "OAuth exchange request: access=%s refresh=%s origin=%s",
+            _redact(access_token),
+            _redact(refresh_token),
+            request.headers.get('Origin')
+        )
+
         if not access_token:
             return jsonify({
                 'success': False,
@@ -354,6 +384,12 @@ def oauth_exchange():
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         user_response = supabase.auth.get_user(access_token)
         supabase_user = getattr(user_response, 'user', None)
+
+        current_app.logger.info(
+            "OAuth exchange Supabase response: has_user=%s response_type=%s",
+            bool(supabase_user),
+            type(user_response).__name__
+        )
 
         if not supabase_user:
             return jsonify({
@@ -370,6 +406,11 @@ def oauth_exchange():
             username = (email.split('@')[0] if email and '@' in email else supabase_user.id)
 
         profile = get_user_profile(supabase_user.id)
+        current_app.logger.info(
+            "OAuth exchange profile lookup: user_id=%s found=%s",
+            supabase_user.id,
+            bool(profile)
+        )
         if not profile:
             create_user_profile(
                 user_id=supabase_user.id,
@@ -378,6 +419,11 @@ def oauth_exchange():
                 is_admin=False
             )
             profile = get_user_profile(supabase_user.id)
+            current_app.logger.info(
+                "OAuth exchange profile created: user_id=%s success=%s",
+                supabase_user.id,
+                bool(profile)
+            )
 
         return jsonify({
             'success': True,
