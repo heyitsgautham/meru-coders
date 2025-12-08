@@ -1,6 +1,7 @@
 /**
  * Community API Service
- * Handles all community-related API calls (posts, likes, comments)
+ * Handles all community-related API calls (posts, likes, comments, follows, etc.)
+ * Phase 2: Full feature set
  */
 
 import type {
@@ -8,14 +9,25 @@ import type {
   PostsResponse,
   SinglePostResponse,
   CreatePostResponse,
+  UpdatePostResponse,
   DeleteResponse,
   LikeResponse,
   LikesListResponse,
   CommentsResponse,
   CreateCommentResponse,
   CreatePostInput,
+  UpdatePostInput,
   CreateCommentInput,
   PaginationParams,
+  FollowResponse,
+  UsersResponse,
+  BookmarkResponse,
+  NotificationsResponse,
+  ProfileResponse,
+  SearchResponse,
+  ReportResponse,
+  BlockResponse,
+  ReportInput,
 } from '../types/community';
 
 // Get API URL from environment or use default
@@ -83,6 +95,18 @@ export async function getPosts(params: PaginationParams & { user_id?: string } =
 
   const query = searchParams.toString();
   return request<PostsResponse>(`/posts${query ? `?${query}` : ''}`);
+}
+
+/**
+ * Get following feed (posts from users you follow)
+ */
+export async function getFollowingFeed(params: PaginationParams = {}): Promise<PostsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+
+  const query = searchParams.toString();
+  return request<PostsResponse>(`/feed/following${query ? `?${query}` : ''}`);
 }
 
 /**
@@ -268,4 +292,205 @@ export async function sharePost(post: Post): Promise<{ success: boolean; method:
     console.error('Failed to copy to clipboard:', err);
     return { success: false, method: 'copy' };
   }
+}
+
+// ==================== PHASE 2: EDIT POST ====================
+
+/**
+ * Update a post (only owner can update)
+ */
+export async function updatePost(postId: string, input: UpdatePostInput): Promise<UpdatePostResponse> {
+  return request<UpdatePostResponse>(`/posts/${postId}`, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+// ==================== PHASE 2: FOLLOWS ====================
+
+/**
+ * Toggle follow on a user
+ */
+export async function toggleFollow(userId: string): Promise<FollowResponse> {
+  return request<FollowResponse>(`/users/${userId}/follow`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * Get followers of a user
+ */
+export async function getFollowers(userId: string, params: PaginationParams = {}): Promise<UsersResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+  const query = searchParams.toString();
+  return request<UsersResponse>(`/users/${userId}/followers${query ? `?${query}` : ''}`);
+}
+
+/**
+ * Get users that a user follows
+ */
+export async function getFollowing(userId: string, params: PaginationParams = {}): Promise<UsersResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+  const query = searchParams.toString();
+  return request<UsersResponse>(`/users/${userId}/following${query ? `?${query}` : ''}`);
+}
+
+// ==================== PHASE 2: TRENDING ====================
+
+/**
+ * Get trending posts
+ */
+export async function getTrendingPosts(params: PaginationParams = {}): Promise<PostsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+  const query = searchParams.toString();
+  return request<PostsResponse>(`/feed/trending${query ? `?${query}` : ''}`);
+}
+
+// ==================== PHASE 2: BOOKMARKS ====================
+
+/**
+ * Toggle bookmark on a post
+ */
+export async function toggleBookmark(postId: string): Promise<BookmarkResponse> {
+  return request<BookmarkResponse>(`/posts/${postId}/bookmark`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * Get bookmarked posts
+ */
+export async function getBookmarkedPosts(params: PaginationParams = {}): Promise<PostsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+  const query = searchParams.toString();
+  return request<PostsResponse>(`/me/bookmarks${query ? `?${query}` : ''}`);
+}
+
+// ==================== PHASE 2: SEARCH ====================
+
+/**
+ * Search posts
+ */
+export async function searchPosts(query: string, params: PaginationParams = {}): Promise<SearchResponse> {
+  const searchParams = new URLSearchParams();
+  searchParams.set('q', query);
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.offset) searchParams.set('offset', params.offset.toString());
+  return request<SearchResponse>(`/search/posts?${searchParams.toString()}`);
+}
+
+/**
+ * Search users
+ */
+export async function searchUsers(query: string, limit?: number): Promise<UsersResponse> {
+  const searchParams = new URLSearchParams();
+  searchParams.set('q', query);
+  if (limit) searchParams.set('limit', limit.toString());
+  return request<UsersResponse>(`/search/users?${searchParams.toString()}`);
+}
+
+// ==================== PHASE 2: NOTIFICATIONS ====================
+
+/**
+ * Get notifications
+ */
+export async function getNotifications(limit?: number, unreadOnly?: boolean): Promise<NotificationsResponse> {
+  const searchParams = new URLSearchParams();
+  if (limit) searchParams.set('limit', limit.toString());
+  if (unreadOnly) searchParams.set('unread', 'true');
+  const query = searchParams.toString();
+  return request<NotificationsResponse>(`/notifications${query ? `?${query}` : ''}`);
+}
+
+/**
+ * Mark notification as read
+ */
+export async function markNotificationRead(notificationId: string): Promise<DeleteResponse> {
+  return request<DeleteResponse>(`/notifications/${notificationId}/read`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * Mark all notifications as read
+ */
+export async function markAllNotificationsRead(): Promise<DeleteResponse> {
+  return request<DeleteResponse>('/notifications/read-all', {
+    method: 'POST',
+  });
+}
+
+// ==================== PHASE 2: USER PROFILES ====================
+
+/**
+ * Get user profile
+ */
+export async function getUserProfile(userId: string): Promise<ProfileResponse> {
+  return request<ProfileResponse>(`/users/${userId}/profile`);
+}
+
+/**
+ * Update current user's profile
+ */
+export async function updateMyProfile(data: { bio?: string; avatar_url?: string }): Promise<DeleteResponse> {
+  return request<DeleteResponse>('/me/profile', {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+// ==================== PHASE 2: REPORTS & BLOCKS ====================
+
+/**
+ * Report content
+ */
+export async function reportContent(input: ReportInput): Promise<ReportResponse> {
+  return request<ReportResponse>('/reports', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+/**
+ * Toggle block on a user
+ */
+export async function toggleBlock(userId: string): Promise<BlockResponse> {
+  return request<BlockResponse>(`/users/${userId}/block`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * Get blocked users
+ */
+export async function getBlockedUsers(): Promise<UsersResponse> {
+  return request<UsersResponse>('/me/blocked');
+}
+
+// ==================== PHASE 2: COMMENT REPLIES ====================
+
+/**
+ * Add a reply to a comment
+ */
+export async function addCommentReply(postId: string, commentId: string, input: CreateCommentInput): Promise<CreateCommentResponse> {
+  return request<CreateCommentResponse>(`/posts/${postId}/comments/${commentId}/replies`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+/**
+ * Get replies to a comment
+ */
+export async function getCommentReplies(commentId: string, limit?: number): Promise<CommentsResponse> {
+  const query = limit ? `?limit=${limit}` : '';
+  return request<CommentsResponse>(`/comments/${commentId}/replies${query}`);
 }
