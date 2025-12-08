@@ -104,6 +104,23 @@
       "patternColumn": "अक्षरसंख्या",
       "patternType": "syllable_count",
       "sourceReference": "IIT Kanpur Sanskrit Meter Database - Jaati classification"
+    },
+    "atharvaveda": {
+      "id": "atharvaveda",
+      "name": "Atharvaveda",
+      "filename": "atharvaveda.csv",
+      "description": "Comprehensive collection of Atharvaveda verses with identified chandas, merged from multiple validated sources",
+      "source": "Atharvaveda Samhita",
+      "rowCount": 3211,
+      "dataType": "verse_examples",
+      "columns": {
+        "sloka": "sloka",
+        "chandas": "chanda",
+        "additional": []
+      },
+      "slokaColumn": "sloka",
+      "chandasColumn": "chanda",
+      "sourceReference": "Atharvaveda Samhita - validated Vedic verses with meter identifications"
     }
   },
   "sourceDescriptions": {

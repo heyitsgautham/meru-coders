@@ -190,10 +190,11 @@ def extract_sanskrit_text(message: str) -> Optional[str]:
     return None
 
 
-def detect_meter_intent(message: str) -> Tuple[bool, Optional[str]]:
+def detect_meter_intent(message: str) -> Tuple[bool, Optional[str], Dict[str, bool]]:
     """
     Detect if user is asking for meter identification
-    Returns (has_intent, extracted_text)
+    Also detect what specific information user is asking for
+    Returns (has_intent, extracted_text, requested_fields)
     """
     # Keywords indicating meter analysis intent
     intent_keywords = [
@@ -206,11 +207,41 @@ def detect_meter_intent(message: str) -> Tuple[bool, Optional[str]]:
     message_lower = message.lower()
     has_intent = any(keyword in message_lower for keyword in intent_keywords)
     
-    if has_intent:
-        extracted_text = extract_sanskrit_text(message)
-        return True, extracted_text
+    # Detect what specific fields user is asking for
+    requested_fields = {
+        'meter_name': False,
+        'lg_pattern': False,
+        'gana_pattern': False,
+        'syllable_count': False,
+        'matra_count': False,
+        'full_analysis': False  # Default to full analysis if not specified
+    }
     
-    return False, None
+    if has_intent:
+        # Check for specific field requests
+        if any(term in message_lower for term in ['chanda name', 'meter name', 'name of', 'which chanda', 'what chanda', 'chanda only', 'meter only']):
+            requested_fields['meter_name'] = True
+        
+        if any(term in message_lower for term in ['l-g', 'lg', 'laghu', 'guru', 'pattern']):
+            requested_fields['lg_pattern'] = True
+        
+        if any(term in message_lower for term in ['gana', 'gaṇa']):
+            requested_fields['gana_pattern'] = True
+        
+        if any(term in message_lower for term in ['syllable', 'akshara', 'अक्षर']):
+            requested_fields['syllable_count'] = True
+        
+        if any(term in message_lower for term in ['matra', 'mātrā', 'मात्रा']):
+            requested_fields['matra_count'] = True
+        
+        # If no specific fields requested, show full analysis
+        if not any(requested_fields.values()):
+            requested_fields['full_analysis'] = True
+        
+        extracted_text = extract_sanskrit_text(message)
+        return True, extracted_text, requested_fields
+    
+    return False, None, requested_fields
 
 
 def analyze_meter_agentic(text: str) -> Dict[str, Any]:
@@ -378,9 +409,56 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
         }
 
 
-def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default') -> str:
+def get_confidence_label(confidence_score: float) -> str:
+    """Convert numeric confidence score to human-readable label"""
+    if confidence_score >= 9.0:
+        return "Very High"
+    elif confidence_score >= 7.0:
+        return "High"
+    elif confidence_score >= 5.0:
+        return "Medium"
+    elif confidence_score >= 3.0:
+        return "Low"
+    else:
+        return "Very Low"
+
+
+def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) -> str:
+    """
+    Split L-G pattern by pada (quarter) for better readability
+    Returns formatted string with pada separators
+    """
+    if not lg_pattern:
+        return ""
+    
+    total_syllables = len(lg_pattern)
+    
+    # Auto-detect pada structure if not specified
+    if syllables_per_pada is None:
+        # Common pada structures
+        if total_syllables % 4 == 0:
+            syllables_per_pada = total_syllables // 4
+        elif total_syllables % 2 == 0:
+            syllables_per_pada = total_syllables // 2
+        else:
+            # No clear pada structure
+            return lg_pattern
+    
+    # Split into padas
+    padas = []
+    for i in range(0, total_syllables, syllables_per_pada):
+        pada = lg_pattern[i:i+syllables_per_pada]
+        if pada:
+            padas.append(pada)
+    
+    # Format with separators
+    return " | ".join(padas)
+
+
+def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', requested_fields: Dict[str, bool] = None, add_analyze_link: bool = False) -> str:
     """
     Format meter analysis data into a conversational response
+    Formats response based on what fields user specifically requested
     """
     # Handle validation errors (invalid Sanskrit input)
     if not meter_data.get('success'):
@@ -408,45 +486,111 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default') 
             for match in meter_data['fuzzy_matches'][:3]:
                 response += f"- {match[0]} (similarity: {match[1]:.2f})\n"
         
+        if add_analyze_link:
+            response += "\n---\n💡 **Tip:** Use the **Analyse Chanda** page for detailed analysis with visualizations.\n"
+        
         return response
     
+    # Default requested_fields if not provided
+    if requested_fields is None:
+        requested_fields = {'full_analysis': True}
+    
     # Successful identification
-    if persona == 'krishna':
-        intro = "🕉️ Arjuna, I have examined this sacred verse using the ancient wisdom of Acharya Pingala.\n\n"
+    response = ""
+    
+    # Check if user asked for specific fields only
+    specific_fields_requested = any([
+        requested_fields.get('meter_name'),
+        requested_fields.get('lg_pattern'),
+        requested_fields.get('gana_pattern'),
+        requested_fields.get('syllable_count'),
+        requested_fields.get('matra_count')
+    ])
+    
+    if specific_fields_requested:
+        # PRECISION MODE - Show only what user asked for
+        
+        # Show meter name if requested (clean format with confidence label)
+        if requested_fields.get('meter_name'):
+            # Extract primary meter name (without all the pada variations)
+            primary_meter = meter_data['meter']
+            # Get confidence from meter_display if it contains score
+            confidence_label = "High"  # Default
+            if meter_data.get('meter_display'):
+                # Extract first meter with confidence
+                import re
+                match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
+                if match:
+                    score = float(match.group(1))
+                    confidence_label = get_confidence_label(score)
+            
+            response += f"**Chanda:** {primary_meter} (Confidence: {confidence_label})\n"
+        
+        # Show L-G pattern if requested (split by pada)
+        if requested_fields.get('lg_pattern'):
+            lg_pattern = meter_data['lg_pattern']
+            # Split by pada for readability
+            formatted_lg = split_lg_pattern_by_pada(lg_pattern)
+            response += f"**L-G Pattern (by Pada):**\n`{formatted_lg}`\n"
+        
+        # Show gana pattern if requested
+        if requested_fields.get('gana_pattern'):
+            response += f"**Gana Pattern:** `{meter_data['gana_pattern']}`\n"
+        
+        # Show syllable count if requested
+        if requested_fields.get('syllable_count'):
+            response += f"**Syllable Count:** {meter_data['syllables']}\n"
+        
+        # Show matra count if requested
+        if requested_fields.get('matra_count'):
+            response += f"**Matra Count:** {meter_data['matra']}\n"
+        
     else:
-        intro = "✨ I have analyzed the text using traditional chandas identification algorithms.\n\n"
-    
-    response = intro
-    
-    # Format text properly - show each line on separate line for multi-line verses
-    if meter_data.get('is_multi_line'):
-        response += f"**Sanskrit Verse ({meter_data.get('verse_lines', 2)} lines):**\n"
-        for line in meter_data['text'].split('\n'):
-            if line.strip():
-                response += f"> {line.strip()}\n"
+        # FULL ANALYSIS MODE - Show complete information (clean format)
+        
+        # Format text properly - show each line on separate line for multi-line verses
+        if meter_data.get('is_multi_line'):
+            response += f"**Sanskrit Verse ({meter_data.get('verse_lines', 2)} lines):**\n"
+            for line in meter_data['text'].split('\n'):
+                if line.strip():
+                    response += f"> {line.strip()}\n"
+            response += "\n"
+        else:
+            response += f"**Sanskrit Text:** {meter_data['text']}\n\n"
+        
+        # Clean meter display - extract primary meter with confidence label
+        primary_meter = meter_data['meter']
+        
+        # Extract confidence score from meter_display
+        import re
+        confidence_label = "High"  # Default
+        if meter_data.get('meter_display'):
+            match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
+            if match:
+                score = float(match.group(1))
+                confidence_label = get_confidence_label(score)
+        
+        response += f"**Chanda:** {primary_meter} (Confidence: {confidence_label})\n\n"
+        
+        # L-G Pattern split by pada
+        lg_pattern = meter_data['lg_pattern']
+        formatted_lg = split_lg_pattern_by_pada(lg_pattern)
+        response += f"**L-G Pattern (by Pada):**\n`{formatted_lg}`\n\n"
+        
+        response += f"**Gana Pattern:** `{meter_data['gana_pattern']}`\n\n"
+        response += f"**Syllables:** {meter_data['syllables']} | **Matra:** {meter_data['matra']}\n"
+        
+        if meter_data.get('is_multi_line'):
+            response += f" | **Lines:** {meter_data.get('verse_lines', 2)}\n"
+        
         response += "\n"
-    else:
-        response += f"**Sanskrit Text:** {meter_data['text']}\n\n"
+        
+        if meter_data.get('syllable_breakdown') and len(meter_data['syllable_breakdown']) <= 25:
+            response += f"**Syllables:** {' · '.join(meter_data['syllable_breakdown'])}\n\n"
     
-    response += f"**Identified Meter:** **{meter_data['meter']}** ({meter_data['meter_display']})\n\n"
-    response += f"**Metrical Analysis:**\n"
-    response += f"- **Laghu-Guru Pattern:** `{meter_data['lg_pattern']}`\n"
-    response += f"- **Gana Pattern:** `{meter_data['gana_pattern']}`\n"
-    response += f"- **Total Syllable Count:** {meter_data['syllables']}\n"
-    response += f"- **Total Matra Count:** {meter_data['matra']}\n"
-    
-    if meter_data.get('is_multi_line'):
-        response += f"- **Number of Lines:** {meter_data.get('verse_lines', 2)}\n"
-    
-    response += "\n"
-    
-    if meter_data.get('syllable_breakdown') and len(meter_data['syllable_breakdown']) <= 20:
-        response += f"**Syllable Breakdown:** {' · '.join(meter_data['syllable_breakdown'])}\n\n"
-    
-    if persona == 'krishna':
-        response += "This is the meter as prescribed in the ancient texts. Would you like me to explain its spiritual significance? 🙏"
-    else:
-        response += "Would you like me to explain more about this meter's characteristics and usage in classical poetry?"
+    # Add "Use Analyse Chanda" suggestion if agentic flow was used
+    if add_analyze_link:
+        response += "\n---\n💡 **Tip:** Use the **Analyse Chanda** page for detailed analysis with visualizations.\n"
     
     return response
 
@@ -712,7 +856,7 @@ def chat():
         # AGENTIC METER IDENTIFICATION
         # Check if user is asking for meter analysis
         # =====================================================================
-        has_meter_intent, extracted_text = detect_meter_intent(message)
+        has_meter_intent, extracted_text, requested_fields = detect_meter_intent(message)
         
         # If we have OCR text and meter intent, use the OCR text for analysis
         if has_meter_intent and extracted_ocr_text:
@@ -724,8 +868,8 @@ def chat():
             # Perform automatic meter identification
             meter_analysis = analyze_meter_agentic(extracted_text)
             
-            # Format the response
-            agentic_response = format_meter_response(meter_analysis, persona)
+            # Format the response with requested fields and add "Use Analyse Chanda" link
+            agentic_response = format_meter_response(meter_analysis, persona, requested_fields, add_analyze_link=True)
             
             # Store conversation with meter data and image
             conversations[conversation_id].append({

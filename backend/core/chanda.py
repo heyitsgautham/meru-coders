@@ -31,6 +31,26 @@ except ImportError:
     icu = None
     regex = None
 
+# Vedic-Classical meter mappings (SIH 2025)
+try:
+    import sys
+    from pathlib import Path
+    # Add tests directory to path for vedic_classical_mappings
+    tests_dir = Path(__file__).parent.parent / 'tests'
+    if str(tests_dir) not in sys.path:
+        sys.path.insert(0, str(tests_dir))
+    from vedic_classical_mappings import (
+        get_classical_equivalents,
+        meters_match as vedic_meters_match,
+        normalize_meter_name as normalize_vedic_meter
+    )
+    VEDIC_MAPPINGS_AVAILABLE = True
+except ImportError:
+    VEDIC_MAPPINGS_AVAILABLE = False
+    get_classical_equivalents = None
+    vedic_meters_match = None
+    normalize_vedic_meter = None
+
 # size of LRU cache (currently unused - see mark_lg/transform methods)
 MAX_CACHE = 1024
 
@@ -41,6 +61,7 @@ MAX_CACHE = 1024
 # Confidence thresholds for meter matching (0.0 - 10.0 scale)
 CONFIDENCE_EXACT_PATTERN = 10.0      # Exact L-G pattern match
 CONFIDENCE_EXACT_REGEX = 9.0         # Regex pattern match with wildcards
+CONFIDENCE_VEDIC_CLASSICAL_MAP = 9.8 # Vedic→Classical empirical mapping (SIH 2025)
 CONFIDENCE_VEDIC_PRIMARY = 11.0      # Vedic meter by syllable count (no classical match)
 CONFIDENCE_VEDIC_SECONDARY = 9.5     # Vedic meter as fallback (classical match exists)
 CONFIDENCE_PADA_EXACT = 9.0          # Exact pada-level pattern match (sama)
@@ -3269,6 +3290,32 @@ class Chanda:
                     # ENHANCED: Use confidence scores from multi-level matching
                     confidence_scores = _result.get('confidence_scores', {})
                     
+                    # =====================================================================
+                    # VEDIC-CLASSICAL MAPPING ENRICHMENT (SIH 2025)
+                    # For verse-level analysis, enrich confidence scores with empirical mappings
+                    # This helps when processing Vedic texts with verse=True parameter
+                    # =====================================================================
+                    if VEDIC_MAPPINGS_AVAILABLE and holistic_result and holistic_result.get('found'):
+                        vedic_meter = holistic_result.get('meter')
+                        if vedic_meter:
+                            classical_equivalents = get_classical_equivalents(vedic_meter)
+                            if classical_equivalents:
+                                for equiv_name in classical_equivalents[:3]:
+                                    # Check if this equivalent is in current line's predictions
+                                    for meter_name in list(confidence_scores.keys()):
+                                        normalized_pred = normalize_vedic_meter(meter_name)
+                                        normalized_equiv = normalize_vedic_meter(equiv_name)
+                                        
+                                        if normalized_pred == normalized_equiv:
+                                            # Boost confidence for empirically validated mapping
+                                            current_conf, current_type = confidence_scores[meter_name]
+                                            if current_conf < CONFIDENCE_VEDIC_CLASSICAL_MAP:
+                                                confidence_scores[meter_name] = (
+                                                    CONFIDENCE_VEDIC_CLASSICAL_MAP,
+                                                    f'vedic_classical_map_{current_type}'
+                                                )
+                    # =====================================================================
+                    
                     for _c in _unique_chanda:
                         # Get meter name (handle tuple format)
                         meter_name = _c[0] if isinstance(_c, tuple) else _c
@@ -3823,6 +3870,31 @@ class Chanda:
                         if meter_tuple not in chanda:
                             chanda.append(meter_tuple)
                 found = True
+            
+            # =====================================================================
+            # VEDIC-CLASSICAL MAPPING ENRICHMENT (SIH 2025)
+            # Apply empirical mappings to boost confidence for Vedic text predictions
+            # E.g., If predicted "ऋषभगजविलसित" for a Vedic verse, and it matches
+            # "चतुष्पदा भुरिग्जगती" → "ऋषभगजविलसित" mapping (46/47 times), boost it
+            # =====================================================================
+            if VEDIC_MAPPINGS_AVAILABLE and vedic_priority_meter and confidence_map:
+                classical_equivalents = get_classical_equivalents(vedic_priority_meter)
+                if classical_equivalents:
+                    for equiv_name in classical_equivalents[:3]:  # Top 3 mappings
+                        # Check if this equivalent is already in our predictions
+                        for meter_name in list(confidence_map.keys()):
+                            normalized_pred = normalize_vedic_meter(meter_name)
+                            normalized_equiv = normalize_vedic_meter(equiv_name)
+                            
+                            if normalized_pred == normalized_equiv:
+                                # Boost confidence for empirically validated mapping
+                                current_conf, current_type = confidence_map[meter_name]
+                                if current_conf < CONFIDENCE_VEDIC_CLASSICAL_MAP:
+                                    confidence_map[meter_name] = (
+                                        CONFIDENCE_VEDIC_CLASSICAL_MAP,
+                                        f'vedic_classical_map_{current_type}'
+                                    )
+            # =====================================================================
             
             # =====================================================================
             # FUZZY PATTERN MATCHING (INTERMEDIATE FALLBACK)

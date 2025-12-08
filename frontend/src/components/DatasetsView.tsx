@@ -8,6 +8,9 @@ import { Loader2, ChevronLeft, ChevronRight, Search, X, ArrowLeft } from 'lucide
 import * as api from '../services/api';
 import type { DatasetInfo, DatasetRow } from '../types/api';
 
+// Import Atharvaveda book cover for special dataset header
+import AtharvaVedaImg from '../assets/Atharva_Veda.png';
+
 /* ============================================================================
    Custom Styles - Embedded for this component
    ============================================================================ */
@@ -248,6 +251,80 @@ const styles = {
     padding: '36px 40px',
     marginBottom: '28px',
     border: '1px solid #f5e6d3',
+  },
+  // Atharvaveda special header with book cover
+  atharvavedaHeader: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '40px',
+    background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%)',
+    borderRadius: '24px',
+    padding: '40px',
+    marginBottom: '28px',
+    border: '1px solid #fdba74',
+    boxShadow: '0 8px 32px rgba(251, 146, 60, 0.15)',
+    overflow: 'hidden',
+    position: 'relative' as const,
+  },
+  atharvavedaBookCover: {
+    width: '140px',
+    height: '200px',
+    borderRadius: '12px',
+    objectFit: 'cover' as const,
+    boxShadow: '0 8px 24px rgba(194, 65, 12, 0.25)',
+    flexShrink: 0,
+    border: '3px solid #fff',
+  },
+  atharvavedaContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  atharvavedaTitle: {
+    fontSize: '2rem',
+    fontWeight: 700,
+    color: '#9a3412',
+    marginBottom: '8px',
+    fontFamily: "'Noto Sans Devanagari', sans-serif",
+    letterSpacing: '-0.01em',
+  },
+  atharvavedaSanskritTitle: {
+    fontSize: '1.5rem',
+    fontWeight: 500,
+    color: '#c2410c',
+    marginBottom: '16px',
+    fontFamily: "'Noto Sans Devanagari', sans-serif",
+  },
+  atharvavedaDescription: {
+    fontSize: '1rem',
+    color: '#78350f',
+    lineHeight: 1.7,
+    marginBottom: '20px',
+    maxWidth: '700px',
+  },
+  atharvavedaMeta: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '24px',
+    fontSize: '0.875rem',
+    color: '#92400e',
+  },
+  atharvavedaMetaItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    background: 'rgba(251, 146, 60, 0.2)',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    border: '1px solid rgba(251, 146, 60, 0.3)',
+  },
+  atharvavedaGlow: {
+    position: 'absolute' as const,
+    top: '-50%',
+    right: '-10%',
+    width: '400px',
+    height: '400px',
+    background: 'radial-gradient(circle, rgba(251, 146, 60, 0.2) 0%, transparent 70%)',
+    pointerEvents: 'none' as const,
   },
   detailTitle: {
     fontSize: '1.75rem',
@@ -1132,19 +1209,45 @@ export function DatasetsView() {
               Back to datasets
             </button>
 
-            {/* Detail Header */}
-            <div style={styles.detailHeader}>
-              <h2 style={styles.detailTitle}>{selectedDataset.name}</h2>
-              <p style={styles.detailDescription}>{selectedDataset.description}</p>
-              <div style={styles.detailMeta}>
-                <span style={styles.detailMetaItem}>
-                  📚 {selectedDataset.sourceReference || selectedDataset.source}
-                </span>
-                <span style={styles.detailMetaItem}>
-                  📊 {selectedDataset.rowCount.toLocaleString()} entries
-                </span>
+            {/* Detail Header - Special layout for Atharvaveda */}
+            {selectedDataset.id === 'atharvaveda' ? (
+              <div style={styles.atharvavedaHeader}>
+                <div style={styles.atharvavedaGlow}></div>
+                <img 
+                  src={AtharvaVedaImg} 
+                  alt="Atharvaveda" 
+                  style={styles.atharvavedaBookCover}
+                />
+                <div style={styles.atharvavedaContent}>
+                  <h2 style={styles.atharvavedaTitle}>{selectedDataset.name}</h2>
+                  <p style={styles.atharvavedaSanskritTitle}>अथर्ववेद</p>
+                  <p style={styles.atharvavedaDescription}>
+                    {selectedDataset.description}
+                  </p>
+                  <div style={styles.atharvavedaMeta}>
+                    <span style={styles.atharvavedaMetaItem}>
+                      📚 {selectedDataset.sourceReference || selectedDataset.source}
+                    </span>
+                    <span style={styles.atharvavedaMetaItem}>
+                      📊 {selectedDataset.rowCount.toLocaleString()} verses
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div style={styles.detailHeader}>
+                <h2 style={styles.detailTitle}>{selectedDataset.name}</h2>
+                <p style={styles.detailDescription}>{selectedDataset.description}</p>
+                <div style={styles.detailMeta}>
+                  <span style={styles.detailMetaItem}>
+                    📚 {selectedDataset.sourceReference || selectedDataset.source}
+                  </span>
+                  <span style={styles.detailMetaItem}>
+                    📊 {selectedDataset.rowCount.toLocaleString()} entries
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Data Table */}
             <div style={styles.tableContainer}>
