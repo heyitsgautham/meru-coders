@@ -13,6 +13,8 @@ import type {
   FileExtractResponse,
   DatasetsListResponse,
   DatasetResponse,
+  SlokaSearchResponse,
+  SlokaValidateResponse,
 } from '../types/api';
 
 // Get API URL from environment or use default
@@ -306,4 +308,40 @@ export function getTTSAudioURL(filename: string): string {
  */
 export async function getMyContributions(): Promise<{ success: boolean; contributions: any[]; error?: string }> {
   return request('/contributions/my-contributions');
+}
+
+/**
+ * Search for a sloka in the datasets to find matches
+ */
+export async function searchSloka(
+  text: string,
+  options: {
+    threshold?: number;
+    limit?: number;
+  } = {}
+): Promise<SlokaSearchResponse> {
+  return request<SlokaSearchResponse>('/sloka/search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text,
+      threshold: options.threshold ?? 0.7,
+      limit: options.limit ?? 10,
+    }),
+  });
+}
+
+/**
+ * Validate a sloka and get detailed difference analysis
+ */
+export async function validateSloka(text: string): Promise<SlokaValidateResponse> {
+  return request<SlokaValidateResponse>('/sloka/validate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text }),
+  });
 }

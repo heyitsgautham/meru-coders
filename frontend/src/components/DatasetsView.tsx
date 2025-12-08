@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Loader2, ChevronLeft, ChevronRight, Search, X, ArrowLeft } from 'lucide-react';
 import * as api from '../services/api';
 import type { DatasetInfo, DatasetRow } from '../types/api';
+import { SlokaChecker } from './SlokaChecker';
 
 // Import Atharvaveda book cover for special dataset header
 import AtharvaVedaImg from '../assets/Atharva_Veda.png';
@@ -933,6 +934,11 @@ export function DatasetsView() {
       </div>
 
       <div style={styles.contentWrapper}>
+        {/* Sloka Checker - Only show on main datasets page, not when viewing a specific dataset */}
+        {!selectedDataset && !showContributions && (
+          <SlokaChecker />
+        )}
+
         {/* Filter Bar */}
         <div style={styles.filterBar}>
           <div style={styles.filterBarLeft}>

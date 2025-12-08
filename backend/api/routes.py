@@ -853,6 +853,418 @@ def register_routes(app):
                 'error': str(e)
             }), 500
     
+    # ============================================================
+    # SLOKA SEARCH API - Fast fuzzy search for verse validation
+    # ============================================================
+    
+    # Cache for sloka search index (loaded on first request)
+    _sloka_search_cache = {
+        'initialized': False,
+        'slokas': [],  # List of (sloka_text, dataset_id, chandas, row_data)
+        'normalized_map': {}  # normalized_text -> original indices
+    }
+    
+    def normalize_sanskrit_text(text):
+        """
+        Normalize Sanskrit text for comparison.
+        Removes accent marks, normalizes Unicode, and standardizes whitespace.
+        """
+        import unicodedata
+        if not text:
+            return ""
+        
+        # Normalize to NFC form
+        text = unicodedata.normalize('NFC', text)
+        
+        # Remove Vedic accent marks (svarita, anudatta, etc.)
+        # Common Vedic accent marks: U+0951 (॑), U+0952 (॒), U+0953 (॓), U+0954 (॔)
+        vedic_marks = '\u0951\u0952\u0953\u0954\u1CD0\u1CD1\u1CD2\u1CD3\u1CD4\u1CD5\u1CD6\u1CD7\u1CD8\u1CD9\u1CDA\u1CDB\u1CDC\u1CDD\u1CDE\u1CDF\u1CE0\u1CE1'
+        for mark in vedic_marks:
+            text = text.replace(mark, '')
+        
+        # Normalize whitespace
+        text = ' '.join(text.split())
+        
+        # Remove common punctuation but keep essential characters
+        text = text.replace('।', ' ').replace('॥', ' ').replace('।।', ' ')
+        text = text.replace(',', ' ').replace('.', ' ').replace(':', ' ')
+        
+        # Clean up multiple spaces
+        text = ' '.join(text.split())
+        
+        return text.strip().lower()
+    
+    def build_sloka_search_index():
+        """
+        Build search index from all datasets containing slokas.
+        Called once on first search request.
+        """
+        if _sloka_search_cache['initialized']:
+            return
+        
+        logger.info("Building sloka search index...")
+        catalog = load_dataset_catalog()
+        slokas = []
+        
+        for ds_id, ds_data in catalog.get('datasets', {}).items():
+            sloka_col = ds_data.get('slokaColumn')
+            chandas_col = ds_data.get('chandasColumn')
+            
+            if not sloka_col:
+                continue  # Skip datasets without slokas
+            
+            # Handle merged datasets
+            if 'files' in ds_data:
+                continue  # Skip merged datasets (they contain meter definitions, not verses)
+            
+            filename = ds_data.get('filename', '')
+            filepath = SOURCE_DIR / filename
+            
+            if not filepath.exists():
+                continue
+            
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    reader = csv.DictReader(f)
+                    for row_idx, row in enumerate(reader):
+                        sloka_text = row.get(sloka_col, '').strip()
+                        if sloka_text:
+                            chandas = row.get(chandas_col, '') if chandas_col else ''
+                            slokas.append({
+                                'text': sloka_text,
+                                'normalized': normalize_sanskrit_text(sloka_text),
+                                'dataset_id': ds_id,
+                                'dataset_name': ds_data.get('name', ds_id),
+                                'chandas': chandas.strip(),
+                                'source': ds_data.get('source', ''),
+                                'row_index': row_idx,
+                                'raw': row
+                            })
+            except Exception as e:
+                logger.warning(f"Error loading dataset {ds_id} for search index: {e}")
+        
+        _sloka_search_cache['slokas'] = slokas
+        _sloka_search_cache['initialized'] = True
+        logger.info(f"Sloka search index built with {len(slokas)} entries")
+    
+    def calculate_similarity(text1, text2):
+        """
+        Calculate similarity between two strings using Levenshtein ratio.
+        Returns a value between 0 and 1 (1 = exact match).
+        """
+        try:
+            import Levenshtein
+            return Levenshtein.ratio(text1, text2)
+        except ImportError:
+            # Fallback to simple character matching if Levenshtein not available
+            if not text1 or not text2:
+                return 0.0
+            matches = sum(1 for a, b in zip(text1, text2) if a == b)
+            return matches / max(len(text1), len(text2))
+    
+    @app.route(f'{settings.API_PREFIX}/sloka/search', methods=['POST'])
+    def search_sloka():
+        """
+        Search for a sloka in the datasets to find matches and identify errors.
+        
+        Request JSON:
+            {
+                "text": "Sloka text to search for",
+                "threshold": 0.7,  // Minimum similarity (0-1), default 0.7
+                "limit": 10        // Max results, default 10
+            }
+        
+        Returns:
+            JSON with matching slokas sorted by similarity
+        """
+        try:
+            # Build index if not already done
+            build_sloka_search_index()
+            
+            data = request.get_json()
+            
+            if not data or 'text' not in data:
+                return jsonify({
+                    'success': False,
+                    'error': 'Missing required field: text'
+                }), 400
+            
+            query_text = data['text'].strip()
+            if not query_text:
+                return jsonify({
+                    'success': False,
+                    'error': 'Search text cannot be empty'
+                }), 400
+            
+            threshold = float(data.get('threshold', 0.7))
+            limit = min(int(data.get('limit', 10)), 50)  # Cap at 50 results
+            
+            # Normalize query for comparison
+            query_normalized = normalize_sanskrit_text(query_text)
+            
+            if not query_normalized:
+                return jsonify({
+                    'success': False,
+                    'error': 'Query text is empty after normalization'
+                }), 400
+            
+            # Search through all slokas
+            matches = []
+            
+            for sloka_data in _sloka_search_cache['slokas']:
+                # Calculate similarity on normalized text
+                similarity = calculate_similarity(query_normalized, sloka_data['normalized'])
+                
+                if similarity >= threshold:
+                    matches.append({
+                        'original_text': sloka_data['text'],
+                        'dataset_id': sloka_data['dataset_id'],
+                        'dataset_name': sloka_data['dataset_name'],
+                        'chandas': sloka_data['chandas'],
+                        'source': sloka_data['source'],
+                        'similarity': round(similarity, 4),
+                        'is_exact_match': similarity >= 0.99
+                    })
+            
+            # Sort by similarity descending
+            matches.sort(key=lambda x: x['similarity'], reverse=True)
+            
+            # Limit results
+            matches = matches[:limit]
+            
+            # Determine if input appears to have errors
+            has_exact_match = any(m['is_exact_match'] for m in matches)
+            best_match = matches[0] if matches else None
+            
+            # Generate diff hints for the best match
+            diff_hints = []
+            if best_match and not best_match['is_exact_match']:
+                # Simple character-level diff hints
+                original = best_match['original_text']
+                query = query_text
+                
+                # Find potential differences
+                if len(query) != len(original):
+                    diff_hints.append(f"Length difference: your input has {len(query)} chars, original has {len(original)} chars")
+            
+            return jsonify({
+                'success': True,
+                'query': query_text,
+                'query_normalized': query_normalized,
+                'matches': matches,
+                'match_count': len(matches),
+                'has_exact_match': has_exact_match,
+                'best_similarity': best_match['similarity'] if best_match else 0,
+                'diff_hints': diff_hints,
+                'total_slokas_indexed': len(_sloka_search_cache['slokas'])
+            })
+            
+        except ValueError as e:
+            return jsonify({
+                'success': False,
+                'error': f'Invalid parameter: {e}'
+            }), 400
+        except Exception as e:
+            logger.exception(f"Error in sloka search: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+    
+    @app.route(f'{settings.API_PREFIX}/sloka/validate', methods=['POST'])
+    def validate_sloka():
+        """
+        Validate a sloka and identify specific errors/differences from the dataset.
+        Uses difflib for smart diff that doesn't cascade errors.
+        
+        Request JSON:
+            {
+                "text": "Sloka text to validate"
+            }
+        
+        Returns:
+            JSON with validation results including:
+            - highlighted_text: User's text with error positions marked
+            - differences: List of actual differences (not cascading)
+        """
+        try:
+            import difflib
+            
+            # Build index if not already done
+            build_sloka_search_index()
+            
+            data = request.get_json()
+            
+            if not data or 'text' not in data:
+                return jsonify({
+                    'success': False,
+                    'error': 'Missing required field: text'
+                }), 400
+            
+            query_text = data['text'].strip()
+            if not query_text:
+                return jsonify({
+                    'success': False,
+                    'error': 'Text cannot be empty'
+                }), 400
+            
+            # Normalize query for finding best match
+            query_normalized = normalize_sanskrit_text(query_text)
+            
+            # Find best match using similarity
+            best_match = None
+            best_similarity = 0
+            
+            for sloka_data in _sloka_search_cache['slokas']:
+                similarity = calculate_similarity(query_normalized, sloka_data['normalized'])
+                if similarity > best_similarity:
+                    best_similarity = similarity
+                    best_match = sloka_data
+            
+            if not best_match or best_similarity < 0.5:
+                return jsonify({
+                    'success': True,
+                    'found': False,
+                    'message': 'No similar sloka found in the database. This verse may not be in our collection.',
+                    'query': query_text
+                })
+            
+            original = best_match['text']
+            
+            # Normalize both texts for comparison (remove line breaks, extra spaces)
+            # but keep track of original for display
+            query_clean = ' '.join(query_text.split())
+            original_clean = ' '.join(original.split())
+            
+            # If user's input is shorter, they might have entered partial sloka
+            # In that case, only compare up to user's input length in original
+            # Find the best matching substring in original
+            if len(query_clean) < len(original_clean) * 0.7:
+                # User entered a partial sloka - find the matching portion
+                # Use get_close_matches on chunks to find best alignment
+                matcher = difflib.SequenceMatcher(None, query_clean, original_clean)
+                
+                # Find longest matching block
+                blocks = matcher.get_matching_blocks()
+                if blocks:
+                    # Take the portion of original that aligns with user input
+                    # For simplicity, compare from the beginning
+                    original_portion = original_clean[:len(query_clean) + 20]  # Add some buffer
+                else:
+                    original_portion = original_clean
+            else:
+                original_portion = original_clean
+            
+            # Use SequenceMatcher to find the real differences
+            matcher = difflib.SequenceMatcher(None, query_clean, original_portion)
+            
+            # Get the opcodes which tell us what operations transform query into original
+            opcodes = matcher.get_opcodes()
+            
+            differences = []
+            error_positions = set()  # Track positions in user's text that are wrong
+            
+            for tag, i1, i2, j1, j2 in opcodes:
+                if tag == 'equal':
+                    # These characters match, no error
+                    continue
+                elif tag == 'replace':
+                    # Characters at these positions are different
+                    user_segment = query_clean[i1:i2]
+                    correct_segment = original_portion[j1:j2]
+                    differences.append({
+                        'type': 'replace',
+                        'position': i1,
+                        'end_position': i2,
+                        'your_text': user_segment,
+                        'correct_text': correct_segment,
+                        'description': f"'{user_segment}' should be '{correct_segment}'"
+                    })
+                    # Mark all positions in this range as errors
+                    for pos in range(i1, i2):
+                        error_positions.add(pos)
+                elif tag == 'delete':
+                    # Extra characters in user's input (not in original)
+                    extra_segment = query_clean[i1:i2]
+                    differences.append({
+                        'type': 'extra',
+                        'position': i1,
+                        'end_position': i2,
+                        'your_text': extra_segment,
+                        'correct_text': '',
+                        'description': f"Extra: '{extra_segment}'"
+                    })
+                    for pos in range(i1, i2):
+                        error_positions.add(pos)
+                elif tag == 'insert':
+                    # Missing characters (in original but not in user's input)
+                    missing_segment = original_portion[j1:j2]
+                    # Only report missing if it's not just trailing text (user entered partial)
+                    if i1 < len(query_clean) - 5:  # Not at the end
+                        differences.append({
+                            'type': 'missing',
+                            'position': i1,
+                            'end_position': i1,
+                            'your_text': '',
+                            'correct_text': missing_segment,
+                            'description': f"Missing: '{missing_segment}'"
+                        })
+            
+            # Build highlighted segments for the frontend
+            # Each segment is either normal or an error
+            highlighted_segments = []
+            sorted_positions = sorted(error_positions)
+            
+            i = 0
+            while i < len(query_clean):
+                if i in error_positions:
+                    # Find the end of this error run
+                    start = i
+                    while i < len(query_clean) and i in error_positions:
+                        i += 1
+                    highlighted_segments.append({
+                        'text': query_clean[start:i],
+                        'isError': True
+                    })
+                else:
+                    # Find the end of this normal run
+                    start = i
+                    while i < len(query_clean) and i not in error_positions:
+                        i += 1
+                    highlighted_segments.append({
+                        'text': query_clean[start:i],
+                        'isError': False
+                    })
+            
+            is_valid = len(differences) == 0
+            
+            # Recalculate similarity on cleaned texts for more accurate percentage
+            final_similarity = difflib.SequenceMatcher(None, query_clean, original_clean).ratio()
+            
+            return jsonify({
+                'success': True,
+                'found': True,
+                'is_valid': is_valid,
+                'similarity': round(final_similarity, 4),
+                'similarity_percentage': round(final_similarity * 100, 1),
+                'original_text': original,  # Keep original with line breaks for display
+                'your_text': query_text,
+                'highlighted_segments': highlighted_segments,
+                'chandas': best_match['chandas'],
+                'dataset_name': best_match['dataset_name'],
+                'source': best_match['source'],
+                'differences': differences,
+                'difference_count': len(differences),
+                'message': 'Perfect match!' if is_valid else f'Found {len(differences)} difference(s).'
+            })
+            
+        except Exception as e:
+            logger.exception(f"Error in sloka validation: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+    
     @app.route(f'{settings.API_PREFIX}/tts/generate', methods=['POST'])
     def generate_tts():
         """
