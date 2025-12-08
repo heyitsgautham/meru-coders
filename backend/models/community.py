@@ -23,7 +23,7 @@ class CommunityModel:
     # ==================== POSTS ====================
     
     def create_post(self, user_id: str, content: str, sanskrit_text: Optional[str] = None, 
-                    meter_analysis: Optional[Dict] = None) -> Dict[str, Any]:
+                    meter_analysis: Optional[Dict] = None, image_url: Optional[str] = None) -> Dict[str, Any]:
         """
         Create a new post
         
@@ -32,6 +32,7 @@ class CommunityModel:
             content: Post content/caption
             sanskrit_text: Optional Sanskrit verse text
             meter_analysis: Optional meter analysis result from Chanda
+            image_url: Optional URL of uploaded image
         
         Returns:
             Dict with success status and post data
@@ -45,6 +46,7 @@ class CommunityModel:
                         'content': content,
                         'sanskrit_text': sanskrit_text,
                         'meter_analysis': meter_analysis,
+                        'image_url': image_url,
                         'user_id': user_id,
                         'created_at': datetime.utcnow().isoformat(),
                         'likes_count': 0,
@@ -58,6 +60,7 @@ class CommunityModel:
                 'content': content,
                 'sanskrit_text': sanskrit_text,
                 'meter_analysis': meter_analysis,
+                'image_url': image_url,
                 'likes_count': 0,
                 'comments_count': 0,
                 'created_at': datetime.utcnow().isoformat()
@@ -221,7 +224,38 @@ class CommunityModel:
                     'error': 'You can only delete your own posts'
                 }
             
-            # Delete post (cascade will handle likes and comments)
+            # Delete related records first to handle foreign key constraints
+            # Delete bookmarks for this post
+            try:
+                self.supabase.table('bookmarks').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete bookmarks: {e}")
+            
+            # Delete likes for this post
+            try:
+                self.supabase.table('post_likes').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete likes: {e}")
+            
+            # Delete comments for this post
+            try:
+                self.supabase.table('comments').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete comments: {e}")
+            
+            # Delete notifications related to this post
+            try:
+                self.supabase.table('notifications').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete notifications: {e}")
+            
+            # Delete reports for this post
+            try:
+                self.supabase.table('reports').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete reports: {e}")
+            
+            # Now delete the post
             self.supabase.table('posts').delete().eq('id', post_id).execute()
             
             return {
@@ -605,7 +639,8 @@ class CommunityModel:
     # ==================== PHASE 2: EDIT POST ====================
     
     def update_post(self, post_id: str, user_id: str, content: Optional[str] = None,
-                    sanskrit_text: Optional[str] = None, meter_analysis: Optional[Dict] = None) -> Dict[str, Any]:
+                    sanskrit_text: Optional[str] = None, meter_analysis: Optional[Dict] = None,
+                    image_url: Optional[str] = None, update_image: bool = False) -> Dict[str, Any]:
         """
         Update a post (only by owner)
         
@@ -615,6 +650,8 @@ class CommunityModel:
             content: New content (optional)
             sanskrit_text: New Sanskrit text (optional)
             meter_analysis: New meter analysis (optional)
+            image_url: Image URL (optional)
+            update_image: If True, update image_url field (allows setting to None to remove)
         
         Returns:
             Dict with success status and updated post
@@ -644,6 +681,9 @@ class CommunityModel:
                 update_data['sanskrit_text'] = sanskrit_text
             if meter_analysis is not None:
                 update_data['meter_analysis'] = meter_analysis
+            if update_image:
+                # Explicitly update image_url (can be None to remove)
+                update_data['image_url'] = image_url
             
             result = self.supabase.table('posts')\
                 .update(update_data)\
@@ -935,6 +975,10 @@ class CommunityModel:
             posts_map = {p['id']: p for p in (posts.data or [])}
             ordered_posts = [posts_map[pid] for pid in post_ids if pid in posts_map]
             
+            # All posts in bookmarks are bookmarked by definition
+            for post in ordered_posts:
+                post['is_bookmarked'] = True
+            
             return {
                 'success': True,
                 'posts': ordered_posts,
@@ -1033,12 +1077,12 @@ class CommunityModel:
     def _create_notification(self, user_id: str, type: str, actor_id: str,
                             post_id: Optional[str] = None, comment_id: Optional[str] = None,
                             content: Optional[str] = None) -> None:
-        """Create a notification (internal helper)"""
+        """Create a notification (internal helper) and send real-time update"""
         try:
             if not self.supabase or user_id == actor_id:
                 return  # Don't notify yourself
             
-            self.supabase.table('notifications').insert({
+            notification_data = {
                 'user_id': user_id,
                 'type': type,
                 'actor_id': actor_id,
@@ -1047,7 +1091,44 @@ class CommunityModel:
                 'content': content,
                 'is_read': False,
                 'created_at': datetime.utcnow().isoformat()
-            }).execute()
+            }
+            
+            result = self.supabase.table('notifications').insert(notification_data).execute()
+            
+            # Send real-time notification via WebSocket
+            if result.data and len(result.data) > 0:
+                notification = result.data[0]
+                
+                # Get actor info for the notification
+                try:
+                    actor = self.supabase.table('users')\
+                        .select('id, username, avatar_url')\
+                        .eq('id', actor_id)\
+                        .single()\
+                        .execute()
+                    
+                    if actor.data:
+                        notification['actor'] = actor.data
+                except:
+                    pass
+                
+                # Send via WebSocket
+                try:
+                    from backend.api.websocket import send_notification_to_user, emit_notification_count
+                    send_notification_to_user(user_id, notification)
+                    
+                    # Also send updated unread count
+                    unread = self.supabase.table('notifications')\
+                        .select('id', count='exact')\
+                        .eq('user_id', user_id)\
+                        .eq('is_read', False)\
+                        .execute()
+                    
+                    if unread.count:
+                        emit_notification_count(user_id, unread.count)
+                except Exception as ws_error:
+                    print(f"WebSocket notification error (non-fatal): {ws_error}")
+                    
         except Exception as e:
             print(f"Create notification error: {e}")
     
@@ -1377,3 +1458,214 @@ class CommunityModel:
             
         except Exception as e:
             return {'success': False, 'error': str(e), 'replies': []}
+
+    # ==================== PHASE 3: ADMIN MODERATION ====================
+    
+    def is_admin(self, user_id: str) -> bool:
+        """Check if a user is an admin"""
+        try:
+            if not self.supabase:
+                return False
+            
+            result = self.supabase.table('users')\
+                .select('is_admin')\
+                .eq('id', user_id)\
+                .single()\
+                .execute()
+            
+            return result.data.get('is_admin', False) if result.data else False
+            
+        except Exception as e:
+            print(f"Check admin error: {e}")
+            return False
+    
+    def get_all_reports(self, status: str = 'pending', limit: int = 50, 
+                       offset: int = 0) -> Dict[str, Any]:
+        """Get all reports for admin moderation"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'reports': [], 'count': 0}
+            
+            query = self.supabase.table('reports')\
+                .select('''
+                    *,
+                    reporter:users!reporter_id(id, username, avatar_url),
+                    reported_user:users!reported_user_id(id, username, avatar_url),
+                    post:posts!post_id(id, content, user_id),
+                    comment:post_comments!comment_id(id, content, user_id)
+                ''')\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)
+            
+            if status != 'all':
+                query = query.eq('status', status)
+            
+            result = query.execute()
+            
+            return {
+                'success': True,
+                'reports': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+            
+        except Exception as e:
+            print(f"Get all reports error: {e}")
+            return {'success': False, 'error': str(e), 'reports': []}
+    
+    def handle_report(self, report_id: str, admin_id: str, action: str,
+                     notes: Optional[str] = None) -> Dict[str, Any]:
+        """Handle a report with the specified action"""
+        try:
+            if not self.supabase:
+                return {'success': False, 'error': 'Database not configured'}
+            
+            # Get the report
+            report = self.supabase.table('reports')\
+                .select('*')\
+                .eq('id', report_id)\
+                .single()\
+                .execute()
+            
+            if not report.data:
+                return {'success': False, 'error': 'Report not found'}
+            
+            report_data = report.data
+            
+            # Handle based on action
+            if action == 'dismiss':
+                # Just update status
+                self.supabase.table('reports').update({
+                    'status': 'dismissed',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes
+                }).eq('id', report_id).execute()
+                
+            elif action == 'delete_content':
+                # Delete the reported content
+                if report_data.get('post_id'):
+                    self.delete_post(report_data['post_id'])
+                elif report_data.get('comment_id'):
+                    self._delete_comment_admin(report_data['comment_id'])
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'content_deleted'
+                }).eq('id', report_id).execute()
+                
+            elif action == 'warn_user':
+                # Create a warning notification
+                reported_user_id = report_data.get('reported_user_id')
+                if reported_user_id:
+                    self._create_notification(
+                        user_id=reported_user_id,
+                        type='warning',
+                        content=notes or 'You have received a warning for violating community guidelines.'
+                    )
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'user_warned'
+                }).eq('id', report_id).execute()
+                
+            elif action == 'ban_user':
+                # Ban the user
+                reported_user_id = report_data.get('reported_user_id')
+                if reported_user_id:
+                    self.supabase.table('users').update({
+                        'is_banned': True,
+                        'banned_at': datetime.utcnow().isoformat(),
+                        'banned_by': admin_id,
+                        'ban_reason': notes
+                    }).eq('id', reported_user_id).execute()
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'user_banned'
+                }).eq('id', report_id).execute()
+            
+            return {'success': True, 'message': f'Report {action} successfully'}
+            
+        except Exception as e:
+            print(f"Handle report error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def _delete_comment_admin(self, comment_id: str) -> bool:
+        """Delete a comment (admin action)"""
+        try:
+            if not self.supabase:
+                return False
+            
+            self.supabase.table('post_comments').delete().eq('id', comment_id).execute()
+            return True
+        except Exception:
+            return False
+    
+    def get_moderation_stats(self) -> Dict[str, Any]:
+        """Get moderation statistics"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'stats': {}}
+            
+            # Get counts by status
+            pending = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'pending')\
+                .execute()
+            
+            resolved = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'resolved')\
+                .execute()
+            
+            dismissed = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'dismissed')\
+                .execute()
+            
+            # Get user stats
+            total_users = self.supabase.table('users')\
+                .select('id', count='exact')\
+                .execute()
+            
+            banned_users = self.supabase.table('users')\
+                .select('id', count='exact')\
+                .eq('is_banned', True)\
+                .execute()
+            
+            # Get post stats
+            total_posts = self.supabase.table('posts')\
+                .select('id', count='exact')\
+                .execute()
+            
+            return {
+                'success': True,
+                'stats': {
+                    'reports': {
+                        'pending': pending.count or 0,
+                        'resolved': resolved.count or 0,
+                        'dismissed': dismissed.count or 0,
+                        'total': (pending.count or 0) + (resolved.count or 0) + (dismissed.count or 0)
+                    },
+                    'users': {
+                        'total': total_users.count or 0,
+                        'banned': banned_users.count or 0
+                    },
+                    'posts': {
+                        'total': total_posts.count or 0
+                    }
+                }
+            }
+            
+        except Exception as e:
+            print(f"Get moderation stats error: {e}")
+            return {'success': False, 'error': str(e)}

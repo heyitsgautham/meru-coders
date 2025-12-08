@@ -1,11 +1,12 @@
 /**
  * NotificationsDropdown Component
  * Shows notifications in a dropdown from the header
+ * Supports real-time updates via WebSocket
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Heart, MessageCircle, UserPlus, Reply, Loader2, Check } from 'lucide-react';
+import { Bell, Heart, MessageCircle, UserPlus, Reply, Loader2, Check, Wifi, WifiOff } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import {
   markNotificationRead,
   markAllNotificationsRead,
 } from '../../services/community';
+import { useWebSocket, useRealtimeNotifications, useNotificationToast } from '../../hooks/useNotifications';
 import type { Notification } from '../../types/community';
 
 export function NotificationsDropdown() {
@@ -29,6 +31,28 @@ export function NotificationsDropdown() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  // WebSocket connection for real-time updates
+  const { connected } = useWebSocket();
+  
+  // Real-time notification handler
+  const handleNewNotification = useCallback((notification: any) => {
+    // Add new notification to the top of the list
+    setNotifications(prev => {
+      // Avoid duplicates
+      if (prev.some(n => n.id === notification.id)) {
+        return prev;
+      }
+      return [notification as Notification, ...prev];
+    });
+    setUnreadCount(prev => prev + 1);
+  }, []);
+
+  // Subscribe to real-time notifications
+  const { newNotifications } = useRealtimeNotifications(handleNewNotification);
+
+  // Toast for new notifications
+  const { notification: toastNotification, showToast, dismissToast } = useNotificationToast();
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -50,11 +74,12 @@ export function NotificationsDropdown() {
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
+      // Poll for new notifications every 30 seconds (fallback if WebSocket disconnects)
+      // With WebSocket, this is less critical but still useful for sync
+      const interval = setInterval(fetchNotifications, connected ? 60000 : 30000);
       return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [user, connected]);
 
   // Refresh when dropdown opens
   useEffect(() => {
@@ -145,28 +170,43 @@ export function NotificationsDropdown() {
   if (!user) return null;
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <button className="notification-bell-btn">
-          <Bell size={20} />
-          {unreadCount > 0 && (
-            <span className="notification-badge">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
-      </DropdownMenuTrigger>
-      
-      <DropdownMenuContent align="end" className="notifications-dropdown">
-        <div className="notifications-header">
-          <h3>Notifications</h3>
-          {unreadCount > 0 && (
-            <button className="mark-all-read-btn" onClick={handleMarkAllRead}>
-              <Check size={14} />
-              Mark all read
-            </button>
-          )}
+    <>
+      {/* Notification Toast for real-time updates */}
+      {showToast && toastNotification && (
+        <div className="notification-toast" onClick={dismissToast}>
+          <div className="notification-toast-content">
+            {getNotificationIcon(toastNotification.type)}
+            <span>{getNotificationText(toastNotification as Notification)}</span>
+          </div>
         </div>
+      )}
+      
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <button className="notification-bell-btn">
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+            {/* WebSocket connection indicator */}
+            <span className={`ws-indicator ${connected ? 'connected' : 'disconnected'}`} title={connected ? 'Real-time connected' : 'Polling mode'}>
+              {connected ? <Wifi size={8} /> : <WifiOff size={8} />}
+            </span>
+          </button>
+        </DropdownMenuTrigger>
+        
+        <DropdownMenuContent align="end" className="notifications-dropdown">
+          <div className="notifications-header">
+            <h3>Notifications</h3>
+            {unreadCount > 0 && (
+              <button className="mark-all-read-btn" onClick={handleMarkAllRead}>
+                <Check size={14} />
+                Mark all read
+              </button>
+            )}
+          </div>
         
         <DropdownMenuSeparator />
         
@@ -207,5 +247,6 @@ export function NotificationsDropdown() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 }

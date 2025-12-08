@@ -1,12 +1,19 @@
 /**
  * CommentSection Component
- * Elegant comments display with add/delete functionality
+ * Phase 3: Nested/threaded comment replies support
  */
 
 import { useState, useEffect } from 'react';
-import { Send, Trash2 } from 'lucide-react';
+import { Send, Trash2, MessageCircle, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { getComments, addComment, deleteComment, formatRelativeTime } from '../../services/community';
+import { 
+  getComments, 
+  addComment, 
+  deleteComment, 
+  formatRelativeTime,
+  addCommentReply,
+  getCommentReplies 
+} from '../../services/community';
 import type { Comment } from '../../types/community';
 
 interface CommentSectionProps {
@@ -31,7 +38,9 @@ export function CommentSection({ postId, onCommentAdded, onCommentDeleted }: Com
     try {
       const result = await getComments(postId);
       if (result.success) {
-        setComments(result.comments);
+        // Filter out replies (parent_id !== null) - only show top-level comments
+        const topLevelComments = result.comments.filter(c => !c.parent_id);
+        setComments(topLevelComments);
       }
     } catch (error) {
       console.error('Failed to load comments:', error);
@@ -69,6 +78,16 @@ export function CommentSection({ postId, onCommentAdded, onCommentDeleted }: Com
     } catch (error) {
       console.error('Failed to delete comment:', error);
     }
+  };
+
+  const handleReplyAdded = (parentId: string) => {
+    // Update the parent comment's reply count
+    setComments(prev => prev.map(c => 
+      c.id === parentId 
+        ? { ...c, reply_count: (c.reply_count || 0) + 1 }
+        : c
+    ));
+    onCommentAdded?.();
   };
 
   const userInitials = user ? (user.username || 'U').slice(0, 2).toUpperCase() : '';
@@ -127,8 +146,11 @@ export function CommentSection({ postId, onCommentAdded, onCommentDeleted }: Com
             <CommentItem
               key={comment.id}
               comment={comment}
+              postId={postId}
               isOwner={user?.id === comment.user_id}
+              currentUserId={user?.id}
               onDelete={handleDelete}
+              onReplyAdded={handleReplyAdded}
             />
           ))}
         </div>
@@ -139,16 +161,100 @@ export function CommentSection({ postId, onCommentAdded, onCommentDeleted }: Com
 
 interface CommentItemProps {
   comment: Comment;
+  postId: string;
   isOwner: boolean;
+  currentUserId?: string;
   onDelete: (commentId: string) => void;
+  onReplyAdded: (parentId: string) => void;
+  isReply?: boolean;
 }
 
-function CommentItem({ comment, isOwner, onDelete }: CommentItemProps) {
+function CommentItem({ 
+  comment, 
+  postId, 
+  isOwner, 
+  currentUserId,
+  onDelete, 
+  onReplyAdded,
+  isReply = false 
+}: CommentItemProps) {
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
+  const [submittingReply, setSubmittingReply] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
+  const [replies, setReplies] = useState<Comment[]>([]);
+  const [loadingReplies, setLoadingReplies] = useState(false);
+  const [replyCount, setReplyCount] = useState(comment.reply_count || 0);
+
   const username = comment.users?.username || 'Anonymous';
   const initials = username.slice(0, 2).toUpperCase();
 
+  const handleLoadReplies = async () => {
+    if (loadingReplies) return;
+    
+    if (showReplies) {
+      setShowReplies(false);
+      return;
+    }
+
+    setLoadingReplies(true);
+    try {
+      const result = await getCommentReplies(comment.id);
+      if (result.success) {
+        setReplies(result.comments);
+        setShowReplies(true);
+      }
+    } catch (error) {
+      console.error('Failed to load replies:', error);
+    } finally {
+      setLoadingReplies(false);
+    }
+  };
+
+  const handleSubmitReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim() || !currentUserId) return;
+
+    setSubmittingReply(true);
+    try {
+      const result = await addCommentReply(postId, comment.id, { content: replyContent.trim() });
+      if (result.success) {
+        setReplyContent('');
+        setShowReplyInput(false);
+        setReplyCount(prev => prev + 1);
+        
+        // Add to replies if already showing
+        if (showReplies) {
+          setReplies(prev => [...prev, result.comment]);
+        } else {
+          // Show replies after adding one
+          setReplies([result.comment]);
+          setShowReplies(true);
+        }
+        
+        onReplyAdded(comment.id);
+      }
+    } catch (error) {
+      console.error('Failed to add reply:', error);
+    } finally {
+      setSubmittingReply(false);
+    }
+  };
+
+  const handleDeleteReply = async (replyId: string) => {
+    try {
+      const result = await deleteComment(replyId);
+      if (result.success) {
+        setReplies(prev => prev.filter(r => r.id !== replyId));
+        setReplyCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error('Failed to delete reply:', error);
+    }
+  };
+
   return (
-    <div className="comment-item">
+    <div className={`comment-item ${isReply ? 'comment-reply' : ''}`}>
       <div className="avatar avatar-xs">
         {initials}
       </div>
@@ -160,7 +266,89 @@ function CommentItem({ comment, isOwner, onDelete }: CommentItemProps) {
           </div>
           <p className="comment-item-text">{comment.content}</p>
         </div>
+
+        {/* Reply actions - only for top-level comments */}
+        {!isReply && (
+          <div className="comment-actions">
+            {currentUserId && (
+              <button
+                className="comment-action-btn"
+                onClick={() => setShowReplyInput(!showReplyInput)}
+              >
+                <MessageCircle size={14} />
+                Reply
+              </button>
+            )}
+            
+            {replyCount > 0 && (
+              <button
+                className="comment-action-btn"
+                onClick={handleLoadReplies}
+                disabled={loadingReplies}
+              >
+                {loadingReplies ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : showReplies ? (
+                  <ChevronUp size={14} />
+                ) : (
+                  <ChevronDown size={14} />
+                )}
+                {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Reply Input */}
+        {showReplyInput && (
+          <form onSubmit={handleSubmitReply} className="reply-input-wrapper">
+            <input
+              type="text"
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              placeholder={`Reply to ${username}...`}
+              className="reply-input"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={!replyContent.trim() || submittingReply}
+              className="reply-submit-btn"
+            >
+              {submittingReply ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+            </button>
+            <button
+              type="button"
+              className="reply-cancel-btn"
+              onClick={() => {
+                setShowReplyInput(false);
+                setReplyContent('');
+              }}
+            >
+              Cancel
+            </button>
+          </form>
+        )}
+
+        {/* Nested Replies */}
+        {showReplies && replies.length > 0 && (
+          <div className="replies-list">
+            {replies.map((reply) => (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                postId={postId}
+                isOwner={currentUserId === reply.user_id}
+                currentUserId={currentUserId}
+                onDelete={handleDeleteReply}
+                onReplyAdded={onReplyAdded}
+                isReply={true}
+              />
+            ))}
+          </div>
+        )}
       </div>
+      
       {isOwner && (
         <button
           onClick={() => onDelete(comment.id)}

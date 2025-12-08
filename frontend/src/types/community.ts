@@ -204,6 +204,7 @@ export interface CreatePostInput {
   content: string;
   sanskrit_text?: string;
   analyze_meter?: boolean;
+  image_url?: string;
 }
 
 // Update post input
@@ -211,6 +212,7 @@ export interface UpdatePostInput {
   content?: string;
   sanskrit_text?: string;
   analyze_meter?: boolean;
+  image_url?: string | null;  // null to remove image
 }
 
 // Create comment input

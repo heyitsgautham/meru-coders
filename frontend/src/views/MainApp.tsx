@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Header";
 import { AnalysisForm } from "../components/AnalysisForm";
+import { SplitViewAnalysis } from "../components/SplitViewAnalysis";
 import { ExamplesView } from "../components/ExamplesView";
 import { AboutView } from "../components/AboutView";
 import { DatasetsView } from "../components/DatasetsView";
@@ -63,6 +64,9 @@ export default function MainApp() {
               initialText={textFromExample}
               onTextChange={handleTextChange}
             />
+          )}
+          {currentView === "splitview" && (
+            <SplitViewAnalysis />
           )}
           {currentView === "examples" && (
             <div style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>

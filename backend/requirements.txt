@@ -31,6 +31,11 @@ python-magic>=0.4.27
 # Background Job Scheduling
 APScheduler>=3.10.0
 
+# Real-time WebSocket Support
+flask-socketio>=5.3.0
+python-socketio>=5.10.0
+eventlet>=0.35.0
+
 # Text-to-Speech Support
 edge-tts>=6.1.0
 

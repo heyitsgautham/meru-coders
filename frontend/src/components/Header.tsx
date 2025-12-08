@@ -15,6 +15,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
   
   const navItems: { name: string; view: ViewType }[] = [
     { name: 'Home', view: 'home' },
+    { name: 'Split View', view: 'splitview' },
     { name: 'Examples', view: 'examples' },
     { name: 'Datasets', view: 'datasets' },
     { name: 'About', view: 'about' }

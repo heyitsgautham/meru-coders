@@ -400,6 +400,109 @@ function splitIntoPadas<T>(arr: T[], padaSize: number): T[][] {
   return padas;
 }
 
+// Shloka Overview Component - Shows colored syllables at a glance
+// Blue = Laghu (ल/L), Red/Pink = Guru (ग/G)
+function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
+  if (!lineResults || lineResults.length === 0) return null;
+
+  return (
+    <div className="mb-8 bg-[#FDF6E3] rounded-2xl p-10 shadow-sm border border-[#E8DCC8]">
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-2xl font-bold text-gray-800">Shloka Overview</h3>
+        <div className="flex items-center gap-8 text-base">
+          <div className="flex items-center gap-2">
+            <span 
+              className="inline-block w-6 h-6 rounded" 
+              style={{ backgroundColor: '#A8D4F0' }}
+            />
+            <span className="text-gray-700 font-medium">Laghu (ल) - Short</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span 
+              className="inline-block w-6 h-6 rounded" 
+              style={{ backgroundColor: '#F5B7B1' }}
+            />
+            <span className="text-gray-700 font-medium">Guru (ग) - Long</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex flex-col items-center space-y-6">
+        {lineResults.map((lineItem, lineIndex) => {
+          const result = lineItem.result || {};
+          const syllables = result.display_syllables || [];
+          const lgArray = result.display_lg || [];
+          const originalLine = lineItem.line || '';
+
+          // Split original line into words to detect word boundaries
+          const words = originalLine.split(/\s+/).filter(w => w.trim());
+          
+          // Build syllable-to-word mapping by tracking character positions
+          // We'll group syllables and add extra spacing between word boundaries
+          const validPairs: { syllable: string; lg: string; isWordEnd: boolean }[] = [];
+          let syllableText = '';
+          
+          syllables.forEach((syl: string, idx: number) => {
+            if (lgArray[idx] && lgArray[idx].trim() !== '') {
+              syllableText += syl;
+              // Check if this syllable ends a word (followed by space in original or is last)
+              const isWordEnd = idx < syllables.length - 1 && 
+                (syllables[idx + 1] === ' ' || !lgArray[idx + 1] || lgArray[idx + 1].trim() === '');
+              validPairs.push({ syllable: syl, lg: lgArray[idx], isWordEnd });
+            }
+          });
+
+          if (validPairs.length === 0) return null;
+
+          return (
+            <div 
+              key={lineIndex} 
+              className="text-center w-full"
+              style={{
+                fontFamily: "'Noto Sans Devanagari', 'Siddhanta', sans-serif",
+                fontSize: '2.25rem',
+                lineHeight: '2.8'
+              }}
+            >
+              {validPairs.map((pair, idx) => {
+                const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
+                // Add extra margin after every 2-4 syllables to simulate word breaks
+                // This is an approximation since Sanskrit words vary in length
+                const addWordGap = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
+                
+                return (
+                  <span
+                    key={idx}
+                    className="inline-block"
+                    style={{
+                      backgroundColor: isLaghu ? '#A8D4F0' : '#F5B7B1',
+                      color: '#2D2D2D',
+                      fontWeight: 500,
+                      borderRadius: '6px',
+                      margin: '4px 1px',
+                      marginRight: addWordGap ? '28px' : '1px',
+                      padding: '8px 12px',
+                      minWidth: '2.5rem',
+                      textAlign: 'center'
+                    }}
+                    title={isLaghu ? 'Laghu (Short syllable)' : 'Guru (Long syllable)'}
+                  >
+                    {pair.syllable}
+                  </span>
+                );
+              })}
+              {/* Add a visual separator between lines */}
+              {lineIndex < lineResults.length - 1 && (
+                <span style={{ color: '#8B7355', fontSize: '2rem', marginLeft: '8px' }}>।</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // Line Analysis Card Component
 function LineAnalysisCard({
   lineItem,
@@ -849,6 +952,11 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
               );
             })()}
           </div>
+        )}
+
+        {/* Shloka Overview - Colored syllables at a glance */}
+        {lineResults.length > 0 && (
+          <ShlokaOverview lineResults={lineResults} />
         )}
 
         {/* Line-by-Line Analysis (secondary when verse results exist) */}

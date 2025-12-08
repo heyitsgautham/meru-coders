@@ -12,6 +12,7 @@ import ContributionForm from "./components/ContributionForm";
 import AdminPanel from "./components/AdminPanel";
 import FloatingChatbot from "./components/chat/FloatingChatbot";
 import { CommunityPage, PostView, UserProfile } from "./components/community";
+import { ModerationPanel } from "./components/community/ModerationPanel";
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/moderation" element={<ModerationPanel />} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -220,6 +220,35 @@ export function PostCard({ post, onPostDeleted, onPostUpdated }: PostCardProps) 
 
             <p className="post-text">{currentPost.content}</p>
 
+            {/* Post Image */}
+            {currentPost.image_url && (
+              <div className="post-image-container">
+                <img 
+                  src={(() => {
+                    const url = currentPost.image_url!;
+                    // Get base URL without /api suffix
+                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                    const baseUrl = apiUrl.replace(/\/api\/?$/, '');
+                    
+                    // Handle different URL formats
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                      return url; // Already absolute URL (Supabase storage)
+                    }
+                    if (url.startsWith('/api/community/uploads')) {
+                      return `${baseUrl}${url}`; // New format: /api/community/uploads/...
+                    }
+                    if (url.startsWith('/uploads')) {
+                      return `${baseUrl}/api/community${url}`; // Old format - add /api/community prefix
+                    }
+                    return `${baseUrl}${url}`; // Fallback
+                  })()} 
+                  alt="Post attachment" 
+                  className="post-image"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
             {currentPost.sanskrit_text && (
               <div className="post-sanskrit-box">
                 <p className="post-sanskrit-text">{currentPost.sanskrit_text}</p>
