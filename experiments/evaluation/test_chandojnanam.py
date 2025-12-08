@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
- 
+"""
+Chandojnanam Evaluation Tests
+"""
 
 import sys
 
 ###############################################################################
 # Meru_Coders Evaluation
 
-Meru_Coders_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
+Meru_Coders_PATH = "./backend"
 sys.path.insert(0, Meru_Coders_PATH)
 import chanda
 

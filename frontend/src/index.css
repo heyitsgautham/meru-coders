@@ -2330,3 +2330,951 @@ button:disabled {
   }
 }
 
+/* ============================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   Target: 360px - 768px screens
+   ============================================ */
+
+/* ---- Global Mobile Fixes ---- */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll globally */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Minimum touch target size (44px per Apple/Google guidelines) */
+  button, 
+  a, 
+  input[type="submit"], 
+  input[type="button"],
+  .tab-button,
+  .nav-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better text readability on mobile */
+  body {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Main card mobile padding */
+  .main-card {
+    padding: 24px 16px !important;
+  }
+
+  /* Form container width fix */
+  .field-group--textarea {
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+}
+
+/* ---- Header & Navigation Mobile ---- */
+@media (max-width: 768px) {
+  /* App header container */
+  .app-header-inner {
+    padding: 10px 12px !important;
+  }
+
+  .app-header-content {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Logo smaller on mobile */
+  .app-logo span {
+    font-size: 1.25rem !important;
+  }
+
+  /* Navigation - horizontal scroll on mobile */
+  .app-nav {
+    width: 100% !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding: 8px 12px !important;
+    gap: 6px !important;
+    border-radius: 8px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  /* Nav links compact on mobile */
+  .app-nav .nav-link {
+    white-space: nowrap !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    min-height: 36px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Hide text labels on smaller screens, show only icons */
+  .app-nav .nav-link-text {
+    display: none !important;
+  }
+
+  /* Ensure icons are always visible */
+  .app-nav .nav-link svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+/* Extra small screens - even more compact */
+@media (max-width: 400px) {
+  .app-header-inner {
+    padding: 8px 8px !important;
+  }
+
+  .app-logo span {
+    font-size: 1.1rem !important;
+  }
+
+  .app-nav .nav-link {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Mobile navigation drawer styles */
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  padding: 20px;
+}
+
+.mobile-nav-drawer.open {
+  right: 0;
+}
+
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---- Landing Page Mobile ---- */
+@media (max-width: 768px) {
+  /* Landing nav bar */
+  .landing-nav,
+  nav[style*="position: fixed"] {
+    height: 60px !important;
+  }
+
+  .landing-nav > div,
+  nav[style*="position: fixed"] > div {
+    padding: 0 16px !important;
+  }
+
+  /* Hide "Launch Application" text, show icon only on very small screens */
+  nav button[style*="padding: '12px 28px'"] {
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+  }
+
+  /* Hero section */
+  section[style*="paddingTop: '160px'"] {
+    padding-top: 100px !important;
+    padding-bottom: 60px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Hero grid - stack vertically */
+  .landing-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Hero title responsive */
+  .landing-hero-title {
+    font-size: 32px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Hero subtitle */
+  .landing-hero-title + p {
+    font-size: 16px !important;
+  }
+
+  /* Hero buttons stack on mobile */
+  .landing-hero-buttons {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .landing-hero-buttons button,
+  .landing-hero-buttons a {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Sample card on mobile */
+  .landing-sample-card {
+    padding: 24px !important;
+  }
+
+  /* All landing sections */
+  section[style*="padding: '100px 60px'"] {
+    padding: 60px 20px !important;
+  }
+
+  /* Section headings */
+  section h2 {
+    font-size: 28px !important;
+  }
+
+  section h2 + p {
+    font-size: 16px !important;
+  }
+
+  /* What is Chandas grid */
+  div[style*="gridTemplateColumns: '1fr 1fr'"][style*="gap: '60px'"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Feature cards */
+  .landing-features-grid > div,
+  .landing-meters-grid > div {
+    padding: 24px !important;
+  }
+
+  /* CTA section */
+  section[style*="backgroundColor: '#4a2c10'"] {
+    padding: 60px 20px !important;
+  }
+
+  section[style*="backgroundColor: '#4a2c10'"] h2 {
+    font-size: 28px !important;
+  }
+
+  section[style*="backgroundColor: '#4a2c10'"] button {
+    padding: 14px 28px !important;
+    font-size: 16px !important;
+  }
+
+  /* Footer */
+  footer[style*="padding: '40px 60px'"] {
+    padding: 32px 20px !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+
+  footer > div {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+}
+
+/* ---- Main App Mobile ---- */
+@media (max-width: 768px) {
+  /* Analysis form container */
+  .analysis-form-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 12px !important;
+  }
+
+  /* Main container width */
+  div[style*="width: '900px'"],
+  div[style*="width: '75%'"],
+  div[style*="width: '90%'"],
+  div[style*="width: '1200px'"],
+  div[style*="width: '1400px'"],
+  div[style*="width: '1600px'"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Main padding */
+  main.flex-1 {
+    padding: 12px 8px !important;
+  }
+
+  /* Tab buttons - horizontal scroll */
+  .analysis-form-container .flex.items-stretch {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* Tab buttons - stack or scroll */
+  .tab-button {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .tab-button span {
+    font-size: 12px !important;
+  }
+
+  .tab-button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Scroll input / textarea */
+  .scroll-input,
+  textarea {
+    min-height: 150px !important;
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+
+  /* Upload areas */
+  div[style*="border-2 border-dashed"],
+  .upload-area {
+    padding: 20px 12px !important;
+  }
+
+  /* Analyze buttons */
+  button[type="submit"],
+  .analyze-btn {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
+  }
+
+  /* Mode selector buttons */
+  .mode-selector {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .mode-selector button {
+    width: 100% !important;
+  }
+}
+
+/* ---- Results Display Mobile ---- */
+@media (max-width: 768px) {
+  /* Results display container */
+  .results-display {
+    margin-top: 24px !important;
+  }
+
+  /* Results card - reduce padding */
+  .results-card {
+    padding: 16px !important;
+    border-radius: 16px !important;
+    border-width: 1px !important;
+  }
+
+  /* Results header */
+  .results-header {
+    margin: -16px -16px 16px -16px !important;
+    padding: 16px !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: flex-start !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  .results-header h2 {
+    font-size: 18px !important;
+  }
+
+  .results-header .flex.items-center.gap-4 {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .results-header a,
+  .results-header button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Results container */
+  div[style*="maxWidth: '1000px'"],
+  div[style*="maxWidth: '1400px'"] {
+    max-width: 100% !important;
+    padding: 16px !important;
+  }
+
+  /* Analysis cards */
+  div[style*="minWidth: '100%'"][style*="backgroundColor: '#FFF9F2'"] {
+    padding: 16px !important;
+  }
+
+  /* Tables - horizontal scroll */
+  .analysis-table-wrapper {
+    margin: 0 -12px;
+    padding: 0 12px;
+    width: calc(100% + 24px);
+  }
+
+  table {
+    font-size: 13px !important;
+  }
+
+  table th,
+  table td {
+    padding: 6px 4px !important;
+    min-width: 32px !important;
+  }
+
+  /* Pada labels */
+  span[style*="bg-[#FFE0BF]"] {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+  }
+
+  /* Summary section grids - 3 cols to 1 col */
+  .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Meter info cards */
+  div[style*="p-5 bg-[#fdf8f3]"] {
+    padding: 16px !important;
+  }
+
+  /* Download/action buttons */
+  .results-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .results-actions button {
+    width: 100% !important;
+  }
+}
+
+/* ---- Auth Pages Mobile (Login/Signup) ---- */
+@media (max-width: 768px) {
+  /* Auth page container */
+  .auth-page {
+    padding: 16px 12px !important;
+    min-height: 100vh;
+  }
+
+  /* Auth card wrapper */
+  .auth-card-wrapper {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Auth card */
+  .auth-card {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Card header */
+  .auth-card [class*="CardHeader"] {
+    padding: 16px 16px 8px !important;
+  }
+
+  .auth-card [class*="CardTitle"] {
+    font-size: 24px !important;
+  }
+
+  .auth-card [class*="CardDescription"] {
+    font-size: 14px !important;
+  }
+
+  /* Card content */
+  .auth-card [class*="CardContent"] {
+    padding: 16px 12px !important;
+  }
+
+  /* Input fields */
+  .auth-card input[type="text"],
+  .auth-card input[type="password"],
+  .auth-card input[type="email"] {
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  /* Auth buttons */
+  .auth-card button[type="submit"],
+  .auth-card .auth-button {
+    height: 48px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+  }
+
+  /* Social login buttons */
+  .auth-card button {
+    min-height: 44px !important;
+  }
+
+  /* Card footer */
+  .auth-card [class*="CardFooter"] {
+    padding: 12px 16px 16px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+}
+
+/* ---- Community/Profile Pages Mobile ---- */
+@media (max-width: 768px) {
+  /* Profile cards */
+  .profile-card {
+    padding: 16px !important;
+  }
+
+  /* Community grid */
+  .community-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---- Modals & Dialogs Mobile ---- */
+@media (max-width: 768px) {
+  /* Dialog content */
+  div[role="dialog"],
+  .dialog-content {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    margin: 16px !important;
+    padding: 16px !important;
+  }
+
+  /* Sheet (bottom drawer) */
+  div[class*="Sheet"] {
+    max-height: 85vh !important;
+  }
+}
+
+/* ---- Extra Small Screens (360px) ---- */
+@media (max-width: 400px) {
+  /* Even tighter padding */
+  .main-card {
+    padding: 16px 12px !important;
+  }
+
+  /* Smaller headings */
+  h1 {
+    font-size: 24px !important;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  /* Smaller buttons */
+  button {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+  }
+
+  /* Landing hero */
+  .landing-hero-title {
+    font-size: 26px !important;
+  }
+
+  /* Tab buttons wrap */
+  .tab-button {
+    flex: 1 1 100% !important;
+  }
+}
+
+/* ---- Touch-friendly improvements ---- */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Remove hover effects that don't work on touch */
+  button:hover,
+  a:hover {
+    transform: none !important;
+  }
+
+  /* Better tap feedback */
+  button:active,
+  a:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* ---- iOS specific fixes ---- */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent iOS text size adjustment */
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Fix iOS input zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Safe area padding for notched iPhones */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* ---- Scrollbar improvements for mobile ---- */
+@media (max-width: 768px) {
+  /* Thinner scrollbars on mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  /* Hide horizontal scrollbar but keep functionality */
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 2px;
+  }
+}
+
+/* ---- Desktop Styles (restore larger layouts) ---- */
+@media (min-width: 769px) {
+  .landing-nav-content {
+    padding: 0 60px !important;
+  }
+
+  .landing-logo {
+    font-size: 24px !important;
+  }
+
+  .landing-launch-btn {
+    padding: 12px 28px !important;
+    font-size: 15px !important;
+  }
+
+  .landing-section.landing-hero {
+    padding-top: 160px !important;
+    padding-bottom: 100px !important;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+  }
+
+  .landing-hero-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 80px !important;
+  }
+
+  .landing-hero-title {
+    font-size: 52px !important;
+  }
+
+  .landing-hero-subtitle {
+    font-size: 18px !important;
+  }
+
+  .landing-hero-buttons {
+    flex-direction: row !important;
+    gap: 16px !important;
+  }
+
+  .landing-hero-buttons button,
+  .landing-hero-buttons a {
+    width: auto !important;
+  }
+
+  .landing-sample-card {
+    padding: 40px !important;
+  }
+
+  .main-card {
+    padding: 40px 48px !important;
+  }
+
+  /* Wider containers on desktop */
+  div[style*="width: '900px'"] {
+    width: 900px !important;
+  }
+}
+
+/* Hidden/shown utilities */
+.hidden {
+  display: none !important;
+}
+
+@media (min-width: 640px) {
+  .sm\:inline {
+    display: inline !important;
+  }
+  .sm\:hidden {
+    display: none !important;
+  }
+}
+
+/* ---- Additional Landing Page Mobile Fixes ---- */
+@media (max-width: 768px) {
+  /* Landing sections general */
+  .landing-section,
+  .landing-what-is-chandas,
+  .landing-cta {
+    padding: 48px 16px !important;
+  }
+
+  /* What is Chandas grid */
+  .landing-whatischandas-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* CTA section */
+  .landing-cta {
+    padding: 48px 16px !important;
+  }
+
+  .landing-cta-title {
+    font-size: 26px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .landing-cta p {
+    font-size: 15px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .landing-cta-btn {
+    width: 100% !important;
+    padding: 14px 24px !important;
+    font-size: 16px !important;
+    justify-content: center !important;
+  }
+
+  /* Footer */
+  .landing-footer {
+    padding: 24px 16px !important;
+  }
+
+  .landing-footer-content {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+
+  .landing-footer-content span:first-child {
+    font-size: 16px !important;
+  }
+
+  .landing-footer-content span:last-child {
+    font-size: 12px !important;
+  }
+}
+
+/* ---- Main App Mobile ---- */
+@media (max-width: 768px) {
+  /* Main app container */
+  .main-app {
+    overflow-x: hidden !important;
+  }
+
+  /* Main content area */
+  .main-content {
+    padding: 12px 8px !important;
+  }
+
+  /* All view containers */
+  .view-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 8px !important;
+  }
+
+  /* Examples view */
+  .examples-container {
+    width: 100% !important;
+  }
+
+  /* Datasets view */
+  .datasets-container {
+    width: 100% !important;
+  }
+
+  /* About view */
+  .about-container {
+    width: 100% !important;
+  }
+}
+
+/* ---- Extra small screen adjustments ---- */
+@media (max-width: 400px) {
+  /* Even tighter section padding */
+  .landing-section {
+    padding: 32px 12px !important;
+  }
+
+  /* Smaller feature/meter cards */
+  .landing-features-grid > div,
+  .landing-meters-grid > div {
+    padding: 16px !important;
+  }
+
+  /* Meter numbers smaller */
+  .landing-meters-grid > div > div:first-child {
+    font-size: 28px !important;
+  }
+
+  /* Trusted sources single column */
+  .trusted-sources-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================
+   FINAL MOBILE POLISH & EDGE CASE FIXES
+   ============================================ */
+
+/* Prevent horizontal scroll globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+@media (max-width: 768px) {
+  /* Universal container fix */
+  * {
+    max-width: 100vw;
+  }
+
+  /* Fix any elements with fixed widths */
+  [style*="width:"][style*="px"] {
+    max-width: 100% !important;
+  }
+
+  /* Sanskrit text should wrap properly */
+  p, span, div {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Devanagari text containers */
+  [style*="Devanagari"],
+  .devanagari,
+  .sanskrit-text {
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Tables always scrollable */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Grid-based layouts should stack */
+  .grid-cols-2,
+  .md\:grid-cols-2,
+  .lg\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-cols-4,
+  .md\:grid-cols-4,
+  .lg\:grid-cols-4 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Flex gaps reduced on mobile */
+  .gap-6 { gap: 16px !important; }
+  .gap-8 { gap: 20px !important; }
+  .gap-10 { gap: 24px !important; }
+  .gap-12 { gap: 28px !important; }
+
+  /* Padding overrides */
+  .p-8, .p-10, .p-12 {
+    padding: 16px !important;
+  }
+
+  .px-8, .px-10, .px-12 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .py-16, .py-20 {
+    padding-top: 32px !important;
+    padding-bottom: 32px !important;
+  }
+
+  /* Margin overrides */
+  .mb-8, .mb-10 {
+    margin-bottom: 24px !important;
+  }
+
+  .mt-8, .mt-10 {
+    margin-top: 24px !important;
+  }
+}
+
+/* Extra Small - 360px and below */
+@media (max-width: 380px) {
+  /* Even more compact */
+  .main-content {
+    padding: 8px 4px !important;
+  }
+
+  .main-card {
+    padding: 12px 8px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Smaller text */
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+
+  /* Compact buttons */
+  button, .btn {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+
+  /* Single column for all grids */
+  .landing-meters-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Devanagari even smaller */
+  [style*="Devanagari"],
+  .devanagari,
+  .sanskrit-text {
+    font-size: 16px !important;
+  }
+}

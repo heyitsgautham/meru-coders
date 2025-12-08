@@ -217,7 +217,7 @@ Padas: [11, 11]
 - ✅ 90.5% all-lines accuracy
 - ✅ 95.2% verse-level accuracy
 - ✅ 1,920 meters in database
-- ✅ Production-deployed at https://sanskrit.iitk.ac.in/jnanasangraha/chanda/
+- ✅ Production-deployed
 
 **Advantages:**
 - Battle-tested on 10,000+ verses

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { API_BASE_URL } from '../services/api';
+import { getAPIURL } from '../services/api';
 import { supabase } from '../lib/supabase';
 
 const redactToken = (token?: string | null) =>
@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const postJson = async (endpoint: string, payload: Record<string, any>) => {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const res = await fetch(`${getAPIURL()}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -170,13 +170,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.info('[AuthContext] Starting OAuth via supabase-js (PKCE)', {
         provider,
         redirect_to,
-        apiBase: API_BASE_URL,
+        apiBase: getAPIURL(),
       });
 
       // Use frontend Supabase client so PKCE code_verifier is stored in localStorage.
       // This avoids the "code_verifier missing" error seen when backend initiated the flow.
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
+        provider: provider as 'google' | 'github' | 'azure',
         options: {
           redirectTo: redirect_to,
           skipBrowserRedirect: false,
@@ -206,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.info('[AuthContext] Completing OAuth', {
         accessToken: redactToken(accessToken),
         refreshToken: redactToken(refreshToken),
-        apiBase: API_BASE_URL,
+        apiBase: getAPIURL(),
       });
       const data = await postJson('/auth/oauth/exchange', { access_token: accessToken, refresh_token: refreshToken });
       handleAuthResponse(data);

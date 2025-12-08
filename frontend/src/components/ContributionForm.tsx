@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../services/api';
+import { getAPIURL } from '../services/api';
 import '../styles/contribute.css';
 
 export type ContributionKind = 'verse' | 'meter';
@@ -75,7 +75,7 @@ export default function ContributionForm() {
 
       const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
       const payload = buildContributionPayload(contributionType, contributionData);
-      const res = await fetch(`${API_BASE_URL}/submit`, {
+      const res = await fetch(`${getAPIURL()}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

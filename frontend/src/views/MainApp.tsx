@@ -44,7 +44,7 @@ export default function MainApp() {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col">
+    <div className="main-app min-h-screen relative overflow-hidden flex flex-col">
       {/* Subtle mandala background (very faded) */}
       <div className="fixed inset-0 opacity-[0.03] pointer-events-none">
         <MandalaBackground />
@@ -58,7 +58,7 @@ export default function MainApp() {
           onGoToLanding={handleGoToLanding}
         />
         
-        <main className="flex-1 py-16 px-6">
+        <main className="main-content flex-1 py-16 px-6">
           {currentView === "home" && (
             <AnalysisForm
               initialText={textFromExample}
@@ -69,17 +69,17 @@ export default function MainApp() {
             <SplitViewAnalysis />
           )}
           {currentView === "examples" && (
-            <div style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="view-container examples-container" style={{ width: '75%', maxWidth: '1400px', margin: '0 auto' }}>
               <ExamplesView onSelectExample={handleSelectExample} />
             </div>
           )}
           {currentView === "datasets" && (
-            <div style={{ width: '90%', maxWidth: '1600px', margin: '0 auto' }}>
+            <div className="view-container datasets-container" style={{ width: '90%', maxWidth: '1600px', margin: '0 auto' }}>
               <DatasetsView />
             </div>
           )}
           {currentView === "about" && (
-            <div style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
+            <div className="view-container about-container" style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
               <AboutView />
             </div>
           )}

@@ -30,27 +30,11 @@ import type {
   ReportInput,
 } from '../types/community';
 
-// Get API URL from environment or use default
-const getAPIBaseURL = (): string => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
+// Import shared API URL utility
+import { getAPIURL } from './api';
 
-  if (typeof window !== 'undefined' &&
-    window.location.hostname !== 'localhost' &&
-    window.location.hostname !== '127.0.0.1') {
-    const win = window as typeof window & { CONFIG?: { API_URL?: string } };
-    if (win.CONFIG?.API_URL) {
-      return win.CONFIG.API_URL;
-    }
-    return 'http://localhost:5000/api';
-  }
-
-  return 'http://localhost:5000/api';
-};
-
-const API_BASE_URL = getAPIBaseURL();
-const COMMUNITY_API = `${API_BASE_URL}/community`;
+// Computed at request time, not module load time
+const getCommunityAPI = () => `${getAPIURL()}/community`;
 
 /**
  * Handle 401 Unauthorized errors - token expired
@@ -75,7 +59,7 @@ function handleUnauthorized(): void {
  * Make an authenticated API request
  */
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${COMMUNITY_API}${endpoint}`;
+  const url = `${getCommunityAPI()}${endpoint}`;
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
 
   try {

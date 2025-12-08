@@ -2,6 +2,7 @@
 Multi-modal AI Chatbot API using Google Gemini
 Supports text, voice, and image inputs with conversation history
 Includes agentic capabilities for automatic meter identification
+Last Updated: 2025-12-08 - Chatbot formatting improvements
 """
 
 import os
@@ -291,6 +292,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                 
                 # Collect all line results
                 all_lg = []
+                lg_by_line: List[str] = []
                 all_syllables = []
                 total_syllables = 0
                 total_matra = 0
@@ -299,7 +301,10 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     for line_result in result['line']:
                         line_data = line_result.get('result', {})
                         if line_data.get('display_lg'):
-                            all_lg.extend(line_data['display_lg'])
+                            line_lg_list = [char for char in line_data['display_lg'] if char]
+                            if line_lg_list:
+                                all_lg.extend(line_lg_list)
+                                lg_by_line.append(''.join(line_lg_list))
                         if line_data.get('display_syllables'):
                             all_syllables.extend(line_data['display_syllables'])
                         # Convert to int to handle both int and str types
@@ -359,6 +364,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'meter': meter_name,
                     'meter_display': meter_display,
                     'lg_pattern': ''.join(all_lg),
+                    'lg_pattern_padas': lg_by_line,
                     'gana_pattern': result['line'][0].get('result', {}).get('display_gana', '') if 'line' in result and len(result['line']) > 0 else '',
                     'syllables': total_syllables,
                     'matra': total_matra,
@@ -387,12 +393,37 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'text': text
                 }
             
+            # Get the full L-G pattern
+            lg_pattern = ''.join([char for char in result.get('display_lg', []) if char])
+            
+            # Split into padas for better visualization
+            lg_padas = []
+            total_syllables = len(lg_pattern)
+            if total_syllables > 0:
+                # Determine pada structure based on syllable count
+                if total_syllables % 4 == 0:
+                    # 4 padas (quarters) - most common
+                    pada_length = total_syllables // 4
+                    for i in range(4):
+                        start = i * pada_length
+                        end = start + pada_length
+                        lg_padas.append(lg_pattern[start:end])
+                elif total_syllables % 2 == 0:
+                    # 2 padas (halves)
+                    pada_length = total_syllables // 2
+                    lg_padas.append(lg_pattern[:pada_length])
+                    lg_padas.append(lg_pattern[pada_length:])
+                else:
+                    # No clear pada structure, keep as single unit
+                    lg_padas.append(lg_pattern)
+            
             return {
                 'success': True,
                 'text': text,
                 'meter': result.get('display_chanda_primary', 'Unknown'),
                 'meter_display': result.get('display_chanda', 'Unknown'),
-                'lg_pattern': ''.join(result.get('display_lg', [])),
+                'lg_pattern': lg_pattern,
+                'lg_pattern_padas': lg_padas,
                 'gana_pattern': result.get('display_gana', ''),
                 'syllables': result.get('display_length', 0),
                 'matra': result.get('display_matra', 0),
@@ -407,6 +438,48 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
             'success': False,
             'error': str(e)
         }
+
+
+def extract_primary_meter_name(meter_display: str) -> str:
+    """
+    Extract just the primary meter name from verbose display format
+    Handles both pipe (|) and slash (/) separators
+    Example: "इन्द्रवज्रा (indravajrā) [10.0] | त्रिष्टुभ् (पाद 1)..." -> "इन्द्रवज्रा (indravajrā)"
+    Example: "इन्द्रवज्रा / त्रिष्टुभ् (पाद 1) / त्रिष्टुभ् (पाद 2)..." -> "इन्द्रवज्रा"
+    """
+    if not meter_display:
+        return "Unknown"
+    
+    import re
+    
+    # Split by pipe or slash separator to get first meter
+    first_part = re.split(r'\s*[|/]\s*', meter_display)[0].strip()
+    
+    # Remove confidence score in brackets [10.0]
+    cleaned = re.sub(r'\s*\[\d+\.?\d*\]\s*', '', first_part).strip()
+    
+    # Remove transliteration in parentheses if it's after the Devanagari name
+    # Keep it if the whole name is in parentheses
+    # Pattern: "sanskrit_text (transliteration)" -> "sanskrit_text"
+    # But keep: "(transliteration only)"
+    if '(' in cleaned:
+        # Check if Devanagari characters exist before parentheses
+        has_devanagari = bool(re.search(r'[\u0900-\u097F]', cleaned.split('(')[0]))
+        if has_devanagari:
+            # Remove the transliteration part
+            cleaned = re.sub(r'\s*\([^)]*\)\s*', '', cleaned).strip()
+    
+    return cleaned if cleaned else "Unknown"
+
+
+def format_lg_padas(lg_padas: List[str]) -> str:
+    """Format a list of L-G patterns split by pada into markdown bullet list."""
+    if not lg_padas:
+        return ""
+    formatted = []
+    for idx, pada in enumerate(lg_padas, 1):
+        formatted.append(f"- **Pada {idx}:** {pada}")
+    return "\n".join(formatted)
 
 
 def get_confidence_label(confidence_score: float) -> str:
@@ -426,7 +499,7 @@ def get_confidence_label(confidence_score: float) -> str:
 def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) -> str:
     """
     Split L-G pattern by pada (quarter) for better readability
-    Returns formatted string with pada separators
+    Returns formatted string with each pada on a separate line
     """
     if not lg_pattern:
         return ""
@@ -441,7 +514,7 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
         elif total_syllables % 2 == 0:
             syllables_per_pada = total_syllables // 2
         else:
-            # No clear pada structure
+            # No clear pada structure, show as single line
             return lg_pattern
     
     # Split into padas
@@ -451,8 +524,13 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
         if pada:
             padas.append(pada)
     
-    # Format with separators
-    return " | ".join(padas)
+    # Format with each pada on a new line with pada number
+    formatted_padas = []
+    for idx, pada in enumerate(padas, 1):
+        formatted_padas.append(f"- **Pada {idx}:** {pada}")
+    
+    # Use single newline - bullet points work better in markdown
+    return "\n".join(formatted_padas)
 
 
 def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', requested_fields: Dict[str, bool] = None, add_analyze_link: bool = False) -> str:
@@ -487,7 +565,10 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
                 response += f"- {match[0]} (similarity: {match[1]:.2f})\n"
         
         if add_analyze_link:
-            response += "\n---\n💡 **Tip:** Use the **Analyse Chanda** page for detailed analysis with visualizations.\n"
+            # Encode the analyzed text for URL - use base64 to handle special characters
+            import base64
+            encoded_text = base64.b64encode(meter_data['text'].encode('utf-8')).decode('ascii')
+            response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**](#analyze:{encoded_text}) page for detailed analysis with visualizations.\n"
         
         return response
     
@@ -513,7 +594,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         # Show meter name if requested (clean format with confidence label)
         if requested_fields.get('meter_name'):
             # Extract primary meter name (without all the pada variations)
-            primary_meter = meter_data['meter']
+            primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
             # Get confidence from meter_display if it contains score
             confidence_label = "High"  # Default
             if meter_data.get('meter_display'):
@@ -529,9 +610,13 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         # Show L-G pattern if requested (split by pada)
         if requested_fields.get('lg_pattern'):
             lg_pattern = meter_data['lg_pattern']
-            # Split by pada for readability
-            formatted_lg = split_lg_pattern_by_pada(lg_pattern)
-            response += f"**L-G Pattern (by Pada):**\n`{formatted_lg}`\n"
+            # Prefer explicit pada list if available
+            lg_padas = [p for p in meter_data.get('lg_pattern_padas', []) if p]
+            if lg_padas:
+                formatted_lg = format_lg_padas(lg_padas)
+            else:
+                formatted_lg = split_lg_pattern_by_pada(lg_pattern)
+            response += f"**L-G Pattern (by Pada):**\n{formatted_lg}\n\n"
         
         # Show gana pattern if requested
         if requested_fields.get('gana_pattern'):
@@ -559,7 +644,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
             response += f"**Sanskrit Text:** {meter_data['text']}\n\n"
         
         # Clean meter display - extract primary meter with confidence label
-        primary_meter = meter_data['meter']
+        primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
         
         # Extract confidence score from meter_display
         import re
@@ -574,8 +659,12 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         
         # L-G Pattern split by pada
         lg_pattern = meter_data['lg_pattern']
-        formatted_lg = split_lg_pattern_by_pada(lg_pattern)
-        response += f"**L-G Pattern (by Pada):**\n`{formatted_lg}`\n\n"
+        lg_padas = [p for p in meter_data.get('lg_pattern_padas', []) if p]
+        if lg_padas:
+            formatted_lg = format_lg_padas(lg_padas)
+        else:
+            formatted_lg = split_lg_pattern_by_pada(lg_pattern)
+        response += f"**L-G Pattern (by Pada):**\n{formatted_lg}\n\n"
         
         response += f"**Gana Pattern:** `{meter_data['gana_pattern']}`\n\n"
         response += f"**Syllables:** {meter_data['syllables']} | **Matra:** {meter_data['matra']}\n"
@@ -590,7 +679,10 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     
     # Add "Use Analyse Chanda" suggestion if agentic flow was used
     if add_analyze_link:
-        response += "\n---\n💡 **Tip:** Use the **Analyse Chanda** page for detailed analysis with visualizations.\n"
+        # Encode the analyzed text for URL - use base64 to handle special characters
+        import base64
+        encoded_text = base64.b64encode(meter_data['text'].encode('utf-8')).decode('ascii')
+        response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**](#analyze:{encoded_text}) page for detailed analysis with visualizations.\n"
     
     return response
 

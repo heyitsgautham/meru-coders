@@ -258,3 +258,59 @@ export interface DatasetResponse {
   hasMore?: boolean;
   error?: string;
 }
+
+// Sloka Search types
+export interface SlokaSearchMatch {
+  original_text: string;
+  dataset_id: string;
+  dataset_name: string;
+  chandas: string;
+  source: string;
+  similarity: number;
+  is_exact_match: boolean;
+}
+
+export interface SlokaSearchResponse {
+  success: boolean;
+  query?: string;
+  query_normalized?: string;
+  matches?: SlokaSearchMatch[];
+  match_count?: number;
+  has_exact_match?: boolean;
+  best_similarity?: number;
+  diff_hints?: string[];
+  total_slokas_indexed?: number;
+  error?: string;
+}
+
+export interface SlokaDifference {
+  type: 'replace' | 'missing' | 'extra';
+  position: number;
+  end_position: number;
+  your_text: string;
+  correct_text: string;
+  description: string;
+}
+
+export interface HighlightedSegment {
+  text: string;
+  isError: boolean;
+}
+
+export interface SlokaValidateResponse {
+  success: boolean;
+  found?: boolean;
+  is_valid?: boolean;
+  similarity?: number;
+  similarity_percentage?: number;
+  original_text?: string;
+  your_text?: string;
+  highlighted_segments?: HighlightedSegment[];
+  chandas?: string;
+  dataset_name?: string;
+  source?: string;
+  differences?: SlokaDifference[];
+  difference_count?: number;
+  message?: string;
+  error?: string;
+}

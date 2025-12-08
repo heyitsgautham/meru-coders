@@ -742,7 +742,9 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
   const allInvalidInput = lineResults.length > 0 && lineResults.every(
     (line) => line.result?.is_valid_input === false
   );
-  const firstValidationError = lineResults.find(line => line.result?.validation_error)?.result?.validation_error;
+  // Store first validation error for potential future use
+  const _firstValidationError = lineResults.find(line => line.result?.validation_error)?.result?.validation_error;
+  void _firstValidationError;
 
   // If all input is invalid, show a helpful error message
   if (allInvalidInput) {
@@ -775,10 +777,10 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
   }
 
   return (
-    <div className="mt-10 animate-fadeIn" style={{ width: '100%', maxWidth: '100%' }}>
-      <div className="bg-white border-2 border-gray-300 rounded-3xl p-12 shadow-lg" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+    <div className="results-display mt-10 animate-fadeIn" style={{ width: '100%', maxWidth: '100%' }}>
+      <div className="results-card bg-white border-2 border-gray-300 rounded-3xl p-12 shadow-lg" style={{ width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
-        <div className="flex items-center justify-between pb-8 border-b-2 border-gray-200 bg-gray-50 -mx-12 -mt-12 px-12 pt-12 rounded-t-3xl">
+        <div className="results-header flex items-center justify-between pb-8 border-b-2 border-gray-200 bg-gray-50 -mx-12 -mt-12 px-12 pt-12 rounded-t-3xl">
           <h2 className="text-2xl font-bold text-[var(--color-text-main)]">Analysis Results</h2>
           <div className="flex items-center gap-4">
             {result.result_path && (

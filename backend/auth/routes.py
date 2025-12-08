@@ -13,8 +13,29 @@ import time
 from .utils import create_user_profile, get_user_profile, ADMIN_USERNAME, ADMIN_PASSWORD
 
 EMAIL_DOMAIN = os.environ.get("AUTH_EMAIL_DOMAIN", "merucoders.app")
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+# FRONTEND_URL is used as fallback only - prefer Origin header for dynamic redirects
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:8080")
 from .middleware import get_current_user
+
+
+def _get_frontend_origin() -> str:
+    """Get the frontend origin dynamically from request headers or fallback to env var."""
+    # Try to get from Origin header (set by browser on cross-origin requests)
+    origin = request.headers.get('Origin')
+    if origin:
+        return origin
+    
+    # Try Referer header as fallback
+    referer = request.headers.get('Referer')
+    if referer:
+        # Extract origin from referer (protocol + host)
+        from urllib.parse import urlparse
+        parsed = urlparse(referer)
+        if parsed.scheme and parsed.netloc:
+            return f"{parsed.scheme}://{parsed.netloc}"
+    
+    # Fallback to environment variable
+    return FRONTEND_URL
 
 
 def _generate_email(username: str) -> str:
@@ -310,7 +331,9 @@ def oauth_start():
     try:
         data = request.get_json() or {}
         provider = data.get('provider', 'google')
-        redirect_to = data.get('redirect_to') or f"{FRONTEND_URL}/oauth/callback"
+        # Use dynamic origin detection for redirect URL
+        frontend_origin = _get_frontend_origin()
+        redirect_to = data.get('redirect_to') or f"{frontend_origin}/oauth/callback"
 
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         current_app.logger.info(

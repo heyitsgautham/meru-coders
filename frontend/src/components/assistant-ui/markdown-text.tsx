@@ -130,15 +130,57 @@ const defaultComponents = memoizeMarkdownComponents({
       {...props}
     />
   ),
-  a: ({ className, ...props }) => (
-    <a
-      className={cn(
-        "aui-md-a font-medium text-primary underline underline-offset-4",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  a: ({ className, href, children, ...props }) => {
+    // Check if this is an "Analyse Chanda" link with encoded text
+    if (href && href.startsWith('#analyze:')) {
+      const encodedText = href.replace('#analyze:', '');
+      
+      const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        try {
+          // Decode the text from base64
+          const decodedText = atob(encodedText);
+          const utf8Text = decodeURIComponent(escape(decodedText));
+          
+          // Store the text in sessionStorage
+          sessionStorage.setItem('chanda_prefill_text', utf8Text);
+          
+          // Navigate to home
+          window.location.href = '/app';
+        } catch (error) {
+          console.error('Error decoding analyze link:', error);
+        }
+      };
+      
+      return (
+        <a
+          href="#"
+          onClick={handleClick}
+          className={cn(
+            "aui-md-a font-bold text-[#D97706] hover:text-[#B45309] cursor-pointer no-underline hover:underline underline-offset-4 transition-colors",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
+    
+    // Regular link
+    return (
+      <a
+        className={cn(
+          "aui-md-a font-medium text-primary underline underline-offset-4",
+          className,
+        )}
+        href={href}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  },
   blockquote: ({ className, ...props }) => (
     <blockquote
       className={cn("aui-md-blockquote border-l-2 pl-6 italic", className)}

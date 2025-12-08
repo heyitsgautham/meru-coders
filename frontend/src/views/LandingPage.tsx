@@ -8,10 +8,10 @@ import AtharvaVedaImg from "../assets/Atharva_Veda.png";
 import BhagavadGitaImg from "../assets/Bhagavad_Gita.png";
 
 interface LandingPageProps {
-  onLaunchApp: () => void;
+  onLaunchApp?: () => void;
 }
 
-export function LandingPage({ onLaunchApp }: LandingPageProps) {
+export function LandingPage({ onLaunchApp: _onLaunchApp }: LandingPageProps) {
   const navigate = useNavigate();
   
   const handleLaunch = () => {
@@ -19,13 +19,13 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
   };
   
   return (
-    <div style={{ 
+    <div className="landing-page" style={{ 
       minHeight: '100vh', 
       backgroundColor: '#faf7f2',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
       {/* Navigation Bar */}
-      <nav style={{
+      <nav className="landing-nav" style={{
         position: 'fixed',
         top: 0,
         left: 0,
@@ -39,16 +39,16 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <div style={{
+        <div className="landing-nav-content" style={{
           width: '100%',
           maxWidth: '1200px',
-          padding: '0 60px',
+          padding: '0 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <span style={{ 
-            fontSize: '24px', 
+          <span className="landing-logo" style={{ 
+            fontSize: '20px', 
             fontWeight: 700, 
             color: '#4a2c10',
             letterSpacing: '-0.5px'
@@ -58,16 +58,17 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           
           <button 
             onClick={handleLaunch}
+            className="landing-launch-btn"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '12px 28px',
+              padding: '10px 20px',
               backgroundColor: '#c75b1a',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '15px',
+              fontSize: '14px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s ease'
@@ -75,18 +76,19 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b34d12'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c75b1a'}
           >
-            Launch Application
+            <span className="hidden sm:inline">Launch Application</span>
+            <span className="sm:hidden">Launch</span>
             <ArrowRight size={18} />
           </button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="landing-section" style={{
-        paddingTop: '160px',
-        paddingBottom: '100px',
-        paddingLeft: '60px',
-        paddingRight: '60px',
+      <section className="landing-section landing-hero" style={{
+        paddingTop: '120px',
+        paddingBottom: '60px',
+        paddingLeft: '24px',
+        paddingRight: '24px',
         display: 'flex',
         justifyContent: 'center'
       }}>
@@ -94,21 +96,21 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           width: '100%',
           maxWidth: '1200px',
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '80px',
+          gridTemplateColumns: '1fr',
+          gap: '40px',
           alignItems: 'center'
         }}>
           {/* Left Column - Text */}
-          <div>
+          <div className="landing-hero-text">
             <div style={{
               display: 'inline-block',
-              padding: '8px 16px',
+              padding: '6px 14px',
               backgroundColor: '#fff3e6',
               borderRadius: '20px',
-              marginBottom: '24px'
+              marginBottom: '20px'
             }}>
               <span style={{ 
-                fontSize: '13px', 
+                fontSize: '12px', 
                 fontWeight: 600, 
                 color: '#c75b1a',
                 letterSpacing: '0.5px'
@@ -118,11 +120,11 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             </div>
             
             <h1 className="landing-hero-title" style={{
-              fontSize: '52px',
+              fontSize: '36px',
               fontWeight: 700,
               color: '#1a1a1a',
               lineHeight: 1.15,
-              marginBottom: '24px',
+              marginBottom: '20px',
               letterSpacing: '-1px'
             }}>
               Identify Sanskrit{' '}
@@ -130,11 +132,11 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
               Instantly
             </h1>
             
-            <p style={{
-              fontSize: '18px',
+            <p className="landing-hero-subtitle" style={{
+              fontSize: '16px',
               color: '#5a5a5a',
               lineHeight: 1.7,
-              marginBottom: '40px',
+              marginBottom: '32px',
               maxWidth: '480px'
             }}>
               A powerful tool for identifying the <em>chandas</em> (metrical patterns) 
@@ -142,14 +144,15 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
               a database of over 1,900 meters.
             </p>
             
-            <div style={{ display: 'flex', gap: '16px' }}>
+            <div className="landing-hero-buttons" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <button 
                 onClick={handleLaunch}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '10px',
-                  padding: '16px 32px',
+                  padding: '14px 28px',
                   backgroundColor: '#c75b1a',
                   color: 'white',
                   border: 'none',
@@ -157,7 +160,8 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
                   fontSize: '16px',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  width: '100%'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b34d12'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c75b1a'}
@@ -171,7 +175,8 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '16px 32px',
+                  justifyContent: 'center',
+                  padding: '14px 28px',
                   backgroundColor: 'transparent',
                   color: '#4a2c10',
                   border: '2px solid #d4c4b0',
@@ -180,7 +185,8 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
                   fontWeight: 600,
                   cursor: 'pointer',
                   textDecoration: 'none',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  width: '100%'
                 }}
               >
                 Learn More
@@ -189,10 +195,10 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           </div>
           
           {/* Right Column - Sample Card */}
-          <div style={{
+          <div className="landing-sample-card" style={{
             backgroundColor: 'white',
             borderRadius: '16px',
-            padding: '40px',
+            padding: '24px',
             boxShadow: '0 4px 40px rgba(0, 0, 0, 0.08)',
             border: '1px solid #e8e0d5'
           }}>
@@ -288,7 +294,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </section>
 
       {/* What is Chandas Section */}
-      <section id="what-is-chandas" style={{
+      <section id="what-is-chandas" className="landing-section landing-what-is-chandas" style={{
         padding: '100px 60px',
         backgroundColor: 'white',
         display: 'flex',
@@ -322,7 +328,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             </p>
           </div>
           
-          <div style={{
+          <div className="landing-whatischandas-grid" style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: '60px',
@@ -880,7 +886,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </section>
 
       {/* CTA Section */}
-      <section style={{
+      <section className="landing-section landing-cta" style={{
         padding: '100px 60px',
         backgroundColor: '#4a2c10',
         display: 'flex',
@@ -891,7 +897,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           maxWidth: '800px',
           textAlign: 'center'
         }}>
-          <h2 style={{
+          <h2 className="landing-cta-title" style={{
             fontSize: '40px',
             fontWeight: 700,
             color: 'white',
@@ -911,6 +917,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
           </p>
           <button 
             onClick={handleLaunch}
+            className="landing-cta-btn"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -935,13 +942,13 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </section>
 
       {/* Footer */}
-      <footer style={{
+      <footer className="landing-footer" style={{
         padding: '40px 60px',
         backgroundColor: '#3a2210',
         display: 'flex',
         justifyContent: 'center'
       }}>
-        <div style={{
+        <div className="landing-footer-content" style={{
           width: '100%',
           maxWidth: '1200px',
           display: 'flex',

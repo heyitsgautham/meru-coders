@@ -5,7 +5,7 @@
 
 ## Problem Identified
 
-While testing with classical Sanskrit verses from an online chandas course, we discovered that the backend was producing **incorrect syllable counts and L-G patterns** compared to the IIT-K reference implementation.
+While testing with classical Sanskrit verses from an online chandas course, we discovered that the backend was producing **incorrect syllable counts and L-G patterns** compared to the reference implementation.
 
 ### Root Cause Analysis
 
@@ -13,7 +13,7 @@ While testing with classical Sanskrit verses from an online chandas course, we d
 ```
 Line: शिलापि याति द्युतिमन्तभावम् (Indravajrā example)
 
-IIT-K (CORRECT):
+Reference (CORRECT):
   Syllables: ['शि', 'ला', 'पि', 'या', 'ति', 'द्यु', 'ति', 'म', 'न्त', 'भा', 'व', 'म्']
   Pattern: LGLGGLLGLGG (11 syllables)
   Identified: Upendravajrā ✓
@@ -46,7 +46,7 @@ def __init__(self, data_path, symbols='यरतनभजसमलग', syllabiz
 ### 2. Reverted HALANTA Handling
 **File**: `backend/core/chanda.py`, method `_mark_lg_sanskrit_text()`
 
-Restored IIT-K's original logic:
+Restored the original logic:
 - HALANTA syllables get **empty string** `''` in L-G marks (not counted)
 - This matches the traditional prosody rules
 
@@ -56,7 +56,7 @@ if syllable[-1] == skt.HALANTA:
     lg_marks.append(self.G)  # Count as Guru
     continue
 
-# AFTER (IIT-K original)
+# AFTER (original)
 if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
     lg_marks.append('')  # Skip
     continue
@@ -80,7 +80,7 @@ if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
 
 ### ✅ Classical Meters Now Work
 
-**Manual verification with IIT-K chanda.py:**
+**Manual verification with reference chanda.py:**
 - Indravajrā: ✓ Correctly identified
 - Upendravajrā: ✓ Correctly identified
 - Vasantatilakā: ✓ Correctly identified
@@ -92,7 +92,7 @@ if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
 The `sanskrit_text` library's syllabification was already correct and validated against classical texts. Our "enhancements" broke it.
 
 ### 2. **Validate Against Reference Implementation**
-Having the IIT-K reference implementation (`repos/chanda/`) allowed us to quickly identify the discrepancy.
+Having the reference implementation (`repos/chanda/`) allowed us to quickly identify the discrepancy.
 
 ### 3. **Beware of Over-Engineering**
 - ICU implementation: 2x code size, lower accuracy
@@ -111,12 +111,12 @@ The `test_classical_course_examples.py` still has failures, but these are due to
 2. **Name matching**: Comparing IAST names with Devanagari names
 3. **Meter labeling**: Some course examples may be mislabeled (e.g., first "Indravajrā" verse is actually Upajāti)
 
-**Not** due to the core engine, which now correctly matches IIT-K behavior.
+**Not** due to the core engine, which now correctly matches the reference behavior.
 
 ## Conclusion
 
-✅ **Core syllabification engine restored to IIT-K accuracy**  
+✅ **Core syllabification engine restored to production accuracy**  
 ✅ **100% test suite pass rate maintained**  
 ✅ **Classical meter identification working correctly**  
 
-The system is now back to production-quality accuracy, matching the deployed version at `https://sanskrit.iitk.ac.in/jnanasangraha/chanda/`.
+The system is now back to production-quality accuracy.
