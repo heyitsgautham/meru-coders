@@ -1,4 +1,53 @@
 {
+  "गायत्री": {
+    "description": "24 अक्षराणि = 3 × 8 (त्रिपदा गायत्री) - Rigveda 1.1.1",
+    "examples": [
+      "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं"
+    ],
+    "video": null
+  },
+  "उष्णिक्": {
+    "description": "28 अक्षराणि = 4 × 7 - Rigveda 1.28.2",
+    "examples": [
+      "यत्र द्वाविव जघनाधिषवण्या कृता उलूखलसुतानामवेद्विंद्र जल्गुलः"
+    ],
+    "video": null
+  },
+  "अनुष्टुभ्": {
+    "description": "32 अक्षराणि = 4 × 8 - Rigveda 1.10.7",
+    "examples": [
+      "सुविवृतं सुनिरजमिंद्र त्वादातमिद्यशः गवामप व्रजं वृधि कृणुष्व राधो अद्रिवः"
+    ],
+    "video": null
+  },
+  "बृहती": {
+    "description": "36 अक्षराणि = 4 × 9 - Rigveda 1.36.7",
+    "examples": [
+      "तं घेमित्था नमस्विन उप स्वराजमासते होत्राभिरग्निं मनुषः समिंधते तितिर्वांसो अति स्रिधः"
+    ],
+    "video": null
+  },
+  "पङ्क्ति": {
+    "description": "40 अक्षराणि = 5 × 8 - Rigveda 1.36.18",
+    "examples": [
+      "अग्निना तुर्वशं यदुं परावत उग्रादेवं हवामहे अग्निर्नयन्नववास्त्वं बृहद्रथं तुर्वीतिं दस्यवे सहः"
+    ],
+    "video": null
+  },
+  "त्रिष्टुभ्": {
+    "description": "44 अक्षराणि = 4 × 11 - Rigveda 1.24.1",
+    "examples": [
+      "कस्य नूनं कतमस्यामृतानां मनामहे चारु देवस्य नाम को नो मह्या अदितये पुनर्दात्पितरं च दृशेयं मातरं च"
+    ],
+    "video": null
+  },
+  "जगती": {
+    "description": "48 अक्षराणि = 4 × 12 - Rigveda 1.34.3",
+    "examples": [
+      "समाने अहन्त्रिरवद्यगोहना त्रिरद्य यज्ञं मधुना मिमिक्षतं त्रिर्वाजवतीरिषो अश्विना युवं दोषा अस्मभ्यमुषसश्च पिन्वतं"
+    ],
+    "video": null
+  },
   "शालिनी": [
     "शालिन्युक्ता म्तौ तगौ गोऽब्धिलोकैः।",
     "",
@@ -46,21 +95,5 @@
     "विद्या भोगकरी यशः सुखकरी विद्या गुरूणां गुरुः।",
     "विद्या बन्धुजनो विदेशगमने विद्या परा देवता",
     "विद्या राजसु पूज्यते न हि धनं विद्याविहीनः पशुः॥"
-  ],
-  "Āryā": {
-    "description": "The four pādas have 12, 18, 12, and 15 mātrās respectively.",
-    "examples": [
-      "āparitoṣād viduṣāṃ / na sādhu manye prayogavijñānaṃ // balavadapi śikṣitānām / ātmany apratyayaṃ cetaḥ",
-      "nītijñā niyatijñā / vādajñā api bhavanti vedajñāḥ // brahmajñā api labhyā // svājñāna-jñānino viralāḥ"
-    ],
-    "video": null
-  },
-  "Gīti": {
-    "description": "The four pādas have 12, 18, 12, and 18 mātrās respectively.",
-    "examples": [
-      "nindatu vā nandatu vā / mandamanīṣā niśamya kṛtim etām // harṣaṃ vā marṣaṃ vā / sarṣapamātram api naiva vindema",
-      "kalamañjula-vāganumita-/ galapañjara-gataśukagrahautkaṇṭhyāt // amba radanāmbaraṃ te / bimbaphalaṃ śambarāriṇā nyastam"
-    ],
-    "video": null
-  }
+  ]
 }
