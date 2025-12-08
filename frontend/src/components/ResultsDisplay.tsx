@@ -13,6 +13,7 @@ interface ResultsDisplayProps {
   result: IdentifyResponse;
   type: 'text' | 'image' | 'file';
   onClose?: () => void;
+  compact?: boolean; // When true, hides ShlokaOverview for side-by-side layout (split view)
 }
 
 // Meter name mappings for English transliteration
@@ -251,16 +252,14 @@ const METER_STRUCTURES: Record<string, Partial<MeterStructureInfo>> = {
 
 // Get meter structure information
 function getMeterStructure(meterName: string, lineResults: LineResult[]): MeterStructureInfo | null {
-  // ALWAYS calculate from actual line results first (CRITICAL FIX)
-  // This ensures we show the actual syllable count, not the theoretical meter definition
+  // Calculate actual syllable counts from line results
   if (lineResults.length > 0) {
     const firstResult = lineResults[0].result;
 
-    // Count only VALID syllables (those with L-G marks) - CRITICAL FIX
-    // This matches how LineAnalysisCard displays syllables
+    // Count only VALID syllables (those with L-G marks)
     const firstSyllables = firstResult?.display_syllables || [];
     const firstLgArray = firstResult?.display_lg || [];
-    const validFirstSyllables = firstSyllables.filter((_, idx) =>
+    const validFirstSyllables = firstSyllables.filter((_, idx: number) =>
       firstLgArray[idx] && firstLgArray[idx].trim() !== ''
     ).length;
 
@@ -272,22 +271,65 @@ function getMeterStructure(meterName: string, lineResults: LineResult[]): MeterS
       const syllables = line.result?.display_syllables || [];
       const lgArray = line.result?.display_lg || [];
       // Count only syllables that have corresponding L-G marks
-      const validCount = syllables.filter((_, idx) =>
+      const validCount = syllables.filter((_: string, idx: number) =>
         lgArray[idx] && lgArray[idx].trim() !== ''
       ).length;
       actualTotalSyllables += validCount;
     });
 
-    // Check if we have predefined structure (for reference/validation only)
+    // Check if we have predefined structure for this meter
     const knownStructure = METER_STRUCTURES[meterName];
 
-    // Use ACTUAL data, not predefined structure
+    // If we have a known meter structure, use it to calculate proper pada breakdown
+    // This ensures correct display like "28 (7×4)" instead of "28 (28×1)"
+    if (knownStructure && knownStructure.totalSyllables && knownStructure.syllablesPerPada && knownStructure.totalPadas) {
+      // Use known structure for the format, but show actual total syllables counted
+      return {
+        totalPadas: knownStructure.totalPadas,
+        syllablesPerPada: knownStructure.syllablesPerPada,
+        totalSyllables: actualTotalSyllables,
+        ganaPattern,
+        structureNote: knownStructure.structureNote,
+      };
+    }
+
+    // For unknown meters, try to infer structure from actual data
+    // If input is a single line, try to detect proper pada structure based on total syllables
+    if (lineResults.length === 1 && actualTotalSyllables > 0) {
+      // Common Vedic meter structures by total syllable count
+      const SYLLABLE_STRUCTURES: Record<number, { padas: number; perPada: number }> = {
+        24: { padas: 3, perPada: 8 },   // Gayatri: 3×8
+        28: { padas: 4, perPada: 7 },   // Ushnik: 4×7
+        32: { padas: 4, perPada: 8 },   // Anushtubh: 4×8
+        36: { padas: 4, perPada: 9 },   // Brihati: 4×9
+        40: { padas: 5, perPada: 8 },   // Pankti: 5×8
+        44: { padas: 4, perPada: 11 },  // Trishtubh: 4×11
+        48: { padas: 4, perPada: 12 },  // Jagati: 4×12
+        56: { padas: 4, perPada: 14 },  // Vasantatilaka: 4×14
+        68: { padas: 4, perPada: 17 },  // Mandakranta: 4×17
+        76: { padas: 4, perPada: 19 },  // Shardula: 4×19
+        84: { padas: 4, perPada: 21 },  // Sragdhara: 4×21
+      };
+
+      const inferredStructure = SYLLABLE_STRUCTURES[actualTotalSyllables];
+      if (inferredStructure) {
+        return {
+          totalPadas: inferredStructure.padas,
+          syllablesPerPada: inferredStructure.perPada,
+          totalSyllables: actualTotalSyllables,
+          ganaPattern,
+          structureNote: knownStructure?.structureNote,
+        };
+      }
+    }
+
+    // Fallback: use actual data as-is
     return {
       totalPadas: lineResults.length,  // Actual number of lines/padas
       syllablesPerPada: validFirstSyllables,  // Valid syllables per pada from first line
       totalSyllables: actualTotalSyllables,  // Total valid syllables from all lines
       ganaPattern,
-      structureNote: knownStructure?.structureNote,  // Keep the note for reference
+      structureNote: knownStructure?.structureNote,
     };
   }
 
@@ -406,10 +448,10 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
   if (!lineResults || lineResults.length === 0) return null;
 
   return (
-    <div className="mb-8 bg-[#FDF6E3] rounded-2xl p-10 shadow-sm border border-[#E8DCC8]">
-      <div className="flex items-center justify-between mb-8">
+    <div className="mb-8 bg-[#FDF6E3] rounded-2xl p-10 shadow-sm border border-[#E8DCC8] overflow-hidden">
+      <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <h3 className="text-2xl font-bold text-gray-800">Shloka Overview</h3>
-        <div className="flex items-center gap-8 text-base">
+        <div className="flex items-center gap-8 text-base flex-wrap">
           <div className="flex items-center gap-2">
             <span 
               className="inline-block w-6 h-6 rounded" 
@@ -427,27 +469,43 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
         </div>
       </div>
       
-      <div className="flex flex-col items-center space-y-6">
+      <div className="flex flex-col items-center space-y-6 w-full">
         {lineResults.map((lineItem, lineIndex) => {
           const result = lineItem.result || {};
           const syllables = result.display_syllables || [];
           const lgArray = result.display_lg || [];
           const originalLine = lineItem.line || '';
 
-          // Split original line into words to detect word boundaries
-          const words = originalLine.split(/\s+/).filter(w => w.trim());
-          
-          // Build syllable-to-word mapping by tracking character positions
-          // We'll group syllables and add extra spacing between word boundaries
+          // Build syllable-to-word mapping
           const validPairs: { syllable: string; lg: string; isWordEnd: boolean }[] = [];
-          let syllableText = '';
+          
+          // Split original line into words (space-separated)
+          const words = originalLine.split(/\s+/).filter((w: string) => w.trim());
+          
+          // Match syllables to words by accumulating syllable text
+          let wordIdx = 0;
+          let accumulated = '';
           
           syllables.forEach((syl: string, idx: number) => {
             if (lgArray[idx] && lgArray[idx].trim() !== '') {
-              syllableText += syl;
-              // Check if this syllable ends a word (followed by space in original or is last)
-              const isWordEnd = idx < syllables.length - 1 && 
-                (syllables[idx + 1] === ' ' || !lgArray[idx + 1] || lgArray[idx + 1].trim() === '');
+              accumulated += syl;
+              
+              // Check if current word is complete
+              let isWordEnd = false;
+              if (wordIdx < words.length) {
+                const currentWord = words[wordIdx];
+                // Remove any diacritics/marks for comparison and normalize
+                const normalizedWord = currentWord.replace(/[\s।॥]/g, '');
+                const normalizedAccum = accumulated.replace(/[\s।॥]/g, '');
+                
+                // Word ends when accumulated syllables match or exceed word length
+                if (normalizedAccum.length >= normalizedWord.length) {
+                  isWordEnd = true;
+                  wordIdx++;
+                  accumulated = '';
+                }
+              }
+              
               validPairs.push({ syllable: syl, lg: lgArray[idx], isWordEnd });
             }
           });
@@ -457,33 +515,37 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
           return (
             <div 
               key={lineIndex} 
-              className="text-center w-full"
+              className="w-full"
               style={{
                 fontFamily: "'Noto Sans Devanagari', 'Siddhanta', sans-serif",
                 fontSize: '2.25rem',
-                lineHeight: '2.8'
+                lineHeight: '2.8',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                maxWidth: '100%',
+                gap: '4px 2px'
               }}
             >
               {validPairs.map((pair, idx) => {
                 const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
-                // Add extra margin after every 2-4 syllables to simulate word breaks
-                // This is an approximation since Sanskrit words vary in length
-                const addWordGap = (idx + 1) % 3 === 0 && idx < validPairs.length - 1;
+                // Use actual word boundary detection instead of arbitrary grouping
+                const addWordGap = pair.isWordEnd && idx < validPairs.length - 1;
                 
                 return (
                   <span
                     key={idx}
-                    className="inline-block"
                     style={{
                       backgroundColor: isLaghu ? '#A8D4F0' : '#F5B7B1',
                       color: '#2D2D2D',
                       fontWeight: 500,
                       borderRadius: '6px',
-                      margin: '4px 1px',
-                      marginRight: addWordGap ? '28px' : '1px',
+                      marginRight: addWordGap ? '40px' : '0',
                       padding: '8px 12px',
                       minWidth: '2.5rem',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      flexShrink: 0
                     }}
                     title={isLaghu ? 'Laghu (Short syllable)' : 'Guru (Long syllable)'}
                   >
@@ -493,7 +555,7 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
               })}
               {/* Add a visual separator between lines */}
               {lineIndex < lineResults.length - 1 && (
-                <span style={{ color: '#8B7355', fontSize: '2rem', marginLeft: '8px' }}>।</span>
+                <span style={{ color: '#8B7355', fontSize: '2rem', marginLeft: '8px', flexShrink: 0 }}>।</span>
               )}
             </div>
           );
@@ -718,7 +780,7 @@ function LineAnalysisCard({
   );
 }
 
-export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
+export function ResultsDisplay({ result, type, onClose, compact = false }: ResultsDisplayProps) {
   const [showSanskrit, setShowSanskrit] = useState(true);
 
   if (!result.success) {
@@ -956,8 +1018,8 @@ export function ResultsDisplay({ result, type, onClose }: ResultsDisplayProps) {
           </div>
         )}
 
-        {/* Shloka Overview - Colored syllables at a glance */}
-        {lineResults.length > 0 && (
+        {/* Shloka Overview - Colored syllables at a glance (hidden in compact/split view) */}
+        {lineResults.length > 0 && !compact && (
           <ShlokaOverview lineResults={lineResults} />
         )}
 

@@ -253,6 +253,7 @@ export function SplitViewAnalysis({ initialTextLeft = "", initialTextRight = "" 
                     result={resultLeft}
                     type="text"
                     onClose={handleCloseResultsLeft}
+                    compact={true}
                   />
                 </div>
               ) : textLeft.trim() ? (
@@ -273,6 +274,7 @@ export function SplitViewAnalysis({ initialTextLeft = "", initialTextRight = "" 
                     result={resultRight}
                     type="text"
                     onClose={handleCloseResultsRight}
+                    compact={true}
                   />
                 </div>
               ) : textRight.trim() ? (
