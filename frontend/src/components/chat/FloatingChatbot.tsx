@@ -264,50 +264,6 @@ const FloatingChatbot: React.FC = () => {
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
 
-              {/* Display Meter Analysis Data if Available */}
-              {msg.meter_data && msg.meter_data.success && msg.meter_data.found && (
-                <div className="meter-analysis-card">
-                  <div className="meter-analysis-header">
-                    <span className="meter-icon">✨</span>
-                    <span className="meter-title">Metrical Analysis</span>
-                  </div>
-                  <div className="meter-analysis-body">
-                    <div className="meter-row">
-                      <span className="meter-label">Meter:</span>
-                      <span className="meter-value meter-name">{msg.meter_data.meter}</span>
-                    </div>
-                    <div className="meter-row">
-                      <span className="meter-label">L-G Pattern:</span>
-                      <code className="meter-pattern">{msg.meter_data.lg_pattern}</code>
-                    </div>
-                    <div className="meter-row">
-                      <span className="meter-label">Gana Pattern:</span>
-                      <code className="meter-pattern">{msg.meter_data.gana_pattern}</code>
-                    </div>
-                    <div className="meter-stats">
-                      <div className="meter-stat">
-                        <span className="stat-label">Syllables</span>
-                        <span className="stat-value">{msg.meter_data.syllables}</span>
-                      </div>
-                      <div className="meter-stat">
-                        <span className="stat-label">Matra</span>
-                        <span className="stat-value">{msg.meter_data.matra}</span>
-                      </div>
-                    </div>
-                    {msg.meter_data.syllable_breakdown && msg.meter_data.syllable_breakdown.length > 0 && (
-                      <div className="meter-syllables">
-                        <span className="meter-label">Syllables:</span>
-                        <div className="syllable-chips">
-                          {msg.meter_data.syllable_breakdown.map((syl: string, i: number) => (
-                            <span key={i} className="syllable-chip">{syl}</span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {msg.confidence !== undefined && msg.confidence !== null && (
                 <div className="message-confidence">
                   Confidence: {(msg.confidence * 100).toFixed(0)}%
