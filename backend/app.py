@@ -18,6 +18,9 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from backend.config import settings
+
+# Global SocketIO instance (for access from other modules)
+socketio = None
 from backend.core import Chanda
 from backend.ocr import TesseractOCR, CloudVisionOCR
 
@@ -37,6 +40,7 @@ def create_app():
     app.config['SECRET_KEY'] = settings.SECRET_KEY
     app.config['MAX_CONTENT_LENGTH'] = settings.MAX_CONTENT_LENGTH
     app.config['DEBUG'] = settings.DEBUG
+    app.config['CORS_ORIGINS'] = settings.CORS_ORIGINS  # For SocketIO
     
     # Configure logging
     logging.basicConfig(
@@ -61,8 +65,27 @@ def create_app():
             "origins": "*",
             "methods": ["GET", "POST", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        },
+        r"/socket.io/*": {
+            "origins": settings.CORS_ORIGINS,
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
         }
     })
+    
+    # Initialize WebSocket support
+    global socketio
+    app.logger.info("Initializing Flask-SocketIO...")
+    try:
+        from backend.api.websocket import init_socketio
+        socketio = init_socketio(app)
+        app.socketio = socketio
+        app.logger.info("Flask-SocketIO initialized successfully")
+    except Exception as e:
+        app.logger.warning(f"Flask-SocketIO not available: {e}")
+        app.socketio = None
     
     # Initialize rate limiter
     app.logger.info("Initializing rate limiter...")

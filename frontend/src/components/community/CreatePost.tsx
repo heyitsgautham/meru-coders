@@ -1,13 +1,13 @@
 /**
  * CreatePost Component
- * Elegant post composer with Sanskrit input support
+ * Elegant post composer with Sanskrit input support and image upload
  */
 
-import { useState } from 'react';
-import { Send, Sparkles, X, BookOpen } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Send, Sparkles, X, BookOpen, Image, Loader2 } from 'lucide-react';
 import { Switch } from '../ui/switch';
 import { useAuth } from '../../contexts/AuthContext';
-import { createPost } from '../../services/community';
+import { createPost, uploadImage } from '../../services/community';
 import type { Post } from '../../types/community';
 
 interface CreatePostProps {
@@ -22,6 +22,12 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
   const [analyzeMeter, setAnalyzeMeter] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Image upload state
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) {
     return (
@@ -36,6 +42,36 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
   const username = user.username || 'User';
   const avatarInitials = username.slice(0, 2).toUpperCase();
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image must be less than 5MB');
+        return;
+      }
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setError(null);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
@@ -44,16 +80,34 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
     setError(null);
 
     try {
+      // Upload image first if selected
+      let imageUrl: string | undefined;
+      if (selectedImage) {
+        setUploadingImage(true);
+        const uploadResult = await uploadImage(selectedImage);
+        if (uploadResult.success && uploadResult.url) {
+          imageUrl = uploadResult.url;
+        } else {
+          setError(uploadResult.error || 'Failed to upload image');
+          setSubmitting(false);
+          setUploadingImage(false);
+          return;
+        }
+        setUploadingImage(false);
+      }
+
       const result = await createPost({
         content: content.trim(),
         sanskrit_text: sanskritText.trim() || undefined,
         analyze_meter: analyzeMeter,
+        image_url: imageUrl,
       });
 
       if (result.success) {
         setContent('');
         setSanskritText('');
         setShowSanskritInput(false);
+        removeImage();
         onPostCreated?.(result.post);
       } else {
         setError(result.error || 'Failed to create post');
@@ -128,12 +182,36 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
             </div>
           )}
 
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="image-preview-container">
+              <img src={imagePreview} alt="Preview" className="image-preview" />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="image-remove-btn"
+                aria-label="Remove image"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+
           {/* Error Message */}
           {error && (
             <p className="error-message" style={{ color: '#EF4444', fontSize: '14px', marginTop: '8px' }}>
               {error}
             </p>
           )}
+
+          {/* Hidden file input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageSelect}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
 
           {/* Actions */}
           <div className="create-post-actions">
@@ -146,14 +224,27 @@ export function CreatePost({ onPostCreated }: CreatePostProps) {
                 <Sparkles size={18} />
                 <span>Add Sanskrit</span>
               </button>
+              <button
+                type="button"
+                className={`tool-btn ${selectedImage ? 'active' : ''}`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Image size={18} />
+                <span>Add Image</span>
+              </button>
             </div>
 
             <button
               type="submit"
-              disabled={!content.trim() || submitting}
+              disabled={!content.trim() || submitting || uploadingImage}
               className="submit-btn"
             >
-              {submitting ? (
+              {uploadingImage ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Uploading...
+                </>
+              ) : submitting ? (
                 'Posting...'
               ) : (
                 <>

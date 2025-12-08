@@ -1,12 +1,13 @@
 /**
  * PostFeed Component
  * Elegant feed with posts, loading states, and infinite scroll
+ * Phase 2: Added following feed support
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { PostCard } from './PostCard';
-import { getPosts } from '../../services/community';
+import { getPosts, getFollowingFeed } from '../../services/community';
 import type { Post, FeedFilter } from '../../types/community';
 
 interface PostFeedProps {
@@ -34,11 +35,21 @@ export function PostFeed({ filter = 'all', userId, onPostUpdated }: PostFeedProp
 
     try {
       const offset = reset ? 0 : posts.length;
-      const result = await getPosts({
-        limit: POSTS_PER_PAGE,
-        offset,
-        user_id: userId,
-      });
+      
+      // Choose which feed to load based on filter
+      let result;
+      if (filter === 'following') {
+        result = await getFollowingFeed({
+          limit: POSTS_PER_PAGE,
+          offset,
+        });
+      } else {
+        result = await getPosts({
+          limit: POSTS_PER_PAGE,
+          offset,
+          user_id: userId,
+        });
+      }
 
       if (result.success) {
         const newPosts = result.posts;
@@ -53,7 +64,7 @@ export function PostFeed({ filter = 'all', userId, onPostUpdated }: PostFeedProp
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [posts.length, userId]);
+  }, [posts.length, userId, filter]);
 
   useEffect(() => {
     loadPosts(true);

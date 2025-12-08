@@ -1,15 +1,17 @@
 /**
  * PostCard Component
  * Desktop-optimized post display with share modal
+ * Phase 2: Added Edit, Bookmark, Report functionality
  */
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, MessageCircle, Share2, Trash2, MoreHorizontal, Music } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Trash2, MoreHorizontal, Music, Edit2, Bookmark, Flag } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import {
@@ -24,10 +26,12 @@ import {
 } from '../ui/alert-dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useAuth } from '../../contexts/AuthContext';
-import { toggleLike, deletePost, formatRelativeTime } from '../../services/community';
+import { toggleLike, deletePost, formatRelativeTime, toggleBookmark } from '../../services/community';
 import type { Post } from '../../types/community';
 import { CommentSection } from './CommentSection';
 import { ShareModal } from './ShareModal';
+import { EditPostModal } from './EditPostModal';
+import { ReportModal } from './ReportModal';
 
 interface PostCardProps {
   post: Post;
@@ -35,7 +39,7 @@ interface PostCardProps {
   onPostUpdated?: (post: Post) => void;
 }
 
-export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }: PostCardProps) {
+export function PostCard({ post, onPostDeleted, onPostUpdated }: PostCardProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.is_liked || false);
@@ -45,9 +49,13 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(post.is_bookmarked || false);
+  const [currentPost, setCurrentPost] = useState(post);
 
   const isOwner = user && (user.id === post.user_id);
-  const username = post.users?.username || 'Anonymous';
+  const username = currentPost.users?.username || 'Anonymous';
   const avatarInitials = username.slice(0, 2).toUpperCase();
 
   const handlePostClick = () => {
@@ -76,6 +84,26 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
     }
   };
 
+  const handleBookmarkToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) return;
+
+    const wasBookmarked = isBookmarked;
+    setIsBookmarked(!isBookmarked);
+
+    try {
+      const result = await toggleBookmark(post.id);
+      if (result.success) {
+        setIsBookmarked(result.bookmarked);
+      } else {
+        setIsBookmarked(wasBookmarked);
+      }
+    } catch (error) {
+      setIsBookmarked(wasBookmarked);
+      console.error('Failed to toggle bookmark:', error);
+    }
+  };
+
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowShareModal(true);
@@ -96,6 +124,11 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
     }
   };
 
+  const handlePostEdited = (updatedPost: Post) => {
+    setCurrentPost(updatedPost);
+    onPostUpdated?.(updatedPost);
+  };
+
   const handleCommentAdded = () => {
     setCommentsCount(prev => prev + 1);
   };
@@ -104,77 +137,150 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
     setCommentsCount(prev => Math.max(0, prev - 1));
   };
 
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/community/user/${post.user_id}`);
+  };
+
   return (
     <>
       <article className="post-card" onClick={handlePostClick} style={{ cursor: 'pointer' }}>
         <div className="post-card-inner">
-          <div className="post-avatar">
+          <div className="post-avatar" onClick={handleUserClick}>
             <div className="avatar avatar-lg">{avatarInitials}</div>
           </div>
 
           <div className="post-content-area">
             <div className="post-header">
-              <div className="post-author-info">
+              <div className="post-author-info" onClick={handleUserClick}>
                 <span className="post-author-name">{username}</span>
                 <span className="post-meta">
-                  @{username.toLowerCase()} · {formatRelativeTime(post.created_at)}
+                  @{username.toLowerCase()} · {formatRelativeTime(currentPost.created_at)}
+                  {currentPost.updated_at && currentPost.updated_at !== currentPost.created_at && (
+                    <span className="edited-indicator"> · edited</span>
+                  )}
                 </span>
               </div>
 
-              {isOwner && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="post-menu-btn" onClick={e => e.stopPropagation()}>
-                      <MoreHorizontal size={18} />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="post-menu-btn" onClick={e => e.stopPropagation()}>
+                    <MoreHorizontal size={18} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {isOwner && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEditModal(true);
+                        }}
+                      >
+                        <Edit2 className="mr-2 h-4 w-4" />
+                        Edit Post
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDeleteDialog(true);
+                        }}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Post
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBookmarkToggle(e);
+                    }}
+                  >
+                    <Bookmark className={`mr-2 h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                    {isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
+                  </DropdownMenuItem>
+                  {!isOwner && user && (
                     <DropdownMenuItem
-                      className="text-red-600"
-                      onClick={() => setShowDeleteDialog(true)}
+                      className="text-orange-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowReportModal(true);
+                      }}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Post
+                      <Flag className="mr-2 h-4 w-4" />
+                      Report Post
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
-            <p className="post-text">{post.content}</p>
+            <p className="post-text">{currentPost.content}</p>
 
-            {post.sanskrit_text && (
+            {/* Post Image */}
+            {currentPost.image_url && (
+              <div className="post-image-container">
+                <img 
+                  src={(() => {
+                    const url = currentPost.image_url!;
+                    // Get base URL without /api suffix
+                    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                    const baseUrl = apiUrl.replace(/\/api\/?$/, '');
+                    
+                    // Handle different URL formats
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                      return url; // Already absolute URL (Supabase storage)
+                    }
+                    if (url.startsWith('/api/community/uploads')) {
+                      return `${baseUrl}${url}`; // New format: /api/community/uploads/...
+                    }
+                    if (url.startsWith('/uploads')) {
+                      return `${baseUrl}/api/community${url}`; // Old format - add /api/community prefix
+                    }
+                    return `${baseUrl}${url}`; // Fallback
+                  })()} 
+                  alt="Post attachment" 
+                  className="post-image"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            {currentPost.sanskrit_text && (
               <div className="post-sanskrit-box">
-                <p className="post-sanskrit-text">{post.sanskrit_text}</p>
+                <p className="post-sanskrit-text">{currentPost.sanskrit_text}</p>
                 
-                {post.meter_analysis?.found && (
+                {currentPost.meter_analysis?.found && (
                   <div className="post-meter-analysis">
                     <span className="meter-badge meter-badge-primary">
                       <Music size={14} />
-                      {post.meter_analysis.meter_name}
+                      {currentPost.meter_analysis.meter_name}
                     </span>
                     
-                    {post.meter_analysis.lg_pattern && (
+                    {currentPost.meter_analysis.lg_pattern && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span className="meter-badge meter-badge-pattern">
-                              {post.meter_analysis.lg_pattern.length > 24 
-                                ? post.meter_analysis.lg_pattern.substring(0, 24) + '...'
-                                : post.meter_analysis.lg_pattern}
+                              {currentPost.meter_analysis.lg_pattern.length > 24 
+                                ? currentPost.meter_analysis.lg_pattern.substring(0, 24) + '...'
+                                : currentPost.meter_analysis.lg_pattern}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="font-mono">{post.meter_analysis.lg_pattern}</p>
+                            <p className="font-mono">{currentPost.meter_analysis.lg_pattern}</p>
                             <p className="text-xs opacity-70">Laghu-Guru Pattern</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     )}
                     
-                    {post.meter_analysis.syllable_count && (
+                    {currentPost.meter_analysis.syllable_count && (
                       <span className="meter-badge meter-badge-info">
-                        {post.meter_analysis.syllable_count} syllables
+                        {currentPost.meter_analysis.syllable_count} syllables
                       </span>
                     )}
                   </div>
@@ -199,6 +305,13 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
                 <span>{commentsCount || ''}</span>
               </button>
 
+              <button 
+                className={`action-btn bookmark ${isBookmarked ? 'active' : ''}`}
+                onClick={handleBookmarkToggle}
+              >
+                <Bookmark size={18} />
+              </button>
+
               <button className="action-btn share" onClick={handleShare}>
                 <Share2 size={18} />
                 <span>Share</span>
@@ -218,9 +331,25 @@ export function PostCard({ post, onPostDeleted, onPostUpdated: _onPostUpdated }:
 
       {/* Share Modal */}
       <ShareModal 
-        post={post} 
+        post={currentPost} 
         isOpen={showShareModal} 
         onClose={() => setShowShareModal(false)} 
+      />
+
+      {/* Edit Modal */}
+      <EditPostModal
+        post={currentPost}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onPostUpdated={handlePostEdited}
+      />
+
+      {/* Report Modal */}
+      <ReportModal
+        postId={post.id}
+        type="post"
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
       />
 
       {/* Delete Dialog */}

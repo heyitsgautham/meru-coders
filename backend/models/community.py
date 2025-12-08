@@ -1,6 +1,7 @@
 """
-Community model for handling posts, likes, and comments
+Community model for handling posts, likes, comments, follows, bookmarks, notifications
 Twitter-like social platform for Sanskrit enthusiasts
+Phase 2: Full feature set with follows, trending, search, notifications
 """
 
 from datetime import datetime
@@ -10,7 +11,7 @@ from supabase import create_client
 
 
 class CommunityModel:
-    """Handle community posts, likes, and comments using Supabase"""
+    """Handle community posts, likes, comments, follows, and more using Supabase"""
     
     def __init__(self):
         # Create client lazily to avoid crashes when env vars are missing during startup
@@ -22,7 +23,7 @@ class CommunityModel:
     # ==================== POSTS ====================
     
     def create_post(self, user_id: str, content: str, sanskrit_text: Optional[str] = None, 
-                    meter_analysis: Optional[Dict] = None) -> Dict[str, Any]:
+                    meter_analysis: Optional[Dict] = None, image_url: Optional[str] = None) -> Dict[str, Any]:
         """
         Create a new post
         
@@ -31,6 +32,7 @@ class CommunityModel:
             content: Post content/caption
             sanskrit_text: Optional Sanskrit verse text
             meter_analysis: Optional meter analysis result from Chanda
+            image_url: Optional URL of uploaded image
         
         Returns:
             Dict with success status and post data
@@ -44,6 +46,7 @@ class CommunityModel:
                         'content': content,
                         'sanskrit_text': sanskrit_text,
                         'meter_analysis': meter_analysis,
+                        'image_url': image_url,
                         'user_id': user_id,
                         'created_at': datetime.utcnow().isoformat(),
                         'likes_count': 0,
@@ -57,6 +60,7 @@ class CommunityModel:
                 'content': content,
                 'sanskrit_text': sanskrit_text,
                 'meter_analysis': meter_analysis,
+                'image_url': image_url,
                 'likes_count': 0,
                 'comments_count': 0,
                 'created_at': datetime.utcnow().isoformat()
@@ -220,7 +224,38 @@ class CommunityModel:
                     'error': 'You can only delete your own posts'
                 }
             
-            # Delete post (cascade will handle likes and comments)
+            # Delete related records first to handle foreign key constraints
+            # Delete bookmarks for this post
+            try:
+                self.supabase.table('bookmarks').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete bookmarks: {e}")
+            
+            # Delete likes for this post
+            try:
+                self.supabase.table('post_likes').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete likes: {e}")
+            
+            # Delete comments for this post
+            try:
+                self.supabase.table('comments').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete comments: {e}")
+            
+            # Delete notifications related to this post
+            try:
+                self.supabase.table('notifications').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete notifications: {e}")
+            
+            # Delete reports for this post
+            try:
+                self.supabase.table('reports').delete().eq('post_id', post_id).execute()
+            except Exception as e:
+                print(f"Warning: Could not delete reports: {e}")
+            
+            # Now delete the post
             self.supabase.table('posts').delete().eq('id', post_id).execute()
             
             return {
@@ -289,6 +324,16 @@ class CommunityModel:
                 
                 # Increment likes_count
                 self.supabase.rpc('increment_likes_count', {'p_post_id': post_id}).execute()
+                
+                # Create notification for post owner
+                post = self.supabase.table('posts').select('user_id').eq('id', post_id).single().execute()
+                if post.data and post.data['user_id'] != user_id:
+                    self._create_notification(
+                        user_id=post.data['user_id'],
+                        type='like',
+                        actor_id=user_id,
+                        post_id=post_id
+                    )
                 
                 return {
                     'success': True,
@@ -383,6 +428,17 @@ class CommunityModel:
             if result.data:
                 # Increment comments_count
                 self.supabase.rpc('increment_comments_count', {'p_post_id': post_id}).execute()
+                
+                # Create notification for post owner
+                post = self.supabase.table('posts').select('user_id').eq('id', post_id).single().execute()
+                if post.data and post.data['user_id'] != user_id:
+                    self._create_notification(
+                        user_id=post.data['user_id'],
+                        type='comment',
+                        actor_id=user_id,
+                        post_id=post_id,
+                        comment_id=result.data[0]['id']
+                    )
                 
                 # Fetch comment with user info
                 comment = self.supabase.table('post_comments')\
@@ -579,3 +635,1037 @@ class CommunityModel:
                 'error': str(e),
                 'posts': []
             }
+
+    # ==================== PHASE 2: EDIT POST ====================
+    
+    def update_post(self, post_id: str, user_id: str, content: Optional[str] = None,
+                    sanskrit_text: Optional[str] = None, meter_analysis: Optional[Dict] = None,
+                    image_url: Optional[str] = None, update_image: bool = False) -> Dict[str, Any]:
+        """
+        Update a post (only by owner)
+        
+        Args:
+            post_id: Post ID to update
+            user_id: User ID (must be post owner)
+            content: New content (optional)
+            sanskrit_text: New Sanskrit text (optional)
+            meter_analysis: New meter analysis (optional)
+            image_url: Image URL (optional)
+            update_image: If True, update image_url field (allows setting to None to remove)
+        
+        Returns:
+            Dict with success status and updated post
+        """
+        try:
+            if not self.supabase:
+                return {'success': False, 'error': 'Supabase not configured'}
+            
+            # Verify ownership
+            post = self.supabase.table('posts')\
+                .select('user_id')\
+                .eq('id', post_id)\
+                .single()\
+                .execute()
+            
+            if not post.data:
+                return {'success': False, 'error': 'Post not found'}
+            
+            if post.data['user_id'] != user_id:
+                return {'success': False, 'error': 'You can only edit your own posts'}
+            
+            # Build update data
+            update_data = {'updated_at': datetime.utcnow().isoformat()}
+            if content is not None:
+                update_data['content'] = content
+            if sanskrit_text is not None:
+                update_data['sanskrit_text'] = sanskrit_text
+            if meter_analysis is not None:
+                update_data['meter_analysis'] = meter_analysis
+            if update_image:
+                # Explicitly update image_url (can be None to remove)
+                update_data['image_url'] = image_url
+            
+            result = self.supabase.table('posts')\
+                .update(update_data)\
+                .eq('id', post_id)\
+                .execute()
+            
+            if result.data:
+                # Fetch updated post with user info
+                updated = self.supabase.table('posts')\
+                    .select('*, users!user_id(id, username, avatar_url)')\
+                    .eq('id', post_id)\
+                    .single()\
+                    .execute()
+                return {
+                    'success': True,
+                    'post': updated.data,
+                    'message': 'Post updated successfully'
+                }
+            return {'success': False, 'error': 'Failed to update post'}
+            
+        except Exception as e:
+            print(f"Update post error: {e}")
+            return {'success': False, 'error': str(e)}
+
+    # ==================== PHASE 2: FOLLOWS ====================
+    
+    def toggle_follow(self, follower_id: str, following_id: str) -> Dict[str, Any]:
+        """
+        Toggle follow on a user (follow if not following, unfollow if following)
+        """
+        try:
+            if not self.supabase:
+                return {'success': True, 'following': True, 'message': 'Follow toggled (local dev)'}
+            
+            if follower_id == following_id:
+                return {'success': False, 'error': 'Cannot follow yourself'}
+            
+            # Check if already following
+            existing = self.supabase.table('user_follows')\
+                .select('id')\
+                .eq('follower_id', follower_id)\
+                .eq('following_id', following_id)\
+                .execute()
+            
+            if existing.data:
+                # Unfollow
+                self.supabase.table('user_follows')\
+                    .delete()\
+                    .eq('follower_id', follower_id)\
+                    .eq('following_id', following_id)\
+                    .execute()
+                
+                # Update counters
+                self.supabase.rpc('decrement_followers_count', {'p_user_id': following_id}).execute()
+                self.supabase.rpc('decrement_following_count', {'p_user_id': follower_id}).execute()
+                
+                return {'success': True, 'following': False, 'message': 'Unfollowed'}
+            else:
+                # Follow
+                self.supabase.table('user_follows').insert({
+                    'follower_id': follower_id,
+                    'following_id': following_id,
+                    'created_at': datetime.utcnow().isoformat()
+                }).execute()
+                
+                # Update counters
+                self.supabase.rpc('increment_followers_count', {'p_user_id': following_id}).execute()
+                self.supabase.rpc('increment_following_count', {'p_user_id': follower_id}).execute()
+                
+                # Create notification
+                self._create_notification(
+                    user_id=following_id,
+                    type='follow',
+                    actor_id=follower_id
+                )
+                
+                return {'success': True, 'following': True, 'message': 'Following'}
+                
+        except Exception as e:
+            print(f"Toggle follow error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def get_followers(self, user_id: str, limit: int = 50, offset: int = 0) -> Dict[str, Any]:
+        """Get users who follow a specific user"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'users': [], 'count': 0}
+            
+            result = self.supabase.table('user_follows')\
+                .select('*, users!follower_id(id, username, avatar_url, bio)')\
+                .eq('following_id', user_id)\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            users = [f.get('users') for f in (result.data or []) if f.get('users')]
+            return {'success': True, 'users': users, 'count': len(users)}
+            
+        except Exception as e:
+            print(f"Get followers error: {e}")
+            return {'success': False, 'error': str(e), 'users': []}
+    
+    def get_following(self, user_id: str, limit: int = 50, offset: int = 0) -> Dict[str, Any]:
+        """Get users that a specific user follows"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'users': [], 'count': 0}
+            
+            result = self.supabase.table('user_follows')\
+                .select('*, users!following_id(id, username, avatar_url, bio)')\
+                .eq('follower_id', user_id)\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            users = [f.get('users') for f in (result.data or []) if f.get('users')]
+            return {'success': True, 'users': users, 'count': len(users)}
+            
+        except Exception as e:
+            print(f"Get following error: {e}")
+            return {'success': False, 'error': str(e), 'users': []}
+    
+    def is_following(self, follower_id: str, following_id: str) -> bool:
+        """Check if user is following another user"""
+        try:
+            if not self.supabase:
+                return False
+            result = self.supabase.table('user_follows')\
+                .select('id')\
+                .eq('follower_id', follower_id)\
+                .eq('following_id', following_id)\
+                .execute()
+            return bool(result.data)
+        except:
+            return False
+    
+    def get_following_feed(self, user_id: str, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+        """Get posts from users that current user follows"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            # Get list of users being followed
+            following = self.supabase.table('user_follows')\
+                .select('following_id')\
+                .eq('follower_id', user_id)\
+                .execute()
+            
+            if not following.data:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            following_ids = [f['following_id'] for f in following.data]
+            
+            # Get posts from followed users
+            posts = self.supabase.table('posts')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .in_('user_id', following_ids)\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            return {
+                'success': True,
+                'posts': posts.data or [],
+                'count': len(posts.data) if posts.data else 0
+            }
+            
+        except Exception as e:
+            print(f"Get following feed error: {e}")
+            return {'success': False, 'error': str(e), 'posts': []}
+
+    # ==================== PHASE 2: TRENDING ====================
+    
+    def get_trending_posts(self, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+        """Get trending posts based on engagement and recency"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            # Use the trending function
+            result = self.supabase.rpc('get_trending_posts', {
+                'p_limit': limit,
+                'p_offset': offset
+            }).execute()
+            
+            if result.data:
+                # Fetch user info for each post
+                post_ids = [p['id'] for p in result.data]
+                posts_with_users = self.supabase.table('posts')\
+                    .select('*, users!user_id(id, username, avatar_url)')\
+                    .in_('id', post_ids)\
+                    .execute()
+                
+                # Maintain trending order
+                posts_map = {p['id']: p for p in (posts_with_users.data or [])}
+                ordered_posts = [posts_map[pid] for pid in post_ids if pid in posts_map]
+                
+                return {
+                    'success': True,
+                    'posts': ordered_posts,
+                    'count': len(ordered_posts)
+                }
+            
+            return {'success': True, 'posts': [], 'count': 0}
+            
+        except Exception as e:
+            print(f"Get trending posts error: {e}")
+            # Fallback to posts sorted by likes
+            return self._get_trending_fallback(limit, offset)
+    
+    def _get_trending_fallback(self, limit: int, offset: int) -> Dict[str, Any]:
+        """Fallback trending using simple sorting by engagement"""
+        try:
+            posts = self.supabase.table('posts')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .gte('created_at', (datetime.utcnow().replace(hour=0, minute=0, second=0) - 
+                     __import__('datetime').timedelta(days=7)).isoformat())\
+                .order('likes_count', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            return {
+                'success': True,
+                'posts': posts.data or [],
+                'count': len(posts.data) if posts.data else 0
+            }
+        except Exception as e:
+            return {'success': False, 'error': str(e), 'posts': []}
+
+    # ==================== PHASE 2: BOOKMARKS ====================
+    
+    def toggle_bookmark(self, post_id: str, user_id: str) -> Dict[str, Any]:
+        """Toggle bookmark on a post"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'bookmarked': True}
+            
+            existing = self.supabase.table('bookmarks')\
+                .select('id')\
+                .eq('post_id', post_id)\
+                .eq('user_id', user_id)\
+                .execute()
+            
+            if existing.data:
+                # Remove bookmark
+                self.supabase.table('bookmarks')\
+                    .delete()\
+                    .eq('post_id', post_id)\
+                    .eq('user_id', user_id)\
+                    .execute()
+                return {'success': True, 'bookmarked': False, 'message': 'Bookmark removed'}
+            else:
+                # Add bookmark
+                self.supabase.table('bookmarks').insert({
+                    'post_id': post_id,
+                    'user_id': user_id,
+                    'created_at': datetime.utcnow().isoformat()
+                }).execute()
+                return {'success': True, 'bookmarked': True, 'message': 'Post bookmarked'}
+                
+        except Exception as e:
+            print(f"Toggle bookmark error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def get_bookmarked_posts(self, user_id: str, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+        """Get posts bookmarked by user"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            bookmarks = self.supabase.table('bookmarks')\
+                .select('post_id')\
+                .eq('user_id', user_id)\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            if not bookmarks.data:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            post_ids = [b['post_id'] for b in bookmarks.data]
+            
+            posts = self.supabase.table('posts')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .in_('id', post_ids)\
+                .execute()
+            
+            # Maintain bookmark order
+            posts_map = {p['id']: p for p in (posts.data or [])}
+            ordered_posts = [posts_map[pid] for pid in post_ids if pid in posts_map]
+            
+            # All posts in bookmarks are bookmarked by definition
+            for post in ordered_posts:
+                post['is_bookmarked'] = True
+            
+            return {
+                'success': True,
+                'posts': ordered_posts,
+                'count': len(ordered_posts)
+            }
+            
+        except Exception as e:
+            print(f"Get bookmarked posts error: {e}")
+            return {'success': False, 'error': str(e), 'posts': []}
+    
+    def is_bookmarked(self, post_id: str, user_id: str) -> bool:
+        """Check if post is bookmarked by user"""
+        try:
+            if not self.supabase:
+                return False
+            result = self.supabase.table('bookmarks')\
+                .select('id')\
+                .eq('post_id', post_id)\
+                .eq('user_id', user_id)\
+                .execute()
+            return bool(result.data)
+        except:
+            return False
+
+    # ==================== PHASE 2: SEARCH ====================
+    
+    def search_posts(self, query: str, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+        """Search posts by content or Sanskrit text"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'posts': [], 'count': 0}
+            
+            # Use PostgreSQL full-text search
+            search_query = ' | '.join(query.split())  # OR search
+            
+            result = self.supabase.table('posts')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .text_search('search_vector', search_query)\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            return {
+                'success': True,
+                'posts': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+            
+        except Exception as e:
+            print(f"Search posts error: {e}")
+            # Fallback to ILIKE search
+            return self._search_posts_fallback(query, limit, offset)
+    
+    def _search_posts_fallback(self, query: str, limit: int, offset: int) -> Dict[str, Any]:
+        """Fallback search using ILIKE"""
+        try:
+            result = self.supabase.table('posts')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .or_(f"content.ilike.%{query}%,sanskrit_text.ilike.%{query}%")\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)\
+                .execute()
+            
+            return {
+                'success': True,
+                'posts': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+        except Exception as e:
+            return {'success': False, 'error': str(e), 'posts': []}
+    
+    def search_users(self, query: str, limit: int = 20) -> Dict[str, Any]:
+        """Search users by username"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'users': [], 'count': 0}
+            
+            result = self.supabase.table('users')\
+                .select('id, username, avatar_url, bio, followers_count, following_count')\
+                .ilike('username', f'%{query}%')\
+                .limit(limit)\
+                .execute()
+            
+            return {
+                'success': True,
+                'users': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+            
+        except Exception as e:
+            print(f"Search users error: {e}")
+            return {'success': False, 'error': str(e), 'users': []}
+
+    # ==================== PHASE 2: NOTIFICATIONS ====================
+    
+    def _create_notification(self, user_id: str, type: str, actor_id: str,
+                            post_id: Optional[str] = None, comment_id: Optional[str] = None,
+                            content: Optional[str] = None) -> None:
+        """Create a notification (internal helper) and send real-time update"""
+        try:
+            if not self.supabase or user_id == actor_id:
+                return  # Don't notify yourself
+            
+            notification_data = {
+                'user_id': user_id,
+                'type': type,
+                'actor_id': actor_id,
+                'post_id': post_id,
+                'comment_id': comment_id,
+                'content': content,
+                'is_read': False,
+                'created_at': datetime.utcnow().isoformat()
+            }
+            
+            result = self.supabase.table('notifications').insert(notification_data).execute()
+            
+            # Send real-time notification via WebSocket
+            if result.data and len(result.data) > 0:
+                notification = result.data[0]
+                
+                # Get actor info for the notification
+                try:
+                    actor = self.supabase.table('users')\
+                        .select('id, username, avatar_url')\
+                        .eq('id', actor_id)\
+                        .single()\
+                        .execute()
+                    
+                    if actor.data:
+                        notification['actor'] = actor.data
+                except:
+                    pass
+                
+                # Send via WebSocket
+                try:
+                    from backend.api.websocket import send_notification_to_user, emit_notification_count
+                    send_notification_to_user(user_id, notification)
+                    
+                    # Also send updated unread count
+                    unread = self.supabase.table('notifications')\
+                        .select('id', count='exact')\
+                        .eq('user_id', user_id)\
+                        .eq('is_read', False)\
+                        .execute()
+                    
+                    if unread.count:
+                        emit_notification_count(user_id, unread.count)
+                except Exception as ws_error:
+                    print(f"WebSocket notification error (non-fatal): {ws_error}")
+                    
+        except Exception as e:
+            print(f"Create notification error: {e}")
+    
+    def get_notifications(self, user_id: str, limit: int = 50, unread_only: bool = False) -> Dict[str, Any]:
+        """Get notifications for a user"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'notifications': [], 'unread_count': 0}
+            
+            query = self.supabase.table('notifications')\
+                .select('*, actor:users!actor_id(id, username, avatar_url), post:posts!post_id(id, content)')\
+                .eq('user_id', user_id)\
+                .order('created_at', desc=True)\
+                .limit(limit)
+            
+            if unread_only:
+                query = query.eq('is_read', False)
+            
+            result = query.execute()
+            
+            # Get unread count
+            unread = self.supabase.table('notifications')\
+                .select('id', count='exact')\
+                .eq('user_id', user_id)\
+                .eq('is_read', False)\
+                .execute()
+            
+            return {
+                'success': True,
+                'notifications': result.data or [],
+                'unread_count': unread.count if unread.count else 0
+            }
+            
+        except Exception as e:
+            print(f"Get notifications error: {e}")
+            return {'success': False, 'error': str(e), 'notifications': [], 'unread_count': 0}
+    
+    def mark_notification_read(self, notification_id: str, user_id: str) -> Dict[str, Any]:
+        """Mark a notification as read"""
+        try:
+            if not self.supabase:
+                return {'success': True}
+            
+            self.supabase.table('notifications')\
+                .update({'is_read': True})\
+                .eq('id', notification_id)\
+                .eq('user_id', user_id)\
+                .execute()
+            
+            return {'success': True, 'message': 'Notification marked as read'}
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+    
+    def mark_all_notifications_read(self, user_id: str) -> Dict[str, Any]:
+        """Mark all notifications as read for a user"""
+        try:
+            if not self.supabase:
+                return {'success': True}
+            
+            self.supabase.table('notifications')\
+                .update({'is_read': True})\
+                .eq('user_id', user_id)\
+                .eq('is_read', False)\
+                .execute()
+            
+            return {'success': True, 'message': 'All notifications marked as read'}
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    # ==================== PHASE 2: USER PROFILES ====================
+    
+    def get_user_profile(self, user_id: str, current_user_id: Optional[str] = None) -> Dict[str, Any]:
+        """Get a user's profile with stats"""
+        try:
+            if not self.supabase:
+                return {'success': False, 'error': 'Supabase not configured'}
+            
+            result = self.supabase.table('users')\
+                .select('id, username, avatar_url, bio, followers_count, following_count, created_at')\
+                .eq('id', user_id)\
+                .single()\
+                .execute()
+            
+            if not result.data:
+                return {'success': False, 'error': 'User not found'}
+            
+            profile = result.data
+            
+            # Get post count
+            posts_count = self.supabase.table('posts')\
+                .select('id', count='exact')\
+                .eq('user_id', user_id)\
+                .execute()
+            profile['posts_count'] = posts_count.count if posts_count.count else 0
+            
+            # Check if current user is following
+            if current_user_id and current_user_id != user_id:
+                profile['is_following'] = self.is_following(current_user_id, user_id)
+                profile['is_blocked'] = self._is_blocked(current_user_id, user_id)
+            else:
+                profile['is_following'] = False
+                profile['is_blocked'] = False
+            
+            return {'success': True, 'profile': profile}
+            
+        except Exception as e:
+            print(f"Get user profile error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def update_user_profile(self, user_id: str, bio: Optional[str] = None,
+                           avatar_url: Optional[str] = None) -> Dict[str, Any]:
+        """Update user's profile"""
+        try:
+            if not self.supabase:
+                return {'success': False, 'error': 'Supabase not configured'}
+            
+            update_data = {}
+            if bio is not None:
+                update_data['bio'] = bio
+            if avatar_url is not None:
+                update_data['avatar_url'] = avatar_url
+            
+            if not update_data:
+                return {'success': False, 'error': 'No data to update'}
+            
+            result = self.supabase.table('users')\
+                .update(update_data)\
+                .eq('id', user_id)\
+                .execute()
+            
+            return {'success': True, 'message': 'Profile updated'}
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    # ==================== PHASE 2: REPORTS & BLOCKS ====================
+    
+    def report_content(self, reporter_id: str, reason: str, description: Optional[str] = None,
+                      reported_user_id: Optional[str] = None, post_id: Optional[str] = None,
+                      comment_id: Optional[str] = None) -> Dict[str, Any]:
+        """Report inappropriate content"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'message': 'Report submitted'}
+            
+            if not any([reported_user_id, post_id, comment_id]):
+                return {'success': False, 'error': 'Must specify content to report'}
+            
+            self.supabase.table('reports').insert({
+                'reporter_id': reporter_id,
+                'reported_user_id': reported_user_id,
+                'post_id': post_id,
+                'comment_id': comment_id,
+                'reason': reason,
+                'description': description,
+                'status': 'pending',
+                'created_at': datetime.utcnow().isoformat()
+            }).execute()
+            
+            return {'success': True, 'message': 'Report submitted successfully'}
+            
+        except Exception as e:
+            print(f"Report content error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def toggle_block(self, blocker_id: str, blocked_id: str) -> Dict[str, Any]:
+        """Toggle block on a user"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'blocked': True}
+            
+            if blocker_id == blocked_id:
+                return {'success': False, 'error': 'Cannot block yourself'}
+            
+            existing = self.supabase.table('user_blocks')\
+                .select('id')\
+                .eq('blocker_id', blocker_id)\
+                .eq('blocked_id', blocked_id)\
+                .execute()
+            
+            if existing.data:
+                # Unblock
+                self.supabase.table('user_blocks')\
+                    .delete()\
+                    .eq('blocker_id', blocker_id)\
+                    .eq('blocked_id', blocked_id)\
+                    .execute()
+                return {'success': True, 'blocked': False, 'message': 'User unblocked'}
+            else:
+                # Block - also unfollow if following
+                self.supabase.table('user_blocks').insert({
+                    'blocker_id': blocker_id,
+                    'blocked_id': blocked_id,
+                    'created_at': datetime.utcnow().isoformat()
+                }).execute()
+                
+                # Remove any existing follow relationship
+                self.supabase.table('user_follows')\
+                    .delete()\
+                    .eq('follower_id', blocker_id)\
+                    .eq('following_id', blocked_id)\
+                    .execute()
+                self.supabase.table('user_follows')\
+                    .delete()\
+                    .eq('follower_id', blocked_id)\
+                    .eq('following_id', blocker_id)\
+                    .execute()
+                
+                return {'success': True, 'blocked': True, 'message': 'User blocked'}
+                
+        except Exception as e:
+            print(f"Toggle block error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def _is_blocked(self, user_id: str, other_user_id: str) -> bool:
+        """Check if users have blocked each other"""
+        try:
+            if not self.supabase:
+                return False
+            result = self.supabase.table('user_blocks')\
+                .select('id')\
+                .or_(f"blocker_id.eq.{user_id},blocker_id.eq.{other_user_id}")\
+                .or_(f"blocked_id.eq.{user_id},blocked_id.eq.{other_user_id}")\
+                .execute()
+            return bool(result.data)
+        except:
+            return False
+    
+    def get_blocked_users(self, user_id: str) -> Dict[str, Any]:
+        """Get list of users blocked by current user"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'users': []}
+            
+            result = self.supabase.table('user_blocks')\
+                .select('*, users!blocked_id(id, username, avatar_url)')\
+                .eq('blocker_id', user_id)\
+                .execute()
+            
+            users = [b.get('users') for b in (result.data or []) if b.get('users')]
+            return {'success': True, 'users': users}
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e), 'users': []}
+
+    # ==================== PHASE 2: COMMENT REPLIES ====================
+    
+    def add_comment_reply(self, post_id: str, user_id: str, content: str, 
+                         parent_id: str) -> Dict[str, Any]:
+        """Add a reply to a comment"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'comment': {'id': 'local', 'content': content}}
+            
+            # Verify parent comment exists
+            parent = self.supabase.table('post_comments')\
+                .select('id, user_id, post_id')\
+                .eq('id', parent_id)\
+                .single()\
+                .execute()
+            
+            if not parent.data:
+                return {'success': False, 'error': 'Parent comment not found'}
+            
+            comment_data = {
+                'post_id': post_id,
+                'user_id': user_id,
+                'content': content,
+                'parent_id': parent_id,
+                'created_at': datetime.utcnow().isoformat()
+            }
+            
+            result = self.supabase.table('post_comments').insert(comment_data).execute()
+            
+            if result.data:
+                # Increment comments_count
+                self.supabase.rpc('increment_comments_count', {'p_post_id': post_id}).execute()
+                
+                # Create notification for parent comment author
+                if parent.data['user_id'] != user_id:
+                    self._create_notification(
+                        user_id=parent.data['user_id'],
+                        type='reply',
+                        actor_id=user_id,
+                        post_id=post_id,
+                        comment_id=result.data[0]['id']
+                    )
+                
+                # Fetch with user info
+                comment = self.supabase.table('post_comments')\
+                    .select('*, users!user_id(id, username, avatar_url)')\
+                    .eq('id', result.data[0]['id'])\
+                    .single()\
+                    .execute()
+                
+                return {
+                    'success': True,
+                    'comment': comment.data if comment.data else result.data[0]
+                }
+            
+            return {'success': False, 'error': 'Failed to add reply'}
+            
+        except Exception as e:
+            print(f"Add comment reply error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def get_comment_replies(self, comment_id: str, limit: int = 20) -> Dict[str, Any]:
+        """Get replies to a comment"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'replies': []}
+            
+            result = self.supabase.table('post_comments')\
+                .select('*, users!user_id(id, username, avatar_url)')\
+                .eq('parent_id', comment_id)\
+                .order('created_at', desc=False)\
+                .limit(limit)\
+                .execute()
+            
+            return {
+                'success': True,
+                'replies': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e), 'replies': []}
+
+    # ==================== PHASE 3: ADMIN MODERATION ====================
+    
+    def is_admin(self, user_id: str) -> bool:
+        """Check if a user is an admin"""
+        try:
+            if not self.supabase:
+                return False
+            
+            result = self.supabase.table('users')\
+                .select('is_admin')\
+                .eq('id', user_id)\
+                .single()\
+                .execute()
+            
+            return result.data.get('is_admin', False) if result.data else False
+            
+        except Exception as e:
+            print(f"Check admin error: {e}")
+            return False
+    
+    def get_all_reports(self, status: str = 'pending', limit: int = 50, 
+                       offset: int = 0) -> Dict[str, Any]:
+        """Get all reports for admin moderation"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'reports': [], 'count': 0}
+            
+            query = self.supabase.table('reports')\
+                .select('''
+                    *,
+                    reporter:users!reporter_id(id, username, avatar_url),
+                    reported_user:users!reported_user_id(id, username, avatar_url),
+                    post:posts!post_id(id, content, user_id),
+                    comment:post_comments!comment_id(id, content, user_id)
+                ''')\
+                .order('created_at', desc=True)\
+                .range(offset, offset + limit - 1)
+            
+            if status != 'all':
+                query = query.eq('status', status)
+            
+            result = query.execute()
+            
+            return {
+                'success': True,
+                'reports': result.data or [],
+                'count': len(result.data) if result.data else 0
+            }
+            
+        except Exception as e:
+            print(f"Get all reports error: {e}")
+            return {'success': False, 'error': str(e), 'reports': []}
+    
+    def handle_report(self, report_id: str, admin_id: str, action: str,
+                     notes: Optional[str] = None) -> Dict[str, Any]:
+        """Handle a report with the specified action"""
+        try:
+            if not self.supabase:
+                return {'success': False, 'error': 'Database not configured'}
+            
+            # Get the report
+            report = self.supabase.table('reports')\
+                .select('*')\
+                .eq('id', report_id)\
+                .single()\
+                .execute()
+            
+            if not report.data:
+                return {'success': False, 'error': 'Report not found'}
+            
+            report_data = report.data
+            
+            # Handle based on action
+            if action == 'dismiss':
+                # Just update status
+                self.supabase.table('reports').update({
+                    'status': 'dismissed',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes
+                }).eq('id', report_id).execute()
+                
+            elif action == 'delete_content':
+                # Delete the reported content
+                if report_data.get('post_id'):
+                    self.delete_post(report_data['post_id'])
+                elif report_data.get('comment_id'):
+                    self._delete_comment_admin(report_data['comment_id'])
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'content_deleted'
+                }).eq('id', report_id).execute()
+                
+            elif action == 'warn_user':
+                # Create a warning notification
+                reported_user_id = report_data.get('reported_user_id')
+                if reported_user_id:
+                    self._create_notification(
+                        user_id=reported_user_id,
+                        type='warning',
+                        content=notes or 'You have received a warning for violating community guidelines.'
+                    )
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'user_warned'
+                }).eq('id', report_id).execute()
+                
+            elif action == 'ban_user':
+                # Ban the user
+                reported_user_id = report_data.get('reported_user_id')
+                if reported_user_id:
+                    self.supabase.table('users').update({
+                        'is_banned': True,
+                        'banned_at': datetime.utcnow().isoformat(),
+                        'banned_by': admin_id,
+                        'ban_reason': notes
+                    }).eq('id', reported_user_id).execute()
+                
+                self.supabase.table('reports').update({
+                    'status': 'resolved',
+                    'reviewed_by': admin_id,
+                    'reviewed_at': datetime.utcnow().isoformat(),
+                    'admin_notes': notes,
+                    'action_taken': 'user_banned'
+                }).eq('id', report_id).execute()
+            
+            return {'success': True, 'message': f'Report {action} successfully'}
+            
+        except Exception as e:
+            print(f"Handle report error: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def _delete_comment_admin(self, comment_id: str) -> bool:
+        """Delete a comment (admin action)"""
+        try:
+            if not self.supabase:
+                return False
+            
+            self.supabase.table('post_comments').delete().eq('id', comment_id).execute()
+            return True
+        except Exception:
+            return False
+    
+    def get_moderation_stats(self) -> Dict[str, Any]:
+        """Get moderation statistics"""
+        try:
+            if not self.supabase:
+                return {'success': True, 'stats': {}}
+            
+            # Get counts by status
+            pending = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'pending')\
+                .execute()
+            
+            resolved = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'resolved')\
+                .execute()
+            
+            dismissed = self.supabase.table('reports')\
+                .select('id', count='exact')\
+                .eq('status', 'dismissed')\
+                .execute()
+            
+            # Get user stats
+            total_users = self.supabase.table('users')\
+                .select('id', count='exact')\
+                .execute()
+            
+            banned_users = self.supabase.table('users')\
+                .select('id', count='exact')\
+                .eq('is_banned', True)\
+                .execute()
+            
+            # Get post stats
+            total_posts = self.supabase.table('posts')\
+                .select('id', count='exact')\
+                .execute()
+            
+            return {
+                'success': True,
+                'stats': {
+                    'reports': {
+                        'pending': pending.count or 0,
+                        'resolved': resolved.count or 0,
+                        'dismissed': dismissed.count or 0,
+                        'total': (pending.count or 0) + (resolved.count or 0) + (dismissed.count or 0)
+                    },
+                    'users': {
+                        'total': total_users.count or 0,
+                        'banned': banned_users.count or 0
+                    },
+                    'posts': {
+                        'total': total_posts.count or 0
+                    }
+                }
+            }
+            
+        except Exception as e:
+            print(f"Get moderation stats error: {e}")
+            return {'success': False, 'error': str(e)}

@@ -29,6 +29,7 @@ interface AuthContextType {
   completeOAuth: (accessToken: string, refreshToken?: string | null) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   checkAdminStatus: () => Promise<boolean>;
+  refreshToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Load stored session on mount
   useEffect(() => {
     const storedUser = typeof localStorage !== 'undefined' ? localStorage.getItem('appUser') : null;
     if (storedUser) {
@@ -51,6 +53,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     }
     setLoading(false);
+  }, []);
+
+  // Listen for auth:expired events from API services
+  useEffect(() => {
+    const handleAuthExpired = (event: CustomEvent) => {
+      console.warn('[AuthContext] Session expired:', event.detail?.message);
+      setUser(null);
+      setIsAdmin(false);
+      // Optionally show a toast or redirect to login
+    };
+
+    window.addEventListener('auth:expired', handleAuthExpired as EventListener);
+    return () => {
+      window.removeEventListener('auth:expired', handleAuthExpired as EventListener);
+    };
   }, []);
 
   const persistSession = (appUser: AppUser | null, token?: string | null, refresh?: string | null) => {
@@ -206,6 +223,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
   };
 
+  // Token refresh function using Supabase
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+      if (!storedRefreshToken) {
+        console.warn('[AuthContext] No refresh token available');
+        return false;
+      }
+
+      console.info('[AuthContext] Attempting to refresh token...');
+      
+      // Use Supabase to refresh the session
+      const { data, error } = await supabase.auth.refreshSession({
+        refresh_token: storedRefreshToken
+      });
+
+      if (error || !data.session) {
+        console.error('[AuthContext] Token refresh failed:', error?.message);
+        // Clear invalid session
+        await signOut();
+        return false;
+      }
+
+      // Update the stored tokens
+      const newAccessToken = data.session.access_token;
+      const newRefreshToken = data.session.refresh_token;
+
+      if (user) {
+        const updatedUser = {
+          ...user,
+          access_token: newAccessToken,
+          refresh_token: newRefreshToken,
+        };
+        setUser(updatedUser);
+        persistSession(updatedUser, newAccessToken, newRefreshToken);
+        console.info('[AuthContext] Token refreshed successfully');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('[AuthContext] Token refresh error:', error);
+      return false;
+    }
+  };
+
+  // Auto-refresh token on mount if user exists
+  useEffect(() => {
+    if (user?.access_token) {
+      // Try to refresh token on app load to ensure fresh session
+      refreshToken().catch(() => {
+        console.warn('[AuthContext] Auto-refresh failed, user may need to re-login');
+      });
+    }
+  }, []); // Only run once on mount
+
   const value = {
     user,
     isAdmin,
@@ -217,6 +290,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     completeOAuth,
     signOut,
     checkAdminStatus,
+    refreshToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
