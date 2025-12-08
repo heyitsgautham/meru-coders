@@ -2270,3 +2270,63 @@ button:disabled {
 .analysis-table-wrapper::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary-dark);
 }
+
+/* Landing Page Responsive Styles */
+.trusted-sources-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+@media (max-width: 1024px) {
+  .trusted-sources-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .trusted-sources-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Landing page responsive overrides */
+@media (max-width: 1024px) {
+  .landing-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  
+  .landing-features-grid,
+  .landing-meters-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .landing-whatischandas-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-section {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  
+  .landing-features-grid,
+  .landing-meters-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .landing-hero-title {
+    font-size: 36px !important;
+  }
+  
+  .landing-nav-content {
+    padding: 0 24px !important;
+  }
+}
+

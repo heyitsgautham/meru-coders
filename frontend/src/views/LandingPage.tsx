@@ -1,6 +1,12 @@
 import { ArrowRight, BookOpen, Sparkles, Database, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// Import book images for trusted sources section
+import RigVedaImg from "../assets/Rig_Veda.png";
+import ChandovallariImg from "../assets/Chandovallari.png";
+import AtharvaVedaImg from "../assets/Atharva_Veda.png";
+import BhagavadGitaImg from "../assets/Bhagavad_Gita.png";
+
 interface LandingPageProps {
   onLaunchApp: () => void;
 }
@@ -76,7 +82,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </nav>
 
       {/* Hero Section */}
-      <section style={{
+      <section className="landing-section" style={{
         paddingTop: '160px',
         paddingBottom: '100px',
         paddingLeft: '60px',
@@ -84,7 +90,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
         display: 'flex',
         justifyContent: 'center'
       }}>
-        <div style={{
+        <div className="landing-hero-grid" style={{
           width: '100%',
           maxWidth: '1200px',
           display: 'grid',
@@ -111,7 +117,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
               </span>
             </div>
             
-            <h1 style={{
+            <h1 className="landing-hero-title" style={{
               fontSize: '52px',
               fontWeight: 700,
               color: '#1a1a1a',
@@ -511,7 +517,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </section>
 
       {/* Features Section */}
-      <section style={{
+      <section className="landing-section" style={{
         padding: '100px 60px',
         backgroundColor: '#faf7f2',
         display: 'flex',
@@ -545,7 +551,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             </p>
           </div>
           
-          <div style={{
+          <div className="landing-features-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '24px'
@@ -616,7 +622,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
       </section>
 
       {/* Meter Types Section */}
-      <section style={{
+      <section className="landing-section" style={{
         padding: '100px 60px',
         backgroundColor: 'white',
         display: 'flex',
@@ -650,7 +656,7 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
             </p>
           </div>
           
-          <div style={{
+          <div className="landing-meters-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '24px'
@@ -713,6 +719,162 @@ export function LandingPage({ onLaunchApp }: LandingPageProps) {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trusted Sources Section */}
+      <section className="landing-section" style={{
+        padding: '100px 60px',
+        backgroundColor: '#faf7f2',
+        display: 'flex',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '1200px'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '60px'
+          }}>
+            <h2 style={{
+              fontSize: '40px',
+              fontWeight: 700,
+              color: '#1a1a1a',
+              marginBottom: '20px',
+              letterSpacing: '-0.5px'
+            }}>
+              Trusted Sources
+            </h2>
+            <p style={{
+              fontSize: '18px',
+              color: '#5a5a5a',
+              maxWidth: '700px',
+              margin: '0 auto',
+              lineHeight: 1.7
+            }}>
+              Our dataset has been meticulously collected and validated using these authoritative 
+              texts—the foundational scriptures of Sanskrit literature and prosody.
+            </p>
+          </div>
+          
+          <div className="trusted-sources-grid">
+            {[
+              { 
+                image: RigVedaImg, 
+                title: 'Rig Veda',
+                subtitle: 'ऋग्वेद',
+                description: 'The oldest Vedic text with diverse metrical compositions',
+                scale: 1
+              },
+              { 
+                image: ChandovallariImg, 
+                title: 'Chandovallari',
+                subtitle: 'छन्दोवल्लरी',
+                description: 'Classical treatise on Sanskrit prosody and meters',
+                scale: 1
+              },
+              { 
+                image: AtharvaVedaImg, 
+                title: 'Atharva Veda',
+                subtitle: 'अथर्ववेद',
+                description: 'Rich collection of hymns with varied metrical patterns',
+                scale: 1
+              },
+              { 
+                image: BhagavadGitaImg, 
+                title: 'Bhagavad Gita',
+                subtitle: 'भगवद्गीता',
+                description: 'Sacred text featuring the Anuṣṭubh meter throughout',
+                scale: 1.3
+              }
+            ].map((source, index) => (
+              <div key={index} style={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1px solid #e8e0d5',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 12px rgba(0, 0, 0, 0.04)'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.04)';
+              }}
+              >
+                <div style={{
+                  aspectRatio: '3/4',
+                  overflow: 'hidden',
+                  backgroundColor: '#f5f0e8'
+                }}>
+                  <img 
+                    src={source.image} 
+                    alt={source.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: `scale(${source.scale})`,
+                      transition: 'transform 0.3s ease'
+                    }}
+                  />
+                </div>
+                <div style={{
+                  padding: '24px',
+                  textAlign: 'center'
+                }}>
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    color: '#1a1a1a',
+                    marginBottom: '4px'
+                  }}>
+                    {source.title}
+                  </h3>
+                  <p style={{
+                    fontSize: '16px',
+                    color: '#c75b1a',
+                    fontFamily: "'Noto Sans Devanagari', sans-serif",
+                    marginBottom: '12px'
+                  }}>
+                    {source.subtitle}
+                  </p>
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#666',
+                    lineHeight: 1.5,
+                    margin: 0
+                  }}>
+                    {source.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{
+            marginTop: '48px',
+            textAlign: 'center',
+            padding: '24px 40px',
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            border: '1px solid #e8e0d5'
+          }}>
+            <p style={{
+              fontSize: '15px',
+              color: '#555',
+              lineHeight: 1.7,
+              margin: 0
+            }}>
+              <span style={{ fontWeight: 600, color: '#4a2c10' }}>Scholarly Validation:</span>{' '}
+              Each meter in our database has been cross-referenced with multiple authoritative sources 
+              to ensure accuracy and authenticity in identification.
+            </p>
           </div>
         </div>
       </section>
