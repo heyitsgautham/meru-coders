@@ -12,6 +12,26 @@
     --chatbot-shadow: rgba(255, 153, 51, 0.15);
 }
 
+/* Analyse Chanda link styling */
+.chatbot-messages a {
+    color: var(--chatbot-primary);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.chatbot-messages a:hover {
+    color: var(--chatbot-primary-dark);
+    border-bottom-color: var(--chatbot-primary);
+    transform: translateY(-1px);
+}
+
+.chatbot-messages a:active {
+    transform: translateY(0);
+}
+
 .dark {
     --chatbot-bg: #1a1a1a;
     --chatbot-surface: #2a2a2a;

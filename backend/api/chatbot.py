@@ -250,6 +250,19 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
     Perform meter analysis using the Chanda algorithm
     Handles both single-line and multi-line verses automatically
     Returns comprehensive meter information
+    
+    Pada Detection Strategy (in order of precedence):
+    1. Split by newlines if multi-line input
+    2. Split by danda separators (।) if single line with dandas
+    3. Smart pada detection based on syllable count for common meters:
+       - Anuṣṭubh: 8 syllables/pada
+       - Śālinī: 11 syllables/pada  
+       - Vasantatilaka: 14 syllables/pada
+       - Mandākrāntā: 17 syllables/pada
+       - Śārdūlavikrīḍita: 19 syllables/pada
+    
+    This ensures the chatbot output matches the home page analysis format
+    with clear pada-by-pada L-G pattern display.
     """
     try:
         from core.chanda import Chanda
@@ -258,12 +271,65 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
         settings = Settings()
         chanda = Chanda(data_path=str(settings.DATA_DIR))
         
-        # Check if text has multiple lines
+        # Check if text has multiple lines (split by newlines OR danda separators)
+        # Sanskrit verses often use । (single danda) to separate padas/lines
         lines = [line.strip() for line in text.split('\n') if line.strip()]
         
+        # If only one line, check for danda separators (।) first
+        if len(lines) == 1 and '।' in text:
+            # Split by danda and clean up
+            lines = [line.strip() for line in text.replace('॥', '।').split('।') if line.strip()]
+        
+        # If still one line, try smart pada detection based on syllable count
+        if len(lines) == 1:
+            # Analyze the whole line first to get syllable count
+            test_result = chanda.identify_line(text)
+            lg_pattern = ''.join([char for char in test_result.get('display_lg', []) if char])
+            total_syllables = len(lg_pattern)
+            
+            # Common pada structures in Sanskrit poetry
+            # Śālinī: 11 syllables per pada
+            # Anuṣṭubh: 8 syllables per pada (32 total for 4 padas)
+            # Vasantatilaka: 14 syllables per pada
+            # Mandākrāntā: 17 syllables per pada
+            # Śārdūlavikrīḍita: 19 syllables per pada
+            
+            common_pada_lengths = [8, 11, 12, 14, 17, 19, 21]
+            
+            # Try to split into padas based on common structures
+            for pada_length in common_pada_lengths:
+                if total_syllables % pada_length == 0:
+                    num_padas = total_syllables // pada_length
+                    # Split the text into padas based on syllable positions
+                    lines = []
+                    
+                    # Get syllable breakdown and L-G marks
+                    syllables = test_result.get('display_syllables', [])
+                    lg_marks = test_result.get('display_lg', [])
+                    
+                    # Filter to only include items with valid L-G marks (actual syllables)
+                    valid_syllables = []
+                    for i, (syl, lg) in enumerate(zip(syllables, lg_marks)):
+                        if lg and lg.strip():  # Only include if has L-G mark
+                            valid_syllables.append(syl)
+                    
+                    if len(valid_syllables) == total_syllables:
+                        # Split based on syllable positions
+                        for pada_idx in range(num_padas):
+                            start = pada_idx * pada_length
+                            end = start + pada_length
+                            pada_syllables = valid_syllables[start:end]
+                            lines.append(''.join(pada_syllables))
+                    
+                    if len(lines) == num_padas:
+                        break  # Successfully split
+        
         if len(lines) > 1:
+            # Multi-line verse - reconstruct as newline-separated text
+            text_for_analysis = '\n'.join(lines)
+            
             # Multi-line verse - use identify_from_text with verse=True
-            response = chanda.identify_from_text(text, verse=True, mode='auto')
+            response = chanda.identify_from_text(text_for_analysis, verse=True, mode='auto')
             
             # Extract data from verse result
             # identify_from_text returns: {'result': {'line': [...], 'verse': [...]}, 'path': {...}}
@@ -360,7 +426,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                 
                 return {
                     'success': True,
-                    'text': text,
+                    'text': text_for_analysis,  # Use the properly formatted text
                     'meter': meter_name,
                     'meter_display': meter_display,
                     'lg_pattern': ''.join(all_lg),
@@ -565,10 +631,11 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
                 response += f"- {match[0]} (similarity: {match[1]:.2f})\n"
         
         if add_analyze_link:
-            # Encode the analyzed text for URL - use base64 to handle special characters
-            import base64
-            encoded_text = base64.b64encode(meter_data['text'].encode('utf-8')).decode('ascii')
-            response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**](#analyze:{encoded_text}) page for detailed analysis with visualizations.\n"
+            # URL encode the text for the link
+            import urllib.parse
+            encoded_text = urllib.parse.quote(meter_data.get('text', ''))
+            analyze_url = f"/app?text={encoded_text}"
+            response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
         
         return response
     
@@ -679,10 +746,11 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     
     # Add "Use Analyse Chanda" suggestion if agentic flow was used
     if add_analyze_link:
-        # Encode the analyzed text for URL - use base64 to handle special characters
-        import base64
-        encoded_text = base64.b64encode(meter_data['text'].encode('utf-8')).decode('ascii')
-        response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**](#analyze:{encoded_text}) page for detailed analysis with visualizations.\n"
+        # URL encode the text for the link
+        import urllib.parse
+        encoded_text = urllib.parse.quote(meter_data.get('text', ''))
+        analyze_url = f"/app?text={encoded_text}"
+        response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
     
     return response
 

@@ -1,4 +1,4 @@
-import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText } from "lucide-react";
+import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, BookOpen } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
@@ -33,9 +33,10 @@ const STORAGE_KEYS = {
 interface AnalysisFormProps {
   initialText?: string;
   onTextChange?: (text: string) => void;
+  autoIdentify?: boolean;
 }
 
-export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormProps) {
+export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = false }: AnalysisFormProps) {
   const [text, setText] = useState(initialText);
   const [activeTab, setActiveTab] = useState<"text" | "image" | "file">(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.activeTab);
@@ -104,10 +105,27 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   // Sync text with parent when initialText changes
   useEffect(() => {
     if (initialText) {
+      console.log('[AnalysisForm] Setting text from initialText:', initialText);
       setText(initialText);
       setActiveTab("text");
     }
   }, [initialText]);
+
+  // Auto-identify when autoIdentify prop is true and text is available
+  useEffect(() => {
+    console.log('[AnalysisForm] Auto-identify check:', { autoIdentify, text: text.substring(0, 30), activeTab, hasText: !!text.trim() });
+
+    if (autoIdentify && text.trim() && activeTab === "text") {
+      console.log('[AnalysisForm] Auto-identification triggered! Submitting in 500ms...');
+
+      // Small delay to ensure UI is ready and text is set
+      const timer = setTimeout(() => {
+        console.log('[AnalysisForm] Calling handleSubmit now...');
+        handleSubmit();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoIdentify, text, activeTab]);
 
   // Notify parent of text changes
   const handleTextChange = (newText: string) => {
@@ -392,14 +410,14 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   return (
     <>
       {/* Main Form Container - constrained to 900px and centered */}
-      <div className="analysis-form-container animate-fadeIn" style={{ width: '900px', maxWidth: '100%', margin: '0 auto' }}>
+      <div style={{ width: '900px', maxWidth: '100%', margin: '0 auto' }} className="animate-fadeIn">
         {/* API Connection Warning */}
         {!connected && (
           <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-[12px] flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-amber-700">Backend API not connected</p>
-              <p className="text-sm text-amber-600">Make sure the backend is running and accessible from this device</p>
+              <p className="text-sm text-amber-600">Make sure the backend is running at <code className="bg-amber-100 px-1 rounded">http://localhost:5000</code></p>
             </div>
           </div>
         )}
