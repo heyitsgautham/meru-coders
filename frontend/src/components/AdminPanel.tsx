@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../services/api';
+import { getAPIURL } from '../services/api';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Header } from './Header';
@@ -47,9 +47,11 @@ export default function AdminPanel() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
 
   const previewText = (text?: string, max = 80) => {
-    if (!text) return '—';
-    return text.length > max ? `${text.slice(0, max)}...` : text;
+    void text; // Mark as intentionally unused for future use
+    void max;
+    return '';
   };
+  void previewText; // Utility function for future use
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -63,7 +65,7 @@ export default function AdminPanel() {
     try {
       setLoading(true);
       const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${API_BASE_URL}/admin/pending`, {
+      const res = await fetch(`${getAPIURL()}/admin/pending`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -83,7 +85,7 @@ export default function AdminPanel() {
       setActionLoading(contributionId);
       
       const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${API_BASE_URL}/admin/approve/${contributionId}`, {
+      const res = await fetch(`${getAPIURL()}/admin/approve/${contributionId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +116,7 @@ export default function AdminPanel() {
       setActionLoading(contributionId);
       
       const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${API_BASE_URL}/admin/reject/${contributionId}`, {
+      const res = await fetch(`${getAPIURL()}/admin/reject/${contributionId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, BookOpen } from "lucide-react";
+import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
@@ -392,14 +392,14 @@ export function AnalysisForm({ initialText = "", onTextChange }: AnalysisFormPro
   return (
     <>
       {/* Main Form Container - constrained to 900px and centered */}
-      <div style={{ width: '900px', maxWidth: '100%', margin: '0 auto' }} className="animate-fadeIn">
+      <div className="analysis-form-container animate-fadeIn" style={{ width: '900px', maxWidth: '100%', margin: '0 auto' }}>
         {/* API Connection Warning */}
         {!connected && (
           <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-[12px] flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-amber-700">Backend API not connected</p>
-              <p className="text-sm text-amber-600">Make sure the backend is running at <code className="bg-amber-100 px-1 rounded">http://localhost:5000</code></p>
+              <p className="text-sm text-amber-600">Make sure the backend is running and accessible from this device</p>
             </div>
           </div>
         )}

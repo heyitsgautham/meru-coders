@@ -154,7 +154,7 @@ The patterns of laghu and guru syllables determine the type of chandas (meter). 
 
 ### When Working on This Project
 
-1. **Maintain Backward Compatibility**: System deployed at https://sanskrit.iitk.ac.in/jnanasangraha/chanda/ - zero downtime updates only
+1. **Maintain Backward Compatibility**: Ensure zero downtime updates only
 
 2. **Test Aggressively**: 
    - Run `PYTHONPATH=. python tests/test_all_fixes.py` after EVERY change
@@ -519,7 +519,7 @@ cd backend && PYTHONPATH=. python tests/test_copilot_api.py
 - ✅ **100% Accuracy** on authentic Vedic and Classical Sanskrit verses
 - ✅ **1,920 Meters** - Most comprehensive digital chandas database
 - ✅ **Multi-modal Input** - Text, file upload, and OCR from images
-- ✅ **Production Deployed** - Live at https://sanskrit.iitk.ac.in/jnanasangraha/chanda/
+- ✅ **Production Deployed**
 - ✅ **Educational Value** - Preserves and promotes Indian Knowledge Systems
 
 ### Technical Excellence
@@ -530,7 +530,6 @@ cd backend && PYTHONPATH=. python tests/test_copilot_api.py
 
 ## Resources
 
-- **Live Demo**: https://sanskrit.iitk.ac.in/jnanasangraha/chanda/
 - **Primary Reference**: Pingala's Chandas Shastra (500-200 BCE)
 - **Secondary References**: 
   - Halayudha's Commentary (10th century CE)

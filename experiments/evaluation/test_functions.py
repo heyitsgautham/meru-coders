@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 06 10:37:55 2022
-
-@author: Hrishikesh Terdalkar
+Evaluation Test Functions
 """
 
 import sys
@@ -12,7 +10,7 @@ from indic_transliteration.sanscript import transliterate
 ###############################################################################
 # Meru_Coders Identify
 
-Meru_Coders_PATH = "/home/hrishirt/git/jnanasangraha/platform/chanda"
+Meru_Coders_PATH = "./backend"
 sys.path.insert(0, Meru_Coders_PATH)
 import chanda
 
@@ -26,7 +24,7 @@ def Meru_Coders_identify(text):
 ###############################################################################
 # Skrutable Evaluation
 
-SKRUTABLE_PATH = "/home/hrishirt/git/skrutable/"
+SKRUTABLE_PATH = "./skrutable/"
 sys.path.insert(0, SKRUTABLE_PATH)
 from meter_identification import MeterIdentifier
 
@@ -45,7 +43,7 @@ def skrutable_identify(verse):
 ###############################################################################
 # Shreevatsa Identify
 
-# SHREEVATSA_PATH = "/home/hrishirt/git/shreevatsa-meters/"
+# SHREEVATSA_PATH = "./shreevatsa-meters/"
 # sys.path.insert(0, SHREEVATSA_PATH)
 # import identifier_pipeline
 

@@ -4,9 +4,10 @@
  */
 
 import axios from 'axios';
+import { getAPIURL } from './api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const CHATBOT_API = `${API_BASE_URL}/chatbot`;
+// Computed at request time, not module load time
+const getChatbotAPI = () => `${getAPIURL()}/chatbot`;
 
 export interface ChatMessage {
     role: 'user' | 'assistant';
@@ -16,6 +17,7 @@ export interface ChatMessage {
     has_image?: boolean;
     has_audio?: boolean;
     image_data?: string; // base64 image data for display
+    audio_data?: string; // base64 audio data for display
     ocr_text?: string;   // extracted OCR text
     persona?: string;
     meter_data?: MeterData;
@@ -93,7 +95,7 @@ export class ChatbotService {
      */
     static async sendMessage(request: ChatRequest): Promise<ChatResponse> {
         try {
-            const response = await axios.post(`${CHATBOT_API}/chat`, request);
+            const response = await axios.post(`${getChatbotAPI()}/chat`, request);
             return response.data;
         } catch (error: any) {
             console.error('Error sending message:', error);
@@ -109,7 +111,7 @@ export class ChatbotService {
      */
     static async getHistory(conversationId: string): Promise<{ success: boolean; messages?: ChatMessage[]; error?: string }> {
         try {
-            const response = await axios.get(`${CHATBOT_API}/history/${conversationId}`);
+            const response = await axios.get(`${getChatbotAPI()}/history/${conversationId}`);
             return response.data;
         } catch (error: any) {
             // Don't log 404 errors - they're expected for new conversations
@@ -128,7 +130,7 @@ export class ChatbotService {
      */
     static async listConversations(): Promise<{ success: boolean; conversations?: Conversation[]; error?: string }> {
         try {
-            const response = await axios.get(`${CHATBOT_API}/conversations`);
+            const response = await axios.get(`${getChatbotAPI()}/conversations`);
             return response.data;
         } catch (error: any) {
             console.error('Error listing conversations:', error);
@@ -144,7 +146,7 @@ export class ChatbotService {
      */
     static async clearConversation(conversationId: string): Promise<{ success: boolean; error?: string }> {
         try {
-            const response = await axios.delete(`${CHATBOT_API}/clear/${conversationId}`);
+            const response = await axios.delete(`${getChatbotAPI()}/clear/${conversationId}`);
             return response.data;
         } catch (error: any) {
             console.error('Error clearing conversation:', error);
@@ -160,7 +162,7 @@ export class ChatbotService {
      */
     static async getPersonas(): Promise<{ success: boolean; personas?: Record<string, Persona>; error?: string }> {
         try {
-            const response = await axios.get(`${CHATBOT_API}/personas`);
+            const response = await axios.get(`${getChatbotAPI()}/personas`);
             return response.data;
         } catch (error: any) {
             console.error('Error fetching personas:', error);
@@ -176,7 +178,7 @@ export class ChatbotService {
      */
     static async analyzeMeter(request: MeterAnalysisRequest): Promise<MeterAnalysisResponse> {
         try {
-            const response = await axios.post(`${CHATBOT_API}/analyze-meter`, request);
+            const response = await axios.post(`${getChatbotAPI()}/analyze-meter`, request);
             return response.data;
         } catch (error: any) {
             console.error('Error analyzing meter:', error);
@@ -222,7 +224,7 @@ export class ChatbotService {
      */
     static async healthCheck(): Promise<{ success: boolean; status?: string; error?: string }> {
         try {
-            const response = await axios.get(`${CHATBOT_API}/health`);
+            const response = await axios.get(`${getChatbotAPI()}/health`);
             return response.data;
         } catch (error: any) {
             console.error('Error checking health:', error);

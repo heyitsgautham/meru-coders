@@ -21,39 +21,68 @@ import type {
 const getAPIBaseURL = (): string => {
   // Check for Vite environment variable
   if (import.meta.env.VITE_API_URL) {
+    console.log('[API] Using VITE_API_URL:', import.meta.env.VITE_API_URL);
     return import.meta.env.VITE_API_URL;
   }
 
-  // Check if we're in production (deployed on Cloud Run)
-  if (typeof window !== 'undefined' &&
-    window.location.hostname !== 'localhost' &&
-    window.location.hostname !== '127.0.0.1') {
-    // In production - check for runtime config
+  // Check if we're in a browser
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    console.log('[API] Detected hostname:', hostname, 'port:', port);
+    
+    // Check for runtime config first (for production/Cloud Run)
     const win = window as typeof window & { CONFIG?: { API_URL?: string } };
     if (win.CONFIG?.API_URL) {
+      console.log('[API] Using runtime CONFIG:', win.CONFIG.API_URL);
       return win.CONFIG.API_URL;
     }
-    // Fallback for production
-    console.error('Production config not found! Defaulting to localhost.');
-    return 'http://localhost:5000/api';
+
+    // Local development - localhost or 127.0.0.1
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      const url = 'http://localhost:5000/api';
+      console.log('[API] localhost detected, using:', url);
+      return url;
+    }
+
+    // Any other hostname (local network IPs, custom domains, etc.)
+    // Use the same hostname to reach the backend on port 5000
+    const url = `http://${hostname}:5000/api`;
+    console.log('[API] Network/custom host detected, using:', url);
+    return url;
   }
 
-  // Local development
+  // SSR/Node.js fallback
+  console.log('[API] SSR fallback, using localhost');
   return 'http://localhost:5000/api';
 };
 
-export const API_BASE_URL = getAPIBaseURL();
-// Get base URL without /api suffix for constructing full URLs
-const API_SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
+// Lazy-evaluated API URL - computed on first access in the browser
+let _cachedAPIBaseURL: string | null = null;
 
-console.log('API Base URL:', API_BASE_URL);
-console.log('API Server URL:', API_SERVER_URL);
+export const getAPIURL = (): string => {
+  if (_cachedAPIBaseURL === null) {
+    _cachedAPIBaseURL = getAPIBaseURL();
+    console.log('[API] Computed API URL:', _cachedAPIBaseURL);
+  }
+  return _cachedAPIBaseURL;
+};
+
+// DEPRECATED: Use getAPIURL() instead - this is only for logging
+// API_BASE_URL is kept for backward compat but should not be used for requests
+export const API_BASE_URL = 'DYNAMIC'; // Placeholder - actual URL computed at runtime via getAPIURL()
+
+// Get base URL without /api suffix for constructing full URLs  
+const getServerURL = () => getAPIURL().replace(/\/api$/, '');
 
 /**
  * Make an API request
  */
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // Always get fresh URL at runtime
+  const baseUrl = getAPIURL();
+  const url = `${baseUrl}${endpoint}`;
 
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
 
@@ -198,7 +227,7 @@ export async function getAPIInfo(): Promise<APIInfoResponse> {
  * Get download URL for result file
  */
 export function getDownloadURL(filename: string): string {
-  return `${API_BASE_URL}/download/${filename}`;
+  return `${getAPIURL()}/download/${filename}`;
 }
 
 /**
@@ -286,10 +315,10 @@ export async function generateTTS(
 
   // Convert relative audio URL to absolute URL
   // Backend returns: /api/tts/audio/filename.mp3
-  // We need: http://localhost:5000/api/tts/audio/filename.mp3
+  // We need: http://hostname:5000/api/tts/audio/filename.mp3
   if (response.success && response.audio_url) {
-    // Use API_SERVER_URL (without /api) since backend URL already includes /api
-    response.audio_url = `${API_SERVER_URL}${response.audio_url}`;
+    // Use getServerURL() (without /api) since backend URL already includes /api
+    response.audio_url = `${getServerURL()}${response.audio_url}`;
     console.log('TTS Audio URL converted to:', response.audio_url);
   }
 
@@ -300,7 +329,7 @@ export async function generateTTS(
  * Get TTS audio URL
  */
 export function getTTSAudioURL(filename: string): string {
-  return `${API_BASE_URL}/tts/audio/${filename}`;
+  return `${getAPIURL()}/tts/audio/${filename}`;
 }
 
 /**

@@ -6,7 +6,6 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
-import { PageContainer } from './layout/PageContainer';
 import { Loader2 } from 'lucide-react';
 
 export default function Signup() {
@@ -71,14 +70,14 @@ export default function Signup() {
 
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-[#faf0e2] via-[#ffe9d5] to-[#f7ddc0] text-slate-900 flex items-center justify-center px-4 py-12 overflow-hidden">
+    <div className="auth-page relative min-h-screen w-full bg-gradient-to-br from-[#faf0e2] via-[#ffe9d5] to-[#f7ddc0] text-slate-900 flex items-center justify-center px-4 py-12 overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-amber-200 blur-[100px] opacity-70" />
         <div className="absolute right-10 bottom-10 h-52 w-52 rounded-full bg-orange-200 blur-[90px] opacity-70" />
       </div>
 
-      <div className="relative flex justify-center w-full" style={{ maxWidth: 480 }}>
-        <Card className="w-full shadow-2xl border-2 border-amber-300/80 bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5">
+      <div className="auth-card-wrapper relative flex justify-center w-full" style={{ maxWidth: 480 }}>
+        <Card className="auth-card w-full shadow-2xl border-2 border-amber-300/80 bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5">
           <CardHeader className="space-y-3 pb-2 text-center px-8 pt-8">
             <CardTitle className="text-3xl font-bold text-slate-900">Sign Up</CardTitle>
             <CardDescription className="text-base text-slate-600">

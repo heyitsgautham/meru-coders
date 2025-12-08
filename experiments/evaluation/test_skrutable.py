@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
- 
+"""
+Skrutable Evaluation Tests
+"""
 
 import sys
 from indic_transliteration.sanscript import transliterate
@@ -8,7 +10,7 @@ from indic_transliteration.sanscript import transliterate
 ###############################################################################
 # Skrutable Evaluation
 
-SKRUTABLE_PATH = "/home/hrishirt/git/skrutable/"
+SKRUTABLE_PATH = "./skrutable/"
 sys.path.insert(0, SKRUTABLE_PATH)
 from meter_identification import MeterIdentifier
 

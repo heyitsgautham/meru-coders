@@ -57,6 +57,7 @@
     },
     server: {
       port: 8080,
+      host: true,  // Expose to local network (0.0.0.0)
       open: true,
     },
   });

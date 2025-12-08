@@ -33,9 +33,9 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
   };
 
   return (
-    <header className="bg-white sticky top-0 z-50 transition-all duration-300 shadow-sm" style={{ width: '100%' }}>
-      <div style={{ width: '100%', padding: '16px 15px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <header className="app-header bg-white sticky top-0 z-50 transition-all duration-300 shadow-sm" style={{ width: '100%' }}>
+      <div className="app-header-inner" style={{ width: '100%', padding: '16px 15px' }}>
+        <div className="app-header-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* Logo - Meru Coders with optional back to landing */}
           <div className="flex items-center gap-3">
             {onGoToLanding && (
@@ -48,7 +48,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
               </button>
             )}
             <div 
-              className="cursor-pointer"
+              className="cursor-pointer app-logo"
               onClick={() => onViewChange('home')}
             >
               <span style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#4a2c10' }}>Meru Coders</span>
@@ -56,7 +56,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
           </div>
 
           {/* Navigation - consistent pill style with proper spacing */}
-          <nav className="flex items-center gap-3 bg-[#fdf8f3] px-4 py-2 rounded-full border border-[var(--color-border-subtle)]">
+          <nav className="app-nav flex items-center gap-3 bg-[#fdf8f3] px-4 py-2 rounded-full border border-[var(--color-border-subtle)]">
             {navItems.map((item) => (
               <button
                 key={item.view}
@@ -73,7 +73,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
               className={`nav-link flex items-center gap-1 ${currentView === 'community' ? 'active' : ''}`}
             >
               <Users className="w-4 h-4" />
-              Community
+              <span className="nav-link-text">Community</span>
             </button>
             
             {/* Auth Navigation */}
@@ -83,7 +83,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
                 className="nav-link flex items-center gap-1"
               >
                 <User className="w-4 h-4" />
-                {isAdmin ? 'Admin' : 'Profile'}
+                <span className="nav-link-text">{isAdmin ? 'Admin' : 'Profile'}</span>
               </button>
             ) : (
               <Link
@@ -91,7 +91,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
                 className="nav-link flex items-center gap-1"
               >
                 <LogIn className="w-4 h-4" />
-                Login / Signup
+                <span className="nav-link-text">Login</span>
               </Link>
             )}
           </nav>

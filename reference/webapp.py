@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 16 16:11:35 2019
-
-@author: Hrishikesh Terdalkar
+Meru Coders - Sanskrit Chandas Web Application
 """
 
 import datetime

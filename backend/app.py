@@ -46,12 +46,21 @@ def create_app():
     app.logger.setLevel(getattr(logging, settings.LOG_LEVEL))
     
     # Enable CORS for frontend
+    # Allow all origins for development - handles localhost and local network IPs
     CORS(app, resources={
         r"/api/*": {
-            "origins": settings.CORS_ORIGINS,
+            "origins": "*",
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+        },
+        r"/health": {
+            "origins": "*",
+            "methods": ["GET", "OPTIONS"],
+        },
+        r"/auth/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
         }
     })
     

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
- 
+"""
+Shreevatsa Evaluation Tests
+"""
 
 import sys
 from indic_transliteration.sanscript import transliterate
@@ -8,7 +10,7 @@ from indic_transliteration.sanscript import transliterate
 ###############################################################################
 # Shreevatsa Evaluation
 
-SHREEVATSA_PATH = "/home/hrishirt/git/shreevatsa-meters/"
+SHREEVATSA_PATH = "./shreevatsa-meters/"
 sys.path.insert(0, SHREEVATSA_PATH)
 import identifier_pipeline
 
