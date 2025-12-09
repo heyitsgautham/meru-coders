@@ -5,6 +5,7 @@ import { AnalysisForm } from "../components/AnalysisForm";
 import { SplitViewAnalysis } from "../components/SplitViewAnalysis";
 import { ExamplesView } from "../components/ExamplesView";
 import { AboutView } from "../components/AboutView";
+import { UpcomingView } from "../components/UpcomingView";
 import { DatasetsView } from "../components/DatasetsView";
 import { MandalaBackground } from "../components/MandalaBackground";
 import type { ViewType } from "../types/api";
@@ -107,6 +108,11 @@ export default function MainApp() {
           {currentView === "about" && (
             <div className="view-container about-container" style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
               <AboutView />
+            </div>
+          )}
+          {currentView === "upcoming" && (
+            <div className="view-container upcoming-container" style={{ width: '1200px', maxWidth: '100%', margin: '0 auto' }}>
+              <UpcomingView />
             </div>
           )}
         </main>
