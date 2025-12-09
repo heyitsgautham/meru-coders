@@ -26,6 +26,30 @@ except ImportError:
     EDGE_TTS_AVAILABLE = False
     logging.warning("edge-tts not available. TTS functionality will be disabled.")
 
+# Import gTTS as fallback
+try:
+    from gtts import gTTS
+    GTTS_AVAILABLE = True
+except ImportError:
+    GTTS_AVAILABLE = False
+    logging.warning("gTTS not available. Fallback TTS will be disabled.")
+
+# Import Google Cloud TTS (best quality with voice selection)
+try:
+    from google.cloud import texttospeech
+    GOOGLE_TTS_AVAILABLE = True
+except ImportError:
+    GOOGLE_TTS_AVAILABLE = False
+    logging.warning("Google Cloud TTS not available.")
+
+# Import pyttsx3 (offline TTS with voice selection)
+try:
+    import pyttsx3
+    PYTTSX3_AVAILABLE = True
+except ImportError:
+    PYTTSX3_AVAILABLE = False
+    logging.warning("pyttsx3 not available.")
+
 # Path to source datasets
 SOURCE_DIR = Path(__file__).parent.parent / 'source'
 from backend.utils.file_processor import (
@@ -1273,16 +1297,16 @@ def register_routes(app):
         Request JSON:
             {
                 "text": "Sanskrit text to convert to speech",
-                "voice": "male|female" (optional, defaults to "male")
+                "voice": "male|female" // (optional, defaults to "female")
             }
         
         Returns:
             JSON with audio file URL
         """
-        if not EDGE_TTS_AVAILABLE:
+        if not EDGE_TTS_AVAILABLE and not GTTS_AVAILABLE and not GOOGLE_TTS_AVAILABLE and not PYTTSX3_AVAILABLE:
             return jsonify({
                 'success': False,
-                'error': 'Text-to-speech functionality is not available. Please install edge-tts.'
+                'error': 'Text-to-speech functionality is not available. Please install edge-tts, gTTS, pyttsx3, or google-cloud-texttospeech.'
             }), 503
         
         try:
@@ -1301,13 +1325,10 @@ def register_routes(app):
                     'error': 'Text cannot be empty'
                 }), 400
             
-            # Voice selection - Hindi neural voices work well for Sanskrit
+            logger.info(f"TTS request received - text length: {len(text)} chars")
+            
+            # Voice selection
             voice_type = data.get('voice', 'male')
-            voices = {
-                "female": "hi-IN-SwaraNeural",
-                "male": "hi-IN-MadhurNeural"
-            }
-            voice = voices.get(voice_type, voices['male'])
             
             # Generate unique filename
             filename = f"tts_{uuid.uuid4().hex}.mp3"
@@ -1316,15 +1337,142 @@ def register_routes(app):
             # Ensure audio directory exists
             settings.AUDIO_DIR.mkdir(parents=True, exist_ok=True)
             
-            # Generate speech using edge-tts
-            async def generate_speech():
-                communicate = edge_tts.Communicate(text, voice)
-                await communicate.save(str(output_path))
+            # Try Google Cloud TTS first (best quality with proper voice selection)
+            generation_success = False
+            used_engine = None
             
-            # Run async function
-            asyncio.run(generate_speech())
+            if GOOGLE_TTS_AVAILABLE:
+                try:
+                    logger.info("Attempting TTS generation with Google Cloud TTS...")
+                    client = texttospeech.TextToSpeechClient()
+                    
+                    # Configure voice selection - Google Cloud TTS has proper male/female Hindi voices
+                    voice_configs = {
+                        "male": {
+                            "language_code": "hi-IN",
+                            "name": "hi-IN-MadhurNeural",  # Male voice
+                            "ssml_gender": texttospeech.SsmlVoiceGender.MALE
+                        },
+                        "female": {
+                            "language_code": "hi-IN", 
+                            "name": "hi-IN-SwaraNeural",  # Female voice
+                            "ssml_gender": texttospeech.SsmlVoiceGender.FEMALE
+                        }
+                    }
+                    
+                    voice_config = voice_configs.get(voice_type, voice_configs['male'])
+                    
+                    # Set up synthesis input
+                    synthesis_input = texttospeech.SynthesisInput(text=text)
+                    
+                    # Select voice parameters
+                    voice = texttospeech.VoiceSelectionParams(
+                        language_code=voice_config["language_code"],
+                        name=voice_config["name"],
+                        ssml_gender=voice_config["ssml_gender"]
+                    )
+                    
+                    # Select audio config
+                    audio_config = texttospeech.AudioConfig(
+                        audio_encoding=texttospeech.AudioEncoding.MP3
+                    )
+                    
+                    # Perform TTS request
+                    response = client.synthesize_speech(
+                        input=synthesis_input,
+                        voice=voice,
+                        audio_config=audio_config
+                    )
+                    
+                    # Write audio to file
+                    with open(str(output_path), 'wb') as out:
+                        out.write(response.audio_content)
+                    
+                    if output_path.exists() and output_path.stat().st_size > 0:
+                        generation_success = True
+                        used_engine = f"Google Cloud TTS ({voice_config['name']})"
+                        logger.info(f"TTS generated successfully with Google Cloud TTS ({voice_type} voice)")
+                    else:
+                        logger.warning("Google Cloud TTS created empty file")
+                        if output_path.exists():
+                            output_path.unlink()
+                except Exception as e:
+                    logger.warning(f"Google Cloud TTS failed: {e}. Falling back to edge-tts...")
+                    if output_path.exists():
+                        output_path.unlink()
             
-            logger.info(f"TTS audio generated: {filename}")
+            # Try edge-tts second, fallback to gTTS
+            if not generation_success and EDGE_TTS_AVAILABLE:
+                try:
+                    logger.info("Attempting TTS generation with edge-tts...")
+                    # Hindi neural voices work well for Sanskrit
+                    voices = {
+                        "female": "hi-IN-SwaraNeural",
+                        "male": "hi-IN-MadhurNeural"
+                    }
+                    voice = voices.get(voice_type, voices['male'])
+                    logger.info(f"TTS using edge-tts voice: {voice}")
+                    
+                    async def generate_speech():
+                        communicate = edge_tts.Communicate(text, voice)
+                        await communicate.save(str(output_path))
+                    
+                    # Run async function
+                    asyncio.run(generate_speech())
+                    
+                    # Check if file was created successfully
+                    if output_path.exists() and output_path.stat().st_size > 0:
+                        generation_success = True
+                        used_engine = "edge-tts"
+                        logger.info(f"TTS generated successfully with edge-tts")
+                    else:
+                        logger.warning("edge-tts created empty file, falling back to gTTS")
+                        if output_path.exists():
+                            output_path.unlink()
+                except Exception as e:
+                    logger.warning(f"edge-tts failed: {e}. Falling back to gTTS...")
+                    if output_path.exists():
+                        output_path.unlink()
+            
+            # Fallback to gTTS if edge-tts failed or not available
+            if not generation_success and GTTS_AVAILABLE:
+                try:
+                    logger.info(f"Attempting TTS generation with gTTS (voice: {voice_type})...")
+                    # gTTS doesn't support different voices natively, but we can adjust parameters
+                    # Use 'hi' for Hindi which works well for Sanskrit
+                    # Note: gTTS uses a single voice per language, so male/female selection isn't supported
+                    # We'll use slow=False for male (normal speed) and could adjust other params
+                    tts = gTTS(text=text, lang='hi', slow=False)
+                    tts.save(str(output_path))
+                    
+                    if output_path.exists() and output_path.stat().st_size > 0:
+                        generation_success = True
+                        used_engine = f"gTTS (Note: Voice selection not supported in fallback mode)"
+                        logger.info(f"TTS generated successfully with gTTS")
+                        logger.warning("gTTS doesn't support voice selection - using default Hindi voice")
+                except Exception as e:
+                    logger.error(f"gTTS also failed: {e}")
+                    if output_path.exists():
+                        output_path.unlink()
+            
+            # Verify file was created and has content
+            if not generation_success or not output_path.exists():
+                logger.error(f"Audio file was not created")
+                return jsonify({
+                    'success': False,
+                    'error': 'Failed to generate audio file with all available engines'
+                }), 500
+            
+            file_size = output_path.stat().st_size
+            if file_size == 0:
+                logger.error(f"Audio file is empty: {output_path}")
+                output_path.unlink()  # Clean up empty file
+                return jsonify({
+                    'success': False,
+                    'error': 'Generated audio file is empty'
+                }), 500
+            
+            logger.info(f"TTS audio generated successfully using {used_engine}: {filename} ({file_size} bytes)")
             
             return jsonify({
                 'success': True,

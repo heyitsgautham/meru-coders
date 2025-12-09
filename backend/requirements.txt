@@ -37,7 +37,9 @@ python-socketio>=5.10.0
 eventlet>=0.35.0
 
 # Text-to-Speech Support
-edge-tts>=6.1.0
+edge-tts>=7.2.3
+gTTS>=2.5.4
+pyttsx3>=2.99
 
 # AI/Chatbot Support
 google-generativeai>=0.8.0
