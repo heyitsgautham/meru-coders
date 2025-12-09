@@ -645,7 +645,7 @@ class EnhancedChanda:
     def read_jaati(self, file):
         """Read Jaati list from CSV"""
         jaati = defaultdict(list)
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -665,7 +665,7 @@ class EnhancedChanda:
         splits = defaultdict(list)
         chanda_pada = defaultdict(dict)
 
-        with open(chanda_file, 'r') as f:
+        with open(chanda_file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:

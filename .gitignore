@@ -31,3 +31,4 @@ seed
 
 #Audio files
 backend/uploads/*
+/game-repo

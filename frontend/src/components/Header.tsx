@@ -1,4 +1,4 @@
-import { Home, User, LogIn, Users } from "lucide-react";
+import { Home, User, LogIn, Users, Gamepad2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import type { ViewType } from "../types/api";
@@ -31,6 +31,11 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
 
   const handleCommunityClick = () => {
     navigate('/community');
+  };
+
+  const handleGameClick = () => {
+    // Open the game in a new tab/window
+    window.open('https://chandas-game-frontend-mz54akd7ra-uc.a.run.app/', '_blank');
   };
 
   return (
@@ -67,6 +72,16 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
                 {item.name}
               </button>
             ))}
+            
+            {/* Game Link */}
+            <button
+              onClick={handleGameClick}
+              className="nav-link flex items-center gap-1"
+              title="Play Chandas Learning Game"
+            >
+              <Gamepad2 className="w-4 h-4" />
+              <span className="nav-link-text">Game</span>
+            </button>
             
             {/* Community Link */}
             <button

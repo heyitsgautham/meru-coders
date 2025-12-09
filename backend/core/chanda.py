@@ -1981,7 +1981,7 @@ class Chanda:
 
     def read_examples(self):
         example_file = os.path.join(self.data_path, "examples.json")
-        with open(example_file, "r") as f:
+        with open(example_file, "r", encoding="utf-8") as f:
             examples = json.load(f)
         return examples
 
