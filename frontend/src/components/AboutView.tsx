@@ -9,7 +9,11 @@ import {
   FileText, 
   Languages, 
   Sparkles, 
-  CheckCircle
+  CheckCircle,
+  Info,
+  Users2,
+  Heart,
+  Award
 } from 'lucide-react';
 
 export function AboutView() {
@@ -75,13 +79,15 @@ export function AboutView() {
               key={index}
               className="flex items-start gap-5 p-5 rounded-xl bg-[#fdf8f3] hover:bg-[var(--color-primary-soft)] transition-all duration-300"
             >
-              <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
-                {feature.icon}
-              </div>
               <div>
-                <h3 className="font-bold text-[var(--color-text-main)] mb-1.5">
-                  {feature.title}
-                </h3>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
+                    {feature.icon}
+                  </div>
+                  <h3 className="font-bold text-[var(--color-text-main)]">
+                    {feature.title}
+                  </h3>
+                </div>
                 <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
                   {feature.description}
                 </p>
@@ -129,6 +135,107 @@ export function AboutView() {
             Built with React, TypeScript, and Tailwind CSS. Backend powered by 
             Python/Flask with advanced Sanskrit prosody analysis.
           </p>
+        </div>
+      </div>
+
+      {/* About Us Section */}
+      <div className="mb-8 p-8 bg-white rounded-2xl border-2 border-[var(--color-border-subtle)]">
+        <div className="space-y-5">
+          {/* About us */}
+          <div className="flex items-start gap-5 p-5 rounded-xl bg-[#fdf8f3] hover:bg-[var(--color-primary-soft)] transition-all duration-300">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
+                  <Info className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-[var(--color-text-main)]">
+                  About us
+                </h3>
+              </div>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                We are a team committed to making Sanskrit metrical learning simple, accurate, and accessible through interactive tools and intelligent analysis.
+              </p>
+            </div>
+          </div>
+
+          {/* Team */}
+          <div className="flex items-start gap-5 p-5 rounded-xl bg-[#fdf8f3] hover:bg-[var(--color-primary-soft)] transition-all duration-300">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
+                  <Users2 className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-[var(--color-text-main)]">
+                  Team
+                </h3>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <img src="/team/Gautham.png" alt="Gautham Krishna S" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Gautham Krishna S</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img src="/team/Kishore.png" alt="Kishore B" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Kishore B</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img src="/team/Hiruthik.png" alt="Hiruthik Sudhakar" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Hiruthik Sudhakar</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img src="/team/Sreevalsan.jpeg" alt="Sreevalsan V" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Sreevalsan V</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img src="/team/Harevasu S.jpg" alt="Harevasu S" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Harevasu S</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img src="/team/Krithika V.jpg" alt="Krithika V" className="w-14 h-16 object-cover rounded-md mb-1" />
+                  <p className="text-center text-xs font-medium text-[var(--color-text-muted)]">Krithika V</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contribution */}
+          <div className="flex items-start gap-5 p-5 rounded-xl bg-[#fdf8f3] hover:bg-[var(--color-primary-soft)] transition-all duration-300">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
+                  <Award className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-[var(--color-text-main)]">
+                  Contribution
+                </h3>
+              </div>
+              <div className="text-sm text-[var(--color-text-muted)] leading-relaxed mt-3">
+                <p>Gautham Krishna - Chanda Identification core engine development & Rag Engine Implementation</p>
+                <p>Kishore - Backend Integration & UI/UX</p>
+                <p>Hiruthik - Game development and voice to text feature implementation</p>
+                <p>Sreevalasan - Dataset Curation (authentic data)</p>
+                <p>Harevasu S - OCR model implementation & Chatbot implementation</p>
+                <p>Krithika - Game design & implementation</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Our commitment */}
+          <div className="flex items-start gap-5 p-5 rounded-xl bg-[#fdf8f3] hover:bg-[var(--color-primary-soft)] transition-all duration-300">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex-shrink-0 p-3 bg-white rounded-xl text-[var(--color-primary)] shadow-sm">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-[var(--color-text-main)]">
+                  Our commitment
+                </h3>
+              </div>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                We continue refining the platform, expanding language coverage, and adding tools that improve accessibility and deepen metrical understanding.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

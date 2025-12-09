@@ -243,7 +243,7 @@ export type AnalysisMode = 'line' | 'verse';
 export type IdentificationMode = 'auto' | 'vedic' | 'classical';
 
 // View type for navigation
-export type ViewType = 'home' | 'splitview' | 'examples' | 'datasets' | 'about' | 'community';
+export type ViewType = 'home' | 'splitview' | 'examples' | 'datasets' | 'about' | 'community' | 'upcoming';
 
 // Input tab type
 export type InputTab = 'text' | 'image' | 'file';

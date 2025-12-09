@@ -61,7 +61,10 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
               className="cursor-pointer app-logo"
               onClick={() => onViewChange('home')}
             >
-              <span style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#4a2c10' }}>Meru Coders</span>
+              <div className="flex flex-col items-end">
+                <span style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#4a2c10' }}>Meru Coders</span>
+                <span className="text-sm text-gray-500">Chandas learning, made accessible for all.</span>
+              </div>
             </div>
           </div>
 
@@ -104,6 +107,14 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
             >
               <Users className="w-4 h-4" />
               <span className="nav-link-text">Community</span>
+            </button>
+            
+            {/* Upcoming Link */}
+            <button
+              onClick={() => onViewChange('upcoming')}
+              className={`nav-link ${currentView === 'upcoming' ? 'active' : ''}`}
+            >
+              Upcoming
             </button>
             
             {/* Auth Navigation */}
