@@ -11,6 +11,7 @@ export interface Example {
   meter: string;
   lines: string[];
   text?: string;
+  mode?: string;
 }
 
 // OCR availability info
@@ -240,7 +241,7 @@ export interface IdentifyTextRequest {
 export type AnalysisMode = 'line' | 'verse';
 
 // Identification mode for Vedic vs Classical detection
-export type IdentificationMode = 'auto' | 'vedic' | 'classical';
+export type IdentificationMode = 'auto' | 'vedic' | 'classical' | 'dandaka';
 
 // View type for navigation
 export type ViewType = 'home' | 'splitview' | 'examples' | 'datasets' | 'about' | 'community' | 'upcoming';
@@ -359,3 +360,39 @@ export interface SlokaValidateResponse {
   message?: string;
   error?: string;
 }
+
+// Dandaka identification types
+export interface DandakaUnit {
+  text: string;
+  aksara_count: number;
+  virama_count: number;
+  density: number;
+  classification: 'Saṃkīrṇa-daṇḍakam' | 'Madhyama-daṇḍakam' | 'Prabandha-daṇḍakam' | 'Ati-daṇḍakam';
+}
+
+export interface DandakaResult {
+  is_dandaka: boolean;
+  units: DandakaUnit[];
+  total_aksaras: number;
+  total_viramas: number;
+  average_density: number;
+}
+
+// Rajashyamala Stotram identification types
+export interface RajashyamalaResult {
+  is_rajashyamala: boolean;
+  confidence: number;
+  matched_keywords: string[];
+  title_match: boolean;
+  semantic_markers: string[];
+  structure_type: 'stotra-prose' | 'tantric-hymn' | 'mantra-based' | 'unknown';
+}
+
+// Combined Dandaka mode response
+export interface DandakaModeResult {
+  mode: 'dandaka';
+  dandaka?: DandakaResult;
+  rajashyamala?: RajashyamalaResult;
+  text_type: 'dandaka' | 'rajashyamala-stotram' | 'mixed' | 'unclassified';
+}
+
