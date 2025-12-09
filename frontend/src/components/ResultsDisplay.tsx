@@ -958,19 +958,57 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
               const primaryScore = sortedMeters[0][1];
               const englishName = getMeterEnglish(primaryMeter);
 
-              // Calculate confidence based on total score vs total lines
-              const numLines = lineResults.length || 1;
-              const scorePerLine = primaryScore / Math.max(numLines, 1);
-              const confidencePercent = Math.min(100, Math.round(scorePerLine * 100));
-
+              // Get confidence from backend's primary_confidence_reason if available
+              const firstLineResult = lineResults[0]?.result;
+              const confidenceReason = firstLineResult?.primary_confidence_reason;
+              
               let confidenceLabel = 'High';
               let confidenceColor = '#16A34A'; // green-600
-              if (confidencePercent < 50) {
-                confidenceLabel = 'Low';
-                confidenceColor = '#EF4444'; // red-500
-              } else if (confidencePercent < 80) {
-                confidenceLabel = 'Medium';
-                confidenceColor = '#F59E0B'; // amber-500
+              let confidenceScore = 0;
+              let confidenceReasonText = '';
+              
+              if (confidenceReason) {
+                // Use backend confidence reason (cap at 10.0 for display)
+                confidenceScore = Math.min(confidenceReason.confidence, 10);
+                confidenceReasonText = confidenceReason.reason;
+                
+                // Map level to label and color
+                switch (confidenceReason.level) {
+                  case 'very_high':
+                    confidenceLabel = 'Very High';
+                    confidenceColor = '#16A34A'; // green-600
+                    break;
+                  case 'high':
+                    confidenceLabel = 'High';
+                    confidenceColor = '#22C55E'; // green-500
+                    break;
+                  case 'medium':
+                    confidenceLabel = 'Medium';
+                    confidenceColor = '#F59E0B'; // amber-500
+                    break;
+                  case 'low':
+                    confidenceLabel = 'Low';
+                    confidenceColor = '#F97316'; // orange-500
+                    break;
+                  case 'very_low':
+                    confidenceLabel = 'Very Low';
+                    confidenceColor = '#EF4444'; // red-500
+                    break;
+                }
+              } else {
+                // Fallback: Calculate confidence based on total score vs total lines
+                const numLines = lineResults.length || 1;
+                const scorePerLine = primaryScore / Math.max(numLines, 1);
+                const confidencePercent = Math.min(100, Math.round(scorePerLine * 100));
+                confidenceScore = confidencePercent / 10; // Convert to 0-10 scale
+
+                if (confidencePercent < 50) {
+                  confidenceLabel = 'Low';
+                  confidenceColor = '#EF4444'; // red-500
+                } else if (confidencePercent < 80) {
+                  confidenceLabel = 'Medium';
+                  confidenceColor = '#F59E0B'; // amber-500
+                }
               }
 
               // Get meter structure info
@@ -998,20 +1036,52 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                   </div>
 
                   {/* Syllables and Confidence - Side by side boxes */}
-                  <div className="flex gap-6">
-                    <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
-                      <div className="text-sm font-medium text-gray-500 mb-2">Syllables</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Syllables Box */}
+                    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                      <div className="text-sm font-medium text-gray-500 mb-1">Syllables</div>
                       <div className="text-3xl font-bold text-gray-900">
-                        {meterStructure ? `${meterStructure.totalSyllables} (${meterStructure.syllablesPerPada}×${meterStructure.totalPadas})` : '-'}
+                        {meterStructure ? `${meterStructure.totalSyllables}` : '-'}
+                        {meterStructure && (
+                          <span className="text-lg font-normal text-gray-500 ml-2">
+                            ({meterStructure.syllablesPerPada}×{meterStructure.totalPadas})
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
-                      <div className="text-sm font-medium text-gray-500 mb-2">Confidence</div>
+                    
+                    {/* Confidence Box - with integrated reason */}
+                    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                      <div className="text-sm font-medium text-gray-500 mb-1">Confidence</div>
                       <div className="text-3xl font-bold" style={{ color: confidenceColor }}>
                         {confidenceLabel}
+                        <span className="text-lg font-normal text-gray-500 ml-2">
+                          ({Math.min(confidenceScore, 10).toFixed(1)}/10)
+                        </span>
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Confidence Reason - Full width explanation below */}
+                  {confidenceReasonText && (
+                    <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                      <div className="flex items-start gap-5">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                          <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div style={{ fontSize: '1.5rem', fontWeight: 600 }} className="text-blue-900 mb-4">Why this confidence score?</div>
+                          <div style={{ fontSize: '1.25rem', lineHeight: '2' }} className="text-blue-800 space-y-3">
+                            {confidenceReasonText.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                              <p key={idx}>{sentence.trim()}</p>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })()}
@@ -1076,16 +1146,56 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                       const lineCount = sortedMeters[0][1];
                       const englishName = getMeterEnglish(primaryMeter);
                       const totalLines = lineResults.length;
-                      const confidencePercent = Math.round((lineCount / totalLines) * 100);
 
+                      // Get confidence from backend's primary_confidence_reason if available
+                      const firstLineResult = lineResults[0]?.result;
+                      const confidenceReason = firstLineResult?.primary_confidence_reason;
+                      
                       let confidenceLabel = 'High';
                       let confidenceColor = '#16A34A'; // green-600
-                      if (confidencePercent < 50) {
-                        confidenceLabel = 'Low';
-                        confidenceColor = '#EF4444'; // red-500
-                      } else if (confidencePercent < 80) {
-                        confidenceLabel = 'Medium';
-                        confidenceColor = '#F59E0B'; // amber-500
+                      let confidenceScore = 0;
+                      let confidenceReasonText = '';
+                      
+                      if (confidenceReason) {
+                        // Use backend confidence reason (cap at 10.0 for display)
+                        confidenceScore = Math.min(confidenceReason.confidence, 10);
+                        confidenceReasonText = confidenceReason.reason;
+                        
+                        // Map level to label and color
+                        switch (confidenceReason.level) {
+                          case 'very_high':
+                            confidenceLabel = 'Very High';
+                            confidenceColor = '#16A34A'; // green-600
+                            break;
+                          case 'high':
+                            confidenceLabel = 'High';
+                            confidenceColor = '#22C55E'; // green-500
+                            break;
+                          case 'medium':
+                            confidenceLabel = 'Medium';
+                            confidenceColor = '#F59E0B'; // amber-500
+                            break;
+                          case 'low':
+                            confidenceLabel = 'Low';
+                            confidenceColor = '#F97316'; // orange-500
+                            break;
+                          case 'very_low':
+                            confidenceLabel = 'Very Low';
+                            confidenceColor = '#EF4444'; // red-500
+                            break;
+                        }
+                      } else {
+                        // Fallback to old calculation
+                        const confidencePercent = Math.round((lineCount / totalLines) * 100);
+                        confidenceScore = confidencePercent / 10;
+
+                        if (confidencePercent < 50) {
+                          confidenceLabel = 'Low';
+                          confidenceColor = '#EF4444'; // red-500
+                        } else if (confidencePercent < 80) {
+                          confidenceLabel = 'Medium';
+                          confidenceColor = '#F59E0B'; // amber-500
+                        }
                       }
 
                       // Get meter structure info
@@ -1112,20 +1222,52 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                           </div>
 
                           {/* Syllables and Confidence - Side by side boxes */}
-                          <div className="flex gap-6">
-                            <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
-                              <div className="text-sm font-medium text-gray-500 mb-2">Syllables</div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Syllables Box */}
+                            <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                              <div className="text-sm font-medium text-gray-500 mb-1">Syllables</div>
                               <div className="text-3xl font-bold text-gray-900">
-                                {meterStructure ? `${meterStructure.totalSyllables} (${meterStructure.syllablesPerPada}×${meterStructure.totalPadas})` : '-'}
+                                {meterStructure ? `${meterStructure.totalSyllables}` : '-'}
+                                {meterStructure && (
+                                  <span className="text-lg font-normal text-gray-500 ml-2">
+                                    ({meterStructure.syllablesPerPada}×{meterStructure.totalPadas})
+                                  </span>
+                                )}
                               </div>
                             </div>
-                            <div className="flex-1 bg-white rounded-2xl p-5 border border-gray-300">
-                              <div className="text-sm font-medium text-gray-500 mb-2">Confidence</div>
+                            
+                            {/* Confidence Box */}
+                            <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                              <div className="text-sm font-medium text-gray-500 mb-1">Confidence</div>
                               <div className="text-3xl font-bold" style={{ color: confidenceColor }}>
                                 {confidenceLabel}
+                                <span className="text-lg font-normal text-gray-500 ml-2">
+                                  ({Math.min(confidenceScore, 10).toFixed(1)}/10)
+                                </span>
                               </div>
                             </div>
                           </div>
+                          
+                          {/* Confidence Reason - Full width explanation below */}
+                          {confidenceReasonText && (
+                            <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                              <div className="flex items-start gap-5">
+                                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                                  <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1">
+                                  <div style={{ fontSize: '1.5rem', fontWeight: 600 }} className="text-blue-900 mb-4">Why this confidence score?</div>
+                                  <div style={{ fontSize: '1.25rem', lineHeight: '2' }} className="text-blue-800 space-y-3">
+                                    {confidenceReasonText.split(/(?<=[.!?])\s+/).map((sentence, idx) => (
+                                      <p key={idx}>{sentence.trim()}</p>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </>
                       );
                     })()}

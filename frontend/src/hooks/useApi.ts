@@ -228,6 +228,42 @@ export function useExtractText() {
   return { text, loading, error, extract, reset };
 }
 
+// Hook for audio text extraction using IndicConformer ASR (no analysis)
+export function useExtractAudio() {
+  const [text, setText] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const extract = useCallback(async (file: File) => {
+    setLoading(true);
+    setError(null);
+    setText(null);
+
+    try {
+      const response = await api.extractTextFromAudio(file);
+      if (response.success && response.text !== undefined) {
+        setText(response.text);
+        return response.text;
+      } else {
+        throw new Error(response.error || 'Audio transcription failed');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Audio transcription failed';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setText(null);
+    setError(null);
+  }, []);
+
+  return { text, loading, error, extract, reset };
+}
+
 // Hook for file identification
 export function useIdentifyFile() {
   const [result, setResult] = useState<IdentifyResponse | null>(null);

@@ -40,7 +40,7 @@ eventlet>=0.35.0
 edge-tts>=6.1.0
 
 # AI/Chatbot Support
-google-generativeai>=0.8.0
+google-genai>=1.0.0
 
 # Optional: Hybrid syllabization (ICU-based) for improved accuracy
 # Provides 50% better syllable counting vs sanskrit_text

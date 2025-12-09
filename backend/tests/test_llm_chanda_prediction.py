@@ -49,8 +49,9 @@ def load_api_keys_from_env():
                             keys.append(key_part)
     return keys
 
-# Gemini API setup
-import google.generativeai as genai
+# Gemini API setup - using new google-genai SDK
+from google import genai
+from google.genai import types
 
 # API key rotation for rate limiting
 API_KEYS = load_api_keys_from_env()
@@ -164,33 +165,22 @@ def get_family(name: str) -> str:
     return METER_FAMILIES.get(normalized, normalized)
 
 
-def create_gemini_model():
-    """Create and configure a Gemini model instance."""
+def create_gemini_client():
+    """Create and configure a Gemini client instance."""
     api_key, key_index = get_next_api_key()
-    genai.configure(api_key=api_key)
     
-    # Configure generation settings
-    generation_config = {
-        "temperature": 0.1,  # Low temperature for more deterministic output
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 256,
-    }
-    
-    model = genai.GenerativeModel(
-        model_name="gemini-2.0-flash",
-        generation_config=generation_config,
-    )
-    return model, key_index
+    # Create client with new SDK
+    client = genai.Client(api_key=api_key)
+    return client, key_index
 
 
-def predict_chanda_with_llm(verse: str, model, key_index: int, max_retries: int = 3) -> Optional[str]:
+def predict_chanda_with_llm(verse: str, client, key_index: int, max_retries: int = 3) -> Optional[str]:
     """
     Use Gemini LLM to predict the Chanda (meter) of a Sanskrit verse.
     
     Args:
         verse: Sanskrit verse in Devanagari script
-        model: Gemini model instance
+        client: Gemini client instance
         key_index: Current API key index (for tracking exhaustion)
         max_retries: Maximum number of retries with different keys
     
@@ -213,13 +203,24 @@ Do NOT include any explanation, just the meter name.
 
 Meter name:"""
 
+    # Configure generation settings
+    config = types.GenerateContentConfig(
+        temperature=0.1,  # Low temperature for more deterministic output
+        top_p=0.95,
+        max_output_tokens=256,
+    )
+
     retries = 0
-    current_model = model
+    current_client = client
     current_key_index = key_index
     
     while retries < max_retries:
         try:
-            response = current_model.generate_content(prompt)
+            response = current_client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=config
+            )
             if response and response.text:
                 # Clean up the response
                 meter_name = response.text.strip()
@@ -240,7 +241,7 @@ Meter name:"""
                 if retries < max_retries:
                     try:
                         # Try with a new API key
-                        current_model, current_key_index = create_gemini_model()
+                        current_client, current_key_index = create_gemini_client()
                         print(f"  🔄 Retrying with API key #{current_key_index + 1}...")
                         time.sleep(1)  # Small delay before retry
                         continue
@@ -359,9 +360,9 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
     test_data = load_test_data(csv_path, num_samples)
     print(f"Loaded {len(test_data)} test verses")
     
-    # Initialize Gemini model
-    print("\nInitializing Gemini model...")
-    model, current_key_index = create_gemini_model()
+    # Initialize Gemini client
+    print("\nInitializing Gemini client...")
+    client, current_key_index = create_gemini_client()
     print(f"Using API key #{current_key_index + 1}")
     
     # Initialize Chanda identifier for comparison if requested
@@ -408,7 +409,7 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
         
         # Predict with LLM (with retry logic for exhausted keys)
         try:
-            predicted = predict_chanda_with_llm(verse, model, current_key_index)
+            predicted = predict_chanda_with_llm(verse, client, current_key_index)
         except ValueError as e:
             print(f"\n🚨 {e}")
             print("Stopping test due to exhausted API keys.")
@@ -487,7 +488,7 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
         # Rotate API key every 5 requests to distribute load
         if i % 5 == 0:
             try:
-                model, current_key_index = create_gemini_model()
+                client, current_key_index = create_gemini_client()
                 print(f"  🔄 Switched to API key #{current_key_index + 1}")
             except ValueError as e:
                 print(f"\n🚨 {e}")

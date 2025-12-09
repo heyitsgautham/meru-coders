@@ -12,11 +12,15 @@ import json
 import logging
 import asyncio
 import uuid
+import time
 from pathlib import Path
 from flask import request, jsonify, send_from_directory, current_app
 from werkzeug.utils import secure_filename
 
 from backend.config import settings
+
+# Import AI validator for shloka pre-validation
+from backend.core.ai_validator import validate_shloka_input
 
 # Import edge-tts for text-to-speech functionality
 try:
@@ -109,9 +113,110 @@ def register_routes(app):
             identification_mode = data.get('identification_mode', 'auto')
             verse_mode = (text_mode == 'verse')
             
+            # Start timing for latency measurement
+            start_time = time.time()
+            timing_info = {
+                'total_ms': 0,
+                'cache_lookup_ms': 0,
+                'ai_validation_ms': 0,
+                'rule_engine_ms': 0,
+                'cache_hit': False,
+                'ai_skipped': False
+            }
+            
             logger.info(f"Analyzing text (text_mode: {text_mode}, id_mode: {identification_mode}, sandhi: {enable_sandhi})")
             
-            # Perform meter identification
+            # =====================================================================
+            # STEP 1: VERSE CACHE LOOKUP - Check if we have this verse already
+            # If found with high similarity, skip AI validation entirely
+            # =====================================================================
+            cache_start = time.time()
+            cache_result = find_cached_verse_match(text, threshold=CACHE_CLOSE_MATCH_THRESHOLD)
+            timing_info['cache_lookup_ms'] = round((time.time() - cache_start) * 1000, 2)
+            
+            skip_ai = cache_result.get('skip_ai', False)
+            timing_info['cache_hit'] = cache_result.get('found', False)
+            timing_info['ai_skipped'] = skip_ai
+            
+            if cache_result.get('found'):
+                logger.info(f"Cache hit! Similarity: {cache_result['similarity']:.2%}, Skip AI: {skip_ai}")
+            
+            # =====================================================================
+            # STEP 2: AI PRE-VALIDATION (skipped if cache hit with high similarity)
+            # This prevents the rule-based model from predicting invalid chandas
+            # =====================================================================
+            ai_validation = {'ai_validated': False, 'text_type': 'unknown', 'confidence': 0.0}
+            
+            if skip_ai:
+                # Cache hit - assume valid Sanskrit (it's in our verified dataset)
+                logger.info("Skipping AI validation - verse found in cache")
+                should_proceed = True
+                ai_validation = {
+                    'ai_validated': False,
+                    'text_type': 'verse',
+                    'confidence': cache_result.get('similarity', 0.9),
+                    'skipped_reason': 'cache_hit'
+                }
+            else:
+                # No cache hit - run AI validation
+                ai_start = time.time()
+                should_proceed, rejection_reason, ai_validation = validate_shloka_input(text, skip_ai=False)
+                timing_info['ai_validation_ms'] = round((time.time() - ai_start) * 1000, 2)
+            
+            if not should_proceed:
+                logger.info(f"AI validation rejected input: {rejection_reason}")
+                timing_info['total_ms'] = round((time.time() - start_time) * 1000, 2)
+                
+                # Return a 200 OK with invalid input result (same format as chanda.py)
+                # This allows the frontend to display it nicely instead of as an error
+                invalid_result = {
+                    'line': [{
+                        'line': text,
+                        'result': {
+                            'found': False,
+                            'is_padya': False,
+                            'is_valid_input': False,
+                            'validation_error': 'Invalid Sanskrit input',
+                            'prose_message': 'Please enter valid Sanskrit text using Devanagari (देवनागरी) or IAST with diacritics (dharmakṣetre)',
+                            'syllables': [],
+                            'lg': [],
+                            'gana': '',
+                            'length': 0,
+                            'matra': 0,
+                            'chanda': [],
+                            'jaati': [],
+                            'display_scheme': None,
+                            'display_line': text,
+                            'display_syllables': [],
+                            'display_lg': [],
+                            'display_gana': '',
+                            'display_length': 0,
+                            'display_matra': 0,
+                            'display_chanda': '',
+                            'display_chanda_primary': '',
+                            'fuzzy': []
+                        }
+                    }]
+                }
+                
+                return jsonify({
+                    'success': True,  # Return success so frontend doesn't show error box
+                    'result': invalid_result,
+                    'summary': {
+                        'count': {'line': 1, 'match_line': 0},
+                        'line': {'match': {'chanda': {}}, 'no_match': 1}
+                    },
+                    'summary_formatted': 'Invalid input - not Sanskrit text',
+                    'is_valid_input': False,
+                    'validation_message': 'Please enter valid Sanskrit text using Devanagari (देवनागरी) or IAST with diacritics (dharmakṣetre)',
+                    'timing': timing_info
+                })
+            # =====================================================================
+            
+            # =====================================================================
+            # STEP 3: METER IDENTIFICATION (rule engine)
+            # =====================================================================
+            rule_start = time.time()
             result = app.chanda.identify_from_text(
                 text,
                 verse=verse_mode,
@@ -121,6 +226,8 @@ def register_routes(app):
                 use_sandhi=enable_sandhi,
                 mode=identification_mode
             )
+            timing_info['rule_engine_ms'] = round((time.time() - rule_start) * 1000, 2)
+            timing_info['total_ms'] = round((time.time() - start_time) * 1000, 2)
             
             # Generate summary
             summary = app.chanda.summarize_results(result['result'])
@@ -134,12 +241,32 @@ def register_routes(app):
                 else:
                     result_path = str(result['path'])
             
+            # Log timing summary
+            if timing_info['cache_hit']:
+                ai_status = 'SKIPPED' if timing_info['ai_skipped'] else f"{timing_info['ai_validation_ms']}ms"
+                logger.info(f"[TIMING] Cache HIT | Total: {timing_info['total_ms']}ms | Cache: {timing_info['cache_lookup_ms']}ms | AI: {ai_status} | Rule: {timing_info['rule_engine_ms']}ms")
+            else:
+                logger.info(f"[TIMING] Cache MISS | Total: {timing_info['total_ms']}ms | Cache: {timing_info['cache_lookup_ms']}ms | AI: {timing_info['ai_validation_ms']}ms | Rule: {timing_info['rule_engine_ms']}ms")
+            
             return jsonify({
                 'success': True,
                 'result': result['result'],
                 'result_path': result_path,
                 'summary': summary,
                 'summary_formatted': summary_formatted,
+                'ai_validation': {
+                    'validated': ai_validation.get('ai_validated', False),
+                    'text_type': ai_validation.get('text_type', 'unknown'),
+                    'confidence': ai_validation.get('confidence', 0.0),
+                    'skipped': timing_info['ai_skipped']
+                },
+                'cache_info': {
+                    'hit': timing_info['cache_hit'],
+                    'similarity': cache_result.get('similarity', 0.0) if cache_result.get('found') else 0.0,
+                    'cached_chandas': cache_result.get('cached_data', {}).get('chandas', '') if cache_result.get('found') else '',
+                    'source_dataset': cache_result.get('cached_data', {}).get('dataset', '') if cache_result.get('found') else ''
+                },
+                'timing': timing_info,
                 'input': {
                     'text': text,
                     'output_scheme': output_scheme,
@@ -375,6 +502,10 @@ def register_routes(app):
             identification_mode = request.form.get('identification_mode', 'auto')
             
             logger.info(f"Analyzing file: {filename} ({extraction_result.file_type.value}, {extraction_result.page_count} pages)")
+            
+            # NOTE: AI validation is SKIPPED for file uploads (batch mode)
+            # This is intentional to save API quota and reduce latency for large files
+            # The rule-based validation in chanda.py still applies
             
             # Perform meter identification
             verse_mode = (text_mode == 'verse')
@@ -962,6 +1093,81 @@ def register_routes(app):
             matches = sum(1 for a, b in zip(text1, text2) if a == b)
             return matches / max(len(text1), len(text2))
     
+    # ============================================================
+    # VERSE CACHE LOOKUP - Skip AI for known verses
+    # ============================================================
+    
+    # Configurable thresholds for cache-based AI skipping
+    CACHE_EXACT_MATCH_THRESHOLD = 0.98   # Skip AI + use cached meter directly
+    CACHE_CLOSE_MATCH_THRESHOLD = 0.90   # Skip AI, but still run rule engine
+    
+    def find_cached_verse_match(text, threshold=CACHE_CLOSE_MATCH_THRESHOLD):
+        """
+        Search the verse cache for an exact or close match.
+        If found, we can skip AI validation and potentially use cached meter info.
+        
+        Args:
+            text: Input Sanskrit text
+            threshold: Minimum similarity score to consider a match (default 0.90)
+        
+        Returns:
+            dict with:
+                - found: bool
+                - similarity: float (0-1)
+                - cached_data: dict with meter info if found
+                - skip_ai: bool (whether to skip AI validation)
+                - use_cached_meter: bool (whether cached meter can be used directly)
+        """
+        # Build index if not already done
+        build_sloka_search_index()
+        
+        if not _sloka_search_cache['slokas']:
+            return {'found': False, 'similarity': 0.0, 'skip_ai': False, 'use_cached_meter': False}
+        
+        # Normalize input for comparison
+        normalized_input = normalize_sanskrit_text(text)
+        
+        if not normalized_input:
+            return {'found': False, 'similarity': 0.0, 'skip_ai': False, 'use_cached_meter': False}
+        
+        best_match = None
+        best_similarity = 0.0
+        
+        # Search through cached verses
+        for sloka_data in _sloka_search_cache['slokas']:
+            similarity = calculate_similarity(normalized_input, sloka_data['normalized'])
+            
+            if similarity > best_similarity:
+                best_similarity = similarity
+                best_match = sloka_data
+                
+                # Early exit for exact match (optimization)
+                if similarity >= CACHE_EXACT_MATCH_THRESHOLD:
+                    break
+        
+        if best_match and best_similarity >= threshold:
+            return {
+                'found': True,
+                'similarity': best_similarity,
+                'cached_data': {
+                    'text': best_match['text'],
+                    'chandas': best_match.get('chandas', ''),
+                    'lg_pattern': best_match.get('raw', {}).get('lg_pattern', ''),
+                    'syllable_count': best_match.get('raw', {}).get('syllable_count', ''),
+                    'dataset': best_match.get('dataset_name', ''),
+                    'source': best_match.get('source', ''),
+                },
+                'skip_ai': True,  # Skip AI validation for close matches
+                'use_cached_meter': best_similarity >= CACHE_EXACT_MATCH_THRESHOLD
+            }
+        
+        return {
+            'found': False,
+            'similarity': best_similarity,
+            'skip_ai': False,
+            'use_cached_meter': False
+        }
+    
     @app.route(f'{settings.API_PREFIX}/sloka/search', methods=['POST'])
     def search_sloka():
         """
@@ -1539,6 +1745,198 @@ def register_routes(app):
             
         except Exception as e:
             logger.exception(f"Error in ocr_extract: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+
+    @app.route(f'{settings.API_PREFIX}/audio/transcribe', methods=['POST'])
+    def audio_transcribe():
+        """
+        Transcribe Sanskrit audio using IndicConformer ASR.
+        
+        Accepts audio files (WAV, MP3, WebM) and returns transcribed Sanskrit text.
+        Uses AI4Bharat's IndicConformerASR model via external API.
+        WebM files (from browser recording) are automatically converted to WAV.
+        
+        Request: Multipart form data with 'audio_file' field
+        
+        Returns:
+            JSON with transcribed text
+        """
+        import requests as http_requests
+        import subprocess
+        import tempfile
+        
+        ALLOWED_AUDIO_EXTENSIONS = {'wav', 'mp3', 'webm', 'ogg', 'm4a', 'flac'}
+        
+        try:
+            # Handle multipart form data
+            if 'audio_file' not in request.files:
+                return jsonify({
+                    'success': False,
+                    'error': 'No audio file provided'
+                }), 400
+            
+            file = request.files['audio_file']
+            if file.filename == '':
+                return jsonify({
+                    'success': False,
+                    'error': 'Empty filename'
+                }), 400
+            
+            if not allowed_file(file.filename, ALLOWED_AUDIO_EXTENSIONS):
+                return jsonify({
+                    'success': False,
+                    'error': f'Invalid file type. Allowed: {ALLOWED_AUDIO_EXTENSIONS}'
+                }), 400
+            
+            filename = secure_filename(file.filename)
+            filepath = settings.AUDIO_DIR / filename
+            file.save(filepath)
+            
+            logger.info(f"Audio transcription requested for: {filename}")
+            
+            # Check if we need to convert WebM to WAV (browser recordings are WebM/Opus)
+            file_ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+            audio_filepath = filepath
+            converted_filepath = None
+            
+            if file_ext in ('webm', 'ogg', 'm4a'):
+                # Convert to WAV using ffmpeg
+                converted_filepath = settings.AUDIO_DIR / f"{filename.rsplit('.', 1)[0]}.wav"
+                logger.info(f"Converting {file_ext.upper()} to WAV: {converted_filepath}")
+                
+                try:
+                    # Use ffmpeg to convert to 16kHz mono WAV (optimal for ASR)
+                    result = subprocess.run([
+                        'ffmpeg', '-y', '-i', str(filepath),
+                        '-ar', '16000',  # 16kHz sample rate
+                        '-ac', '1',      # Mono
+                        '-f', 'wav',
+                        str(converted_filepath)
+                    ], capture_output=True, text=True, timeout=60)
+                    
+                    if result.returncode != 0:
+                        logger.error(f"ffmpeg conversion failed: {result.stderr}")
+                        return jsonify({
+                            'success': False,
+                            'error': 'Audio format conversion failed. Please upload a WAV or MP3 file.'
+                        }), 400
+                    
+                    audio_filepath = converted_filepath
+                    
+                    # Get audio duration using ffprobe
+                    try:
+                        probe_result = subprocess.run([
+                            'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
+                            '-of', 'default=noprint_wrappers=1:nokey=1', str(converted_filepath)
+                        ], capture_output=True, text=True, timeout=10)
+                        duration = float(probe_result.stdout.strip()) if probe_result.stdout.strip() else 0
+                        logger.info(f"Conversion successful: {converted_filepath} (duration: {duration:.2f}s)")
+                        
+                        if duration < 1.0:
+                            logger.warning(f"Audio too short: {duration:.2f}s")
+                            return jsonify({
+                                'success': False,
+                                'error': 'Recording is too short. Please record at least 1 second of audio.'
+                            }), 400
+                    except Exception as e:
+                        logger.warning(f"Could not get audio duration: {e}")
+                        logger.info(f"Conversion successful: {converted_filepath}")
+                    
+                except FileNotFoundError:
+                    logger.error("ffmpeg not found. Cannot convert WebM to WAV.")
+                    return jsonify({
+                        'success': False,
+                        'error': 'Audio conversion not available. Please upload a WAV or MP3 file instead.'
+                    }), 400
+                except subprocess.TimeoutExpired:
+                    logger.error("ffmpeg conversion timed out")
+                    return jsonify({
+                        'success': False,
+                        'error': 'Audio conversion timed out. Please try a shorter recording.'
+                    }), 400
+            
+            # Call IndicConformer ASR API
+            asr_url = settings.INDIC_ASR_URL
+            send_filename = audio_filepath.name
+            
+            try:
+                with open(audio_filepath, 'rb') as audio_file:
+                    files = {'file': (send_filename, audio_file)}
+                    data = {'decoder': 'rnnt'}
+                    
+                    logger.info(f"Calling IndicConformer ASR at: {asr_url} with file: {send_filename}")
+                    response = http_requests.post(
+                        asr_url,
+                        files=files,
+                        data=data,
+                        timeout=120  # 2 minute timeout for large audio files
+                    )
+                    
+                    if response.status_code != 200:
+                        logger.error(f"ASR API returned status {response.status_code}: {response.text}")
+                        return jsonify({
+                            'success': False,
+                            'error': f'ASR service error: {response.status_code}'
+                        }), 502
+                    
+                    result = response.json()
+                    logger.info(f"ASR API response: {result}")
+                    
+                    # Extract transcription from response
+                    transcription = result.get('transcription', [])
+                    logger.info(f"Transcription field: {transcription}, type: {type(transcription)}")
+                    
+                    if isinstance(transcription, list) and len(transcription) > 0:
+                        text = transcription[0].strip()
+                    elif isinstance(transcription, str):
+                        text = transcription.strip()
+                    else:
+                        text = ''
+                    
+                    if not text:
+                        logger.warning("ASR returned empty transcription - audio may be silent or too short")
+                        return jsonify({
+                            'success': False,
+                            'error': 'No speech detected in the audio. Please ensure you are speaking clearly into the microphone and try recording again.'
+                        }), 400
+                    
+                    logger.info(f"ASR transcription complete: {len(text)} chars")
+                    
+                    return jsonify({
+                        'success': True,
+                        'text': text,
+                        'decoder_used': result.get('decoder_used', 'rnnt')
+                    })
+                    
+            except http_requests.exceptions.Timeout:
+                logger.error("ASR API request timed out")
+                return jsonify({
+                    'success': False,
+                    'error': 'Audio transcription timed out. Please try a shorter audio file.'
+                }), 504
+            except http_requests.exceptions.ConnectionError as e:
+                logger.error(f"ASR API connection error: {e}")
+                return jsonify({
+                    'success': False,
+                    'error': 'Could not connect to transcription service. Please try again later.'
+                }), 503
+            finally:
+                # Clean up uploaded and converted files
+                try:
+                    filepath.unlink()
+                except Exception:
+                    pass
+                if converted_filepath:
+                    try:
+                        converted_filepath.unlink()
+                    except Exception:
+                        pass
+            
+        except Exception as e:
+            logger.exception(f"Error in audio_transcribe: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)

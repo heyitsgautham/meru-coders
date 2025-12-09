@@ -1,8 +1,8 @@
-import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, BookOpen } from "lucide-react";
+import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, BookOpen, Mic } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
-import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile } from "../hooks/useApi";
+import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile, useExtractAudio } from "../hooks/useApi";
 import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode } from "../types/api";
 
 // Fixed analysis settings
@@ -38,9 +38,9 @@ interface AnalysisFormProps {
 
 export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = false }: AnalysisFormProps) {
   const [text, setText] = useState(initialText);
-  const [activeTab, setActiveTab] = useState<"text" | "image" | "file">(() => {
+  const [activeTab, setActiveTab] = useState<"text" | "image" | "file" | "voice">(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.activeTab);
-    return (saved as "text" | "image" | "file") || "text";
+    return (saved as "text" | "image" | "file" | "voice") || "text";
   });
 
   // Identification mode state
@@ -59,14 +59,23 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
   const [fileWarnings, setFileWarnings] = useState<string[]>([]);
 
+  // Voice/Audio state
+  const [selectedAudio, setSelectedAudio] = useState<File | null>(null);
+  const [audioExtractedText, setAudioExtractedText] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
   // Refs for file inputs
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Drag and drop state
   const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const [isDraggingAudio, setIsDraggingAudio] = useState(false);
 
   // Results state
   const [result, setResult] = useState<IdentifyResponse | null>(null);
@@ -84,9 +93,15 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
     extract: extractTextFromFile,
     reset: resetFileExtract
   } = useExtractFile();
+  const {
+    loading: audioExtractLoading,
+    error: audioExtractError,
+    extract: extractTextFromAudio,
+    reset: resetAudioExtract
+  } = useExtractAudio();
 
   const isLoading = textLoading || fileLoading;
-  const error = textError || fileError || extractError || fileExtractError;
+  const error = textError || fileError || extractError || fileExtractError || audioExtractError;
 
   // Save activeTab to localStorage when it changes
   useEffect(() => {
@@ -306,6 +321,173 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
     }
   };
 
+  // ========== AUDIO/VOICE HANDLERS ==========
+
+  // Handle audio file selection
+  const handleAudioSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processAudioFile(file);
+    }
+  };
+
+  // Process audio file (shared between select and drag-drop)
+  const processAudioFile = (file: File) => {
+    // Validate file type
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['wav', 'mp3', 'webm', 'ogg', 'm4a', 'flac'];
+
+    if (!ext || !allowedExtensions.includes(ext)) {
+      alert('Please select a WAV or MP3 audio file');
+      return;
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Audio file size must be less than 10MB');
+      return;
+    }
+
+    setSelectedAudio(file);
+    setAudioExtractedText(null);
+    resetAudioExtract();
+  };
+
+  // Handle drag events for audio upload
+  const handleAudioDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleAudioDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingAudio(true);
+  };
+
+  const handleAudioDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.currentTarget.contains(e.relatedTarget as Node)) {
+      return;
+    }
+    setIsDraggingAudio(false);
+  };
+
+  const handleAudioDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingAudio(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      processAudioFile(file);
+    }
+  };
+
+  // Handle audio transcription
+  const handleExtractAudioText = async () => {
+    if (!selectedAudio) return;
+
+    try {
+      const text = await extractTextFromAudio(selectedAudio);
+      setAudioExtractedText(text);
+    } catch (err) {
+      console.error("Audio transcription failed:", err);
+    }
+  };
+
+  // Handle "Identify Chandas" from transcribed audio text
+  const handleIdentifyFromAudio = async () => {
+    if (!audioExtractedText) return;
+
+    // Set the text and switch to text tab
+    setText(audioExtractedText);
+    setActiveTab("text");
+    setResult(null);
+
+    try {
+      const response = await identifyText(audioExtractedText, ANALYSIS_MODE, OUTPUT_SCRIPT, identificationMode);
+      setResultType("text");
+      setResult(response);
+    } catch (err) {
+      console.error("Analysis failed:", err);
+    }
+  };
+
+  // Clear audio and reset state
+  const handleRemoveAudio = () => {
+    setSelectedAudio(null);
+    setAudioExtractedText(null);
+    resetAudioExtract();
+    if (audioInputRef.current) {
+      audioInputRef.current.value = '';
+    }
+    // Stop recording if active
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Start recording audio
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+        setSelectedAudio(audioFile);
+        setAudioExtractedText(null);
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      setMediaRecorder(recorder);
+      setAudioChunks([]);
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Could not access microphone. Please ensure you have granted permission.");
+    }
+  };
+
+  // Stop recording audio
+  const stopRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Get audio file icon
+  const getAudioFileIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'mp3':
+        return '🎵';
+      case 'wav':
+        return '🔊';
+      case 'webm':
+        return '🎤';
+      default:
+        return '🎧';
+    }
+  };
+
+  // ========== END AUDIO/VOICE HANDLERS ==========
+
   // Get file type icon based on extension
   const getFileTypeIcon = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase();
@@ -484,6 +666,21 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
             >
               <Upload className="w-3.5 h-3.5" />
               <span className="text-sm font-medium">File Upload</span>
+            </button>
+
+            {/* Voice Input Tab */}
+            <button
+              onClick={() => {
+                setActiveTab("voice");
+                setResult(null); // Clear results when switching tabs
+              }}
+              className={`tab-button flex-1 border transition-all duration-300 ${activeTab === "voice"
+                ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-dark)] shadow-[0_0_0_1px_rgba(255,153,51,0.35)]"
+                : "border-[var(--color-border-subtle)] bg-white text-[var(--color-text-main)] hover:border-[var(--color-accent-gold)] hover:bg-[var(--color-primary-soft)]"
+                }`}
+            >
+              <Mic className="w-3.5 h-3.5" />
+              <span className="text-sm font-medium">Voice Input</span>
             </button>
           </div>
 
@@ -862,6 +1059,234 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                       {/* Identify Chandas Button */}
                       <button
                         onClick={handleIdentifyFromFile}
+                        disabled={textLoading}
+                        className="identify-btn h-[52px] px-8 text-base"
+                      >
+                        {textLoading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Analyzing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-5 h-5" />
+                            <span>Identify Chandas</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === "voice" && (
+              <div className="space-y-6">
+                {/* Voice/Audio Upload Area */}
+                <div>
+                  <label className="block text-[var(--color-text-main)] mb-3 font-semibold text-base">
+                    Record or Upload Sanskrit Chanting
+                  </label>
+                  <input
+                    ref={audioInputRef}
+                    type="file"
+                    accept=".wav,.mp3,.webm,.ogg,.m4a,.flac"
+                    onChange={handleAudioSelect}
+                    className="hidden"
+                  />
+                  <div
+                    onClick={() => !selectedAudio && !isRecording && audioInputRef.current?.click()}
+                    onDragOver={handleAudioDragOver}
+                    onDragEnter={handleAudioDragEnter}
+                    onDragLeave={handleAudioDragLeave}
+                    onDrop={handleAudioDrop}
+                    className={`group border-2 border-dashed rounded-[20px] p-8 bg-gradient-to-b transition-all duration-300 ${isDraggingAudio
+                      ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] shadow-xl scale-[1.02]'
+                      : selectedAudio
+                        ? 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3]'
+                        : 'border-[var(--color-border-subtle)] from-white to-[#fdf8f3] cursor-pointer hover:from-white hover:to-[var(--color-primary-soft)] hover:border-[var(--color-primary)] hover:shadow-xl'
+                      }`}
+                  >
+                    {selectedAudio ? (
+                      <div className="flex flex-col items-center gap-6">
+                        <div className="relative">
+                          <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg">
+                            <span className="text-4xl">{getAudioFileIcon(selectedAudio.name)}</span>
+                          </div>
+                          {/* Remove button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveAudio();
+                            }}
+                            className="absolute -top-3 -right-3 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                            title="Remove audio"
+                          >
+                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-lg font-semibold text-[var(--color-text-main)] mb-1">
+                            {selectedAudio.name}
+                          </p>
+                          <p className="text-sm text-[var(--color-text-muted)]">
+                            {(selectedAudio.size / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+
+                        {/* Extract Text Button - only show when no extracted text */}
+                        {!audioExtractedText && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExtractAudioText();
+                            }}
+                            disabled={audioExtractLoading}
+                            className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base disabled:opacity-50 flex items-center gap-2"
+                          >
+                            {audioExtractLoading ? (
+                              <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span>Transcribing...</span>
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="w-5 h-5" />
+                                <span>Extract Text</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+
+                        {/* Clear Audio Button - only show after text extraction */}
+                        {audioExtractedText && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveAudio();
+                            }}
+                            className="px-8 py-3 bg-[var(--color-primary-soft)] text-[var(--color-primary-dark)] border border-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg font-semibold text-base flex items-center gap-2"
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>Clear Audio</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : isRecording ? (
+                      <div className="flex flex-col items-center gap-6">
+                        <div className="p-6 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg animate-pulse">
+                          <Mic className="w-10 h-10 text-white" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-lg font-semibold text-red-600 mb-2">
+                            Recording...
+                          </p>
+                          <p className="text-[var(--color-text-muted)] text-base">
+                            Click Stop when finished chanting
+                          </p>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            stopRecording();
+                          }}
+                          className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
+                        >
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="6" y="6" width="12" height="12" rx="2" />
+                          </svg>
+                          <span>Stop Recording</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-6">
+                        <div className={`p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg transition-all duration-300 ${isDraggingAudio ? 'scale-110 shadow-xl' : 'group-hover:shadow-xl group-hover:scale-110'
+                          }`}>
+                          <Mic className="w-10 h-10 text-white" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-lg font-semibold text-[var(--color-text-main)] mb-2">
+                            {isDraggingAudio ? 'Drop your audio here!' : 'Record or upload audio'}
+                          </p>
+                          <p className="text-[var(--color-text-muted)] text-base mb-1">
+                            Chant a shloka and we'll identify the meter
+                          </p>
+                          <p className="text-[var(--color-text-muted)] text-sm">
+                            Supports WAV, MP3 (max 10MB)
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startRecording();
+                            }}
+                            className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
+                          >
+                            <Mic className="w-5 h-5" />
+                            <span>Record</span>
+                          </button>
+                          <span className="text-[var(--color-text-muted)]">or</span>
+                          <button className={`px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base ${isDraggingAudio ? 'scale-105' : 'group-hover:scale-105'
+                            }`}>
+                            Choose File
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Audio Extraction Error Display */}
+                {audioExtractError && (
+                  <div className="mt-4 p-5 bg-red-50 border-2 border-red-200 rounded-[16px] flex items-start gap-4">
+                    <div className="p-2 bg-red-100 rounded-full">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-red-700 mb-1">Transcription Failed</p>
+                      <p className="text-red-600">{audioExtractError}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Transcribed Text Display - Styled with theme border */}
+                {audioExtractedText && (
+                  <div className="mt-8 p-8 bg-[#fdf8f3] border-2 border-[var(--color-primary)] rounded-[20px] shadow-md">
+                    {/* Transcribed Text Heading */}
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-[var(--color-text-main)]">
+                        Transcribed Text
+                      </h3>
+                      <span className="px-3 py-1 bg-white rounded-full border border-[var(--color-border-subtle)] text-sm text-[var(--color-text-muted)]">
+                        IndicConformer ASR
+                      </span>
+                    </div>
+
+                    {/* Text Content */}
+                    <div
+                      className="text-center mb-8 whitespace-pre-wrap p-8 bg-white rounded-[16px] border border-[var(--color-border-subtle)] max-h-[400px] overflow-y-auto"
+                      style={{
+                        fontFamily: "'Crimson Text', 'Merriweather', Georgia, 'Times New Roman', serif",
+                        fontSize: '25px',
+                        fontWeight: 400,
+                        color: '#4a2c10',
+                        lineHeight: 1.75,
+                        letterSpacing: '0.02em'
+                      }}
+                    >
+                      {audioExtractedText}
+                    </div>
+
+                    {/* Button Row */}
+                    <div className="flex items-center gap-4">
+                      {/* Identify Chandas Button */}
+                      <button
+                        onClick={handleIdentifyFromAudio}
                         disabled={textLoading}
                         className="identify-btn h-[52px] px-8 text-base"
                       >
