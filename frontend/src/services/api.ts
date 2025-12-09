@@ -30,9 +30,9 @@ const getAPIBaseURL = (): string => {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     const port = window.location.port;
-    
+
     console.log('[API] Detected hostname:', hostname, 'port:', port);
-    
+
     // Check for runtime config first (for production/Cloud Run)
     const win = window as typeof window & { CONFIG?: { API_URL?: string } };
     if (win.CONFIG?.API_URL) {

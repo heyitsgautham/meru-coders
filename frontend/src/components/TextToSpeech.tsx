@@ -14,7 +14,6 @@ interface TextToSpeechProps {
 
 export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpeechProps) {
   const { audioUrl, loading, error, generate, reset } = useTTS();
-  const [voice, setVoice] = useState<'male' | 'female'>('male');
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -23,16 +22,6 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
     reset();
     setIsPlaying(false);
   }, [text, reset]);
-
-  // Reset audio when voice changes to allow regeneration
-  const handleVoiceChange = (newVoice: 'male' | 'female') => {
-    setVoice(newVoice);
-    if (audioUrl) {
-      // Reset to allow regeneration with new voice
-      reset();
-      setIsPlaying(false);
-    }
-  };
 
   // Handle audio playback state
   useEffect(() => {
@@ -77,10 +66,10 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
     setIsPlaying(false);
 
     console.log('🎤 Generating TTS for text:', text.substring(0, 50) + '...');
-    console.log('🎤 Selected voice:', voice);
+    console.log('🎤 Using default male voice');
 
     try {
-      const result = await generate(text, voice);
+      const result = await generate(text, 'male');
       console.log('🎤 TTS Generation result:', result);
       if (result.audio_url) {
         console.log('✅ Audio URL received:', result.audio_url);
@@ -148,32 +137,7 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
           align-items: center;
         }
 
-        .tts-voice-selector {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 12px;
-          background: white;
-          border: 2px solid #ffcc80;
-          border-radius: 8px;
-          font-size: 14px;
-          color: #bf360c;
-        }
 
-        .tts-voice-selector label {
-          font-weight: 500;
-          margin-right: 4px;
-        }
-
-        .tts-voice-selector select {
-          border: none;
-          background: transparent;
-          color: #bf360c;
-          font-weight: 600;
-          cursor: pointer;
-          outline: none;
-          font-size: 14px;
-        }
 
         .tts-button {
           display: flex;
@@ -293,24 +257,12 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
       </div>
 
       <div className="tts-controls">
-        <div className="tts-voice-selector">
-          <label htmlFor="voice-select">🎤 Voice:</label>
-          <select
-            id="voice-select"
-            value={voice}
-            onChange={(e) => handleVoiceChange(e.target.value as 'male' | 'female')}
-            disabled={loading}
-          >
-            <option value="male">👨 Male</option>
-            <option value="female">👩 Female</option>
-          </select>
-        </div>
-
         {!audioUrl ? (
           <button
             onClick={handleGenerate}
             disabled={loading || !text.trim()}
             className="tts-button tts-button-primary"
+            title={!text.trim() ? "No text to convert" : "Generate audio"}
           >
             {loading ? (
               <>
@@ -330,12 +282,12 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
               onClick={handleGenerate}
               disabled={loading}
               className="tts-button tts-button-primary"
-              title="Regenerate with selected voice"
+              title="Regenerate with current voice"
             >
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" />
-                  Generating...
+                  Regenerating...
                 </>
               ) : (
                 <>
@@ -348,6 +300,7 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
               onClick={handlePlay}
               disabled={!audioUrl || loading}
               className="tts-button tts-button-success"
+              title={isPlaying ? "Pause audio" : "Play audio"}
             >
               {isPlaying ? (
                 <>
@@ -365,6 +318,7 @@ export function TextToSpeech({ text, label = "Listen to this verse" }: TextToSpe
               onClick={handleDownload}
               disabled={!audioUrl || loading}
               className="tts-button tts-button-secondary"
+              title="Download audio file"
             >
               <Download />
               Download
