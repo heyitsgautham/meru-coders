@@ -420,7 +420,7 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
     try {
       const result = await validateSloka(audioExtractedText);
       setValidationResult(result);
-      
+
       // Only replace text if found and similarity >= 90%
       if (result.found && result.original_text && result.similarity && result.similarity >= 0.90) {
         setAudioExtractedText(result.original_text);
@@ -1355,11 +1355,10 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
 
                     {/* Validation Result Display */}
                     {validationResult && validationResult.found && validationResult.similarity && validationResult.similarity >= 0.90 && (
-                      <div className={`mb-6 p-6 rounded-xl border-2 ${
-                        validationResult.is_valid 
-                          ? 'bg-green-50 border-green-300' 
+                      <div className={`mb-6 p-6 rounded-xl border-2 ${validationResult.is_valid
+                          ? 'bg-green-50 border-green-300'
                           : 'bg-yellow-50 border-yellow-300'
-                      }`}>
+                        }`}>
                         <div className="flex items-start gap-3">
                           {validationResult.is_valid ? (
                             <CheckCircle className="w-6 h-6 text-green-600 mt-1" />
@@ -1444,7 +1443,7 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                               </>
                             )}
                           </button>
-                          
+
                           <button
                             onClick={handleUseAsIs}
                             disabled={isValidating}
