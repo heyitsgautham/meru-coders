@@ -44,6 +44,15 @@ pyttsx3>=2.99
 # AI/Chatbot Support
 google-genai>=1.0.0
 
+# RAG (Retrieval-Augmented Generation) Support
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-google-genai>=0.0.5
+langchain-community>=0.0.10
+chromadb>=0.4.22
+sentence-transformers>=2.2.2
+tiktoken>=0.5.2
+
 # Optional: Hybrid syllabization (ICU-based) for improved accuracy
 # Provides 50% better syllable counting vs sanskrit_text
 # Install with: pip install PyICU regex

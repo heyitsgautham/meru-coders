@@ -51,7 +51,7 @@ GEMINI_API_KEYS = [
 GEMINI_API_KEYS = [key for key in GEMINI_API_KEYS if key]
 
 # Validation prompt for Gemini
-SHLOKA_VALIDATION_PROMPT = """You are an expert in Sanskrit prosody (Chandas Shastra). 
+SHLOKA_VALIDATION_PROMPT = """You are Aacharya Pingala, the ancient sage and author of Chandas Shastra. 
 Analyze the following text and determine if it is a valid Sanskrit verse (shloka/padya) suitable for chandas/meter identification.
 
 Text to analyze:

@@ -26,7 +26,7 @@ import type { Notification } from '../../types/community';
 export function NotificationsDropdown() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export function NotificationsDropdown() {
 
   // WebSocket connection for real-time updates
   const { connected } = useWebSocket();
-  
+
   // Real-time notification handler
   const handleNewNotification = useCallback((notification: any) => {
     // Add new notification to the top of the list
@@ -49,14 +49,14 @@ export function NotificationsDropdown() {
   }, []);
 
   // Subscribe to real-time notifications
-  const { newNotifications } = useRealtimeNotifications(handleNewNotification);
+  const { newNotifications: _newNotifications } = useRealtimeNotifications(handleNewNotification);
 
   // Toast for new notifications
   const { notification: toastNotification, showToast, dismissToast } = useNotificationToast();
 
   const fetchNotifications = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       const response = await getNotifications(20);
@@ -180,7 +180,7 @@ export function NotificationsDropdown() {
           </div>
         </div>
       )}
-      
+
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <button className="notification-bell-btn">
@@ -196,7 +196,7 @@ export function NotificationsDropdown() {
             </span>
           </button>
         </DropdownMenuTrigger>
-        
+
         <DropdownMenuContent align="end" className="notifications-dropdown">
           <div className="notifications-header">
             <h3>Notifications</h3>
@@ -207,46 +207,46 @@ export function NotificationsDropdown() {
               </button>
             )}
           </div>
-        
-        <DropdownMenuSeparator />
-        
-        {loading && notifications.length === 0 ? (
-          <div className="notifications-loading">
-            <Loader2 className="animate-spin" size={20} />
-          </div>
-        ) : notifications.length === 0 ? (
-          <div className="notifications-empty">
-            <Bell size={24} />
-            <p>No notifications yet</p>
-          </div>
-        ) : (
-          <div className="notifications-list">
-            {notifications.map(notification => (
-              <DropdownMenuItem
-                key={notification.id}
-                className={`notification-item ${!notification.is_read ? 'unread' : ''}`}
-                onClick={() => handleNotificationClick(notification)}
-              >
-                <div className="notification-item-icon">
-                  {getNotificationIcon(notification.type)}
-                </div>
-                <div className="notification-item-content">
-                  <p className="notification-item-text">
-                    {getNotificationText(notification)}
-                  </p>
-                  <span className="notification-item-time">
-                    {formatTime(notification.created_at)}
-                  </span>
-                </div>
-                {!notification.is_read && (
-                  <div className="notification-unread-dot" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </div>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+
+          <DropdownMenuSeparator />
+
+          {loading && notifications.length === 0 ? (
+            <div className="notifications-loading">
+              <Loader2 className="animate-spin" size={20} />
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="notifications-empty">
+              <Bell size={24} />
+              <p>No notifications yet</p>
+            </div>
+          ) : (
+            <div className="notifications-list">
+              {notifications.map(notification => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  className={`notification-item ${!notification.is_read ? 'unread' : ''}`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="notification-item-icon">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  <div className="notification-item-content">
+                    <p className="notification-item-text">
+                      {getNotificationText(notification)}
+                    </p>
+                    <span className="notification-item-time">
+                      {formatTime(notification.created_at)}
+                    </span>
+                  </div>
+                  {!notification.is_read && (
+                    <div className="notification-unread-dot" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </div>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 }

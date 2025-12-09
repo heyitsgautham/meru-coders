@@ -111,7 +111,9 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
                     confidence: response.confidence,
                     persona: response.persona,
                     meter_data: response.meter_data,
-                    agentic_action: response.agentic_action
+                    agentic_action: response.agentic_action,
+                    response_source: response.response_source, // Pass through RAG/AI source
+                    rag_docs_used: response.rag_docs_used // Pass through number of sources
                 };
 
                 setMessages(prev => [...prev, assistantMessage]);
@@ -153,7 +155,7 @@ export const ChatBotProvider: React.FC<ChatBotProviderProps> = ({ children }) =>
                 role: 'assistant',
                 content: newPersona === 'krishna'
                     ? '🕉️ Namaste, dear one. I am Krishna, here to guide you through the beauty of Sanskrit prosody.'
-                    : '📚 Welcome! I am your Sanskrit Prosody Expert. How may I help you understand Sanskrit meters?',
+                    : '📚 Namaste! I am Aacharya Pingala, the author of Chandas Shastra. How may I help you understand the science of Sanskrit meters?',
                 timestamp: new Date().toISOString(),
                 type: 'system'
             };

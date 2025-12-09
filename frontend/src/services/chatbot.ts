@@ -23,6 +23,8 @@ export interface ChatMessage {
     meter_data?: MeterData;
     agentic_action?: string;
     type?: string;
+    response_source?: 'rag' | 'ai'; // NEW: response source type
+    rag_docs_used?: number; // NEW: number of RAG sources used
 }
 
 export interface MeterData {
@@ -57,6 +59,8 @@ export interface ChatResponse {
     agentic_action?: string;
     meter_data?: MeterData;
     error?: string;
+    response_source?: 'rag' | 'ai'; // NEW: response source type
+    rag_docs_used?: number; // NEW: number of RAG sources used
 }
 
 export interface Conversation {
