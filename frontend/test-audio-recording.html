@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WAV Recording</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        #audioInfo {
+            margin: 20px 0;
+            padding: 10px;
+            background: #e8f4f8;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎤 Test WAV Audio Recording</h1>
+    <p>This test verifies that audio is recorded and converted to WAV format.</p>
+    
+    <div>
+        <button id="startBtn">Start Recording</button>
+        <button id="stopBtn" disabled>Stop Recording</button>
+    </div>
+    
+    <div id="status">Status: Ready</div>
+    <div id="audioInfo"></div>
+    <audio id="audioPlayer" controls style="display: none; margin-top: 20px;"></audio>
+
+    <script type="module">
+        // Inline version of audioUtils functions for testing
+        async function convertToWav(audioBlob) {
+            const audioContext = new AudioContext();
+            const arrayBuffer = await audioBlob.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            const wavBuffer = encodeWAV(audioBuffer);
+            return new Blob([wavBuffer], { type: 'audio/wav' });
+        }
+
+        function encodeWAV(audioBuffer) {
+            const numberOfChannels = audioBuffer.numberOfChannels;
+            const sampleRate = audioBuffer.sampleRate;
+            const format = 1;
+            const bitDepth = 16;
+
+            const length = audioBuffer.length * numberOfChannels * 2;
+            const buffer = new ArrayBuffer(44 + length);
+            const view = new DataView(buffer);
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + length, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, format, true);
+            view.setUint16(22, numberOfChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numberOfChannels * bitDepth / 8, true);
+            view.setUint16(32, numberOfChannels * bitDepth / 8, true);
+            view.setUint16(34, bitDepth, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, length, true);
+
+            const channels = [];
+            for (let i = 0; i < numberOfChannels; i++) {
+                channels.push(audioBuffer.getChannelData(i));
+            }
+
+            let offset = 44;
+            for (let i = 0; i < audioBuffer.length; i++) {
+                for (let channel = 0; channel < numberOfChannels; channel++) {
+                    const sample = Math.max(-1, Math.min(1, channels[channel][i]));
+                    view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+                    offset += 2;
+                }
+            }
+
+            return buffer;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        // Recording logic
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let stream = null;
+
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const status = document.getElementById('status');
+        const audioInfo = document.getElementById('audioInfo');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                status.textContent = 'Status: Requesting microphone access...';
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                const mimeTypes = [
+                    'audio/webm;codecs=opus',
+                    'audio/webm',
+                    'audio/ogg;codecs=opus',
+                    'audio/mp4'
+                ];
+
+                let selectedMimeType = 'audio/webm';
+                for (const mimeType of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(mimeType)) {
+                        selectedMimeType = mimeType;
+                        console.log('Using MIME type:', mimeType);
+                        break;
+                    }
+                }
+
+                mediaRecorder = new MediaRecorder(stream, { mimeType: selectedMimeType });
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.start();
+                status.innerHTML = '<span class="success">Status: Recording... Speak into your microphone!</span>';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                audioInfo.textContent = '';
+                audioPlayer.style.display = 'none';
+            } catch (error) {
+                console.error('Error:', error);
+                status.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+        });
+
+        stopBtn.addEventListener('click', async () => {
+            if (!mediaRecorder) return;
+
+            status.textContent = 'Status: Stopping and converting to WAV...';
+            stopBtn.disabled = true;
+
+            mediaRecorder.onstop = async () => {
+                try {
+                    // Stop all tracks
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+
+                    // Create blob from recorded chunks
+                    const audioBlob = new Blob(audioChunks, { type: audioChunks[0]?.type || 'audio/webm' });
+                    console.log('Original recording:', audioBlob.size, 'bytes');
+
+                    // Convert to WAV
+                    const wavBlob = await convertToWav(audioBlob);
+                    console.log('WAV conversion complete:', wavBlob.size, 'bytes');
+
+                    // Create File object
+                    const wavFile = new File([wavBlob], 'recording.wav', { type: 'audio/wav' });
+                    
+                    // Display info
+                    audioInfo.innerHTML = `
+                        <div class="success">✓ WAV Conversion Successful!</div>
+                        <p><strong>File Name:</strong> ${wavFile.name}</p>
+                        <p><strong>File Type:</strong> ${wavFile.type}</p>
+                        <p><strong>File Size:</strong> ${(wavFile.size / 1024).toFixed(2)} KB</p>
+                        <p><strong>Original Size:</strong> ${(audioBlob.size / 1024).toFixed(2)} KB</p>
+                    `;
+
+                    // Play audio
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    audioPlayer.src = audioUrl;
+                    audioPlayer.style.display = 'block';
+
+                    status.innerHTML = '<span class="success">Status: Recording complete! You can play it below.</span>';
+                    startBtn.disabled = false;
+                } catch (error) {
+                    console.error('Conversion error:', error);
+                    status.innerHTML = `<span class="error">Error converting to WAV: ${error.message}</span>`;
+                    audioInfo.textContent = '';
+                    startBtn.disabled = false;
+                }
+            };
+
+            mediaRecorder.stop();
+        });
+    </script>
+</body>
+</html>

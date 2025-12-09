@@ -1,9 +1,11 @@
-import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, BookOpen, Mic } from "lucide-react";
+import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, Mic, CheckCircle, GitCompare } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
 import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile, useExtractAudio } from "../hooks/useApi";
-import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode } from "../types/api";
+import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode, SlokaValidateResponse } from "../types/api";
+import { createAudioRecorder } from "../utils/audioUtils";
+import { validateSloka } from "../services/api";
 
 // Fixed analysis settings
 const ANALYSIS_MODE: AnalysisMode = "verse";
@@ -63,8 +65,10 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   const [selectedAudio, setSelectedAudio] = useState<File | null>(null);
   const [audioExtractedText, setAudioExtractedText] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<SlokaValidateResponse | null>(null);
+  const audioRecorderRef = useRef<ReturnType<typeof createAudioRecorder> | null>(null);
 
   // Refs for file inputs
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -107,6 +111,15 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.activeTab, activeTab);
   }, [activeTab]);
+
+  // Cleanup audio URL on unmount or when audio changes
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  }, [audioUrl]);
 
   // Scroll to results when they appear
   useEffect(() => {
@@ -393,9 +406,38 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
     try {
       const text = await extractTextFromAudio(selectedAudio);
       setAudioExtractedText(text);
+      setValidationResult(null); // Reset validation when new text is extracted
     } catch (err) {
       console.error("Audio transcription failed:", err);
     }
+  };
+
+  // Handle normalize audio text - find verified sloka from database
+  const handleNormalizeAudio = async () => {
+    if (!audioExtractedText) return;
+
+    setIsValidating(true);
+    try {
+      const result = await validateSloka(audioExtractedText);
+      setValidationResult(result);
+      
+      // Only replace text if found and similarity >= 90%
+      if (result.found && result.original_text && result.similarity && result.similarity >= 0.90) {
+        setAudioExtractedText(result.original_text);
+      }
+      // If similarity < 90%, show result but don't replace text
+    } catch (err) {
+      console.error("Sloka validation failed:", err);
+      alert("Failed to validate sloka. Please try again.");
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  // Handle use as-is - proceed with transcribed text without normalization
+  const handleUseAsIs = () => {
+    setValidationResult(null);
+    // Just keep the current audioExtractedText as-is
   };
 
   // Handle "Identify Chandas" from transcribed audio text
@@ -417,16 +459,23 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   };
 
   // Clear audio and reset state
-  const handleRemoveAudio = () => {
+  const handleRemoveAudio = async () => {
+    // Revoke audio URL to free memory
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
     setSelectedAudio(null);
     setAudioExtractedText(null);
+    setValidationResult(null);
     resetAudioExtract();
     if (audioInputRef.current) {
       audioInputRef.current.value = '';
     }
     // Stop recording if active
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
+    if (audioRecorderRef.current && isRecording) {
+      await audioRecorderRef.current.stop();
+      audioRecorderRef.current = null;
       setIsRecording(false);
     }
   };
@@ -434,39 +483,42 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   // Start recording audio
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-      const chunks: Blob[] = [];
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunks.push(e.data);
-        }
-      };
-
-      recorder.onstop = () => {
-        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
-        const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
-        setSelectedAudio(audioFile);
-        setAudioExtractedText(null);
-        // Stop all tracks to release microphone
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      setMediaRecorder(recorder);
-      setAudioChunks([]);
-      recorder.start();
+      audioRecorderRef.current = createAudioRecorder();
+      await audioRecorderRef.current.start();
       setIsRecording(true);
+      console.log('Recording started - will save as WAV');
     } catch (err) {
       console.error("Error accessing microphone:", err);
       alert("Could not access microphone. Please ensure you have granted permission.");
+      audioRecorderRef.current = null;
     }
   };
 
   // Stop recording audio
-  const stopRecording = () => {
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
+  const stopRecording = async () => {
+    try {
+      if (audioRecorderRef.current && isRecording) {
+        console.log('Stopping recording and converting to WAV...');
+        const wavFile = await audioRecorderRef.current.stop();
+        if (wavFile) {
+          console.log('WAV file created from recording:', wavFile.name, wavFile.size, 'bytes');
+          // Revoke old URL if exists
+          if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          // Create new URL for playback
+          const url = URL.createObjectURL(wavFile);
+          setAudioUrl(url);
+          setSelectedAudio(wavFile);
+          setAudioExtractedText(null);
+        }
+        audioRecorderRef.current = null;
+        setIsRecording(false);
+      }
+    } catch (err) {
+      console.error("Error stopping recording:", err);
+      alert("Failed to stop recording. Please try again.");
+      audioRecorderRef.current = null;
       setIsRecording(false);
     }
   };
@@ -1136,6 +1188,25 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                           </p>
                         </div>
 
+                        {/* Audio Player */}
+                        {audioUrl && (
+                          <div className="w-full max-w-md">
+                            <audio
+                              controls
+                              src={audioUrl}
+                              className="w-full rounded-lg"
+                              style={{
+                                height: '40px',
+                                backgroundColor: 'var(--color-bg-subtle)',
+                                border: '1px solid var(--color-border-subtle)',
+                                borderRadius: '8px'
+                              }}
+                            >
+                              Your browser does not support the audio element.
+                            </audio>
+                          </div>
+                        )}
+
                         {/* Extract Text Button - only show when no extracted text */}
                         {!audioExtractedText && (
                           <button
@@ -1178,11 +1249,11 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                       </div>
                     ) : isRecording ? (
                       <div className="flex flex-col items-center gap-6">
-                        <div className="p-6 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg animate-pulse">
+                        <div className="p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-2xl shadow-lg animate-pulse">
                           <Mic className="w-10 h-10 text-white" />
                         </div>
                         <div className="text-center">
-                          <p className="text-lg font-semibold text-red-600 mb-2">
+                          <p className="text-lg font-semibold text-[var(--color-primary)] mb-2">
                             Recording...
                           </p>
                           <p className="text-[var(--color-text-muted)] text-base">
@@ -1194,7 +1265,7 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                             e.stopPropagation();
                             stopRecording();
                           }}
-                          className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
+                          className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
                         >
                           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <rect x="6" y="6" width="12" height="12" rx="2" />
@@ -1225,7 +1296,7 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                               e.stopPropagation();
                               startRecording();
                             }}
-                            className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
+                            className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white rounded-full hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base flex items-center gap-2"
                           >
                             <Mic className="w-5 h-5" />
                             <span>Record</span>
@@ -1282,13 +1353,114 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
                       {audioExtractedText}
                     </div>
 
+                    {/* Validation Result Display */}
+                    {validationResult && validationResult.found && validationResult.similarity && validationResult.similarity >= 0.90 && (
+                      <div className={`mb-6 p-6 rounded-xl border-2 ${
+                        validationResult.is_valid 
+                          ? 'bg-green-50 border-green-300' 
+                          : 'bg-yellow-50 border-yellow-300'
+                      }`}>
+                        <div className="flex items-start gap-3">
+                          {validationResult.is_valid ? (
+                            <CheckCircle className="w-6 h-6 text-green-600 mt-1" />
+                          ) : (
+                            <GitCompare className="w-6 h-6 text-yellow-600 mt-1" />
+                          )}
+                          <div className="flex-1">
+                            <h4 className="font-bold text-lg mb-2 text-gray-800">
+                              {validationResult.is_valid ? 'Perfect Match! ✓' : 'Normalised'}
+                            </h4>
+                            {!validationResult.is_valid && (
+                              <>
+                                <p className="text-sm text-gray-700 mb-3">
+                                  Text has been normalized
+                                </p>
+                                {validationResult.difference_count && validationResult.difference_count > 0 && (
+                                  <p className="text-sm text-gray-600 italic">
+                                    {validationResult.difference_count} difference{validationResult.difference_count > 1 ? 's' : ''} corrected
+                                  </p>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {validationResult && validationResult.found && validationResult.similarity && validationResult.similarity < 0.90 && (
+                      <div className="mb-6 p-6 rounded-xl border-2 bg-red-50 border-red-300">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="w-6 h-6 text-red-600 mt-1" />
+                          <div className="flex-1">
+                            <h4 className="font-bold text-lg mb-2 text-gray-800">
+                              Similarity Too Low
+                            </h4>
+                            <p className="text-sm text-gray-700 mb-2">
+                              Found a match with {validationResult.similarity_percentage?.toFixed(1)}% similarity, but requires at least 90% to normalize.
+                            </p>
+                            <p className="text-sm text-gray-600 italic">
+                              Using your original transcribed text as-is.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {validationResult && !validationResult.found && (
+                      <div className="mb-6 p-6 rounded-xl border-2 bg-blue-50 border-blue-300">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="w-6 h-6 text-blue-600 mt-1" />
+                          <div className="flex-1">
+                            <h4 className="font-bold text-lg mb-2 text-gray-800">
+                              No Match Found
+                            </h4>
+                            <p className="text-sm text-gray-700">
+                              This verse was not found in our database. Using your transcribed text as-is.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Button Row */}
-                    <div className="flex items-center gap-4">
-                      {/* Identify Chandas Button */}
+                    <div className="flex flex-col gap-4">
+                      {/* Normalize and Use As-Is Buttons - Show before validation */}
+                      {!validationResult && (
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={handleNormalizeAudio}
+                            disabled={isValidating}
+                            className="flex-1 h-[52px] px-6 text-base font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-xl flex items-center justify-center gap-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white hover:from-[var(--color-primary-dark)] hover:to-[#D96E12] disabled:opacity-50"
+                          >
+                            {isValidating ? (
+                              <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span>Validating...</span>
+                              </>
+                            ) : (
+                              <>
+                                <GitCompare className="w-5 h-5" />
+                                <span>NORMALIZE (Find Verified Sloka)</span>
+                              </>
+                            )}
+                          </button>
+                          
+                          <button
+                            onClick={handleUseAsIs}
+                            disabled={isValidating}
+                            className="h-[52px] px-6 text-base font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-xl flex items-center justify-center gap-3 bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+                          >
+                            <CheckCircle className="w-5 h-5" />
+                            <span>USE AS-IS</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Identify Chandas Button - Show after choosing normalize or as-is */}
                       <button
                         onClick={handleIdentifyFromAudio}
                         disabled={textLoading}
-                        className="identify-btn h-[52px] px-8 text-base"
+                        className="identify-btn h-[52px] px-8 text-base w-full"
                       >
                         {textLoading ? (
                           <>

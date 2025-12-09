@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Mic, Image as ImageIcon, Trash2, Sparkles, X, Send } from 'lucide-react';
 import { useChatBot } from '../../contexts/ChatBotContext';
 import ReactMarkdown from 'react-markdown';
+import { createAudioRecorder } from '../../utils/audioUtils';
 import './FloatingChatbot.css';
 
 const FloatingChatbot: React.FC = () => {
@@ -26,11 +27,12 @@ const FloatingChatbot: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioRecorderRef = useRef<ReturnType<typeof createAudioRecorder> | null>(null);
   const shouldAutoScrollRef = useRef(true);
 
   // Auto-scroll to bottom only when user sends a message, not during AI response
@@ -46,12 +48,21 @@ const FloatingChatbot: React.FC = () => {
     }
   }, [messages]);
 
+  // Cleanup audio URL on unmount or when audio changes
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  }, [audioUrl]);
+
   const handleSendMessage = async () => {
     // Auto-add a default prompt if image is selected but no message
     const messageToSend = inputMessage.trim() ||
       (selectedImage ? 'Analyse the chanda' : '');
 
-    if (!messageToSend && !selectedImage && !audioBlob) return;
+    if (!messageToSend && !selectedImage && !audioFile) return;
 
     let imageBase64: string | undefined;
     let audioBase64: string | undefined;
@@ -62,15 +73,20 @@ const FloatingChatbot: React.FC = () => {
     }
 
     // Convert audio to base64
-    if (audioBlob) {
-      audioBase64 = await blobToBase64(audioBlob);
+    if (audioFile) {
+      audioBase64 = await fileToBase64(audioFile);
     }
 
     // Reset input IMMEDIATELY to clear preview
     setInputMessage('');
     setSelectedImage(null);
     setImagePreview(null);
-    setAudioBlob(null);
+    // Revoke audio URL to free memory
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    setAudioFile(null);
 
     // Send message after clearing UI
     await sendMessage(messageToSend, imageBase64, audioBase64);
@@ -97,52 +113,40 @@ const FloatingChatbot: React.FC = () => {
 
   const handleStartRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      // Determine the best supported MIME type for audio recording
-      const mimeTypes = [
-        'audio/webm;codecs=opus',
-        'audio/webm',
-        'audio/ogg;codecs=opus',
-        'audio/mp4'
-      ];
-
-      let selectedMimeType = 'audio/webm'; // fallback
-      for (const mimeType of mimeTypes) {
-        if (MediaRecorder.isTypeSupported(mimeType)) {
-          selectedMimeType = mimeType;
-          console.log('Using MIME type:', mimeType);
-          break;
-        }
-      }
-
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: selectedMimeType
-      });
-      mediaRecorderRef.current = mediaRecorder;
-
-      const chunks: Blob[] = [];
-      mediaRecorder.ondataavailable = (e) => {
-        chunks.push(e.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: selectedMimeType });
-        setAudioBlob(blob);
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
+      audioRecorderRef.current = createAudioRecorder();
+      await audioRecorderRef.current.start();
       setIsRecording(true);
+      console.log('Chatbot recording started - will save as WAV');
     } catch (error) {
       console.error('Error accessing microphone:', error);
       alert('Failed to access microphone. Please check permissions.');
+      audioRecorderRef.current = null;
     }
   };
 
-  const handleStopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
+  const handleStopRecording = async () => {
+    try {
+      if (audioRecorderRef.current && isRecording) {
+        console.log('Chatbot stopping recording and converting to WAV...');
+        const wavFile = await audioRecorderRef.current.stop();
+        if (wavFile) {
+          console.log('Chatbot WAV file created:', wavFile.name, wavFile.size, 'bytes');
+          // Revoke old URL if exists
+          if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+          }
+          // Create new URL for playback
+          const url = URL.createObjectURL(wavFile);
+          setAudioUrl(url);
+          setAudioFile(wavFile);
+        }
+        audioRecorderRef.current = null;
+        setIsRecording(false);
+      }
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+      alert('Failed to stop recording. Please try again.');
+      audioRecorderRef.current = null;
       setIsRecording(false);
     }
   };
@@ -153,15 +157,6 @@ const FloatingChatbot: React.FC = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(file);
-    });
-  };
-
-  const blobToBase64 = (blob: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
     });
   };
 
@@ -317,13 +312,39 @@ const FloatingChatbot: React.FC = () => {
       )}
 
       {/* Audio Recording Indicator */}
-      {audioBlob && (
-        <div className="audio-indicator">
-          <Mic size={16} className="audio-icon" />
-          <span>Audio recorded</span>
-          <button onClick={() => setAudioBlob(null)} className="audio-remove">
-            <X size={16} />
-          </button>
+      {audioFile && (
+        <div className="audio-indicator" style={{ flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Mic size={16} className="audio-icon" />
+              <span>Audio recorded ({audioFile.name})</span>
+            </div>
+            <button
+              onClick={() => {
+                if (audioUrl) {
+                  URL.revokeObjectURL(audioUrl);
+                  setAudioUrl(null);
+                }
+                setAudioFile(null);
+              }}
+              className="audio-remove"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          {audioUrl && (
+            <audio
+              controls
+              src={audioUrl}
+              style={{
+                width: '100%',
+                height: '32px',
+                borderRadius: '4px'
+              }}
+            >
+              Your browser does not support the audio element.
+            </audio>
+          )}
         </div>
       )}
 
