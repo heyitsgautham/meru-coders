@@ -1,4 +1,4 @@
-import { Home, User, LogIn, Users, Gamepad2 } from "lucide-react";
+import { Home, User, LogIn, Users, Gamepad2, Atom } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import type { ViewType } from "../types/api";
@@ -36,6 +36,10 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
   const handleGameClick = () => {
     // Open the game in a new tab/window
     window.open('https://chandas-game-frontend-mz54akd7ra-uc.a.run.app/', '_blank');
+  };
+
+  const handleLGLabClick = () => {
+    navigate('/lg-lab');
   };
 
   return (
@@ -81,6 +85,16 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
             >
               <Gamepad2 className="w-4 h-4" />
               <span className="nav-link-text">Game</span>
+            </button>
+            
+            {/* L-G Lab Link */}
+            <button
+              onClick={handleLGLabClick}
+              className="nav-link flex items-center gap-1"
+              title="L-G Laboratory - Explore the Science of Chandas"
+            >
+              <Atom className="w-4 h-4" />
+              <span className="nav-link-text">L-G Lab</span>
             </button>
             
             {/* Community Link */}

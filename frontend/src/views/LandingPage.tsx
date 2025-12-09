@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Sparkles, Database, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles, Database, Zap, Atom } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Import book images for trusted sources section
@@ -16,6 +16,10 @@ export function LandingPage({ onLaunchApp: _onLaunchApp }: LandingPageProps) {
   
   const handleLaunch = () => {
     navigate('/app');
+  };
+
+  const handleLGLabClick = () => {
+    navigate('/lg-lab');
   };
   
   return (
@@ -623,6 +627,80 @@ export function LandingPage({ onLaunchApp: _onLaunchApp }: LandingPageProps) {
                 </p>
               </div>
             ))}
+          </div>
+          
+          {/* L-G Lab Feature Highlight */}
+          <div style={{
+            marginTop: '48px',
+            backgroundColor: 'linear-gradient(135deg, #fff3e6 0%, #ffe8cc 100%)',
+            padding: '40px',
+            borderRadius: '16px',
+            border: '2px solid #ffd699',
+            boxShadow: '0 4px 20px rgba(199, 91, 26, 0.15)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '32px',
+              maxWidth: '900px',
+              margin: '0 auto'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #ff9933 0%, #c75b1a 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 15px rgba(199, 91, 26, 0.3)',
+                flexShrink: 0
+              }}>
+                <Atom size={40} color="white" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: '#4a2c10',
+                  marginBottom: '12px'
+                }}>
+                  🔬 L-G Laboratory
+                </h3>
+                <p style={{
+                  fontSize: '16px',
+                  color: '#555',
+                  lineHeight: 1.7,
+                  marginBottom: '16px'
+                }}>
+                  Discover the deep connections between Laghu-Guru patterns and the rhythms of nature, 
+                  mathematics, music, and human consciousness. Explore interactive visualizations of 
+                  Fibonacci sequences, breath patterns, and natural rhythms.
+                </p>
+                <button
+                  onClick={handleLGLabClick}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 24px',
+                    backgroundColor: '#c75b1a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b34d12'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c75b1a'}
+                >
+                  Explore L-G Lab
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
