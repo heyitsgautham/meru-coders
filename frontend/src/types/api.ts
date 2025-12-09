@@ -26,6 +26,14 @@ export interface OCRExtractResponse {
   error?: string;
 }
 
+// Audio transcription response (text only, no analysis)
+export interface AudioExtractResponse {
+  success: boolean;
+  text?: string;
+  decoder_used?: string;
+  error?: string;
+}
+
 // File info from extraction
 export interface FileInfo {
   filename: string;
@@ -99,6 +107,37 @@ export interface PatternValidation {
   mismatches?: Array<[number | string, string, string]>;
 }
 
+// Confidence reason from backend
+export interface ConfidenceReason {
+  match_type: string;
+  confidence: number;
+  level: 'very_high' | 'high' | 'medium' | 'low' | 'very_low';
+  reason: string;
+  technical_details?: {
+    match_type_raw?: string;
+    base_match_type?: string;
+    base_score?: number;
+    description?: string;
+    pattern?: string;
+    pattern_length?: number;
+    syllable_count?: number;
+    num_padas?: number;
+    syllables_per_pada?: number;
+    similarity_percentage?: number;
+    levenshtein_distance?: number;
+    vedic_range?: { low: number; high: number };
+    vedic_peak?: number;
+    distance_from_peak?: number;
+    [key: string]: unknown;
+  };
+}
+
+// Confidence scores map (meter_name -> [score, match_type])
+export type ConfidenceScores = Record<string, [number, string]>;
+
+// Confidence reasons map (meter_name -> ConfidenceReason)
+export type ConfidenceReasons = Record<string, ConfidenceReason>;
+
 // Analysis result for a single line
 export interface AnalysisResult {
   found: boolean;
@@ -117,6 +156,10 @@ export interface AnalysisResult {
   // Pattern validation fields (new)
   meter_info?: MeterInfo | null;
   pattern_validation?: PatternValidation | null;
+  // Confidence scoring fields
+  confidence_scores?: ConfidenceScores;
+  confidence_reasons?: ConfidenceReasons;
+  primary_confidence_reason?: ConfidenceReason;
 }
 
 // Line result item

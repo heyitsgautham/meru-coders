@@ -54,6 +54,12 @@ except ImportError:
 # size of LRU cache (currently unused - see mark_lg/transform methods)
 MAX_CACHE = 1024
 
+# Import confidence reasons module for generating explanations
+from backend.core.confidence_reasons import (
+    build_confidence_reasons,
+    get_primary_confidence_reason,
+)
+
 ###############################################################################
 # CONFIGURATION CONSTANTS
 ###############################################################################
@@ -4015,6 +4021,31 @@ class Chanda:
         
         # Store confidence information for debugging/analysis
         answer['confidence_scores'] = confidence_map
+        
+        # Determine number of padas from syllable count
+        syllable_count = len(lg_str)
+        if syllable_count % 4 == 0:
+            num_padas_detected = 4
+        elif syllable_count % 3 == 0:
+            num_padas_detected = 3
+        elif syllable_count % 2 == 0:
+            num_padas_detected = 2
+        else:
+            num_padas_detected = 1
+        
+        # Generate human-readable confidence reasons
+        answer['confidence_reasons'] = build_confidence_reasons(
+            confidence_scores=confidence_map,
+            pattern=lg_str,
+            syllable_count=syllable_count,
+            num_padas=num_padas_detected,
+        )
+        answer['primary_confidence_reason'] = get_primary_confidence_reason(
+            confidence_scores=confidence_map,
+            pattern=lg_str,
+            syllable_count=syllable_count,
+            num_padas=num_padas_detected,
+        )
 
         # display properties
         display_line = line

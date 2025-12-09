@@ -10,6 +10,7 @@ import type {
   AnalysisMode,
   IdentificationMode,
   OCRExtractResponse,
+  AudioExtractResponse,
   FileExtractResponse,
   DatasetsListResponse,
   DatasetResponse,
@@ -153,6 +154,19 @@ export async function extractTextFromFile(file: File): Promise<FileExtractRespon
   formData.append('file', file);
 
   return request<FileExtractResponse>('/file/extract', {
+    method: 'POST',
+    body: formData,
+  });
+}
+
+/**
+ * Extract text from audio using IndicConformer ASR (no meter analysis)
+ */
+export async function extractTextFromAudio(file: File): Promise<AudioExtractResponse> {
+  const formData = new FormData();
+  formData.append('audio_file', file);
+
+  return request<AudioExtractResponse>('/audio/transcribe', {
     method: 'POST',
     body: formData,
   });

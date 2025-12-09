@@ -2122,6 +2122,14 @@ button:disabled {
   background-color: #fef3c7;
 }
 
+.bg-amber-500 {
+  background-color: #f59e0b;
+}
+
+.hover\:bg-amber-600:hover {
+  background-color: #d97706;
+}
+
 /* Text color utilities */
 .text-blue-600 {
   color: #2563eb;
@@ -2137,6 +2145,14 @@ button:disabled {
 
 .text-amber-700 {
   color: #b45309;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-700 {
+  color: #374151;
 }
 
 .text-purple-600 {

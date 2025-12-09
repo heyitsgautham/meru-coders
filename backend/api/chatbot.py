@@ -2,7 +2,7 @@
 Multi-modal AI Chatbot API using Google Gemini
 Supports text, voice, and image inputs with conversation history
 Includes agentic capabilities for automatic meter identification
-Last Updated: 2025-12-08 - Chatbot formatting improvements
+Last Updated: 2025-12-09 - Updated to new google-genai SDK
 """
 
 import os
@@ -13,7 +13,8 @@ import logging
 from datetime import datetime
 from typing import List, Dict, Optional, Any, Tuple
 from flask import Blueprint, request, jsonify
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 import random
 
@@ -424,6 +425,12 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     meter_display = first_line.get('display_chanda', 'Unknown')
                     found = first_line.get('found', False)
                 
+                # Get confidence reason from first line result
+                confidence_reason = None
+                if 'line' in result and len(result['line']) > 0:
+                    first_line_result = result['line'][0].get('result', {})
+                    confidence_reason = first_line_result.get('primary_confidence_reason')
+                
                 return {
                     'success': True,
                     'text': text_for_analysis,  # Use the properly formatted text
@@ -438,7 +445,8 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'found': found,
                     'fuzzy_matches': result['line'][0].get('result', {}).get('fuzzy', [])[:3] if 'line' in result and len(result['line']) > 0 else [],
                     'verse_lines': len(lines),
-                    'is_multi_line': True
+                    'is_multi_line': True,
+                    'confidence_reason': confidence_reason
                 }
             else:
                 return {'success': False, 'error': 'Could not analyze verse'}
@@ -497,7 +505,8 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                 'found': result.get('found', False),
                 'fuzzy_matches': result.get('fuzzy', [])[:3] if result.get('fuzzy') else [],
                 'verse_lines': 1,
-                'is_multi_line': False
+                'is_multi_line': False,
+                'confidence_reason': result.get('primary_confidence_reason')
             }
     except Exception as e:
         return {
@@ -646,6 +655,26 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     # Successful identification
     response = ""
     
+    # Extract confidence information from the new confidence_reason structure
+    confidence_reason = meter_data.get('confidence_reason')
+    confidence_score = 0.0
+    confidence_level = "High"  # Default
+    confidence_reason_text = ""
+    
+    if confidence_reason:
+        confidence_score = confidence_reason.get('confidence', 0.0)
+        confidence_level = confidence_reason.get('level', 'high').replace('_', ' ').title()
+        confidence_reason_text = confidence_reason.get('reason', '')
+    else:
+        # Fallback: Extract confidence score from meter_display if confidence_reason not available
+        import re
+        if meter_data.get('meter_display'):
+            match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
+            if match:
+                score = float(match.group(1))
+                confidence_score = score
+                confidence_level = get_confidence_label(score)
+    
     # Check if user asked for specific fields only
     specific_fields_requested = any([
         requested_fields.get('meter_name'),
@@ -658,21 +687,15 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     if specific_fields_requested:
         # PRECISION MODE - Show only what user asked for
         
-        # Show meter name if requested (clean format with confidence label)
+        # Show meter name if requested (with confidence score and reason)
         if requested_fields.get('meter_name'):
             # Extract primary meter name (without all the pada variations)
             primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
-            # Get confidence from meter_display if it contains score
-            confidence_label = "High"  # Default
-            if meter_data.get('meter_display'):
-                # Extract first meter with confidence
-                import re
-                match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
-                if match:
-                    score = float(match.group(1))
-                    confidence_label = get_confidence_label(score)
             
-            response += f"**Chanda:** {primary_meter} (Confidence: {confidence_label})\n"
+            response += f"**Chanda:** {primary_meter}\n"
+            response += f"**Confidence:** {confidence_level} ({confidence_score:.1f}/10)\n"
+            if confidence_reason_text:
+                response += f"**Why:** {confidence_reason_text}\n"
         
         # Show L-G pattern if requested (split by pada)
         if requested_fields.get('lg_pattern'):
@@ -713,16 +736,12 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         # Clean meter display - extract primary meter with confidence label
         primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
         
-        # Extract confidence score from meter_display
-        import re
-        confidence_label = "High"  # Default
-        if meter_data.get('meter_display'):
-            match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
-            if match:
-                score = float(match.group(1))
-                confidence_label = get_confidence_label(score)
-        
-        response += f"**Chanda:** {primary_meter} (Confidence: {confidence_label})\n\n"
+        # Show meter with confidence score and reason
+        response += f"**Chanda:** {primary_meter}\n"
+        response += f"**Confidence:** {confidence_level} ({confidence_score:.1f}/10)\n"
+        if confidence_reason_text:
+            response += f"**Why:** {confidence_reason_text}\n"
+        response += "\n"
         
         # L-G Pattern split by pada
         lg_pattern = meter_data['lg_pattern']
@@ -762,8 +781,9 @@ def get_gemini_client():
     
     # Randomly select an API key for load balancing
     api_key = random.choice(GEMINI_API_KEYS)
-    genai.configure(api_key=api_key)
-    return genai
+    
+    # Return new SDK client
+    return genai.Client(api_key=api_key)
 
 
 def calculate_confidence_score(response_text: str, context: str = "") -> float:
@@ -1071,27 +1091,29 @@ def chat():
         # Get Gemini client
         genai_client = get_gemini_client()
         
-        # Use text-only model (images are processed via OCR first)
-        model = genai_client.GenerativeModel(
-            model_name='gemini-2.5-flash',
-            generation_config={
-                'temperature': PERSONAS[persona]['temperature'],
-                'top_p': PERSONAS[persona]['top_p'],
-                'max_output_tokens': 4096,
-            },
-            system_instruction=PERSONAS[persona]['system_instruction']
+        # Configure generation settings
+        config = types.GenerateContentConfig(
+            system_instruction=PERSONAS[persona]['system_instruction'],
+            temperature=PERSONAS[persona]['temperature'],
+            top_p=PERSONAS[persona]['top_p'],
+            max_output_tokens=4096,
         )
         
-        # Build chat history for context
-        chat_history = []
+        # Build chat history for context (convert to new format)
+        history = []
         for conv in conversations[conversation_id][-10:]:  # Last 10 messages
-            chat_history.append({
-                'role': 'user' if conv['role'] == 'user' else 'model',
-                'parts': [conv['content']]
-            })
+            role = 'user' if conv['role'] == 'user' else 'model'
+            history.append(types.Content(
+                role=role,
+                parts=[types.Part.from_text(conv['content'])]
+            ))
         
-        # Start chat session
-        chat = model.start_chat(history=chat_history)
+        # Create chat session with the new SDK
+        chat = genai_client.chats.create(
+            model='gemini-2.5-flash',
+            config=config,
+            history=history
+        )
         
         # Send message and get response (text only - images already processed via OCR)
         try:
@@ -1100,24 +1122,11 @@ def chat():
             
             # Check if response has valid content
             if not response or not hasattr(response, 'text'):
-                finish_reason = getattr(response, 'finish_reason', None) if response else None
-                logger.error(f"Gemini response failed - finish_reason: {finish_reason}")
-                
-                if finish_reason == 2:  # SAFETY
-                    return jsonify({
-                        'success': False,
-                        'error': 'Content was blocked by safety filters. Please rephrase your question.'
-                    }), 400
-                elif finish_reason == 3:  # RECITATION
-                    return jsonify({
-                        'success': False,
-                        'error': 'Content blocked due to recitation policy.'
-                    }), 400
-                else:
-                    return jsonify({
-                        'success': False,
-                        'error': f'Unable to generate a response. (Finish reason: {finish_reason})'
-                    }), 400
+                logger.error(f"Gemini response failed - no text in response")
+                return jsonify({
+                    'success': False,
+                    'error': 'Unable to generate a response.'
+                }), 400
             
             response_text = response.text
             logger.info(f"Gemini response received successfully, length: {len(response_text)}")
@@ -1301,9 +1310,12 @@ def analyze_meter():
         
         # Then, ask the AI to explain the result
         genai_client = get_gemini_client()
-        model = genai_client.GenerativeModel(
-            model_name='gemini-2.5-flash',
-            system_instruction=PERSONAS[persona]['system_instruction']
+        
+        # Configure generation settings
+        config = types.GenerateContentConfig(
+            system_instruction=PERSONAS[persona]['system_instruction'],
+            temperature=0.7,
+            max_output_tokens=1024,
         )
         
         explanation_prompt = f"""
@@ -1319,7 +1331,11 @@ def analyze_meter():
         and why it's commonly used in Sanskrit poetry. Keep it concise (3-4 sentences).
         """
         
-        response = model.generate_content(explanation_prompt)
+        response = genai_client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=explanation_prompt,
+            config=config
+        )
         explanation = response.text
         
         confidence = calculate_confidence_score(explanation, text)
