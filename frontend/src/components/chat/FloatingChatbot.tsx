@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Mic, Image as ImageIcon, Trash2, Sparkles, X, Send } from 'lucide-react';
+import { MessageCircle, Mic, Image as ImageIcon, Trash2, Sparkles, X, Send, Maximize2, Minimize2 } from 'lucide-react';
 import { useChatBot } from '../../contexts/ChatBotContext';
 import ReactMarkdown from 'react-markdown';
 import { createAudioRecorder } from '../../utils/audioUtils';
@@ -29,6 +29,7 @@ const FloatingChatbot: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -174,7 +175,7 @@ const FloatingChatbot: React.FC = () => {
   }
 
   return (
-    <div className="chatbot-container">
+    <div className={`chatbot-container ${isFullscreen ? 'chatbot-fullscreen' : ''}`}>
       {/* Header */}
       <div className="chatbot-header">
         <div className="chatbot-header-content">
@@ -188,13 +189,23 @@ const FloatingChatbot: React.FC = () => {
             <p className="chatbot-subtitle">Multi-modal AI Assistant</p>
           </div>
         </div>
-        <button
-          onClick={toggleChatbot}
-          className="chatbot-close-btn"
-          aria-label="Close chatbot"
-        >
-          <X size={20} />
-        </button>
+        <div className="chatbot-header-actions">
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="chatbot-action-btn"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+          </button>
+          <button
+            onClick={toggleChatbot}
+            className="chatbot-action-btn"
+            aria-label="Close chatbot"
+          >
+            <X size={20} />
+          </button>
+        </div>
       </div>
 
       {/* Persona Switcher */}

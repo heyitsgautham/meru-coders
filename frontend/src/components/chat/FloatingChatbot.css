@@ -100,6 +100,27 @@
     border-radius: 24px;
     box-shadow: 0 20px 60px var(--chatbot-shadow),
         0 0 1px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fullscreen Mode */
+.chatbot-container.chatbot-fullscreen {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    z-index: 10000;
+    box-shadow: 0 20px 60px var(--chatbot-shadow),
+        0 0 1px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -161,6 +182,36 @@
     margin: 0;
 }
 
+.chatbot-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.chatbot-action-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.chatbot-action-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.chatbot-action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Legacy support for old class name */
 .chatbot-close-btn {
     background: rgba(255, 255, 255, 0.15);
     border: none;
