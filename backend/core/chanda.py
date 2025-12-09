@@ -55,7 +55,7 @@ except ImportError:
 MAX_CACHE = 1024
 
 # Import confidence reasons module for generating explanations
-from backend.core.confidence_reasons import (
+from .confidence_reasons import (
     build_confidence_reasons,
     get_primary_confidence_reason,
 )
