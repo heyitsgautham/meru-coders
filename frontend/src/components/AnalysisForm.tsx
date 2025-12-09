@@ -2,6 +2,7 @@ import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, Mic, 
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
+import { PingalaAcharyaSpeaker } from "./PingalaAcharyaSpeaker";
 import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile, useExtractAudio } from "../hooks/useApi";
 import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode, SlokaValidateResponse } from "../types/api";
 import { createAudioRecorder } from "../utils/audioUtils";
@@ -84,6 +85,7 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
   // Results state
   const [result, setResult] = useState<IdentifyResponse | null>(null);
   const [resultType, setResultType] = useState<"text" | "image" | "file">("text");
+  const [showPingala, setShowPingala] = useState(false);
 
   // API hooks
   const { connected } = useAPIInfo();
@@ -317,6 +319,11 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
       const response = await identifyText(fileExtractedText, ANALYSIS_MODE, OUTPUT_SCRIPT);
       setResultType("text");
       setResult(response);
+      
+      // Show Pingala Acharya if identification was successful
+      if (response?.success && response?.result?.line?.[0]?.result?.found) {
+        setShowPingala(true);
+      }
     } catch (err) {
       console.error("Analysis failed:", err);
     }
@@ -453,6 +460,11 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
       const response = await identifyText(audioExtractedText, ANALYSIS_MODE, OUTPUT_SCRIPT, identificationMode);
       setResultType("text");
       setResult(response);
+      
+      // Show Pingala Acharya if identification was successful
+      if (response?.success && response?.result?.line?.[0]?.result?.found) {
+        setShowPingala(true);
+      }
     } catch (err) {
       console.error("Analysis failed:", err);
     }
@@ -590,6 +602,11 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
       const response = await identifyText(extractedText, ANALYSIS_MODE, OUTPUT_SCRIPT, identificationMode);
       setResultType("text");
       setResult(response);
+      
+      // Show Pingala Acharya if identification was successful
+      if (response?.success && response?.result?.line?.[0]?.result?.found) {
+        setShowPingala(true);
+      }
     } catch (err) {
       console.error("Analysis failed:", err);
     }
@@ -621,6 +638,11 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
       }
 
       setResult(response);
+      
+      // Show Pingala Acharya if identification was successful
+      if (response?.success && response?.result?.line?.[0]?.result?.found) {
+        setShowPingala(true);
+      }
     } catch (err) {
       console.error("Analysis failed:", err);
     }
@@ -1549,6 +1571,14 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
             onClose={handleCloseResults}
           />
         </div>
+      )}
+
+      {/* Pingala Acharya Speaker - Animated popup with speech */}
+      {showPingala && result && activeTab === "text" && (
+        <PingalaAcharyaSpeaker
+          result={result}
+          onClose={() => setShowPingala(false)}
+        />
       )}
     </>
   );
