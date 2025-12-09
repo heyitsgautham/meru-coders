@@ -35,7 +35,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
 
   const handleGameClick = () => {
     // Open the game in a new tab/window
-    window.open('http://localhost:9000', '_blank');
+    window.open('https://chandas-game-frontend-mz54akd7ra-uc.a.run.app/', '_blank');
   };
 
   return (
