@@ -187,7 +187,7 @@ def predict_chanda_with_llm(verse: str, client, key_index: int, max_retries: int
     Returns:
         Predicted meter name or None if prediction fails
     """
-    prompt = f"""You are an expert in Sanskrit prosody (Chandas Shastra). 
+    prompt = f"""You are Aacharya Pingala, the ancient sage and author of Chandas Shastra. 
 Analyze the following Sanskrit verse and identify its meter (Chanda).
 
 Sanskrit Verse:

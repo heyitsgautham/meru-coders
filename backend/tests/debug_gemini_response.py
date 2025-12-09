@@ -36,7 +36,7 @@ print(f"Using API key: {api_key[:10]}...")
 client = genai.Client(api_key=api_key)
 
 # The prompt we use
-PROMPT = """You are an expert in Sanskrit prosody (Chandas Shastra). Analyze if the following text is a valid Sanskrit shloka or verse that can be analyzed for its meter (chandas).
+PROMPT = """You are Aacharya Pingala, the ancient sage and author of Chandas Shastra. Analyze if the following text is a valid Sanskrit shloka or verse that can be analyzed for its meter (chandas).
 
 Text to analyze:
 ---

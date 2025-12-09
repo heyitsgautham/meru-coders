@@ -46,11 +46,11 @@ function handleUnauthorized(): void {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('appUser');
   }
-  
+
   // Dispatch a custom event that the app can listen to
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('auth:expired', { 
-      detail: { message: 'Session expired. Please log in again.' } 
+    window.dispatchEvent(new CustomEvent('auth:expired', {
+      detail: { message: 'Session expired. Please log in again.' }
     }));
   }
 }
@@ -102,7 +102,7 @@ export interface ImageUploadResponse {
  * Upload an image for a post
  */
 export async function uploadImage(file: File): Promise<ImageUploadResponse> {
-  const url = `${COMMUNITY_API}/upload/image`;
+  const url = `${getCommunityAPI()}/upload/image`;
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
 
   const formData = new FormData();
@@ -614,7 +614,7 @@ export async function getReports(status: string = 'pending', limit?: number): Pr
  * Take action on a report (admin only)
  */
 export async function handleReport(
-  reportId: string, 
+  reportId: string,
   action: 'dismiss' | 'delete_content' | 'warn_user' | 'ban_user',
   notes?: string
 ): Promise<ActionResponse> {

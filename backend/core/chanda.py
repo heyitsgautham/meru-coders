@@ -1981,7 +1981,7 @@ class Chanda:
 
     def read_examples(self):
         example_file = os.path.join(self.data_path, "examples.json")
-        with open(example_file, "r") as f:
+        with open(example_file, "r", encoding="utf-8") as f:
             examples = json.load(f)
         return examples
 
@@ -4034,16 +4034,19 @@ class Chanda:
             num_padas_detected = 1
         
         # Generate human-readable confidence reasons
+        # CRITICAL: Always use the FULL syllable count (len(lg_str)), not per-pada count
+        # This ensures confidence messages show "28 syllables" not "14 syllables" for उष्णिक्
+        full_syllable_count = len(lg_str)  # Total syllables in the entire input
         answer['confidence_reasons'] = build_confidence_reasons(
             confidence_scores=confidence_map,
             pattern=lg_str,
-            syllable_count=syllable_count,
+            syllable_count=full_syllable_count,  # Use FULL count, not divided
             num_padas=num_padas_detected,
         )
         answer['primary_confidence_reason'] = get_primary_confidence_reason(
             confidence_scores=confidence_map,
             pattern=lg_str,
-            syllable_count=syllable_count,
+            syllable_count=full_syllable_count,  # Use FULL count, not divided
             num_padas=num_padas_detected,
         )
 

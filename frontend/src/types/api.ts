@@ -146,6 +146,8 @@ export interface AnalysisResult {
   display_syllables?: string[];
   display_lg?: string[];
   display_gana?: string;
+  display_length?: number | string;
+  display_matra?: number | string;
   fuzzy?: FuzzyMatch[];
   // Validation fields for handling invalid input (e.g., English text)
   is_valid_input?: boolean;

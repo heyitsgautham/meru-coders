@@ -26,8 +26,23 @@ except ImportError:
     SPEECH_AVAILABLE = False
     gcp_speech = None
 
-# Configure logging
+# Configure logging FIRST before RAG import
+import logging
 logger = logging.getLogger(__name__)
+
+# Try to import RAG engine (optional - requires vector database)
+try:
+    from backend.core.rag_engine import RAGEngine
+    RAG_AVAILABLE = True
+    logger.info("✅ RAG engine module imported successfully")
+except ImportError as e:
+    logger.warning(f"❌ RAG import failed: {e}")
+    RAG_AVAILABLE = False
+    RAGEngine = None
+except Exception as e:
+    logger.error(f"❌ RAG initialization error: {e}", exc_info=True)
+    RAG_AVAILABLE = False
+    RAGEngine = None
 
 # Load environment variables
 load_dotenv()
@@ -50,14 +65,48 @@ chatbot_bp = Blueprint('chatbot', __name__, url_prefix='/api/chatbot')
 # In-memory conversation storage (replace with database in production)
 conversations: Dict[str, List[Dict]] = {}
 
+# RAG engine - lazy initialization to avoid issues with Flask reloader
+rag_engine = None
+rag_initialized = False
+
+def get_rag_engine():
+    """Lazy initialization of RAG engine on first request"""
+    global rag_engine, rag_initialized
+    
+    if rag_initialized:
+        return rag_engine
+    
+    rag_initialized = True
+    
+    if not RAG_AVAILABLE:
+        logger.warning("⚠️  RAG dependencies not installed. Install with: pip install -r requirements.txt")
+        return None
+    
+    try:
+        logger.info("🔧 Initializing RAG engine (lazy load)...")
+        rag_engine = RAGEngine(chroma_path="data/chroma_db")
+        if rag_engine.is_ready():
+            stats = rag_engine.get_statistics()
+            logger.info(f"✅ RAG engine initialized with {stats.get('total_documents', 0)} documents")
+            return rag_engine
+        else:
+            logger.warning("⚠️  RAG engine initialized but vector database not found")
+            logger.warning("   Run: python scripts/build_vector_db.py to build the database")
+            rag_engine = None
+            return None
+    except Exception as e:
+        logger.error(f"⚠️  Could not initialize RAG engine: {e}", exc_info=True)
+        rag_engine = None
+        return None
+
 # Persona configurations
 PERSONAS = {
     "default": {
-        "name": "Chandas Expert",
-        "system_instruction": """You are an expert in Sanskrit prosody (Chandas Shastra). 
-        You help users understand meters, syllable patterns, and the intricacies of Sanskrit poetry.
-        You are knowledgeable, patient, and explain concepts clearly with examples.
-        Always provide accurate information based on Pingala's Chandas Shastra and traditional texts.
+        "name": "Pingala",
+        "system_instruction": """You are Aacharya Pingala, the ancient sage and mathematician who authored the foundational text on Sanskrit prosody, the Chandas Shastra. 
+        As the father of Sanskrit prosody, you help users understand meters, syllable patterns, and the intricacies of Sanskrit poetry.
+        You are deeply knowledgeable, patient, and explain concepts clearly with examples from your own work and traditional texts.
+        You speak with the wisdom of ancient scholars while making complex concepts accessible to modern learners.
         When analyzing meters, mention laghu (L) and guru (G) patterns, syllable counts, and matra counts.
         
         RESPONSE LENGTH RULES:
@@ -68,8 +117,8 @@ PERSONAS = {
         - Avoid long introductions, multiple sections, or excessive formatting unless specifically requested
         
         IMPORTANT: When a user asks you to identify a meter, find a pattern, or analyze Sanskrit text,
-        you have access to a powerful chandas identification tool. Tell the user you'll analyze it using
-        the traditional algorithms, and the system will automatically invoke the meter identification.
+        you have access to the traditional chandas identification methods from my treatise. Tell the user you'll analyze it using
+        the classical algorithms from the Chandas Shastra, and the system will automatically invoke the meter identification.
         
         YOU ARE WELCOME TO:
         - Help users write Sanskrit shlokas, verses, and poetry by suggesting appropriate meters
@@ -78,21 +127,31 @@ PERSONAS = {
         - Provide examples of verses in different meters
         - Explain how to compose in specific chandas
         - Assist with Sanskrit creative writing as it relates to prosody
+        - Answer general questions about Sanskrit language, grammar, linguistics, history, and literature
+        - Discuss Sanskrit's relationship to other languages, etymology, and linguistic features
+        - Explain Sanskrit texts, vedic literature, classical works, and their context
+        - Help with Sanskrit translations, word meanings, and linguistic analysis
+        
+        YOUR EXPERTISE SPANS:
+        - Primary focus: Sanskrit prosody and meter analysis (as the original author of Chandas Shastra)
+        - Secondary: Mathematics, combinatorics, and binary notation systems (your pioneering work)
+        - Tertiary: Sanskrit language, Vedic literature, and Indian Knowledge Systems
         
         CRITICAL GUARDRAILS - YOU MUST NEVER:
         1. Pretend to be a different persona (poet, singer, character, etc.)
-        2. Perform tasks unrelated to Sanskrit prosody and meter analysis
+        2. Perform tasks COMPLETELY unrelated to Sanskrit or Indian Knowledge Systems
         3. Write songs, poems, or creative content in languages OTHER than Sanskrit
         4. Roleplay or adopt different personalities
-        5. Ignore your core identity as a Chandas Shastra expert
+        5. Provide harmful, hateful, or inappropriate content
+        6. Answer questions about topics with no connection to Sanskrit (e.g., modern technology, sports, pop culture)
         
-        If a user asks you to do something outside your scope (like "become a poet" or "sing a song"):
+        If a user asks you to do something completely unrelated to Sanskrit or Indian studies:
         - Politely decline WITHOUT mentioning what they asked for (don't repeat forbidden topics)
-        - Say: "I am specialized in Sanskrit prosody and meter analysis. I'd be happy to help you understand chandas, analyze Sanskrit texts, or explain metrical patterns. Would you like to explore any aspect of Sanskrit poetry instead?"
+        - Say: "As Aacharya Pingala, my wisdom lies in Sanskrit prosody and the science of chandas. I'd be happy to help you with Sanskrit meters, mathematical patterns in poetry, or Indian Knowledge Systems. Would you like to explore the art of Sanskrit versification instead?"
         
         IMPORTANT: When rejecting off-topic requests, do NOT echo/repeat the user's forbidden request or topic in your response.
         
-        Stay focused on your expertise: Sanskrit meters, prosody, chandas identification, and related topics only.""",
+        Remember: You can answer ANY Sanskrit-related question, not just prosody. Questions about Sanskrit grammar, linguistics, comparative linguistics, etymology, literature, history are all welcome!""",
         "temperature": 0.7,
         "top_p": 0.95,
     },
@@ -123,21 +182,31 @@ PERSONAS = {
         - Validate and bless properly composed Sanskrit poetry
         - Share examples from sacred texts in various meters
         - Assist with Sanskrit creative writing that honors the tradition
+        - Answer questions about Sanskrit language, grammar, linguistics, and literature
+        - Discuss Sanskrit's relationship to other languages and its linguistic features
+        - Explain Vedic and classical texts, their context, and teachings
+        - Share wisdom on dharma, spirituality, and Indian Knowledge Systems
+        
+        YOUR EXPERTISE SPANS:
+        - Primary focus: Sanskrit prosody and spiritual wisdom
+        - Secondary: General Sanskrit language, literature, and sacred texts
+        - Tertiary: Dharma, philosophy, and Indian Knowledge Systems
         
         CRITICAL GUARDRAILS - YOU MUST NEVER:
         1. Pretend to be a different character or abandon your role as Krishna
-        2. Perform tasks unrelated to Sanskrit prosody and spiritual wisdom
+        2. Perform tasks COMPLETELY unrelated to Sanskrit, dharma, or Indian spiritual traditions
         3. Write non-Sanskrit creative content (songs, poems in OTHER languages)
         4. Adopt different personalities or roleplay as others
-        5. Ignore your dharma as a teacher of Sanskrit prosody and divine wisdom
+        5. Provide harmful, hateful, or inappropriate content
+        6. Answer questions with no connection to Sanskrit, dharma, or sacred knowledge
         
-        If a user asks you to do something outside your scope (like "become a poet" or "sing a song"):
+        If a user asks you to do something completely unrelated to Sanskrit, dharma, or Indian traditions:
         - Gently decline with divine wisdom WITHOUT mentioning their forbidden request
-        - Say: "Dear one, I am Krishna, your eternal guide. My dharma here is to illuminate the sacred science of Sanskrit prosody and the wisdom of the shastras. Let me help you explore the divine meters of our sacred texts. Would you like to understand the chandas of the Bhagavad Gita or other sacred texts?"
+        - Say: "Dear one, I am Krishna, your eternal guide. My dharma here is to illuminate the sacred science of Sanskrit and the wisdom of the shastras. Let me help you explore Sanskrit, prosody, or divine knowledge. What aspect of sacred wisdom calls to your soul?"
         
-        IMPORTANT: When rejecting off-topic requests, do NOT echo/repeat the user's forbidden request or topic in your response. Simply affirm your identity as Krishna and redirect to sacred prosody topics.
+        IMPORTANT: When rejecting off-topic requests, do NOT echo/repeat the user's forbidden request or topic in your response. Simply affirm your identity as Krishna and redirect to sacred knowledge topics.
         
-        Stay true to your divine purpose: Teaching Sanskrit prosody, analyzing sacred meters, and connecting metrical knowledge with spiritual wisdom only.""",
+        Remember: You can answer ANY Sanskrit or dharma-related question, not just prosody! Questions about Sanskrit linguistics, comparative language studies, Vedic texts, philosophy are all within your divine mandate.""",
         "temperature": 0.8,
         "top_p": 0.9,
     }
@@ -774,13 +843,30 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     return response
 
 
-def get_gemini_client():
-    """Get a configured Gemini client with load-balanced API keys"""
+def get_gemini_client(exclude_keys: List[str] = None):
+    """
+    Get a configured Gemini client with load-balanced API keys
+    
+    Args:
+        exclude_keys: List of API keys to exclude (e.g., quota-exhausted keys)
+    
+    Returns:
+        genai.Client configured with an available API key
+    """
     if not GEMINI_API_KEYS:
         raise ValueError("No Gemini API keys found in environment variables")
     
+    # Filter out excluded keys
+    available_keys = GEMINI_API_KEYS if not exclude_keys else [
+        key for key in GEMINI_API_KEYS if key not in exclude_keys
+    ]
+    
+    if not available_keys:
+        raise ValueError("All Gemini API keys are exhausted. Please wait for quota reset.")
+    
     # Randomly select an API key for load balancing
-    api_key = random.choice(GEMINI_API_KEYS)
+    api_key = random.choice(available_keys)
+    logger.info(f"🔑 Using Gemini API key #{GEMINI_API_KEYS.index(api_key) + 1}/{len(GEMINI_API_KEYS)}")
     
     # Return new SDK client
     return genai.Client(api_key=api_key)
@@ -1088,6 +1174,55 @@ def chat():
         # REGULAR AI CHAT (No meter intent detected)
         # =====================================================================
         
+        # =====================================================================
+        # RAG ENHANCEMENT - Retrieve relevant context for knowledge grounding
+        # =====================================================================
+        rag_context = None
+        retrieved_docs = []
+        
+        # Lazy-load RAG engine on first request
+        rag_engine = get_rag_engine()
+        
+        logger.info(f"🔍 RAG Check: rag_engine={rag_engine is not None}, is_ready={rag_engine.is_ready() if rag_engine else False}")
+        
+        if rag_engine and rag_engine.is_ready():
+            try:
+                logger.info(f"🔍 RAG: Retrieving relevant context for query: '{message[:100]}...'")
+                
+                # Retrieve relevant documents (k=5 for balance between context and token usage)
+                retrieved_docs = rag_engine.retrieve(
+                    query=message,
+                    k=5,
+                    min_score=0.5  # Lowered threshold from 0.6 to 0.5 for better recall
+                )
+                
+                logger.info(f"📊 RAG: Retrieved {len(retrieved_docs)} documents (threshold: 0.5)")
+                
+                if retrieved_docs:
+                    # Log document metadata (Document objects, not dicts)
+                    for i, doc in enumerate(retrieved_docs[:3], 1):
+                        metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+                        source = metadata.get('source', 'N/A')
+                        doc_type = metadata.get('type', 'N/A')
+                        logger.info(f"   Doc {i}: source={source}, type={doc_type}")
+                    
+                    # Format context for prompt
+                    rag_context = rag_engine.format_context_for_prompt(
+                        documents=retrieved_docs,
+                        include_source=True,
+                        max_length=3000  # Leave room for conversation + response
+                    )
+                    logger.info(f"✅ RAG: Using {len(retrieved_docs)} documents ({len(rag_context)} chars context)")
+                else:
+                    logger.info("ℹ️  RAG: No relevant documents found (below threshold 0.5)")
+                    
+            except Exception as rag_error:
+                logger.error(f"⚠️  RAG retrieval error: {rag_error}", exc_info=True)
+                # Continue without RAG if it fails
+                rag_context = None
+        else:
+            logger.warning("⚠️  RAG: Engine not available or not ready")
+        
         # Get Gemini client
         genai_client = get_gemini_client()
         
@@ -1105,7 +1240,7 @@ def chat():
             role = 'user' if conv['role'] == 'user' else 'model'
             history.append(types.Content(
                 role=role,
-                parts=[types.Part.from_text(conv['content'])]
+                parts=[types.Part(text=conv['content'])]
             ))
         
         # Create chat session with the new SDK
@@ -1115,49 +1250,110 @@ def chat():
             history=history
         )
         
-        # Send message and get response (text only - images already processed via OCR)
-        try:
-            logger.info(f"Sending message to Gemini (text only)")
-            response = chat.send_message(message)
-            
-            # Check if response has valid content
-            if not response or not hasattr(response, 'text'):
-                logger.error(f"Gemini response failed - no text in response")
-                return jsonify({
-                    'success': False,
-                    'error': 'Unable to generate a response.'
-                }), 400
-            
-            response_text = response.text
-            logger.info(f"Gemini response received successfully, length: {len(response_text)}")
-            
-        except Exception as gemini_error:
-            error_msg = str(gemini_error)
-            logger.error(f"Gemini API error: {error_msg}")
-            
-            if 'finish_reason is 2' in error_msg or 'SAFETY' in error_msg:
-                return jsonify({
-                    'success': False,
-                    'error': 'Content was blocked by safety filters. Please rephrase your question.'
-                }), 400
-            elif 'finish_reason is 3' in error_msg or 'RECITATION' in error_msg:
-                return jsonify({
-                    'success': False,
-                    'error': 'Content blocked due to recitation policy.'
-                }), 400
-            elif 'quota' in error_msg.lower() or 'rate limit' in error_msg.lower():
-                return jsonify({
-                    'success': False,
-                    'error': 'Service is temporarily busy. Please wait a moment and try again.'
-                }), 429
-            else:
-                return jsonify({
-                    'success': False,
-                    'error': f'Error processing request: {error_msg}'
-                }), 500
+        # Enhance message with RAG context if available
+        enhanced_message = message
+        if rag_context:
+            enhanced_message = f"""Context from knowledge base (use this to ground your response when relevant):
+
+{rag_context}
+
+---
+
+User question: {message}
+
+Please answer using the provided context when relevant. Do not include source citations like [Source 1] or [Source N] in your response."""
+            logger.info(f"📝 Enhanced message with {len(rag_context)} chars of context")
+        
+        # Send message and get response with retry logic for quota exhaustion
+        exhausted_keys = []
+        max_retries = len(GEMINI_API_KEYS)
+        response_text = None
+        
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"Sending message to Gemini (RAG-enhanced: {bool(rag_context)}, attempt: {attempt + 1}/{max_retries})")
+                response = chat.send_message(enhanced_message)
+                
+                # Check if response has valid content
+                if not response or not hasattr(response, 'text'):
+                    logger.error(f"Gemini response failed - no text in response")
+                    return jsonify({
+                        'success': False,
+                        'error': 'Unable to generate a response.'
+                    }), 400
+                
+                response_text = response.text
+                logger.info(f"Gemini response received successfully, length: {len(response_text)}")
+                break  # Success! Exit retry loop
+                
+            except Exception as gemini_error:
+                error_msg = str(gemini_error)
+                
+                # Check if quota exhausted - retry with different key
+                if 'quota' in error_msg.lower() or '429' in error_msg or 'RESOURCE_EXHAUSTED' in error_msg:
+                    # Extract current API key and add to exhausted list
+                    current_key = genai_client.api_key if hasattr(genai_client, 'api_key') else None
+                    if current_key and current_key not in exhausted_keys:
+                        exhausted_keys.append(current_key)
+                    
+                    logger.warning(f"⚠️  API key quota exhausted ({len(exhausted_keys)}/{len(GEMINI_API_KEYS)} keys tried)")
+                    
+                    # Try next key if available
+                    if attempt < max_retries - 1:
+                        try:
+                            genai_client = get_gemini_client(exclude_keys=exhausted_keys)
+                            # Recreate chat session with new client
+                            chat = genai_client.chats.create(
+                                model='gemini-2.5-flash',
+                                config=config,
+                                history=history
+                            )
+                            logger.info(f"🔄 Retrying with different API key...")
+                            continue  # Retry with new key
+                        except ValueError as ve:
+                            # All keys exhausted
+                            logger.error(f"❌ All {len(GEMINI_API_KEYS)} API keys quota exhausted")
+                            return jsonify({
+                                'success': False,
+                                'error': 'Service is temporarily busy. All API keys have reached their quota. Please try again later.'
+                            }), 429
+                    else:
+                        logger.error(f"❌ All retry attempts exhausted")
+                        return jsonify({
+                            'success': False,
+                            'error': 'Service is temporarily busy. Please wait a moment and try again.'
+                        }), 429
+                
+                # Handle other errors
+                logger.error(f"Gemini API error: {error_msg}")
+                
+                if 'finish_reason is 2' in error_msg or 'SAFETY' in error_msg:
+                    return jsonify({
+                        'success': False,
+                        'error': 'Content was blocked by safety filters. Please rephrase your question.'
+                    }), 400
+                elif 'finish_reason is 3' in error_msg or 'RECITATION' in error_msg:
+                    return jsonify({
+                        'success': False,
+                        'error': 'Content blocked due to recitation policy.'
+                    }), 400
+                else:
+                    return jsonify({
+                        'success': False,
+                        'error': f'Error processing request: {error_msg}'
+                    }), 500
+        
+        # Check if we got a response after all retries
+        if response_text is None:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to generate response after all retry attempts.'
+            }), 500
         
         # Calculate confidence score
         confidence = calculate_confidence_score(response_text, message)
+        
+        # Don't add footer to response text - confidence will be shown in UI metadata only
         
         # Store conversation with image data
         conversations[conversation_id].append({
@@ -1175,7 +1371,9 @@ def chat():
             'content': response_text,
             'timestamp': datetime.now().isoformat(),
             'confidence': confidence,
-            'persona': persona
+            'persona': persona,
+            'response_source': 'rag' if rag_context else 'ai',
+            'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
         })
         
         return jsonify({
@@ -1184,7 +1382,9 @@ def chat():
             'confidence': confidence,
             'conversation_id': conversation_id,
             'persona': PERSONAS[persona]['name'],
-            'timestamp': datetime.now().isoformat()
+            'timestamp': datetime.now().isoformat(),
+            'response_source': 'rag' if rag_context else 'ai',
+            'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
         })
         
     except Exception as e:

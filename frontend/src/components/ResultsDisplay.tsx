@@ -453,22 +453,22 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
         <h3 className="text-2xl font-bold text-gray-800">Shloka Overview</h3>
         <div className="flex items-center gap-8 text-base flex-wrap">
           <div className="flex items-center gap-2">
-            <span 
-              className="inline-block w-6 h-6 rounded" 
+            <span
+              className="inline-block w-6 h-6 rounded"
               style={{ backgroundColor: '#A8D4F0' }}
             />
             <span className="text-gray-700 font-medium">Laghu (ल) - Short</span>
           </div>
           <div className="flex items-center gap-2">
-            <span 
-              className="inline-block w-6 h-6 rounded" 
+            <span
+              className="inline-block w-6 h-6 rounded"
               style={{ backgroundColor: '#F5B7B1' }}
             />
             <span className="text-gray-700 font-medium">Guru (ग) - Long</span>
           </div>
         </div>
       </div>
-      
+
       <div className="flex flex-col items-center space-y-6 w-full">
         {lineResults.map((lineItem, lineIndex) => {
           const result = lineItem.result || {};
@@ -478,18 +478,18 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
 
           // Build syllable-to-word mapping
           const validPairs: { syllable: string; lg: string; isWordEnd: boolean }[] = [];
-          
+
           // Split original line into words (space-separated)
           const words = originalLine.split(/\s+/).filter((w: string) => w.trim());
-          
+
           // Match syllables to words by accumulating syllable text
           let wordIdx = 0;
           let accumulated = '';
-          
+
           syllables.forEach((syl: string, idx: number) => {
             if (lgArray[idx] && lgArray[idx].trim() !== '') {
               accumulated += syl;
-              
+
               // Check if current word is complete
               let isWordEnd = false;
               if (wordIdx < words.length) {
@@ -497,7 +497,7 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
                 // Remove any diacritics/marks for comparison and normalize
                 const normalizedWord = currentWord.replace(/[\s।॥]/g, '');
                 const normalizedAccum = accumulated.replace(/[\s।॥]/g, '');
-                
+
                 // Word ends when accumulated syllables match or exceed word length
                 if (normalizedAccum.length >= normalizedWord.length) {
                   isWordEnd = true;
@@ -505,7 +505,7 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
                   accumulated = '';
                 }
               }
-              
+
               validPairs.push({ syllable: syl, lg: lgArray[idx], isWordEnd });
             }
           });
@@ -513,8 +513,8 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
           if (validPairs.length === 0) return null;
 
           return (
-            <div 
-              key={lineIndex} 
+            <div
+              key={lineIndex}
               className="w-full"
               style={{
                 fontFamily: "'Noto Sans Devanagari', 'Siddhanta', sans-serif",
@@ -532,7 +532,7 @@ function ShlokaOverview({ lineResults }: { lineResults: LineResult[] }) {
                 const isLaghu = pair.lg === 'ल' || pair.lg === 'L';
                 // Use actual word boundary detection instead of arbitrary grouping
                 const addWordGap = pair.isWordEnd && idx < validPairs.length - 1;
-                
+
                 return (
                   <span
                     key={idx}
@@ -958,20 +958,40 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
               const primaryScore = sortedMeters[0][1];
               const englishName = getMeterEnglish(primaryMeter);
 
+              // Calculate meter structure early so we can use it in confidence fix
+              const meterStructure = getMeterStructure(primaryMeter, lineResults);
+
               // Get confidence from backend's primary_confidence_reason if available
               const firstLineResult = lineResults[0]?.result;
               const confidenceReason = firstLineResult?.primary_confidence_reason;
-              
+
               let confidenceLabel = 'High';
               let confidenceColor = '#16A34A'; // green-600
               let confidenceScore = 0;
               let confidenceReasonText = '';
-              
+
               if (confidenceReason) {
                 // Use backend confidence reason (cap at 10.0 for display)
                 confidenceScore = Math.min(confidenceReason.confidence, 10);
                 confidenceReasonText = confidenceReason.reason;
-                
+
+                // FIX: For Vedic meters with multiple lines, replace the per-line syllable count
+                // with the total verse syllable count in the confidence explanation.
+                // This prevents showing "14 syllables" when the full verse has 28 syllables (उष्णिक्)
+                if (lineResults.length > 1 && meterStructure) {
+                  const perLineSyllables = confidenceReason.technical_details?.syllable_count;
+                  const totalSyllables = meterStructure.totalSyllables;
+
+                  // Replace "(X syllables)" with "(Y syllables)" where Y is the total
+                  if (perLineSyllables && totalSyllables && perLineSyllables !== totalSyllables) {
+                    const pattern = new RegExp(`\\b${perLineSyllables}\\s+syllables?\\b`, 'gi');
+                    confidenceReasonText = confidenceReasonText.replace(
+                      pattern,
+                      `${totalSyllables} syllables`
+                    );
+                  }
+                }
+
                 // Map level to label and color
                 switch (confidenceReason.level) {
                   case 'very_high':
@@ -1011,8 +1031,8 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                 }
               }
 
-              // Get meter structure info
-              const meterStructure = getMeterStructure(primaryMeter, lineResults);
+              // meterStructure already calculated earlier (line ~959)
+              // to support confidence reason syllable count fix
 
               return (
                 <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
@@ -1049,7 +1069,7 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                         )}
                       </div>
                     </div>
-                    
+
                     {/* Confidence Box - with integrated reason */}
                     <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
                       <div className="text-sm font-medium text-gray-500 mb-1">Confidence</div>
@@ -1061,7 +1081,7 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Confidence Reason - Full width explanation below */}
                   {confidenceReasonText && (
                     <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
@@ -1150,17 +1170,37 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                       // Get confidence from backend's primary_confidence_reason if available
                       const firstLineResult = lineResults[0]?.result;
                       const confidenceReason = firstLineResult?.primary_confidence_reason;
-                      
+
                       let confidenceLabel = 'High';
                       let confidenceColor = '#16A34A'; // green-600
                       let confidenceScore = 0;
                       let confidenceReasonText = '';
-                      
+
                       if (confidenceReason) {
                         // Use backend confidence reason (cap at 10.0 for display)
                         confidenceScore = Math.min(confidenceReason.confidence, 10);
                         confidenceReasonText = confidenceReason.reason;
-                        
+
+                        // Get meter structure first to check if we need to fix syllable count
+                        const meterStructure = getMeterStructure(primaryMeter, lineResults);
+
+                        // FIX: For Vedic meters with multiple lines, replace the per-line syllable count
+                        // with the total verse syllable count in the confidence explanation.
+                        // This prevents showing "14 syllables" when the full verse has 28 syllables (उष्णिक्)
+                        if (lineResults.length > 1 && meterStructure) {
+                          const perLineSyllables = confidenceReason.technical_details?.syllable_count;
+                          const totalSyllables = meterStructure.totalSyllables;
+
+                          // Replace "(X syllables)" with "(Y syllables)" where Y is the total
+                          if (perLineSyllables && totalSyllables && perLineSyllables !== totalSyllables) {
+                            const pattern = new RegExp(`\\b${perLineSyllables}\\s+syllables?\\b`, 'gi');
+                            confidenceReasonText = confidenceReasonText.replace(
+                              pattern,
+                              `${totalSyllables} syllables`
+                            );
+                          }
+                        }
+
                         // Map level to label and color
                         switch (confidenceReason.level) {
                           case 'very_high':
@@ -1235,7 +1275,7 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                                 )}
                               </div>
                             </div>
-                            
+
                             {/* Confidence Box */}
                             <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
                               <div className="text-sm font-medium text-gray-500 mb-1">Confidence</div>
@@ -1247,7 +1287,7 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Confidence Reason - Full width explanation below */}
                           {confidenceReasonText && (
                             <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">

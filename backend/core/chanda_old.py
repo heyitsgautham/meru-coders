@@ -750,7 +750,7 @@ class Chanda:
             - Second column contains name(s) of Jaati
         """
         jaati = defaultdict(list)
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -774,7 +774,7 @@ class Chanda:
             - Third column (optional) contains synonyms
         """
         matra_meters = defaultdict(list)
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -846,7 +846,7 @@ class Chanda:
         # Check if this is vedic CSV to extract pada patterns
         is_vedic_file = 'vedic' in chanda_file.lower()
 
-        with open(chanda_file, 'r') as f:
+        with open(chanda_file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -960,7 +960,7 @@ class Chanda:
 
     def read_examples(self):
         example_file = os.path.join(self.data_path, "examples.json")
-        with open(example_file, "r") as f:
+        with open(example_file, "r", encoding="utf-8") as f:
             examples = json.load(f)
         return examples
 

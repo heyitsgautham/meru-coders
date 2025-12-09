@@ -5,11 +5,11 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  Trash2, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Trash2,
   Ban,
   AlertCircle,
   Loader2,
@@ -32,12 +32,12 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  getReports, 
-  handleReport, 
+import {
+  getReports,
+  handleReport,
   getModerationStats,
   type Report,
-  type ModerationStats 
+  type ModerationStats
 } from '../../services/community';
 import { formatRelativeTime } from '../../services/community';
 import type { ViewType } from '../../types/api';
@@ -49,7 +49,7 @@ type ReportAction = 'dismiss' | 'delete_content' | 'warn_user' | 'ban_user';
 export function ModerationPanel() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  
+
   const [reports, setReports] = useState<Report[]>([]);
   const [stats, setStats] = useState<ModerationStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +102,7 @@ export function ModerationPanel() {
     }
   };
 
-  const handleViewChange = (view: ViewType) => {
+  const handleViewChange = (_view: ViewType) => {
     navigate('/app');
   };
 
@@ -114,11 +114,11 @@ export function ModerationPanel() {
 
   const executeAction = async () => {
     if (!pendingAction) return;
-    
+
     const { report, action } = pendingAction;
     setActionLoading(report.id);
     setShowActionDialog(false);
-    
+
     try {
       const result = await handleReport(report.id, action, actionNotes || undefined);
       if (result.success) {
@@ -180,7 +180,7 @@ export function ModerationPanel() {
   return (
     <div className="moderation-page">
       <Header currentView="home" onViewChange={handleViewChange} />
-      
+
       <div className="moderation-container">
         <div className="moderation-header">
           <div>
@@ -250,15 +250,15 @@ export function ModerationPanel() {
               <CheckCircle size={48} />
               <h3>No {statusFilter} reports</h3>
               <p>
-                {statusFilter === 'pending' 
+                {statusFilter === 'pending'
                   ? 'Great! There are no reports waiting for review.'
                   : `No reports with status "${statusFilter}" found.`}
               </p>
             </div>
           ) : (
             reports.map(report => (
-              <div 
-                key={report.id} 
+              <div
+                key={report.id}
                 className={`report-card ${selectedReport?.id === report.id ? 'selected' : ''}`}
                 onClick={() => setSelectedReport(selectedReport?.id === report.id ? null : report)}
               >
@@ -288,7 +288,7 @@ export function ModerationPanel() {
                       </>
                     )}
                   </div>
-                  
+
                   {report.description && (
                     <p className="report-description">{report.description}</p>
                   )}
@@ -298,13 +298,13 @@ export function ModerationPanel() {
                     <div className="reported-content">
                       <span className="content-label">Post content:</span>
                       <p className="content-preview">
-                        {report.post.content.length > 200 
+                        {report.post.content.length > 200
                           ? report.post.content.substring(0, 200) + '...'
                           : report.post.content}
                       </p>
                     </div>
                   )}
-                  
+
                   {report.comment && (
                     <div className="reported-content">
                       <span className="content-label">Comment:</span>
@@ -325,7 +325,7 @@ export function ModerationPanel() {
                       <XCircle size={14} className="mr-1" />
                       Dismiss
                     </Button>
-                    
+
                     {(report.post_id || report.comment_id) && (
                       <Button
                         variant="outline"
@@ -338,7 +338,7 @@ export function ModerationPanel() {
                         Delete Content
                       </Button>
                     )}
-                    
+
                     {report.reported_user_id && (
                       <>
                         <Button
@@ -351,7 +351,7 @@ export function ModerationPanel() {
                           <AlertCircle size={14} className="mr-1" />
                           Warn User
                         </Button>
-                        
+
                         <Button
                           variant="destructive"
                           size="sm"
@@ -363,7 +363,7 @@ export function ModerationPanel() {
                         </Button>
                       </>
                     )}
-                    
+
                     {actionLoading === report.id && (
                       <Loader2 className="animate-spin ml-2" size={16} />
                     )}
@@ -397,7 +397,7 @@ export function ModerationPanel() {
               {pendingAction && getActionDescription(pendingAction.action)}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           <div className="action-notes-input">
             <label htmlFor="action-notes">Notes (optional):</label>
             <textarea
@@ -408,7 +408,7 @@ export function ModerationPanel() {
               rows={3}
             />
           </div>
-          
+
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setPendingAction(null)}>
               Cancel
