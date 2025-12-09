@@ -2,11 +2,12 @@ import { Sparkles, Image, Upload, Edit3, Loader2, AlertTriangle, FileText, Mic, 
 import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
+import { DandakaResultsDisplay } from "./DandakaResultsDisplay";
 import { PingalaAcharyaSpeaker } from "./PingalaAcharyaSpeaker";
 import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile, useExtractAudio } from "../hooks/useApi";
 import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode, SlokaValidateResponse } from "../types/api";
 import { createAudioRecorder } from "../utils/audioUtils";
-import { validateSloka } from "../services/api";
+import { validateSloka, identifyDandaka } from "../services/api";
 
 // Fixed analysis settings
 const ANALYSIS_MODE: AnalysisMode = "verse";
@@ -25,6 +26,10 @@ const MODE_INFO: Record<IdentificationMode, { label: string; description: string
   classical: {
     label: "Classical Mode",
     description: "For classical Sanskrit meters using L-G pattern matching (Anushtubh, Vasantatilaka)"
+  },
+  dandaka: {
+    label: "Daṇḍaka / Stotra",
+    description: "For Daṇḍaka verses (long flowing compounds) and unmetrical Tantric Stotras like Rājaśyāmalā"
   }
 };
 
@@ -35,19 +40,22 @@ const STORAGE_KEYS = {
 
 interface AnalysisFormProps {
   initialText?: string;
+  initialMode?: string;
   onTextChange?: (text: string) => void;
   autoIdentify?: boolean;
 }
 
-export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = false }: AnalysisFormProps) {
+export function AnalysisForm({ initialText = "", initialMode, onTextChange, autoIdentify = false }: AnalysisFormProps) {
   const [text, setText] = useState(initialText);
   const [activeTab, setActiveTab] = useState<"text" | "image" | "file" | "voice">(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.activeTab);
     return (saved as "text" | "image" | "file" | "voice") || "text";
   });
 
-  // Identification mode state
-  const [identificationMode, setIdentificationMode] = useState<IdentificationMode>("auto");
+  // Identification mode state - use initialMode if provided
+  const [identificationMode, setIdentificationMode] = useState<IdentificationMode>(
+    (initialMode as IdentificationMode) || "auto"
+  );
 
   // Image/File state
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -624,7 +632,13 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
           alert("Please enter some Sanskrit text");
           return;
         }
-        response = await identifyText(text, ANALYSIS_MODE, OUTPUT_SCRIPT, identificationMode);
+        
+        // Use dandaka-specific endpoint if in dandaka mode
+        if (identificationMode === 'dandaka') {
+          response = await identifyDandaka(text);
+        } else {
+          response = await identifyText(text, ANALYSIS_MODE, OUTPUT_SCRIPT, identificationMode);
+        }
         setResultType("text");
       } else if (activeTab === "file") {
         if (!selectedFile) {
@@ -639,8 +653,8 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
 
       setResult(response);
       
-      // Show Pingala Acharya if identification was successful
-      if (response?.success && response?.result?.line?.[0]?.result?.found) {
+      // Show Pingala Acharya if identification was successful (not for dandaka mode)
+      if (identificationMode !== 'dandaka' && response?.success && response?.result?.line?.[0]?.result?.found) {
         setShowPingala(true);
       }
     } catch (err) {
@@ -1564,11 +1578,15 @@ export function AnalysisForm({ initialText = "", onTextChange, autoIdentify = fa
       {/* Results Display - SEPARATE container, wider width - Only show for text input tab */}
       {result && activeTab === "text" && (
         <div ref={resultsRef} style={{ width: '1400px', maxWidth: '100%', margin: '40px auto 0 auto' }}>
-          <ResultsDisplay
-            result={result}
-            type={resultType}
-            onClose={handleCloseResults}
-          />
+          {identificationMode === 'dandaka' && result.result ? (
+            <DandakaResultsDisplay result={result.result} />
+          ) : (
+            <ResultsDisplay
+              result={result}
+              type={resultType}
+              onClose={handleCloseResults}
+            />
+          )}
         </div>
       )}
 

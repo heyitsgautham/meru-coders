@@ -308,6 +308,48 @@ def register_routes(app):
                 'error': str(e)
             }), 500
     
+    @app.route(f'{settings.API_PREFIX}/identify/dandaka', methods=['POST'])
+    def identify_dandaka():
+        """
+        Identify Dandaka verses and Rajashyamala Stotram.
+        
+        Request JSON:
+            {
+                "text": "Sanskrit text in Devanagari or other scheme"
+            }
+        
+        Returns:
+            JSON with dandaka and rajashyamala analysis results
+        """
+        try:
+            from backend.core.dandaka_detector import analyze_dandaka_mode
+            
+            data = request.get_json()
+            
+            if not data or 'text' not in data:
+                return jsonify({
+                    'error': 'Missing required field: text'
+                }), 400
+            
+            text = data['text']
+            
+            logger.info(f"Analyzing text in Dandaka mode")
+            
+            # Call the dandaka analyzer
+            result = analyze_dandaka_mode(text)
+            
+            return jsonify({
+                'success': True,
+                'result': result
+            })
+            
+        except Exception as e:
+            logger.exception(f"Error in identify_dandaka: {e}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+    
     @app.route(f'{settings.API_PREFIX}/identify/image', methods=['POST'])
     def identify_image():
         """

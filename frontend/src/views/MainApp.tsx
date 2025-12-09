@@ -20,6 +20,7 @@ export default function MainApp() {
     return (saved as ViewType) || "home";
   });
   const [textFromExample, setTextFromExample] = useState("");
+  const [modeFromExample, setModeFromExample] = useState<string | undefined>(undefined);
   const [autoIdentify, setAutoIdentify] = useState(false);
 
   // Handle text from URL parameters (from chatbot link)
@@ -56,8 +57,9 @@ export default function MainApp() {
   }, [navigate]);
 
   // Handle example selection - switch to home view and populate text
-  const handleSelectExample = useCallback((text: string) => {
+  const handleSelectExample = useCallback((text: string, mode?: string) => {
     setTextFromExample(text);
+    setModeFromExample(mode);
     setCurrentView("home");
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,6 +90,7 @@ export default function MainApp() {
           {currentView === "home" && (
             <AnalysisForm
               initialText={textFromExample}
+              initialMode={modeFromExample}
               onTextChange={handleTextChange}
               autoIdentify={autoIdentify}
             />

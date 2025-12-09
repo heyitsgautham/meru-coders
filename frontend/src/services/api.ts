@@ -134,6 +134,21 @@ export async function identifyFromText(
 }
 
 /**
+ * Identify Dandaka verses and Rajashyamala Stotram
+ */
+export async function identifyDandaka(text: string): Promise<IdentifyResponse> {
+  return request<IdentifyResponse>('/identify/dandaka', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text,
+    }),
+  });
+}
+
+/**
  * Extract text from image using OCR (no meter analysis)
  */
 export async function extractTextFromImage(file: File): Promise<OCRExtractResponse> {

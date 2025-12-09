@@ -9,13 +9,16 @@ import { useExamples } from '../hooks/useApi';
 import type { Example } from '../types/api';
 
 interface ExamplesViewProps {
-  onSelectExample: (text: string) => void;
+  onSelectExample: (text: string, mode?: string) => void;
 }
 
-function ExampleCard({ example, onClick }: { example: Example; onClick: () => void }) {
+function ExampleCard({ example, onClick, isDandaka = false }: { example: Example; onClick: () => void; isDandaka?: boolean }) {
   const lines = Array.isArray(example.lines)
     ? example.lines.filter(line => line.trim())
     : (example.text || '').split('\n').filter(line => line.trim());
+
+  // For dandaka examples, show first 2 lines as preview
+  const displayLines = isDandaka ? lines.slice(0, 2) : lines;
 
   return (
     <div
@@ -26,14 +29,17 @@ function ExampleCard({ example, onClick }: { example: Example; onClick: () => vo
         {example.meter}
       </h3>
       <div className="mb-5" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif" }}>
-        {lines.map((line, idx) => (
-          <p key={idx} className="text-gray-800 whitespace-nowrap" style={{ fontSize: '1.1rem', lineHeight: '2' }}>
+        {displayLines.map((line, idx) => (
+          <p key={idx} className="text-gray-800 overflow-hidden text-ellipsis" style={{ fontSize: '1rem', lineHeight: '1.8' }}>
             {line}
           </p>
         ))}
+        {isDandaka && lines.length > 2 && (
+          <p className="text-gray-500 italic text-sm mt-2">+ {lines.length - 2} more line{lines.length - 2 > 1 ? 's' : ''}</p>
+        )}
       </div>
       <span className="text-sm font-semibold text-orange-500 group-hover:text-orange-600 flex items-center gap-2 transition-colors">
-        Try this example
+        Analyze this dandaka
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </span>
     </div>
@@ -54,7 +60,7 @@ export function ExamplesView({ onSelectExample }: ExamplesViewProps) {
     const text = Array.isArray(example.lines)
       ? example.lines.filter(line => line.trim()).join('\n')
       : (example.text || '');
-    onSelectExample(text);
+    onSelectExample(text, example.mode);
   };
 
   if (loading) {
@@ -102,6 +108,40 @@ export function ExamplesView({ onSelectExample }: ExamplesViewProps) {
     );
   }
 
+  // Dandaka examples - one for each classification (ACCURATE)
+  const dandakaExamples: Example[] = [
+    {
+      meter: 'संकीर्ण-दण्डकम् (Saṃkīrṇa-daṇḍakam)',
+      text: 'रामो राजमणिः सदा विजयते रामं रमेशं भजे।',
+      lines: ['रामो राजमणिः सदा विजयते रामं रमेशं भजे।'],
+      mode: 'dandaka'
+    },
+    {
+      meter: 'मध्यम-दण्डकम् (Madhyama-daṇḍakam)',
+      text: 'यस्मिन् जातो रामः सर्वेषां लोकानां हितकरः सत्यप्रतिज्ञः धर्मात्मा स राजा दशरथः।',
+      lines: [
+        'यस्मिन् जातो रामः सर्वेषां लोकानां हितकरः सत्यप्रतिज्ञः धर्मात्मा स राजा दशरथः।'
+      ],
+      mode: 'dandaka'
+    },
+    {
+      meter: 'प्रबन्ध-दण्डकम् (Prabandha-daṇḍakam)',
+      text: 'तस्याः प्रभावादिव धूमजालेरन्तर्हितः कौशिकसप्तरश्मिः महार्णवोर्मिस्फुरदाविलत्वाद्बभूव तेजस्तिमिरेण मिश्रः क्षणेन गृध्रप्रतिमानभःस्थच्छायातपत्रं जगतीश्वरस्य।',
+      lines: [
+        'तस्याः प्रभावादिव धूमजालेरन्तर्हितः कौशिकसप्तरश्मिः महार्णवोर्मिस्फुरदाविलत्वाद्बभूव तेजस्तिमिरेण मिश्रः क्षणेन गृध्रप्रतिमानभःस्थच्छायातपत्रं जगतीश्वरस्य।'
+      ],
+      mode: 'dandaka'
+    },
+    {
+      meter: 'अति-दण्डकम् (Ati-daṇḍakam)',
+      text: 'तस्याः प्रभावादिव धूमजालेरन्तर्हितः कौशिकसप्तरश्मिः महार्णवोर्मिस्फुरदाविलत्वाद्बभूव तेजस्तिमिरेण मिश्रः क्षणेन गृध्रप्रतिमानभःस्थच्छायातपत्रं जगतीश्वरस्य चकास चामीकरशैलकूटनिष्क्रान्तशाखं महतः पतत्रं स्फुरत्पाटलाभोगवपुः प्रभायां दधद्रोचिषां संहतिं रोचमानं तमः सद्य आर्द्रालिगोप्यम्।',
+      lines: [
+        'तस्याः प्रभावादिव धूमजालेरन्तर्हितः कौशिकसप्तरश्मिः महार्णवोर्मिस्फुरदाविलत्वाद्बभूव तेजस्तिमिरेण मिश्रः क्षणेन गृध्रप्रतिमानभःस्थच्छायातपत्रं जगतीश्वरस्य चकास चामीकरशैलकूटनिष्क्रान्तशाखं महतः पतत्रं स्फुरत्पाटलाभोगवपुः प्रभायां दधद्रोचिषां संहतिं रोचमानं तमः सद्य आर्द्रालिगोप्यम्।'
+      ],
+      mode: 'dandaka'
+    }
+  ];
+
   return (
     <div className="animate-fadeIn px-6 py-10">
       {/* Header */}
@@ -114,15 +154,44 @@ export function ExamplesView({ onSelectExample }: ExamplesViewProps) {
         </p>
       </div>
 
-      {/* Examples Grid - 3 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {examples.map((example, index) => (
-          <ExampleCard
-            key={index}
-            example={example}
-            onClick={() => handleSelect(example)}
-          />
-        ))}
+      {/* Classical Meters Section */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-[var(--color-text-main)] mb-6 flex items-center gap-3">
+          <BookOpen className="w-6 h-6 text-orange-500" />
+          Classical Meters
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {examples.map((example, index) => (
+            <ExampleCard
+              key={index}
+              example={example}
+              onClick={() => handleSelect(example)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Dandaka Examples Section */}
+      <div>
+        <h2 className="text-2xl font-bold text-[var(--color-text-main)] mb-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+            <span className="text-white text-sm font-bold">द</span>
+          </div>
+          Daṇḍaka Examples
+        </h2>
+        <p className="text-gray-600 mb-6 ml-11">
+          Unmetrical compositions - System will classify the entire text as one of four types
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {dandakaExamples.map((example, index) => (
+            <ExampleCard
+              key={`dandaka-${index}`}
+              example={example}
+              onClick={() => handleSelect(example)}
+              isDandaka={true}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
