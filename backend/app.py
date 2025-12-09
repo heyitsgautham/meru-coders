@@ -14,10 +14,20 @@ from flask_limiter.util import get_remote_address
 from pathlib import Path
 import logging
 import atexit
+import os
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from backend.config import settings
+
+# Set up Google Cloud credentials BEFORE importing routes
+# This ensures TTS and other Google Cloud services can initialize properly
+_credentials_path = Path(__file__).parent / 'secrets' / 'gcp-credentials.json'
+if _credentials_path.exists():
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(_credentials_path)
+    logging.info(f"Google Cloud credentials set: {_credentials_path}")
+else:
+    logging.warning(f"Google Cloud credentials not found at: {_credentials_path}")
 
 # Global SocketIO instance (for access from other modules)
 socketio = None

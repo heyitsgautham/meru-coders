@@ -42,9 +42,10 @@ except ImportError:
 try:
     from google.cloud import texttospeech
     GOOGLE_TTS_AVAILABLE = True
+    logging.info("Google Cloud TTS library imported successfully")
 except ImportError:
     GOOGLE_TTS_AVAILABLE = False
-    logging.warning("Google Cloud TTS not available.")
+    logging.warning("Google Cloud TTS not available - install with: pip install google-cloud-texttospeech")
 
 # Import pyttsx3 (offline TTS with voice selection)
 try:
@@ -1535,6 +1536,7 @@ def register_routes(app):
             
             # Voice selection
             voice_type = data.get('voice', 'male')
+            logger.info(f"TTS voice requested: {voice_type}")
             
             # Generate unique filename
             filename = f"tts_{uuid.uuid4().hex}.mp3"
@@ -1552,16 +1554,16 @@ def register_routes(app):
                     logger.info("Attempting TTS generation with Google Cloud TTS...")
                     client = texttospeech.TextToSpeechClient()
                     
-                    # Configure voice selection - Google Cloud TTS has proper male/female Hindi voices
+                    # Configure voice selection - Google Cloud TTS with Chirp3-HD voices for Sanskrit
                     voice_configs = {
                         "male": {
                             "language_code": "hi-IN",
-                            "name": "hi-IN-MadhurNeural",  # Male voice
+                            "name": "hi-IN-Chirp3-HD-Algieba",  # Male Chirp3-HD voice for Sanskrit
                             "ssml_gender": texttospeech.SsmlVoiceGender.MALE
                         },
                         "female": {
                             "language_code": "hi-IN", 
-                            "name": "hi-IN-SwaraNeural",  # Female voice
+                            "name": "hi-IN-Wavenet-A",  # Female voice (Google Cloud TTS)
                             "ssml_gender": texttospeech.SsmlVoiceGender.FEMALE
                         }
                     }
@@ -1683,7 +1685,9 @@ def register_routes(app):
             return jsonify({
                 'success': True,
                 'audio_url': f'{settings.API_PREFIX}/tts/audio/{filename}',
-                'filename': filename
+                'filename': filename,
+                'engine': used_engine,
+                'voice': voice_type
             })
             
         except Exception as e:
