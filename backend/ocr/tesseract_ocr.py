@@ -8,7 +8,7 @@ Wrapper for Tesseract OCR to extract text from images.
 
 import logging
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 
 try:
     import pytesseract
@@ -30,7 +30,7 @@ class TesseractOCR:
     Supports multiple Indian languages including Sanskrit, Hindi, Marathi,
     Bengali, Telugu, Gujarati, Tamil, Malayalam, and Kannada.
     """
-    
+
     def __init__(self, languages=None):
         """
         Initialize Tesseract OCR.
@@ -44,11 +44,11 @@ class TesseractOCR:
                 "Tesseract OCR is not available. "
                 "Please install: pip install pytesseract pillow"
             )
-        
-        self.languages = languages or ['san', 'mar', 'hin', 'ben', 'tel', 
+
+        self.languages = languages or ['san', 'mar', 'hin', 'ben', 'tel',
                                       'guj', 'tam', 'mal', 'kan']
         self.config = self._build_config()
-        
+
         # Test Tesseract availability
         try:
             pytesseract.get_tesseract_version()
@@ -58,13 +58,13 @@ class TesseractOCR:
             raise RuntimeError(
                 "Tesseract OCR is not installed or not in PATH. "
                 "Please install Tesseract: https://github.com/tesseract-ocr/tesseract"
-            )
-    
+            ) from e
+
     def _build_config(self):
         """Build Tesseract configuration string."""
         lang_string = '+'.join(self.languages)
         return f'-l {lang_string}'
-    
+
     def extract_text(self, image_path: Union[str, Path]) -> str:
         """
         Extract text from an image file.
@@ -80,22 +80,22 @@ class TesseractOCR:
             RuntimeError: If OCR extraction fails
         """
         image_path = Path(image_path)
-        
+
         if not image_path.exists():
             raise FileNotFoundError(f"Image file not found: {image_path}")
-        
+
         try:
             # Open image and perform OCR
             image = Image.open(image_path)
             text = pytesseract.image_to_string(image, config=self.config)
-            
+
             logger.info(f"Successfully extracted text from: {image_path.name}")
             return text.strip()
-            
+
         except Exception as e:
             logger.error(f"Failed to extract text from {image_path}: {e}")
-            raise RuntimeError(f"OCR extraction failed: {e}")
-    
+            raise RuntimeError(f"OCR extraction failed: {e}") from e
+
     def extract_text_with_confidence(self, image_path: Union[str, Path]) -> dict:
         """
         Extract text with confidence scores.
@@ -107,39 +107,39 @@ class TesseractOCR:
             Dictionary with 'text' and 'confidence' information
         """
         image_path = Path(image_path)
-        
+
         if not image_path.exists():
             raise FileNotFoundError(f"Image file not found: {image_path}")
-        
+
         try:
             image = Image.open(image_path)
-            
+
             # Get detailed OCR data
             data = pytesseract.image_to_data(image, config=self.config, output_type=pytesseract.Output.DICT)
-            
+
             # Extract text and confidence
             text_parts = []
             confidences = []
-            
+
             for i, conf in enumerate(data['conf']):
                 if conf != -1:  # -1 means no confidence
                     text_parts.append(data['text'][i])
                     confidences.append(conf)
-            
+
             text = ' '.join(text_parts).strip()
             avg_confidence = sum(confidences) / len(confidences) if confidences else 0
-            
+
             return {
                 'text': text,
                 'confidence': avg_confidence,
                 'word_count': len(text_parts)
             }
-            
+
         except Exception as e:
             logger.error(f"Failed to extract text with confidence from {image_path}: {e}")
-            raise RuntimeError(f"OCR extraction failed: {e}")
-    
-    def save_text_to_file(self, image_path: Union[str, Path], 
+            raise RuntimeError(f"OCR extraction failed: {e}") from e
+
+    def save_text_to_file(self, image_path: Union[str, Path],
                          output_path: Optional[Union[str, Path]] = None) -> Path:
         """
         Extract text from image and save to a text file.
@@ -153,18 +153,18 @@ class TesseractOCR:
             Path to the output text file
         """
         image_path = Path(image_path)
-        
+
         if output_path is None:
             output_path = image_path.with_suffix('.txt')
         else:
             output_path = Path(output_path)
-        
+
         # Extract text
         text = self.extract_text(image_path)
-        
+
         # Save to file
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(text, encoding='utf-8')
-        
+
         logger.info(f"Saved extracted text to: {output_path}")
         return output_path

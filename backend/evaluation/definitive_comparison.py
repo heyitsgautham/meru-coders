@@ -39,10 +39,11 @@ Key Insights:
 
 import sys
 import time
-import pytest
-import pandas as pd
-from pathlib import Path
 from collections import Counter
+from pathlib import Path
+
+import pandas as pd
+import pytest
 
 # Setup paths
 BASE_PATH = Path(__file__).parent.parent.parent
@@ -78,12 +79,12 @@ def normalize_chanda_name(name: str) -> str:
     """
     if not name:
         return ''
-    
+
     name = name.strip()
-    
+
     # Check if contains Devanagari (Unicode range 0900-097F)
     has_devanagari = any('\u0900' <= c <= '\u097F' for c in name)
-    
+
     if has_devanagari and HAS_TRANSLITERATION:
         # Use proper transliteration for accurate conversion
         name = transliterate(name, sanscript.DEVANAGARI, sanscript.IAST)
@@ -106,12 +107,12 @@ def normalize_chanda_name(name: str) -> str:
         }
         for dev, lat in devanagari_map.items():
             name = name.replace(dev, lat)
-    
+
     # Now normalize IAST diacritics to basic Latin
     n = name.lower()
     replacements = [
         ('ā', 'a'), ('ä', 'a'),  # long a
-        ('ī', 'i'),              # long i  
+        ('ī', 'i'),              # long i
         ('ü', 'u'), ('ū', 'u'),  # long u
         ('ṭ', 't'), ('ḍ', 'd'),  # retroflex
         ('ṇ', 'n'), ('ṅ', 'n'), ('ñ', 'n'),  # nasals
@@ -123,12 +124,12 @@ def normalize_chanda_name(name: str) -> str:
     ]
     for old, new in replacements:
         n = n.replace(old, new)
-    
+
     # Remove trailing 'm' or 'a' (common suffix variations)
     for suffix in ['m', 'a']:
         if n.endswith(suffix) and len(n) > 5:
             n = n[:-1]
-    
+
     return n
 
 
@@ -146,9 +147,9 @@ def chanda_names_match(expected: str, actual_list: list) -> bool:
     """
     if not expected or not actual_list:
         return False
-    
+
     exp_norm = normalize_chanda_name(expected)
-    
+
     # Common spelling variants (normalized_expected -> normalized_variants)
     SPELLING_VARIANTS = {
         'anushtup': ['anushtubh', 'anustubh', 'anustup', 'slok', 'shlok'],
@@ -159,19 +160,19 @@ def chanda_names_match(expected: str, actual_list: list) -> bool:
         'indravajr': ['upajati'],  # Indravajra is a type of Upajati
         'upendravajr': ['upajati'],
     }
-    
+
     for actual in actual_list:
         act_norm = normalize_chanda_name(actual)
-        
+
         # Exact normalized match
         if exp_norm == act_norm:
             return True
-        
+
         # Check spelling variants
         if exp_norm in SPELLING_VARIANTS:
             if act_norm in SPELLING_VARIANTS[exp_norm]:
                 return True
-        
+
         # Prefix match for longer names (at least 5 chars matching)
         min_len = min(len(exp_norm), len(act_norm))
         if min_len >= 5:
@@ -179,12 +180,12 @@ def chanda_names_match(expected: str, actual_list: list) -> bool:
             prefix_len = max(5, min_len - 2)
             if exp_norm[:prefix_len] == act_norm[:prefix_len]:
                 return True
-        
+
         # One contains the other (for compound names)
         if len(exp_norm) >= 5 and len(act_norm) >= 5:
             if exp_norm in act_norm or act_norm in exp_norm:
                 return True
-    
+
     return False
 
 
@@ -226,19 +227,19 @@ def run_accuracy_test(implementation, test_data: list) -> dict:
     correct = 0
     mismatches = []
     times = []
-    
+
     for verse, expected in test_data:
         # Use first line only (multi-line verses in CSV)
         first_line = verse.replace('\r', '').split('\n')[0].strip()
-        
+
         start = time.perf_counter()
         try:
             result = implementation.identify_line(first_line)
             elapsed = time.perf_counter() - start
             times.append(elapsed)
-            
+
             actual_names = extract_chanda_names_from_result(result)
-            
+
             if chanda_names_match(expected, actual_names):
                 correct += 1
             else:
@@ -246,9 +247,9 @@ def run_accuracy_test(implementation, test_data: list) -> dict:
                 mismatches.append((expected, top))
         except Exception as e:
             mismatches.append((expected, f'ERROR: {str(e)[:40]}'))
-    
+
     avg_ms = 1000 * sum(times) / len(times) if times else 0
-    
+
     return {
         'correct': correct,
         'total': len(test_data),
@@ -264,7 +265,7 @@ def run_accuracy_test(implementation, test_data: list) -> dict:
 
 class TestDefinitiveComparison:
     """Definitive comparison tests between implementations."""
-    
+
     @pytest.fixture(scope="class")
     def paths(self):
         """Return all necessary paths."""
@@ -274,13 +275,13 @@ class TestDefinitiveComparison:
             'sheet1_csv': str(BACKEND_PATH / 'data' / 'page 1-47 chanda list - Sheet1.csv'),
             'complete_csv': str(BACKEND_PATH / 'data' / 'page 1-47 chanda list - complete.csv'),
         }
-    
+
     @pytest.fixture(scope="class")
     def our_impl(self, paths):
         """Our implementation with our dataset."""
         from core.chanda import Chanda
         return Chanda(data_path=paths['our_data'])
-    
+
     @pytest.fixture(scope="class")
     def iitk_impl_original(self, paths):
         """IITK implementation with original dataset (434 patterns)."""
@@ -289,7 +290,7 @@ class TestDefinitiveComparison:
             return Chanda(paths['iitk_data'])
         except ImportError:
             pytest.skip("IITK implementation not available at reference/alternative_implementations/chanda_iitk.py")
-    
+
     @pytest.fixture(scope="class")
     def iitk_impl_our_data(self, paths):
         """IITK implementation with our dataset (2062 patterns)."""
@@ -298,22 +299,22 @@ class TestDefinitiveComparison:
             return Chanda(paths['our_data'])
         except ImportError:
             pytest.skip("IITK implementation not available")
-    
+
     @pytest.fixture(scope="class")
     def sheet1_data(self, paths):
         """Sheet1 test data: 109 verses, 22 unique chandas."""
         return load_test_csv(paths['sheet1_csv'])
-    
+
     @pytest.fixture(scope="class")
     def complete_data(self, paths):
         """Complete test data: 264 verses, 134 unique chandas."""
         return load_test_csv(paths['complete_csv'])
-    
+
     # =========================================================================
     # Main Comparison Test
     # =========================================================================
-    
-    def test_full_comparison_complete_dataset(self, our_impl, iitk_impl_original, 
+
+    def test_full_comparison_complete_dataset(self, our_impl, iitk_impl_original,
                                                iitk_impl_our_data, complete_data):
         """
         MAIN TEST: Full comparison on complete dataset (264 verses).
@@ -327,9 +328,9 @@ class TestDefinitiveComparison:
         r1 = run_accuracy_test(iitk_impl_original, complete_data)
         r2 = run_accuracy_test(iitk_impl_our_data, complete_data)
         r3 = run_accuracy_test(our_impl, complete_data)
-        
+
         n = len(complete_data)
-        
+
         # Print results
         print(f"\n{'='*75}")
         print("DEFINITIVE COMPARISON RESULTS - Complete Dataset (264 verses)")
@@ -340,24 +341,24 @@ class TestDefinitiveComparison:
         print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
         print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
         print(f"{'='*75}")
-        
-        print(f"\nKey Insights:")
+
+        print("\nKey Insights:")
         print(f"  • Data expansion (434→2062): +{r2['accuracy']-r1['accuracy']:.1f}% accuracy improvement")
         print(f"  • Code improvements: +{r3['accuracy']-r2['accuracy']:.1f}% accuracy improvement")
         print(f"  • Total improvement: +{r3['accuracy']-r1['accuracy']:.1f}% over IITK baseline")
         print(f"  • Speed: Our impl is {r2['avg_ms']/r3['avg_ms']:.1f}x faster than IITK with same data")
-        
+
         # Show mismatches
         if r3['mismatches']:
             print(f"\nRemaining mismatches in our impl ({len(r3['mismatches'])}):")
             for (exp, act), cnt in Counter(r3['mismatches']).most_common(10):
                 print(f"  [{cnt}x] Expected: {exp:<25} Got: {act}")
-        
+
         # Assertions
         assert r3['accuracy'] >= 80.0, f"Our accuracy {r3['accuracy']:.1f}% is below 80% threshold"
         assert r3['accuracy'] >= r2['accuracy'], "Our impl should be more accurate than IITK with same data"
         assert r3['avg_ms'] < r2['avg_ms'], "Our impl should be faster than IITK with same data"
-    
+
     def test_full_comparison_sheet1_dataset(self, our_impl, iitk_impl_original,
                                             iitk_impl_our_data, sheet1_data):
         """
@@ -366,9 +367,9 @@ class TestDefinitiveComparison:
         r1 = run_accuracy_test(iitk_impl_original, sheet1_data)
         r2 = run_accuracy_test(iitk_impl_our_data, sheet1_data)
         r3 = run_accuracy_test(our_impl, sheet1_data)
-        
+
         n = len(sheet1_data)
-        
+
         print(f"\n{'='*75}")
         print("COMPARISON RESULTS - Sheet1 Dataset (109 verses)")
         print(f"{'='*75}")
@@ -378,33 +379,33 @@ class TestDefinitiveComparison:
         print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
         print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
         print(f"{'='*75}")
-        
+
         assert r3['accuracy'] >= 90.0, f"Our accuracy {r3['accuracy']:.1f}% is below 90% threshold on Sheet1"
-    
+
     # =========================================================================
     # Individual Performance Tests
     # =========================================================================
-    
+
     def test_our_impl_speed_threshold(self, our_impl, complete_data):
         """Our implementation should process each verse in under 10ms."""
         result = run_accuracy_test(our_impl, complete_data)
         print(f"\nOur impl speed: {result['avg_ms']:.2f} ms/verse")
         assert result['avg_ms'] < 10.0, f"Speed {result['avg_ms']:.2f}ms exceeds 10ms threshold"
-    
+
     def test_our_impl_accuracy_threshold(self, our_impl, complete_data):
         """Our implementation should achieve at least 80% accuracy."""
         result = run_accuracy_test(our_impl, complete_data)
         print(f"\nOur impl accuracy: {result['accuracy']:.1f}%")
         assert result['accuracy'] >= 80.0, f"Accuracy {result['accuracy']:.1f}% is below 80% threshold"
-    
+
     def test_speedup_over_iitk(self, our_impl, iitk_impl_our_data, complete_data):
         """Our implementation should be at least 5x faster than IITK with same data."""
         our_result = run_accuracy_test(our_impl, complete_data)
         iitk_result = run_accuracy_test(iitk_impl_our_data, complete_data)
-        
+
         speedup = iitk_result['avg_ms'] / our_result['avg_ms']
         print(f"\nSpeedup: {speedup:.1f}x (IITK: {iitk_result['avg_ms']:.2f}ms, Ours: {our_result['avg_ms']:.2f}ms)")
-        
+
         assert speedup >= 5.0, f"Speedup {speedup:.1f}x is below 5x threshold"
 
 
@@ -420,12 +421,12 @@ def main(quick_mode=False):
         quick_mode: If True, skip IITK tests (which are slow)
     """
     from core.chanda import Chanda as OurChanda
-    
+
     print("Loading implementations...")
-    
+
     # Load our implementation
     our_impl = OurChanda(data_path=str(BACKEND_PATH / 'data'))
-    
+
     # Load IITK implementation (skip if quick mode)
     iitk_orig = None
     iitk_ours = None
@@ -440,22 +441,22 @@ def main(quick_mode=False):
             print("  Skipping IITK comparison tests.")
     else:
         print("  - Quick mode: skipping IITK (slow)")
-    
+
     print("  - Our implementation loaded")
-    
+
     # Load test data
     complete_csv = str(BACKEND_PATH / 'data' / 'page 1-47 chanda list - complete.csv')
     sheet1_csv = str(BACKEND_PATH / 'data' / 'page 1-47 chanda list - Sheet1.csv')
-    
+
     complete_data = load_test_csv(complete_csv)
     sheet1_data = load_test_csv(sheet1_csv)
-    
+
     print(f"\nLoaded {len(complete_data)} verses from complete.csv")
     print(f"Loaded {len(sheet1_data)} verses from Sheet1.csv")
-    
+
     # Run tests on complete dataset
     print("\nRunning tests on complete dataset (264 verses)...")
-    
+
     r1 = None
     r2 = None
     if iitk_orig:
@@ -464,12 +465,12 @@ def main(quick_mode=False):
     if iitk_ours:
         print("  Testing IITK + Our data (this takes ~2 minutes)...")
         r2 = run_accuracy_test(iitk_ours, complete_data)
-    
+
     print("  Testing Our implementation...")
     r3 = run_accuracy_test(our_impl, complete_data)
-    
+
     n = len(complete_data)
-    
+
     print(f"\n{'='*75}")
     print("DEFINITIVE COMPARISON RESULTS")
     print(f"{'='*75}")
@@ -477,32 +478,32 @@ def main(quick_mode=False):
     print(f"{'='*75}")
     print(f"\n| {'Implementation':<42} | {'Accuracy':<18} | {'Speed':<12} |")
     print(f"|{'-'*42}|{'-'*18}|{'-'*12}|")
-    
+
     if r1:
         print(f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |")
     else:
         print(f"| IITK + Original (434 patterns)           | {'(skipped)':<18} | {'---':<12} |")
-    
+
     if r2:
         print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
     else:
         print(f"| IITK + Our data (2062 patterns)          | {'(skipped)':<18} | {'---':<12} |")
-    
+
     print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
     print(f"{'='*75}")
-    
+
     if r1 and r2:
-        print(f"\nKey Insights:")
+        print("\nKey Insights:")
         print(f"  • Data expansion (434→2062): +{r2['accuracy']-r1['accuracy']:.1f}% accuracy")
         print(f"  • Code improvements: +{r3['accuracy']-r2['accuracy']:.1f}% accuracy")
         print(f"  • Total improvement: +{r3['accuracy']-r1['accuracy']:.1f}% over baseline")
         print(f"  • Speed: Our impl is {r2['avg_ms']/r3['avg_ms']:.1f}x faster than IITK with same data")
-    
+
     if r3['mismatches']:
         print(f"\nMismatches in our impl ({len(r3['mismatches'])}):")
         for (exp, act), cnt in Counter(r3['mismatches']).most_common(15):
             print(f"  [{cnt}x] Expected: {exp:<25} Got: {act}")
-    
+
     # Summary
     print(f"\n{'='*75}")
     print("SUMMARY")
@@ -516,15 +517,15 @@ def main(quick_mode=False):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Definitive Chanda Comparison Test')
-    parser.add_argument('--quick', '-q', action='store_true', 
+    parser.add_argument('--quick', '-q', action='store_true',
                        help='Quick mode: skip slow IITK tests')
     parser.add_argument('--full', '-f', action='store_true',
                        help='Full mode: include all IITK tests (slow)')
     args = parser.parse_args()
-    
+
     # Default to quick mode unless --full is specified
     quick_mode = not args.full
     if args.quick:
         quick_mode = True
-    
+
     main(quick_mode=quick_mode)

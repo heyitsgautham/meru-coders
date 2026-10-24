@@ -25,14 +25,14 @@ if len(lines) == 1:
     print("Step 3 - Smart pada detection needed...")
     # Simulate chanda analysis (we know it's 55 syllables)
     total_syllables = 55
-    
+
     common_pada_lengths = [8, 11, 12, 14, 17, 19, 21]
-    
+
     for pada_length in common_pada_lengths:
         if total_syllables % pada_length == 0:
             num_padas = total_syllables // pada_length
             print(f"  ✓ Detected: {num_padas} padas of {pada_length} syllables each (Śālinī meter)")
-            
+
             # In real code, we'd split by syllable boundaries
             # For this simulation, we'll use the known correct splits
             lines = [

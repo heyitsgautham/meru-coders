@@ -12,13 +12,13 @@ Author: Meru Coders (SIH 2025)
 Date: December 9, 2025
 """
 
-import os
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
 import logging
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+
 try:
     from langchain_core.documents import Document
 except ImportError:
@@ -39,7 +39,7 @@ class RAGEngine:
     - Example verses
     - Documentation and tutorials
     """
-    
+
     def __init__(
         self,
         chroma_path: str = "data/chroma_db",
@@ -57,18 +57,18 @@ class RAGEngine:
         self.chroma_path = Path(__file__).parent.parent / chroma_path
         self.embedding_model = embedding_model
         self.device = device
-        
-        logger.info(f"🔧 Initializing RAG Engine")
+
+        logger.info("🔧 Initializing RAG Engine")
         logger.info(f"   ChromaDB: {self.chroma_path}")
         logger.info(f"   Embedding Model: {embedding_model}")
-        
+
         # Check if database exists
         if not self.chroma_path.exists():
             logger.warning(f"⚠️  ChromaDB not found at {self.chroma_path}")
-            logger.warning(f"   Run: python scripts/build_vector_db.py")
+            logger.warning("   Run: python scripts/build_vector_db.py")
             self.vectorstore = None
             return
-        
+
         # Initialize embeddings
         try:
             self.embeddings = HuggingFaceEmbeddings(
@@ -76,26 +76,26 @@ class RAGEngine:
                 model_kwargs={'device': device},
                 encode_kwargs={'normalize_embeddings': True}
             )
-            
+
             # Load vector store
             self.vectorstore = Chroma(
                 persist_directory=str(self.chroma_path),
                 embedding_function=self.embeddings,
                 collection_name="chandas_knowledge"
             )
-            
+
             # Get collection stats
             count = self.vectorstore._collection.count()
             logger.info(f"✅ RAG Engine initialized with {count} documents")
-            
+
         except Exception as e:
             logger.error(f"❌ Failed to initialize RAG Engine: {e}")
             self.vectorstore = None
-    
+
     def is_ready(self) -> bool:
         """Check if RAG engine is ready to use"""
         return self.vectorstore is not None
-    
+
     def retrieve(
         self,
         query: str,
@@ -118,7 +118,7 @@ class RAGEngine:
         if not self.is_ready():
             logger.warning("⚠️  RAG Engine not initialized, returning empty results")
             return []
-        
+
         try:
             # Perform semantic search with scores
             docs_with_scores = self.vectorstore.similarity_search_with_relevance_scores(
@@ -126,21 +126,21 @@ class RAGEngine:
                 k=k * 2,  # Retrieve extra for filtering
                 filter=filter_metadata
             )
-            
+
             # Filter by minimum score and limit to k
             filtered_docs = [
                 doc for doc, score in docs_with_scores
                 if score >= min_score
             ][:k]
-            
+
             logger.info(f"🔍 Retrieved {len(filtered_docs)}/{k} documents for query: '{query[:50]}...'")
-            
+
             return filtered_docs
-            
+
         except Exception as e:
             logger.error(f"❌ Retrieval failed: {e}")
             return []
-    
+
     def retrieve_with_scores(
         self,
         query: str,
@@ -160,22 +160,22 @@ class RAGEngine:
         """
         if not self.is_ready():
             return []
-        
+
         try:
             docs_with_scores = self.vectorstore.similarity_search_with_relevance_scores(
                 query=query,
                 k=k,
                 filter=filter_metadata
             )
-            
+
             logger.info(f"🔍 Retrieved {len(docs_with_scores)} documents with scores")
-            
+
             return docs_with_scores
-            
+
         except Exception as e:
             logger.error(f"❌ Retrieval with scores failed: {e}")
             return []
-    
+
     def retrieve_meters(
         self,
         query: str,
@@ -196,9 +196,9 @@ class RAGEngine:
         filter_dict = {"type": "meter_definition"}
         if category:
             filter_dict["category"] = category
-        
+
         return self.retrieve(query, k=k, filter_metadata=filter_dict)
-    
+
     def retrieve_examples(
         self,
         meter_name: str,
@@ -216,9 +216,9 @@ class RAGEngine:
         """
         filter_dict = {"type": "example_verse"}
         query = f"Example verses for {meter_name} meter"
-        
+
         return self.retrieve(query, k=k, filter_metadata=filter_dict)
-    
+
     def retrieve_rules(
         self,
         topic: str,
@@ -235,9 +235,9 @@ class RAGEngine:
             List of rule documents
         """
         filter_dict = {"type": "rules"}
-        
+
         return self.retrieve(topic, k=k, filter_metadata=filter_dict)
-    
+
     def retrieve_documentation(
         self,
         query: str,
@@ -254,9 +254,9 @@ class RAGEngine:
             List of documentation chunks
         """
         filter_dict = {"type": "documentation"}
-        
+
         return self.retrieve(query, k=k, filter_metadata=filter_dict)
-    
+
     def format_context_for_prompt(
         self,
         documents: List[Document],
@@ -276,16 +276,15 @@ class RAGEngine:
         """
         if not documents:
             return ""
-        
+
         context_parts = []
         current_length = 0
-        
+
         for i, doc in enumerate(documents):
             # Extract metadata
             source = doc.metadata.get('source', 'Unknown')
-            doc_type = doc.metadata.get('type', 'document')
             meter_name = doc.metadata.get('meter_name', '')
-            
+
             # Format document
             if include_source:
                 header = f"[Source {i+1}: {source}]"
@@ -294,16 +293,16 @@ class RAGEngine:
                 formatted = f"{header}\n{doc.page_content}\n"
             else:
                 formatted = f"{doc.page_content}\n"
-            
+
             # Check length limit
             if current_length + len(formatted) > max_length:
                 break
-            
+
             context_parts.append(formatted)
             current_length += len(formatted)
-        
+
         return "\n".join(context_parts)
-    
+
     def hybrid_retrieve(
         self,
         query: str,
@@ -324,7 +323,7 @@ class RAGEngine:
         # For now, just use semantic search
         # TODO: Implement keyword search and score fusion
         return self.retrieve(query, k=k)
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         """
         Get statistics about the vector database
@@ -334,14 +333,14 @@ class RAGEngine:
         """
         if not self.is_ready():
             return {"status": "not_initialized"}
-        
+
         try:
             total_docs = self.vectorstore._collection.count()
-            
+
             # Get document type counts
             # Note: This is a simplified version; actual implementation
             # would need to query metadata efficiently
-            
+
             return {
                 "status": "ready",
                 "total_documents": total_docs,
@@ -349,7 +348,7 @@ class RAGEngine:
                 "database_path": str(self.chroma_path),
                 "embedding_dimensions": 768  # For mpnet-base
             }
-            
+
         except Exception as e:
             logger.error(f"❌ Failed to get statistics: {e}")
             return {"status": "error", "error": str(e)}
@@ -359,15 +358,15 @@ class RAGEngine:
 def test_rag_engine():
     """Test the RAG engine with sample queries"""
     print("🧪 Testing RAG Engine\n")
-    
+
     # Initialize
     rag = RAGEngine()
-    
+
     if not rag.is_ready():
         print("❌ RAG Engine not ready. Build vector database first:")
         print("   python scripts/build_vector_db.py")
         return
-    
+
     # Test queries
     test_queries = [
         "What is Anushtubh meter?",
@@ -376,15 +375,15 @@ def test_rag_engine():
         "What are the Vedic meters?",
         "गायत्री छन्द"
     ]
-    
+
     for query in test_queries:
         print(f"\n{'='*60}")
         print(f"Query: {query}")
         print('='*60)
-        
+
         # Retrieve documents
         docs = rag.retrieve(query, k=3)
-        
+
         if docs:
             print(f"\n✅ Found {len(docs)} relevant documents:\n")
             for i, doc in enumerate(docs, 1):
@@ -394,7 +393,7 @@ def test_rag_engine():
                 print()
         else:
             print("❌ No documents found\n")
-    
+
     # Print statistics
     print(f"\n{'='*60}")
     print("📊 Database Statistics")

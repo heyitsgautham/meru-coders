@@ -4,10 +4,10 @@ Provides decorators for protecting routes with Supabase JWT verification.
 """
 
 from functools import wraps
-from flask import request, jsonify, current_app
-from supabase import Client
+
 import jwt
-from flask import current_app
+from flask import current_app, jsonify, request
+from supabase import Client
 
 
 def get_current_user():
@@ -16,12 +16,12 @@ def get_current_user():
     Returns user data or None if invalid/missing token.
     """
     auth_header = request.headers.get('Authorization')
-    
+
     if not auth_header or not auth_header.startswith('Bearer '):
         return None
-    
+
     token = auth_header.split(' ')[1]
-    
+
     # Try Supabase JWT first
     try:
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
@@ -55,18 +55,18 @@ def require_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = get_current_user()
-        
+
         if not user:
             return jsonify({
                 'success': False,
                 'error': 'Authentication required',
                 'message': 'Please log in to access this resource'
             }), 401
-        
+
         # Attach user to request for use in route
         request.current_user = user
         return f(user, *args, **kwargs)
-    
+
     return decorated_function
 
 
@@ -78,14 +78,14 @@ def require_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = get_current_user()
-        
+
         if not user:
             return jsonify({
                 'success': False,
                 'error': 'Authentication required',
                 'message': 'Please log in to access this resource'
             }), 401
-        
+
         # If token came from local admin login, trust is_admin flag in metadata
         meta_admin = None
         if isinstance(user, dict):
@@ -120,5 +120,5 @@ def require_admin(f):
                 'error': 'Authorization failed',
                 'message': 'Could not verify admin status'
             }), 500
-    
+
     return decorated_function

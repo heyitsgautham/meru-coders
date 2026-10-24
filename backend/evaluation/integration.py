@@ -27,7 +27,7 @@ def print_section(title):
 def test_data_files():
     """Test that all required data files exist."""
     print_section("Testing Data Files")
-    
+
     required_files = [
         'chanda_sama.csv',
         'chanda_ardhasama.csv',
@@ -36,7 +36,7 @@ def test_data_files():
         'chanda_jaati.csv',
         'examples.json'
     ]
-    
+
     all_present = True
     for filename in required_files:
         filepath = settings.DATA_DIR / filename
@@ -45,14 +45,14 @@ def test_data_files():
         else:
             print(f"✗ {filename} - Missing")
             all_present = False
-    
+
     return all_present
 
 
 def test_chanda_initialization():
     """Test Chanda class initialization."""
     print_section("Testing Chanda Initialization")
-    
+
     try:
         chanda = Chanda(data_path=str(settings.DATA_DIR))
         print("✓ Chanda initialized successfully")
@@ -66,7 +66,7 @@ def test_chanda_initialization():
 def test_meter_identification(chanda):
     """Test meter identification with sample text."""
     print_section("Testing Meter Identification")
-    
+
     test_cases = [
         {
             'name': 'Simple Line',
@@ -82,7 +82,7 @@ def test_meter_identification(chanda):
             'mode': 'verse'
         }
     ]
-    
+
     all_passed = True
     for test in test_cases:
         try:
@@ -91,7 +91,7 @@ def test_meter_identification(chanda):
                 verse=(test['mode'] == 'verse'),
                 fuzzy=True
             )
-            
+
             if result and 'result' in result:
                 print(f"✓ {test['name']} - Success")
                 print(f"  - Found {len(result['result'])} results")
@@ -101,18 +101,18 @@ def test_meter_identification(chanda):
         except Exception as e:
             print(f"✗ {test['name']} - Error: {e}")
             all_passed = False
-    
+
     return all_passed
 
 
 def test_flask_app():
     """Test Flask application creation."""
     print_section("Testing Flask Application")
-    
+
     try:
         app = create_app()
         print("✓ Flask app created successfully")
-        
+
         # Test with test client
         with app.test_client() as client:
             # Health check
@@ -122,7 +122,7 @@ def test_flask_app():
             else:
                 print(f"✗ Health endpoint failed: {response.status_code}")
                 return False
-            
+
             # API info
             response = client.get('/api/info')
             if response.status_code == 200:
@@ -134,7 +134,7 @@ def test_flask_app():
             else:
                 print(f"✗ API info failed: {response.status_code}")
                 return False
-            
+
             # Test text identification endpoint
             response = client.post('/api/identify/text',
                                   json={
@@ -151,7 +151,7 @@ def test_flask_app():
             else:
                 print(f"✗ Text identification endpoint failed: {response.status_code}")
                 return False
-            
+
             # Test examples endpoint
             response = client.get('/api/examples')
             if response.status_code == 200:
@@ -160,7 +160,7 @@ def test_flask_app():
             else:
                 print(f"✗ Examples endpoint failed: {response.status_code}")
                 return False
-            
+
             # Test schemes endpoint
             response = client.get('/api/schemes')
             if response.status_code == 200:
@@ -169,7 +169,7 @@ def test_flask_app():
             else:
                 print(f"✗ Schemes endpoint failed: {response.status_code}")
                 return False
-        
+
         return True
     except Exception as e:
         print(f"✗ Flask app creation failed: {e}")
@@ -181,7 +181,7 @@ def test_flask_app():
 def test_ocr_availability():
     """Test OCR module availability."""
     print_section("Testing OCR Availability")
-    
+
     # Test Tesseract
     try:
         from backend.ocr import TesseractOCR
@@ -189,7 +189,7 @@ def test_ocr_availability():
         print("✓ Tesseract OCR available")
     except Exception as e:
         print(f"⚠ Tesseract OCR not available: {e}")
-    
+
     # Test Google OCR
     try:
         from backend.ocr import GoogleOCR
@@ -200,21 +200,21 @@ def test_ocr_availability():
             print("⚠ Google OCR credentials not configured")
     except Exception as e:
         print(f"⚠ Google OCR not available: {e}")
-    
+
     return True
 
 
 def test_frontend_files():
     """Test that frontend files exist."""
     print_section("Testing Frontend Files")
-    
+
     frontend_dir = Path(__file__).resolve().parent.parent.parent / 'frontend'
-    
+
     required_files = [
         'index.html',
         'src/app.js'
     ]
-    
+
     all_present = True
     for filepath in required_files:
         full_path = frontend_dir / filepath
@@ -223,7 +223,7 @@ def test_frontend_files():
         else:
             print(f"✗ {filepath} - Missing")
             all_present = False
-    
+
     return all_present
 
 
@@ -232,34 +232,34 @@ def main():
     print("\n" + "🚀" * 35)
     print("  CHANDAS-INTEGRATED - Integration Test Suite")
     print("🚀" * 35)
-    
+
     results = {}
-    
+
     # Run all tests
     results['data_files'] = test_data_files()
-    
+
     success, chanda = test_chanda_initialization()
     results['chanda_init'] = success
-    
+
     if success and chanda:
         results['meter_identification'] = test_meter_identification(chanda)
     else:
         results['meter_identification'] = False
-    
+
     results['flask_app'] = test_flask_app()
     results['ocr'] = test_ocr_availability()
     results['frontend'] = test_frontend_files()
-    
+
     # Summary
     print_section("Test Summary")
-    
+
     all_passed = True
     for test_name, passed in results.items():
         status = "✓ PASS" if passed else "✗ FAIL"
         print(f"{status}: {test_name.replace('_', ' ').title()}")
         if not passed:
             all_passed = False
-    
+
     print("\n" + "=" * 70)
     if all_passed:
         print("  🎉 ALL TESTS PASSED!")
@@ -274,7 +274,7 @@ def main():
         print("  ⚠ SOME TESTS FAILED")
         print("  Please review the errors above and fix any issues.")
     print("=" * 70 + "\n")
-    
+
     return 0 if all_passed else 1
 
 

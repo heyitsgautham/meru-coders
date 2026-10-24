@@ -19,10 +19,10 @@ from backend.app import create_app, socketio
 def main():
     """Start the Flask REST API server with WebSocket support."""
     app = create_app()
-    
+
     # Get port from environment variable (Cloud Run) or default to 5000 (local dev)
     port = int(os.environ.get('PORT', 5000))
-    
+
     print("=" * 70)
     print("🚀 Chandas-Integrated - Sanskrit Meter Identification System")
     print("=" * 70)
@@ -36,7 +36,7 @@ def main():
     print("💡 Press CTRL+C to stop the server")
     print("=" * 70)
     print()
-    
+
     # Run with SocketIO if available, otherwise fall back to Flask
     if socketio:
         print("🔌 Running with WebSocket support (Flask-SocketIO threading mode)")

@@ -7,11 +7,10 @@ This module provides scheduled cleanup functionality for uploaded files
 to prevent disk space accumulation on the server.
 """
 
-import os
-import time
 import logging
+import time
 from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -69,21 +68,21 @@ def cleanup_directory(
     if not directory.exists():
         logger.debug(f"Directory does not exist: {directory}")
         return 0, 0.0
-    
+
     files_deleted = 0
     size_freed_mb = 0.0
-    
+
     try:
         for file_path in directory.iterdir():
             # Skip directories and hidden files
             if file_path.is_dir() or file_path.name.startswith('.'):
                 continue
-                
+
             age_minutes = get_file_age_minutes(file_path)
-            
+
             if age_minutes > max_age_minutes:
                 file_size = get_file_size_mb(file_path)
-                
+
                 if dry_run:
                     logger.info(
                         f"[DRY RUN] Would delete: {file_path.name} "
@@ -100,10 +99,10 @@ def cleanup_directory(
                         )
                     except OSError as e:
                         logger.warning(f"Failed to delete {file_path}: {e}")
-                        
+
     except OSError as e:
         logger.error(f"Error accessing directory {directory}: {e}")
-    
+
     return files_deleted, size_freed_mb
 
 
@@ -133,19 +132,19 @@ def cleanup_uploads(
         f"{'[DRY RUN] ' if dry_run else ''}Starting upload cleanup "
         f"(max age: {max_age_minutes}min)"
     )
-    
+
     total_files = 0
     total_size_mb = 0.0
-    
+
     directories = [
         ("photos", photos_dir),
         ("texts", texts_dir),
         ("results", results_dir),
         ("audio", audio_dir),  # Added TTS audio cleanup
     ]
-    
+
     stats = {}
-    
+
     for name, directory in directories:
         files_deleted, size_freed = cleanup_directory(
             directory, max_age_minutes, dry_run
@@ -156,12 +155,12 @@ def cleanup_uploads(
         }
         total_files += files_deleted
         total_size_mb += size_freed
-    
+
     stats["total"] = {
         "files_deleted": total_files,
         "size_freed_mb": total_size_mb
     }
-    
+
     if total_files > 0:
         logger.info(
             f"{'[DRY RUN] ' if dry_run else ''}Cleanup complete: "
@@ -169,7 +168,7 @@ def cleanup_uploads(
         )
     else:
         logger.debug("Cleanup complete: No files to delete")
-    
+
     return stats
 
 
@@ -181,7 +180,7 @@ def scheduled_cleanup_job(app):
         app: Flask application instance
     """
     from backend.config import settings
-    
+
     with app.app_context():
         try:
             cleanup_uploads(

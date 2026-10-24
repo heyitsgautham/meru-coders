@@ -8,7 +8,6 @@ expected by test_csv_accuracy.py, test_rigveda_validation.py, and test_matching_
 """
 
 import sys
-import os
 from pathlib import Path
 
 # Add the reference directory to path
@@ -23,11 +22,11 @@ class ChandaGPTAdapter:
     
     Maps the functional API of chanda_gpt.identify_from_text() to the Chanda class interface.
     """
-    
+
     def __init__(self, data_path=None):
         """Initialize adapter (data_path not used by chanda_gpt)"""
         self.data_path = data_path
-    
+
     def identify_line(self, text):
         """
         Identify meter for a single line.
@@ -43,10 +42,10 @@ class ChandaGPTAdapter:
         - fuzzy: list of fuzzy matches
         """
         result = chanda_gpt.identify_from_text(text, variant='lenient')
-        
+
         meter = result.get('identified_meter')
         confidence = result.get('confidence', 0.0)
-        
+
         # Map meter names from English to Devanagari
         meter_map = {
             'Gayatri': 'गायत्री',
@@ -62,12 +61,12 @@ class ChandaGPTAdapter:
             'Virat_Trishtubh': 'विराट् त्रिष्टुभ्',
             'Nicrt_Jagati': 'निचृत् जगती',
         }
-        
+
         meter_devanagari = meter_map.get(meter, meter) if meter else None
-        
+
         # Convert L/G pattern to list of strings
         lg_pattern = result.get('lg_pattern', [])
-        
+
         return {
             'found': meter is not None,
             'display_chanda_primary': meter_devanagari or '',
@@ -79,7 +78,7 @@ class ChandaGPTAdapter:
             'fuzzy': [],  # chanda_gpt doesn't provide fuzzy matches
             'display_syllables': result.get('syllables', []),
         }
-    
+
     def identify_from_text(self, text, verse=False):
         """
         Identify meter from text (single line or verse).
@@ -87,15 +86,15 @@ class ChandaGPTAdapter:
         Returns format compatible with test_csv_accuracy.py
         """
         lines = [line.strip() for line in text.split('\n') if line.strip()]
-        
+
         if verse and len(lines) > 1:
             # Verse-level analysis
             full_text = ' '.join(lines)
             result = chanda_gpt.identify_from_text(full_text, variant='lenient')
-            
+
             meter = result.get('identified_meter')
             confidence = result.get('confidence', 0.0)
-            
+
             meter_map = {
                 'Gayatri': 'गायत्री',
                 'Ushnih': 'उष्णिक्',
@@ -110,9 +109,9 @@ class ChandaGPTAdapter:
                 'Virat_Trishtubh': 'विराट् त्रिष्टुभ्',
                 'Nicrt_Jagati': 'निचृत् जगती',
             }
-            
+
             meter_devanagari = meter_map.get(meter, meter) if meter else None
-            
+
             return {
                 'result': {
                     'verse': [
@@ -131,22 +130,22 @@ class ChandaGPTAdapter:
                     'line': line,
                     'result': line_result
                 })
-            
+
             return {
                 'result': {
                     'line': line_results
                 }
             }
-    
+
     def identify_verse_holistically(self, lines):
         """
         Holistic verse identification (used by test_matching_chandas_dataset.py)
         """
         full_text = ' '.join(lines)
         result = chanda_gpt.identify_from_text(full_text, variant='lenient')
-        
+
         meter = result.get('identified_meter')
-        
+
         meter_map = {
             'Gayatri': 'गायत्री',
             'Ushnih': 'उष्णिक्',
@@ -161,22 +160,22 @@ class ChandaGPTAdapter:
             'Virat_Trishtubh': 'विराट् त्रिष्टुभ्',
             'Nicrt_Jagati': 'निचृत् जगती',
         }
-        
+
         meter_devanagari = meter_map.get(meter, meter) if meter else None
-        
+
         return {
             'found': meter is not None,
             'meter': meter_devanagari or ''
         }
-    
+
     def _identify_vedic_mode(self, text):
         """
         Vedic mode identification (used by test_rigveda_validation.py)
         """
         result = chanda_gpt.identify_from_text(text, variant='lenient')
-        
+
         meter = result.get('identified_meter')
-        
+
         meter_map = {
             'Gayatri': 'गायत्री',
             'Ushnih': 'उष्णिक्',
@@ -191,9 +190,9 @@ class ChandaGPTAdapter:
             'Virat_Trishtubh': 'विराट् त्रिष्टुभ्',
             'Nicrt_Jagati': 'निचृत् जगती',
         }
-        
+
         meter_devanagari = meter_map.get(meter, meter) if meter else None
-        
+
         return {
             'meter': meter_devanagari
         }

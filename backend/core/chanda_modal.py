@@ -12,7 +12,6 @@ Author: Meru Coders Team (SIH 2025)
 """
 
 import os
-import sys
 
 # Import the base Chanda class
 from core.chanda import Chanda
@@ -27,7 +26,7 @@ class ChandaModal(Chanda):
         'classical': Uses traditional L-G pattern matching for classical meters
         'auto': Attempts to auto-detect the appropriate mode
     """
-    
+
     # Vedic meter definitions by syllable count
     VEDIC_METERS = {
         24: {'name': 'गायत्री', 'name_en': 'Gāyatrī', 'padas': 3, 'per_pada': 8},
@@ -38,7 +37,7 @@ class ChandaModal(Chanda):
         44: {'name': 'त्रिष्टुभ्', 'name_en': 'Triṣṭubh', 'padas': 4, 'per_pada': 11},
         48: {'name': 'जगती', 'name_en': 'Jagatī', 'padas': 4, 'per_pada': 12},
     }
-    
+
     # Syllable count ranges for fuzzy matching
     # Key insight: Sanskrit syllabification consistently UNDERCOUNTS by 2-6 syllables
     # Ranges are designed to be NON-OVERLAPPING where possible
@@ -52,15 +51,15 @@ class ChandaModal(Chanda):
         'त्रिष्टुभ्': (41, 46),   # 44: target 44, allow 41-46 (KEY: 42 → Triṣṭubh)
         'जगती': (46, 52),         # 48: target 48, allow 46-52
     }
-    
+
     # Tolerance for syllable count matching (Vedic texts have variations)
     # INCREASED to 5 for better Jagatī matching (severe undercounting)
     SYLLABLE_TOLERANCE = 5
-    
+
     def __init__(self, data_path, **kwargs):
         """Initialize with base Chanda functionality."""
         super().__init__(data_path, **kwargs)
-    
+
     def identify_modal(self, text, mode='auto', verse=True, fuzzy=False):
         """
         Identify meter with explicit mode selection.
@@ -83,7 +82,7 @@ class ChandaModal(Chanda):
         dict
             Identification results with meter name, confidence, and details
         """
-        
+
         if mode == 'vedic':
             return self._identify_vedic(text, verse)
         elif mode == 'classical':
@@ -92,7 +91,7 @@ class ChandaModal(Chanda):
             return self._identify_auto(text, verse, fuzzy)
         else:
             raise ValueError(f"Unknown mode: {mode}. Use 'vedic', 'classical', or 'auto'")
-    
+
     def _identify_vedic(self, text, verse=True):
         """
         Identify Vedic meter by syllable count.
@@ -113,27 +112,27 @@ class ChandaModal(Chanda):
             'all_lg': [],
             'debug': {}
         }
-        
+
         # Clean and split text into lines
-        lines = [l.strip() for l in text.replace('॥', '।').split('।') if l.strip()]
+        lines = [ln.strip() for ln in text.replace('॥', '।').split('।') if ln.strip()]
         if not lines:
-            lines = [l.strip() for l in text.split('\n') if l.strip()]
-        
+            lines = [ln.strip() for ln in text.split('\n') if ln.strip()]
+
         total_syllables = 0
         line_details = []
         all_syllables = []
         all_lg = []
-        
+
         for line in lines:
             # Remove punctuation
             clean_line = line.replace('।', '').replace('॥', '').strip()
             if not clean_line:
                 continue
-            
+
             # Get syllables
             syllables = self.get_syllables_icu(clean_line)
             lg = [self.get_syllable_weight_icu(s) for s in syllables]
-            
+
             line_details.append({
                 'line': clean_line,
                 'syllables': syllables,
@@ -141,36 +140,36 @@ class ChandaModal(Chanda):
                 'lg': lg,
                 'lg_pattern': ''.join(lg)
             })
-            
+
             total_syllables += len(syllables)
             all_syllables.extend(syllables)
             all_lg.extend(lg)
-        
+
         result['lines'] = line_details
         result['syllable_count'] = total_syllables
         result['all_syllables'] = all_syllables
         result['all_lg'] = all_lg
         result['lg_pattern'] = ''.join(all_lg)
-        
+
         # Find matching Vedic meter by syllable count
         # Use a candidate list to handle ties properly
         candidates = []
-        
+
         for syl_count, meter_info in self.VEDIC_METERS.items():
             diff = abs(total_syllables - syl_count)
             if diff <= self.SYLLABLE_TOLERANCE:
                 candidates.append((diff, syl_count, meter_info))
-        
+
         # Sort by: 1) smallest diff, 2) HIGHEST syllable count (due to undercounting)
         candidates.sort(key=lambda x: (x[0], -x[1]))
-        
+
         if candidates:
             best_diff, syl_count, meter_info = candidates[0]
             result['meter'] = meter_info['name']
             result['meter_en'] = meter_info['name_en']
             result['expected_syllables'] = syl_count
             result['structure'] = f"{meter_info['padas']} pādas × {meter_info['per_pada']} syllables"
-            
+
             # Calculate confidence based on how close syllable count is
             if best_diff == 0:
                 result['confidence'] = 1.0
@@ -178,7 +177,7 @@ class ChandaModal(Chanda):
                 result['confidence'] = 0.9
             else:
                 result['confidence'] = 0.8
-            
+
             result['debug']['match_type'] = 'exact' if best_diff == 0 else f'fuzzy (±{best_diff})'
         else:
             # Try range-based matching (accounts for syllabification errors)
@@ -193,13 +192,13 @@ class ChandaModal(Chanda):
             else:
                 result['debug']['match_type'] = 'no_match'
                 result['debug']['closest'] = self._find_closest_vedic_meter(total_syllables)
-        
+
         return result
-    
+
     def _find_meter_by_range(self, syllable_count):
         """Find Vedic meter using syllable count ranges."""
         candidates = []
-        
+
         for meter_name, (low, high) in self.VEDIC_METER_RANGES.items():
             if low <= syllable_count <= high:
                 # Find the expected count for this meter
@@ -210,12 +209,12 @@ class ChandaModal(Chanda):
                         structure = f"{info['padas']} pādas × {info['per_pada']} syllables"
                         name_en = info['name_en']
                         break
-                
+
                 if expected:
                     # Calculate confidence based on distance from expected
                     diff = abs(syllable_count - expected)
                     confidence = max(0.5, 1.0 - (diff * 0.05))  # -5% per syllable difference
-                    
+
                     candidates.append({
                         'name': meter_name,
                         'name_en': name_en,
@@ -224,21 +223,21 @@ class ChandaModal(Chanda):
                         'confidence': confidence,
                         'structure': structure
                     })
-        
+
         if candidates:
             # IMPORTANT: Prefer higher syllable-count meters when tied
             # Because syllabification UNDERCOUNTS more than overcounts
             # So if we get 42 syllables, it's more likely Triṣṭubh (44) than Paṅkti (40)
             candidates.sort(key=lambda x: (-x['expected'], x['diff']))
             return candidates[0]
-        
+
         return None
-    
+
     def _find_closest_vedic_meter(self, syllable_count):
         """Find the closest Vedic meter by syllable count."""
         closest = None
         min_diff = float('inf')
-        
+
         for syl_count, meter_info in self.VEDIC_METERS.items():
             diff = abs(syllable_count - syl_count)
             if diff < min_diff:
@@ -249,9 +248,9 @@ class ChandaModal(Chanda):
                     'expected': syl_count,
                     'diff': diff
                 }
-        
+
         return closest
-    
+
     def _identify_classical(self, text, verse=True, fuzzy=False):
         """
         Identify Classical meter by L-G pattern matching.
@@ -260,7 +259,7 @@ class ChandaModal(Chanda):
         """
         # Use the parent class's identification
         base_result = self.identify_from_text(text, verse=verse, fuzzy=fuzzy)
-        
+
         result = {
             'mode': 'classical',
             'input': text,
@@ -271,11 +270,11 @@ class ChandaModal(Chanda):
             'lines': [],
             'debug': {}
         }
-        
+
         # Extract the top result
         if base_result and base_result.get('result'):
             inner = base_result['result']
-            
+
             # Try verse-level result
             verses = inner.get('verse', [])
             if verses and len(verses) > 0:
@@ -286,12 +285,12 @@ class ChandaModal(Chanda):
                         result['meter'] = chanda_list[0][0] if chanda_list[0] else None
                     else:
                         result['meter'] = chanda_list[0]
-                    
+
                     # Get confidence from scores
                     scores = first_verse.get('scores', [])
                     if scores and len(scores) > 0:
                         result['confidence'] = scores[0][1] if len(scores[0]) > 1 else 0.5
-            
+
             # Get line details
             for line_data in inner.get('line', []):
                 line_result = line_data.get('result', {})
@@ -301,11 +300,11 @@ class ChandaModal(Chanda):
                     'syllables': line_result.get('syllables', []),
                     'chanda': line_result.get('chanda', [])[:3]  # Top 3
                 })
-            
+
             result['debug']['raw_result'] = base_result
-        
+
         return result
-    
+
     def _identify_auto(self, text, verse=True, fuzzy=False):
         """
         Auto-detect whether text is Vedic or Classical and identify accordingly.
@@ -319,19 +318,19 @@ class ChandaModal(Chanda):
         # Get both results
         vedic_result = self._identify_vedic(text, verse)
         classical_result = self._identify_classical(text, verse, fuzzy)
-        
+
         # Decision logic
         vedic_conf = vedic_result.get('confidence', 0)
         classical_conf = classical_result.get('confidence', 0)
-        
+
         # Boost Vedic if syllable count is exact match
         if vedic_result.get('debug', {}).get('match_type') == 'exact':
             vedic_conf += 0.3
-        
+
         # Boost Classical if it found an exact pattern match
         if classical_conf >= 0.9:
             classical_conf += 0.2
-        
+
         # Choose the better result
         if vedic_conf >= classical_conf and vedic_result.get('meter'):
             result = vedic_result
@@ -350,7 +349,7 @@ class ChandaModal(Chanda):
                 'vedic_result': vedic_result,
                 'classical_result': classical_result
             }
-        
+
         return result
 
 
@@ -360,15 +359,15 @@ class ChandaModal(Chanda):
 
 def test_modal_identification():
     """Test the modal identification with sample verses."""
-    
+
     print("=" * 70)
     print("   MODAL CHANDA IDENTIFIER - EXPERIMENT")
     print("=" * 70)
-    
+
     # Initialize
     data_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
     chanda = ChandaModal(data_path)
-    
+
     # Test cases
     test_cases = [
         {
@@ -396,60 +395,60 @@ def test_modal_identification():
             'expected_mode': 'classical'
         },
     ]
-    
+
     print("\n" + "-" * 70)
     print("Testing VEDIC mode:")
     print("-" * 70)
-    
+
     for tc in test_cases[:3]:  # Vedic cases
         print(f"\n>>> {tc['name']}")
         print(f"    Text: {tc['text'][:50]}...")
-        
+
         result = chanda.identify_modal(tc['text'], mode='vedic')
-        
+
         meter = result.get('meter', 'None')
         conf = result.get('confidence', 0)
         syl_count = result.get('syllable_count', 0)
         expected = result.get('expected_syllables', '?')
-        
+
         status = "✓" if meter == tc['expected_meter'] else "✗"
         print(f"    Result: {meter} (conf: {conf:.2f})")
         print(f"    Syllables: {syl_count} (expected: {expected})")
         print(f"    Status: {status} (expected: {tc['expected_meter']})")
-    
+
     print("\n" + "-" * 70)
     print("Testing CLASSICAL mode:")
     print("-" * 70)
-    
+
     for tc in test_cases[3:]:  # Classical cases
         print(f"\n>>> {tc['name']}")
         print(f"    Text: {tc['text'][:50]}...")
-        
+
         result = chanda.identify_modal(tc['text'], mode='classical')
-        
+
         meter = result.get('meter', 'None')
         conf = result.get('confidence', 0)
-        
+
         print(f"    Result: {meter} (conf: {conf:.2f})")
-    
+
     print("\n" + "-" * 70)
     print("Testing AUTO mode:")
     print("-" * 70)
-    
+
     for tc in test_cases:
         print(f"\n>>> {tc['name']}")
-        
+
         result = chanda.identify_modal(tc['text'], mode='auto')
-        
+
         meter = result.get('meter', 'None')
         decision = result.get('auto_decision', 'unknown')
         reason = result.get('auto_reason', 'N/A')
-        
+
         status = "✓" if decision == tc['expected_mode'] else "✗"
         print(f"    Decision: {decision} {status}")
         print(f"    Meter: {meter}")
         print(f"    Reason: {reason}")
-    
+
     print("\n" + "=" * 70)
     print("   EXPERIMENT COMPLETE")
     print("=" * 70)

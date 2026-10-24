@@ -15,12 +15,11 @@ Compares:
 @date: 2025-12-05
 """
 
+import csv
 import os
 import sys
-import csv
 import time
 import unicodedata
-from collections import defaultdict, Counter
 
 # Add paths for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -28,7 +27,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
-
 
 # ============================================================================
 # CONSTANTS AND PATHS
@@ -210,10 +208,10 @@ def load_rigveda_dataset(filepath, limit=None):
     """Load Rigveda dataset"""
     data = []
     errors = []
-    
+
     if not os.path.exists(filepath):
         return data, [f"File not found: {filepath}"]
-    
+
     with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row_num, row in enumerate(reader, start=2):
@@ -221,60 +219,60 @@ def load_rigveda_dataset(filepath, limit=None):
                 verse_text = row.get('verse_text', '').strip()
                 meter_raw = row.get('meter', '').strip()
                 ref = row.get('ref', f'row_{row_num}').strip()
-                
+
                 if not verse_text or not meter_raw:
                     continue
-                
+
                 expected_meter = normalize_rigveda_meter(meter_raw)
                 if not expected_meter:
                     errors.append(f"Row {row_num}: Unknown meter '{meter_raw}'")
                     continue
-                    
+
                 data.append({
                     'verse_text': verse_text,
                     'expected_meter': expected_meter,
                     'ref': ref
                 })
-                
+
                 if limit and len(data) >= limit:
                     break
-                    
+
             except Exception as e:
                 errors.append(f"Row {row_num}: {e}")
-    
+
     return data, errors
 
 
 def load_csv_dataset(filepath, limit=147):
     """Load CSV accuracy test dataset (first 147 real verses)"""
     data = []
-    
+
     if not os.path.exists(filepath):
         return data
-    
+
     with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         rows = list(reader)
-    
+
     row_index = 0
     for row in rows:
         if len(row) >= 4:
             verse = row[0].strip()
             expected = row[3].strip()
-            
+
             if not verse or expected.lower() == 'chanda':
                 continue
-            
+
             row_index += 1
             if row_index > limit:
                 break
-                
+
             data.append({
                 'verse': verse,
                 'expected': expected,
                 'row_index': row_index
             })
-    
+
     return data
 
 
@@ -284,7 +282,7 @@ def load_csv_dataset(filepath, limit=147):
 
 def test_rigveda_with_iitk(chanda_class, data_path, limit=1000):
     """Test IITK Chanda implementation against Rigveda dataset"""
-    
+
     # Initialize Chanda
     try:
         chanda = chanda_class(data_path=data_path)
@@ -298,10 +296,10 @@ def test_rigveda_with_iitk(chanda_class, data_path, limit=1000):
             'exact_accuracy': 0,
             'family_accuracy': 0,
         }
-    
+
     # Load Rigveda dataset
     data, parse_errors = load_rigveda_dataset(RIGVEDA_CSV, limit=limit)
-    
+
     if not data:
         return {
             'error': f"No data loaded. Errors: {parse_errors[:5]}",
@@ -312,48 +310,48 @@ def test_rigveda_with_iitk(chanda_class, data_path, limit=1000):
             'exact_accuracy': 0,
             'family_accuracy': 0,
         }
-    
+
     total = len(data)
     exact_matches = 0
     family_matches = 0
     mismatches = 0
-    
+
     start_time = time.time()
-    
+
     for entry in data:
         verse_text = entry['verse_text']
         expected_meter = entry['expected_meter']
-        
+
         # Get prediction using IITK's identify_line
         try:
             result = chanda.identify_line(verse_text)
             predicted_meter = None
-            
+
             if result.get('found') and result.get('chanda'):
                 first_chanda = result['chanda'][0]
                 if isinstance(first_chanda, tuple):
                     predicted_meter = first_chanda[0]
                 else:
                     predicted_meter = first_chanda
-            
+
             # Check match
             exact, family = rigveda_meters_match(expected_meter, predicted_meter)
-            
+
             if exact:
                 exact_matches += 1
             elif family:
                 family_matches += 1
             else:
                 mismatches += 1
-                
-        except Exception as e:
+
+        except Exception:
             mismatches += 1
-    
+
     elapsed_time = time.time() - start_time
-    
+
     exact_accuracy = (exact_matches / total * 100) if total > 0 else 0
     family_accuracy = ((exact_matches + family_matches) / total * 100) if total > 0 else 0
-    
+
     return {
         'total': total,
         'exact_matches': exact_matches,
@@ -368,7 +366,7 @@ def test_rigveda_with_iitk(chanda_class, data_path, limit=1000):
 
 def test_csv_with_iitk(chanda_class, data_path):
     """Test IITK Chanda implementation against CSV accuracy test"""
-    
+
     # Initialize Chanda
     try:
         chanda = chanda_class(data_path=data_path)
@@ -380,10 +378,10 @@ def test_csv_with_iitk(chanda_class, data_path):
             'incorrect': 0,
             'accuracy': 0,
         }
-    
+
     # Load CSV dataset
     data = load_csv_dataset(PAGE_CSV)
-    
+
     if not data:
         return {
             'error': "No data loaded",
@@ -392,21 +390,21 @@ def test_csv_with_iitk(chanda_class, data_path):
             'incorrect': 0,
             'accuracy': 0,
         }
-    
+
     total = len(data)
     correct = 0
     incorrect = 0
-    
+
     start_time = time.time()
-    
+
     for entry in data:
         verse = entry['verse']
         expected = entry['expected']
-        
+
         try:
             # Use identify_from_text for line-level analysis
             result = chanda.identify_from_text(verse, verse=False)
-            
+
             predicted = None
             if result and 'result' in result and result['result'].get('line'):
                 first_line = result['result']['line'][0]
@@ -416,19 +414,19 @@ def test_csv_with_iitk(chanda_class, data_path):
                         predicted = first_chanda[0]
                     else:
                         predicted = first_chanda
-            
+
             if predicted and csv_meters_match(expected, predicted):
                 correct += 1
             else:
                 incorrect += 1
-                
-        except Exception as e:
+
+        except Exception:
             incorrect += 1
-    
+
     elapsed_time = time.time() - start_time
-    
+
     accuracy = (correct / total * 100) if total > 0 else 0
-    
+
     return {
         'total': total,
         'correct': correct,
@@ -441,10 +439,10 @@ def test_csv_with_iitk(chanda_class, data_path):
 
 def test_rigveda_with_our_chanda(limit=1000):
     """Test our Chanda implementation against Rigveda dataset"""
-    
-    from core import Chanda
+
     from config import settings
-    
+    from core import Chanda
+
     # Initialize Chanda
     try:
         chanda = Chanda(data_path=str(settings.DATA_DIR))
@@ -458,10 +456,10 @@ def test_rigveda_with_our_chanda(limit=1000):
             'exact_accuracy': 0,
             'family_accuracy': 0,
         }
-    
+
     # Load Rigveda dataset
     data, parse_errors = load_rigveda_dataset(RIGVEDA_CSV, limit=limit)
-    
+
     if not data:
         return {
             'error': f"No data loaded. Errors: {parse_errors[:5]}",
@@ -472,23 +470,23 @@ def test_rigveda_with_our_chanda(limit=1000):
             'exact_accuracy': 0,
             'family_accuracy': 0,
         }
-    
+
     total = len(data)
     exact_matches = 0
     family_matches = 0
     mismatches = 0
-    
+
     start_time = time.time()
-    
+
     for entry in data:
         verse_text = entry['verse_text']
         expected_meter = entry['expected_meter']
-        
+
         try:
             # Use _identify_vedic_mode for Vedic texts
             result = chanda._identify_vedic_mode(verse_text)
             predicted_meter = result.get('meter')
-            
+
             # Also try standard identification
             if not predicted_meter:
                 line_result = chanda.identify_line(verse_text)
@@ -498,25 +496,25 @@ def test_rigveda_with_our_chanda(limit=1000):
                         predicted_meter = first_chanda[0]
                     else:
                         predicted_meter = first_chanda
-            
+
             # Check match
             exact, family = rigveda_meters_match(expected_meter, predicted_meter)
-            
+
             if exact:
                 exact_matches += 1
             elif family:
                 family_matches += 1
             else:
                 mismatches += 1
-                
-        except Exception as e:
+
+        except Exception:
             mismatches += 1
-    
+
     elapsed_time = time.time() - start_time
-    
+
     exact_accuracy = (exact_matches / total * 100) if total > 0 else 0
     family_accuracy = ((exact_matches + family_matches) / total * 100) if total > 0 else 0
-    
+
     return {
         'total': total,
         'exact_matches': exact_matches,
@@ -531,10 +529,10 @@ def test_rigveda_with_our_chanda(limit=1000):
 
 def test_csv_with_our_chanda():
     """Test our Chanda implementation against CSV accuracy test"""
-    
-    from core import Chanda
+
     from config import settings
-    
+    from core import Chanda
+
     # Initialize Chanda
     try:
         chanda = Chanda(data_path=str(settings.DATA_DIR))
@@ -546,10 +544,10 @@ def test_csv_with_our_chanda():
             'incorrect': 0,
             'accuracy': 0,
         }
-    
+
     # Load CSV dataset
     data = load_csv_dataset(PAGE_CSV)
-    
+
     if not data:
         return {
             'error': "No data loaded",
@@ -558,21 +556,21 @@ def test_csv_with_our_chanda():
             'incorrect': 0,
             'accuracy': 0,
         }
-    
+
     total = len(data)
     correct = 0
     incorrect = 0
-    
+
     start_time = time.time()
-    
+
     for entry in data:
         verse = entry['verse']
         expected = entry['expected']
-        
+
         try:
             # Use identify_from_text for line-level analysis
             result = chanda.identify_from_text(verse, verse=False)
-            
+
             predicted = None
             if result and 'result' in result and result['result'].get('line'):
                 first_line = result['result']['line'][0]
@@ -582,19 +580,19 @@ def test_csv_with_our_chanda():
                         predicted = first_chanda[0]
                     else:
                         predicted = first_chanda
-            
+
             if predicted and csv_meters_match(expected, predicted):
                 correct += 1
             else:
                 incorrect += 1
-                
-        except Exception as e:
+
+        except Exception:
             incorrect += 1
-    
+
     elapsed_time = time.time() - start_time
-    
+
     accuracy = (correct / total * 100) if total > 0 else 0
-    
+
     return {
         'total': total,
         'correct': correct,
@@ -617,11 +615,11 @@ def print_results(title, results, test_type='rigveda'):
     """Print formatted results"""
     print(f"\n{title}")
     print_separator('-', len(title))
-    
+
     if 'error' in results:
         print(f"  ❌ ERROR: {results['error']}")
         return
-    
+
     if test_type == 'rigveda':
         print(f"  📊 Total verses tested:    {results['total']}")
         print(f"  ✅ Exact matches:          {results['exact_matches']} ({results['exact_accuracy']:.2f}%)")
@@ -634,7 +632,7 @@ def print_results(title, results, test_type='rigveda'):
         print(f"  ✅ Correct:                {results['correct']} ({results['accuracy']:.2f}%)")
         print(f"  ❌ Incorrect:              {results['incorrect']} ({100-results['accuracy']:.2f}%)")
         print(f"  📈 ACCURACY:               {results['accuracy']:.2f}%")
-    
+
     if 'time_seconds' in results:
         print(f"  ⏱️  Time:                   {results['time_seconds']:.2f}s ({results['time_per_verse_ms']:.2f}ms/verse)")
 
@@ -644,27 +642,27 @@ def main():
     print("🔬 COMPREHENSIVE PERFORMANCE COMPARISON")
     print("   Comparing chanda_iitk.py vs chanda.py implementations")
     print_separator('=')
-    
+
     # Check if IITK implementation exists
     iitk_path = os.path.join(ROOT_DIR, 'reference', 'alternative_implementations', 'chanda_iitk.py')
     if not os.path.exists(iitk_path):
         print(f"❌ IITK implementation not found at: {iitk_path}")
         return 1
-    
+
     # Import IITK Chanda
     import importlib.util
     spec = importlib.util.spec_from_file_location("chanda_iitk", iitk_path)
     chanda_iitk_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(chanda_iitk_module)
     ChandaIITK = chanda_iitk_module.Chanda
-    
+
     # Dataset info
-    print(f"\n📁 Dataset Information:")
+    print("\n📁 Dataset Information:")
     print(f"   Small dataset (IITK original): {SMALL_DATA_PATH}")
     print(f"   Large dataset (Our enhanced):  {LARGE_DATA_PATH}")
     print(f"   Rigveda test file:             {RIGVEDA_CSV}")
     print(f"   CSV test file:                 {PAGE_CSV}")
-    
+
     # Count meters in datasets
     small_count = 0
     large_count = 0
@@ -675,75 +673,75 @@ def main():
             small_count += sum(1 for _ in open(small_file)) - 1  # minus header
         if os.path.exists(large_file):
             large_count += sum(1 for _ in open(large_file)) - 1
-    
+
     print(f"\n   Small dataset meter count:     ~{small_count} meters")
     print(f"   Large dataset meter count:     ~{large_count} meters")
-    
+
     # Run all tests
     results = {}
-    
+
     # 1. IITK + Small Dataset + Rigveda
     print_separator()
     print("\n🧪 Test 1: chanda_iitk.py + Small Dataset vs Rigveda Validation")
     results['iitk_small_rigveda'] = test_rigveda_with_iitk(ChandaIITK, SMALL_DATA_PATH, limit=1000)
     print_results("Results:", results['iitk_small_rigveda'], 'rigveda')
-    
+
     # 2. IITK + Large Dataset + Rigveda
     print_separator()
     print("\n🧪 Test 2: chanda_iitk.py + Large Dataset vs Rigveda Validation")
     results['iitk_large_rigveda'] = test_rigveda_with_iitk(ChandaIITK, LARGE_DATA_PATH, limit=1000)
     print_results("Results:", results['iitk_large_rigveda'], 'rigveda')
-    
+
     # 3. IITK + Small Dataset + CSV
     print_separator()
     print("\n🧪 Test 3: chanda_iitk.py + Small Dataset vs CSV Accuracy Test")
     results['iitk_small_csv'] = test_csv_with_iitk(ChandaIITK, SMALL_DATA_PATH)
     print_results("Results:", results['iitk_small_csv'], 'csv')
-    
+
     # 4. IITK + Large Dataset + CSV
     print_separator()
     print("\n🧪 Test 4: chanda_iitk.py + Large Dataset vs CSV Accuracy Test")
     results['iitk_large_csv'] = test_csv_with_iitk(ChandaIITK, LARGE_DATA_PATH)
     print_results("Results:", results['iitk_large_csv'], 'csv')
-    
+
     # 5. Our Chanda + Large Dataset + Rigveda
     print_separator()
     print("\n🧪 Test 5: chanda.py (Our) + Large Dataset vs Rigveda Validation")
     results['ours_large_rigveda'] = test_rigveda_with_our_chanda(limit=1000)
     print_results("Results:", results['ours_large_rigveda'], 'rigveda')
-    
+
     # 6. Our Chanda + Large Dataset + CSV
     print_separator()
     print("\n🧪 Test 6: chanda.py (Our) + Large Dataset vs CSV Accuracy Test")
     results['ours_large_csv'] = test_csv_with_our_chanda()
     print_results("Results:", results['ours_large_csv'], 'csv')
-    
+
     # Summary comparison
     print_separator('=')
     print("\n📊 SUMMARY COMPARISON TABLE")
     print_separator('=')
-    
+
     print("\n┌─────────────────────────────────────────────────────────────────────────┐")
     print("│                    RIGVEDA VALIDATION RESULTS                            │")
     print("├─────────────────────────────────────────────────────────────────────────┤")
     print("│ Implementation          │ Dataset  │ Exact Acc  │ Family Acc │ Time/v   │")
     print("├─────────────────────────────────────────────────────────────────────────┤")
-    
+
     def fmt_acc(r, key):
         if 'error' in r:
             return "ERROR"
         return f"{r[key]:.1f}%"
-    
+
     def fmt_time(r):
         if 'error' in r or 'time_per_verse_ms' not in r:
             return "N/A"
         return f"{r['time_per_verse_ms']:.1f}ms"
-    
+
     print(f"│ chanda_iitk.py          │ Small    │ {fmt_acc(results['iitk_small_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_small_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_small_rigveda']):>8} │")
     print(f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_large_rigveda']):>8} │")
     print(f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['ours_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['ours_large_rigveda']):>8} │")
     print("└─────────────────────────────────────────────────────────────────────────┘")
-    
+
     print("\n┌─────────────────────────────────────────────────────────────────────────┐")
     print("│                    CSV ACCURACY TEST RESULTS                             │")
     print("├─────────────────────────────────────────────────────────────────────────┤")
@@ -753,12 +751,12 @@ def main():
     print(f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_csv'], 'accuracy'):>10} │ {fmt_time(results['iitk_large_csv']):>21} │")
     print(f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_csv'], 'accuracy'):>10} │ {fmt_time(results['ours_large_csv']):>21} │")
     print("└─────────────────────────────────────────────────────────────────────────┘")
-    
+
     # Analysis
     print("\n" + "=" * 70)
     print("📝 ANALYSIS")
     print("=" * 70)
-    
+
     # Compare IITK small vs large
     if 'error' not in results['iitk_small_rigveda'] and 'error' not in results['iitk_large_rigveda']:
         diff = results['iitk_large_rigveda']['exact_accuracy'] - results['iitk_small_rigveda']['exact_accuracy']
@@ -767,8 +765,8 @@ def main():
         elif diff < 0:
             print(f"⚠️  Larger dataset decreases IITK accuracy by {abs(diff):.1f}% on Rigveda")
         else:
-            print(f"➡️  Larger dataset has no effect on IITK accuracy on Rigveda")
-    
+            print("➡️  Larger dataset has no effect on IITK accuracy on Rigveda")
+
     # Compare Our implementation vs IITK
     if 'error' not in results['ours_large_rigveda'] and 'error' not in results['iitk_large_rigveda']:
         diff = results['ours_large_rigveda']['exact_accuracy'] - results['iitk_large_rigveda']['exact_accuracy']
@@ -777,8 +775,8 @@ def main():
         elif diff < 0:
             print(f"⚠️  Our implementation underperforms IITK by {abs(diff):.1f}% on Rigveda (same dataset)")
         else:
-            print(f"➡️  Our implementation matches IITK on Rigveda (same dataset)")
-    
+            print("➡️  Our implementation matches IITK on Rigveda (same dataset)")
+
     if 'error' not in results['ours_large_csv'] and 'error' not in results['iitk_large_csv']:
         diff = results['ours_large_csv']['accuracy'] - results['iitk_large_csv']['accuracy']
         if diff > 0:
@@ -786,10 +784,10 @@ def main():
         elif diff < 0:
             print(f"⚠️  Our implementation underperforms IITK by {abs(diff):.1f}% on CSV test (same dataset)")
         else:
-            print(f"➡️  Our implementation matches IITK on CSV test (same dataset)")
-    
+            print("➡️  Our implementation matches IITK on CSV test (same dataset)")
+
     print("\n" + "=" * 70)
-    
+
     return 0
 
 

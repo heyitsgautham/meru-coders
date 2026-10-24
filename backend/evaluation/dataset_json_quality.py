@@ -12,22 +12,22 @@ from pathlib import Path
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
-from core.chanda import Chanda
 from config.settings import Settings
+from core.chanda import Chanda
 
 settings = Settings()
 
 def test_dataset_quality():
     """Test dataset.json quality by comparing labeled meters with identified meters."""
-    
+
     # Load dataset
     dataset_path = backend_dir / "data" / "dataset.json"
     with open(dataset_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    
+
     # Initialize chanda engine
     chanda = Chanda(data_path=str(settings.DATA_DIR))
-    
+
     # Track results
     results = {
         'total': 0,
@@ -35,28 +35,28 @@ def test_dataset_quality():
         'incorrect': 0,
         'errors': []
     }
-    
+
     print(f"Testing {len(data['data'])} entries from dataset.json...\n")
-    
+
     for idx, entry in enumerate(data['data']):
         results['total'] += 1
         text = entry['text']
         expected_meter = entry['meter']
-        
+
         try:
             # Handle multi-line verses - split and take first line only
             lines = text.strip().split('\n')
             first_line = lines[0].strip()
-            
+
             # Identify the meter from first line
             result = chanda.identify_line(first_line)
-            
+
             if result['found']:
                 # Extract clean meter name (remove transliteration and confidence scores)
                 identified_full = result['display_chanda_primary']
                 # Take first part before space (removes transliteration in parentheses)
                 identified_meter = identified_full.split(' ')[0] if ' ' in identified_full else identified_full
-                
+
                 # Check if it matches
                 if identified_meter == expected_meter:
                     results['correct'] += 1
@@ -79,7 +79,7 @@ def test_dataset_quality():
                     'identified': 'NOT FOUND',
                     'confidence': 0
                 })
-        
+
         except Exception as e:
             results['incorrect'] += 1
             results['errors'].append({
@@ -89,21 +89,21 @@ def test_dataset_quality():
                 'identified': f'ERROR: {str(e)}',
                 'confidence': 0
             })
-    
+
     # Print results
     accuracy = (results['correct'] / results['total'] * 100) if results['total'] > 0 else 0
-    
+
     print("=" * 80)
-    print(f"DATASET QUALITY TEST RESULTS")
+    print("DATASET QUALITY TEST RESULTS")
     print("=" * 80)
     print(f"Total entries: {results['total']}")
     print(f"Correct matches: {results['correct']}")
     print(f"Incorrect matches: {results['incorrect']}")
     print(f"Accuracy: {accuracy:.2f}%")
     print("=" * 80)
-    
+
     if results['errors']:
-        print(f"\n❌ MISMATCHES (showing first 20):")
+        print("\n❌ MISMATCHES (showing first 20):")
         print("-" * 80)
         for error in results['errors'][:20]:
             print(f"\n#{error['index']}")
@@ -114,7 +114,7 @@ def test_dataset_quality():
                 print(f"Full output: {error['identified_full']}")
             if 'confidence' in error and error['confidence'] != 'N/A':
                 print(f"Confidence: {error['confidence']}")
-    
+
     # Final verdict
     print("\n" + "=" * 80)
     if accuracy >= 95:

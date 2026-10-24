@@ -3,10 +3,11 @@
 """Debug script to analyze युयुत्सवः syllable marking"""
 
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 
-from core import Chanda
 from config import settings
+from core import Chanda
 
 chanda = Chanda(data_path=str(settings.DATA_DIR))
 

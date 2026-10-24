@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """Test the improved sloka validation with difflib"""
 
+
 import requests
-import json
 
 # Test with a slightly modified sloka (3 intentional changes)
 # Original: माता रामो मत्पिता रामचन्द्रः स्वामी रामो मत्सखा रामचन्द्रः
@@ -24,19 +24,19 @@ print(f"Status: {response.status_code}")
 data = response.json()
 
 if data.get('success') and data.get('found'):
-    print(f"\n✓ Found match!")
+    print("\n✓ Found match!")
     print(f"  Similarity: {data.get('similarity_percentage')}%")
     print(f"  Chandas: {data.get('chandas')}")
     print(f"  Source: {data.get('dataset_name')}")
     print(f"  Difference Count: {data.get('difference_count')}")
-    
+
     print(f"\n📝 Original text:\n  {data.get('original_text')}")
-    
-    print(f"\n🔍 Differences found:")
+
+    print("\n🔍 Differences found:")
     for diff in data.get('differences', []):
         print(f"  • {diff['type'].upper()}: {diff['description']}")
-    
-    print(f"\n🎨 Highlighted segments:")
+
+    print("\n🎨 Highlighted segments:")
     for seg in data.get('highlighted_segments', []):
         marker = "❌" if seg['isError'] else "✓"
         print(f"  {marker} '{seg['text']}'")

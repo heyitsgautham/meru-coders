@@ -6,11 +6,11 @@ Tests the verse-level identification (combining all lines of a verse).
 Dataset: page 1-47 chanda list - complete.csv (264 verses)
 """
 
-import sys
-import re
-import os
 import csv
 import io
+import os
+import re
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.chanda import Chanda
@@ -72,17 +72,17 @@ DEVA_TO_IAST = {
 def meters_match(expected, got_meters):
     """Check if expected meter matches any of the returned meters"""
     expected_norm = normalize(expected)
-    
+
     # Skip invalid entries (patterns instead of meter names)
     if expected_norm.startswith('u') and len(expected_norm) > 10 and expected_norm.count('u') > 5:
         return True  # Skip pattern entries
     if expected_norm.startswith('स') or expected_norm.startswith('"'):
         return True  # Skip malformed entries
-    
+
     for meter in got_meters[:5]:
         meter_iast = DEVA_TO_IAST.get(meter, meter)
         meter_norm = normalize(meter_iast)
-        
+
         # Exact match
         if expected_norm == meter_norm:
             return True
@@ -108,31 +108,31 @@ def meters_match(expected, got_meters):
         # Handle trishtubh family
         if expected_norm in ['upajati', 'upendravajra', 'indravajra'] and meter_norm == 'tristup':
             return True  # Trishtubh is the family - acceptable match
-            
+
     return False
 
 
 def run_test(verbose=False):
     """Run the verse-level accuracy test"""
-    
+
     # Find data file
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(script_dir, '..', 'data')
     csv_path = os.path.join(data_path, 'page 1-47 chanda list - complete.csv')
-    
+
     if not os.path.exists(csv_path):
         print(f"ERROR: CSV file not found at {csv_path}")
         return
-    
+
     c = Chanda(data_path=data_path)
-    
+
     # Parse CSV properly using Python's CSV reader
     with open(csv_path, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     reader = csv.reader(io.StringIO(content))
     rows = list(reader)
-    
+
     # Extract valid entries
     valid_entries = []
     for i, row in enumerate(rows):
@@ -148,38 +148,38 @@ def run_test(verbose=False):
                     'gana': gana,
                     'chanda': chanda
                 })
-    
+
     print("=" * 70)
     print("VERSE-LEVEL ACCURACY TEST")
-    print(f"Dataset: page 1-47 chanda list - complete.csv")
+    print("Dataset: page 1-47 chanda list - complete.csv")
     print(f"Total verses with labels: {len(valid_entries)}")
     print("=" * 70)
     print()
-    
+
     correct = 0
     incorrect = 0
     results = []
-    
+
     for entry in valid_entries:
         verse = entry['shloka']
         expected = entry['chanda']
-        
+
         result = c.identify_from_text(verse, verse=True)
-        
+
         if result['result']['verse']:
             vr = result['result']['verse'][0]
             primary_meters = vr['chanda'][0] if vr['chanda'][0] else []
             primary = primary_meters[0] if primary_meters else 'Unknown'
-            
+
             is_match = meters_match(expected, primary_meters)
-            
+
             if is_match:
                 correct += 1
                 status = "✓"
             else:
                 incorrect += 1
                 status = "✗"
-            
+
             results.append({
                 'idx': entry['idx'],
                 'expected': expected,
@@ -188,7 +188,7 @@ def run_test(verbose=False):
                 'match': is_match,
                 'status': status
             })
-            
+
             if verbose:
                 print(f"{entry['idx']:3}. {status} Expected: {expected:<22} Got: {primary}")
         else:
@@ -201,20 +201,20 @@ def run_test(verbose=False):
                 'match': False,
                 'status': '✗'
             })
-    
+
     # Print summary
     print()
     print("=" * 70)
     print("RESULTS SUMMARY")
     print("=" * 70)
-    
+
     accuracy = 100 * correct / len(results) if results else 0
     print(f"Correct:   {correct}")
     print(f"Incorrect: {incorrect}")
     print(f"Total:     {len(results)}")
     print(f"ACCURACY:  {accuracy:.1f}%")
     print()
-    
+
     # Show failures grouped by type
     print("FAILURES BY TYPE:")
     print("-" * 50)
@@ -226,13 +226,13 @@ def run_test(verbose=False):
             got_norm = normalize(got_iast)
             key = f"{exp_norm} -> {got_norm}"
             failure_count[key] = failure_count.get(key, 0) + 1
-    
+
     for failure, count in sorted(failure_count.items(), key=lambda x: -x[1]):
         print(f"  [{count:2}x] {failure}")
-    
+
     print()
     print("=" * 70)
-    
+
     return accuracy, correct, len(results)
 
 
@@ -241,5 +241,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test verse-level accuracy')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show all results')
     args = parser.parse_args()
-    
+
     run_test(verbose=args.verbose)

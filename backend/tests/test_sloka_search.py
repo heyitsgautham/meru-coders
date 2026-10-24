@@ -5,14 +5,13 @@ Test suite for Sloka Search API
 Tests the fast fuzzy search mechanism for verse validation.
 """
 
-import sys
 import os
+import sys
 
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import patch, MagicMock
 
 
 class TestSlokaSearch(unittest.TestCase):
@@ -21,48 +20,48 @@ class TestSlokaSearch(unittest.TestCase):
     def test_normalize_sanskrit_text(self):
         """Test Sanskrit text normalization."""
         from backend.api.text_matching import normalize_sanskrit_text
-        
+
         # Test basic normalization
         text = "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"
         normalized = normalize_sanskrit_text(text)
-        
+
         self.assertIsNotNone(normalized)
         self.assertIsInstance(normalized, str)
         self.assertFalse('।' in normalized)  # Punctuation removed
-        
+
     def test_normalize_vedic_accents(self):
         """Test that Vedic accent marks are removed."""
         from backend.api.text_matching import normalize_sanskrit_text
-        
+
         # Text with Vedic accents (॑ and ॒)
         text = "अग्नि॑मीळे पुरो॒हितं"
         normalized = normalize_sanskrit_text(text)
-        
+
         self.assertIsNotNone(normalized)
         # Should not contain accent marks
         self.assertFalse('\u0951' in normalized)
         self.assertFalse('\u0952' in normalized)
-        
+
     def test_normalize_empty_text(self):
         """Test normalization of empty text."""
         from backend.api.text_matching import normalize_sanskrit_text
-        
+
         self.assertEqual(normalize_sanskrit_text(""), "")
         self.assertEqual(normalize_sanskrit_text(None), "")
-        
+
     def test_calculate_similarity(self):
         """Test similarity calculation."""
         from backend.api.text_matching import calculate_similarity
-        
+
         # Exact match should be 1.0
         similarity = calculate_similarity("धर्म", "धर्म")
         self.assertEqual(similarity, 1.0)
-        
+
         # Different strings should be less than 1.0
         similarity = calculate_similarity("धर्म", "कर्म")
         self.assertLess(similarity, 1.0)
         self.assertGreater(similarity, 0.0)
-        
+
         # Completely different strings
         similarity = calculate_similarity("abc", "xyz")
         self.assertLess(similarity, 0.5)
@@ -70,33 +69,33 @@ class TestSlokaSearch(unittest.TestCase):
 
 class TestSlokaSearchAPI(unittest.TestCase):
     """Integration tests for the sloka search API endpoints."""
-    
+
     @classmethod
     def setUpClass(cls):
         """Set up test client."""
         from backend.app import create_app
         cls.app = create_app()
         cls.client = cls.app.test_client()
-        
+
     def test_search_endpoint_exists(self):
         """Test that the search endpoint exists."""
         response = self.client.post('/api/sloka/search', json={'text': 'test'})
         # Should not be 404
         self.assertNotEqual(response.status_code, 404)
-        
+
     def test_validate_endpoint_exists(self):
         """Test that the validate endpoint exists."""
         response = self.client.post('/api/sloka/validate', json={'text': 'test'})
         # Should not be 404
         self.assertNotEqual(response.status_code, 404)
-        
+
     def test_search_requires_text(self):
         """Test that search requires text field."""
         response = self.client.post('/api/sloka/search', json={})
         self.assertEqual(response.status_code, 400)
         data = response.get_json()
         self.assertFalse(data['success'])
-        
+
     def test_search_finds_rigveda_verse(self):
         """Search returns the Rigveda 1.1.1 row with its Gayatri label."""
         response = self.client.post('/api/sloka/search', json={

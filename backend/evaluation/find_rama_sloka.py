@@ -9,7 +9,7 @@ with open('source/chandovallari.csv', 'r', encoding='utf-8') as f:
         if 'माता रामो' in sloka or 'रामचन्द्र' in sloka:
             print('='*60)
             print(f'METER: {row.get("chanda", "")}')
-            print(f'SLOKA:')
+            print('SLOKA:')
             print(sloka)
             print('='*60)
             print()

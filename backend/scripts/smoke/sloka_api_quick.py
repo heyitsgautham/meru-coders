@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """Quick test for Sloka Search API"""
 
+
 import requests
-import json
 
 # Test the sloka search endpoint with the first Rigveda verse
 response = requests.post('http://localhost:5000/api/sloka/search', json={

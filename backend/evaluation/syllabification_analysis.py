@@ -13,7 +13,6 @@ Goal: Identify root causes of undercounting and find the best approach.
 """
 
 import sys
-import os
 
 # Add paths
 sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
@@ -48,7 +47,7 @@ TEST_VERSES = [
         'notes': 'Simple 2-syllable word'
     },
     {
-        'id': 'Simple-2', 
+        'id': 'Simple-2',
         'text': 'नमस्ते',
         'expected_syllables': 3,
         'expected_lg': 'LGG',
@@ -71,7 +70,7 @@ TEST_VERSES = [
         'category': 'simple',
         'notes': 'Single long syllable with anusvara'
     },
-    
+
     # =========================================================================
     # GAYATRI (24 syllables = 3×8)
     # =========================================================================
@@ -91,7 +90,7 @@ TEST_VERSES = [
         'category': 'gayatri',
         'notes': 'RV 1.1.1'
     },
-    
+
     # =========================================================================
     # ANUSHTUBH (32 syllables = 4×8)
     # =========================================================================
@@ -111,7 +110,7 @@ TEST_VERSES = [
         'category': 'anushtubh',
         'notes': 'Purusha Sukta first half'
     },
-    
+
     # =========================================================================
     # TRISHTUBH (44 syllables = 4×11) - MOST PROBLEMATIC
     # =========================================================================
@@ -139,7 +138,7 @@ TEST_VERSES = [
         'category': 'trishtubh',
         'notes': 'Nasadiya Sukta first half'
     },
-    
+
     # =========================================================================
     # JAGATI (48 syllables = 4×12) - SEVERELY UNDERCOUNTED
     # =========================================================================
@@ -167,7 +166,7 @@ TEST_VERSES = [
         'category': 'jagati',
         'notes': 'RV 1.164.20 first half'
     },
-    
+
     # =========================================================================
     # COMPLEX CONJUNCTS - Testing specific problematic patterns
     # =========================================================================
@@ -211,7 +210,7 @@ TEST_VERSES = [
         'category': 'conjunct',
         'notes': 'त्र्य complex conjunct'
     },
-    
+
     # =========================================================================
     # VEDIC SPECIFIC - Special characters
     # =========================================================================
@@ -255,13 +254,13 @@ def analyze_with_our_sanskrit_text(text, data_path):
     """Analyze using our Chanda class with sanskrit_text method"""
     chanda = Chanda(data_path, syllabization_method='sanskrit_text')
     syllables, lg_marks = chanda.mark_lg(text)
-    
+
     # Flatten syllables
     if syllables and isinstance(syllables[0], list):
         flat_syl = [s for ln in syllables for w in ln for s in w]
     else:
         flat_syl = syllables
-    
+
     return {
         'method': 'Our sanskrit_text',
         'syllables': flat_syl,
@@ -277,13 +276,13 @@ def analyze_with_our_icu(text, data_path):
     try:
         chanda = Chanda(data_path, syllabization_method='icu')
         syllables, lg_marks = chanda.mark_lg(text)
-        
+
         # Flatten syllables
         if syllables and isinstance(syllables[0], list):
             flat_syl = [s for ln in syllables for w in ln for s in w]
         else:
             flat_syl = syllables
-        
+
         return {
             'method': 'Our ICU',
             'syllables': flat_syl,
@@ -316,14 +315,14 @@ def analyze_with_iitk(text, data_path):
             'lg_count': 0,
             'lg_string': ''
         }
-    
+
     try:
         chanda = ChandaIITK(data_path)
         syllables, lg_marks = chanda.mark_lg(text)
-        
+
         # Flatten syllables
         flat_syl = [s for ln in syllables for w in ln for s in w]
-        
+
         return {
             'method': 'IITK Reference',
             'syllables': flat_syl,
@@ -351,11 +350,11 @@ def analyze_with_raw_sanskrit_text(text):
         clean_text = skt.clean(text)
         syllables = skt.get_syllables(clean_text)
         flat_syl = [s for ln in syllables for w in ln for s in w]
-        
+
         # Compute LG marks manually
         lg_marks = []
         skip_syllables = [skt.AVAGRAHA]
-        
+
         if not flat_syl:
             return {
                 'method': 'Raw sanskrit_text',
@@ -365,7 +364,7 @@ def analyze_with_raw_sanskrit_text(text):
                 'lg_count': 0,
                 'lg_string': ''
             }
-        
+
         for idx, syllable in enumerate(flat_syl[:-1]):
             if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
                 lg_marks.append('')
@@ -375,14 +374,14 @@ def analyze_with_raw_sanskrit_text(text):
                 (skt.HALANTA not in flat_syl[idx+1])
             )
             lg_marks.append('L' if laghu else 'G')
-        
+
         # Last syllable
         syllable = flat_syl[-1]
         if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
             lg_marks.append('')
         else:
             lg_marks.append('L' if skt.is_laghu(syllable) else 'G')
-        
+
         return {
             'method': 'Raw sanskrit_text',
             'syllables': flat_syl,
@@ -406,12 +405,12 @@ def analyze_with_raw_sanskrit_text(text):
 def run_analysis():
     """Run comprehensive syllabification analysis"""
     data_path = '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/data'
-    
+
     print("=" * 80)
     print("COMPREHENSIVE SYLLABIFICATION ANALYSIS")
     print("=" * 80)
     print()
-    
+
     # Summary statistics
     stats = {
         'simple': {'total': 0, 'perfect': 0, 'methods': {}},
@@ -422,18 +421,18 @@ def run_analysis():
         'conjunct': {'total': 0, 'perfect': 0, 'methods': {}},
         'vedic': {'total': 0, 'perfect': 0, 'methods': {}},
     }
-    
+
     method_totals = {
         'Our sanskrit_text': {'correct': 0, 'total': 0, 'diff_sum': 0},
         'Our ICU': {'correct': 0, 'total': 0, 'diff_sum': 0},
         'IITK Reference': {'correct': 0, 'total': 0, 'diff_sum': 0},
         'Raw sanskrit_text': {'correct': 0, 'total': 0, 'diff_sum': 0},
     }
-    
+
     for verse in TEST_VERSES:
         category = verse['category']
         stats[category]['total'] += 1
-        
+
         print(f"\n{'='*80}")
         print(f"[{verse['id']}] {verse['category'].upper()} - {verse['notes']}")
         print(f"{'='*80}")
@@ -442,7 +441,7 @@ def run_analysis():
         if verse['expected_lg']:
             print(f"Expected L-G: {verse['expected_lg']}")
         print()
-        
+
         # Run all analyses
         results = [
             analyze_with_our_sanskrit_text(verse['text'], data_path),
@@ -450,61 +449,61 @@ def run_analysis():
             analyze_with_iitk(verse['text'], data_path),
             analyze_with_raw_sanskrit_text(verse['text']),
         ]
-        
+
         best_diff = float('inf')
         best_method = None
-        
+
         for result in results:
             method = result['method']
             if 'error' in result:
                 print(f"  {method}: ERROR - {result['error']}")
                 continue
-            
+
             syl_count = result['syllable_count']
             lg_count = result['lg_count']
             expected = verse['expected_syllables']
             diff = abs(syl_count - expected)
-            
+
             # Update method totals
             method_totals[method]['total'] += 1
             method_totals[method]['diff_sum'] += diff
             if diff == 0:
                 method_totals[method]['correct'] += 1
-            
+
             # Track best method for this verse
             if diff < best_diff:
                 best_diff = diff
                 best_method = method
-            
+
             status = '✓' if diff == 0 else f'✗ (diff={diff})'
-            
+
             print(f"  {method}:")
             print(f"    Syllables: {result['syllables']}")
             print(f"    Count: {syl_count} (LG count: {lg_count}) {status}")
             print(f"    L-G: {result['lg_string']}")
-        
+
         print()
         print(f"  BEST: {best_method} (diff={best_diff})")
-        
+
         if best_diff == 0:
             stats[category]['perfect'] += 1
-    
+
     # Print summary
     print()
     print("=" * 80)
     print("SUMMARY BY CATEGORY")
     print("=" * 80)
-    
+
     for category, data in stats.items():
         if data['total'] > 0:
             pct = (data['perfect'] / data['total']) * 100
             print(f"  {category.upper()}: {data['perfect']}/{data['total']} perfect ({pct:.1f}%)")
-    
+
     print()
     print("=" * 80)
     print("SUMMARY BY METHOD")
     print("=" * 80)
-    
+
     for method, data in method_totals.items():
         if data['total'] > 0:
             accuracy = (data['correct'] / data['total']) * 100
@@ -512,17 +511,17 @@ def run_analysis():
             print(f"  {method}:")
             print(f"    Exact matches: {data['correct']}/{data['total']} ({accuracy:.1f}%)")
             print(f"    Average diff: {avg_diff:.2f} syllables")
-    
+
     print()
     print("=" * 80)
     print("KEY FINDINGS")
     print("=" * 80)
-    
+
     # Compare methods
-    methods_sorted = sorted(method_totals.items(), 
-                           key=lambda x: (x[1]['correct'], -x[1]['diff_sum']), 
+    methods_sorted = sorted(method_totals.items(),
+                           key=lambda x: (x[1]['correct'], -x[1]['diff_sum']),
                            reverse=True)
-    
+
     print(f"\n  BEST METHOD: {methods_sorted[0][0]}")
     print(f"    - {methods_sorted[0][1]['correct']}/{methods_sorted[0][1]['total']} exact matches")
     print(f"    - {methods_sorted[0][1]['diff_sum'] / max(1, methods_sorted[0][1]['total']):.2f} avg syllable difference")
@@ -534,22 +533,22 @@ def detailed_syllable_breakdown():
     print("=" * 80)
     print("DETAILED SYLLABLE BREAKDOWN - PROBLEMATIC VERSES")
     print("=" * 80)
-    
+
     problematic = [
         ('Trishtubh', 'इन्द्रस्य नु वीर्याणि प्र वोचं यानि चकार प्रथमानि वज्री', 22),
         ('Jagati', 'इन्द्रं मित्रं वरुणमग्निमाहुरथो दिव्यः स सुपर्णो गरुत्मान्', 24),
         ('Jagati', 'द्वा सुपर्णा सयुजा सखाया समानं वृक्षं परिषस्वजाते', 24),
     ]
-    
+
     for category, text, expected in problematic:
         print(f"\n{category}: {text}")
         print(f"Expected: {expected} syllables")
         print()
-        
+
         # Clean and get syllables
         clean_text = skt.clean(text)
         syllables = skt.get_syllables(clean_text)
-        
+
         print("Word-by-word breakdown:")
         total = 0
         for line_idx, line in enumerate(syllables):
@@ -557,7 +556,7 @@ def detailed_syllable_breakdown():
                 word_str = ''.join(word)
                 print(f"  Word {word_idx + 1}: '{word_str}' -> {word} ({len(word)} syllables)")
                 total += len(word)
-        
+
         print(f"\nTotal syllables: {total}")
         print(f"Difference: {expected - total}")
 

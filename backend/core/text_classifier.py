@@ -20,8 +20,7 @@ Author: Meru Coders Team (SIH 2025)
 """
 
 import re
-import unicodedata
-from typing import Tuple, Dict, Optional, List
+from typing import Dict, List, Tuple
 
 
 class TextClassifier:
@@ -33,11 +32,11 @@ class TextClassifier:
         text_type, confidence, features = classifier.classify("अग्निमीळे पुरोहितं...")
         # Returns: ('vedic', 0.85, {'syllable_count': 24, 'vedic_vocab_hits': 3, ...})
     """
-    
+
     # =========================================================================
     # VEDIC MARKERS
     # =========================================================================
-    
+
     # Vedic-specific vocabulary (archaic forms, Vedic deities, ritual terms)
     VEDIC_VOCABULARY = {
         # Deities (Vedic style invocation)
@@ -77,13 +76,13 @@ class TextClassifier:
         # Common Rigvedic words from misclassified verses
         'अस्माकं', 'विश्वा', 'सुमनस', 'देवयंत',
     }
-    
+
     # Vedic-specific suffixes and endings
     VEDIC_SUFFIXES = [
-        'वत्तम', 'तम', 'वान्', 'मान्', 'आन', 'उस्', 
+        'वत्तम', 'तम', 'वान्', 'मान्', 'आन', 'उस्',
         'षि', 'न्वत्', 'धातम', 'कृतु', 'श्रवस्',
     ]
-    
+
     # Vedic word patterns (regex) - archaic forms
     VEDIC_PATTERNS = [
         r'स्व\S+',      # Words starting with स्व (sva-)
@@ -92,14 +91,14 @@ class TextClassifier:
         r'\S+ेभ्यः',    # Dative plural ending
         r'\S+ाय',       # Dative singular ending
     ]
-    
+
     # Vedic Unicode range (Vedic Extensions)
     # U+1CD0-U+1CFF: Vedic Extensions including tone marks
     VEDIC_UNICODE_RANGES = [
         (0x1CD0, 0x1CFF),  # Vedic Extensions
         (0x0951, 0x0954),  # Vedic tone marks in Devanagari
     ]
-    
+
     # Vedic special characters
     VEDIC_SPECIAL_CHARS = {
         '\u0951',  # Udatta (svarita)
@@ -114,7 +113,7 @@ class TextClassifier:
         '\u1CF6',  # Vedic sign Upadhmaniya
         'ळ',       # Used in Vedic texts
     }
-    
+
     # Vedic syllable counts for major meters
     # Maps syllable count -> (meter_name, is_exact)
     VEDIC_SYLLABLE_COUNTS = {
@@ -149,11 +148,11 @@ class TextClassifier:
         49: ('जगती', False),
         50: ('जगती', False),
     }
-    
+
     # =========================================================================
     # CLASSICAL MARKERS
     # =========================================================================
-    
+
     # Classical-specific vocabulary (later Sanskrit, Kavya terms)
     CLASSICAL_VOCABULARY = {
         # Common Shloka/Kavya terms
@@ -182,7 +181,7 @@ class TextClassifier:
         # Markers from danda usage in classical
         'इति', 'एवं', 'तथा', 'यथा', 'अपि', 'तु', 'हि', 'च', 'वा',
     }
-    
+
     # Classical structural markers
     CLASSICAL_STRUCTURAL_PATTERNS = [
         r'॥\s*\d+\s*॥',           # Verse numbering: ॥ 1 ॥
@@ -192,7 +191,7 @@ class TextClassifier:
         r'इति\s+.*॥',             # "iti" marking end
         r'\d+\s*-\s*\d+',          # Verse references (1-5)
     ]
-    
+
     # Classical meters with their typical syllable counts (often longer)
     CLASSICAL_METERS_SYLLABLES = {
         # Per line counts for classical meters
@@ -203,17 +202,17 @@ class TextClassifier:
         11: ['इन्द्रवज्रा', 'उपेन्द्रवज्रा', 'उपजाति'],  # 11 per quarter
         12: ['द्रुतविलम्बित', 'वंशस्थ'],  # 12 per quarter
     }
-    
+
     # =========================================================================
     # CLASSIFICATION METHODS
     # =========================================================================
-    
+
     def __init__(self):
         """Initialize the classifier with compiled patterns"""
         self.classical_patterns = [
             re.compile(p, re.UNICODE) for p in self.CLASSICAL_STRUCTURAL_PATTERNS
         ]
-    
+
     def count_syllables(self, text: str) -> int:
         """
         Count syllables in Sanskrit text (approximate).
@@ -221,23 +220,22 @@ class TextClassifier:
         """
         # Remove whitespace and punctuation
         text = re.sub(r'[\s।॥|,;:\.\-\d]+', '', text)
-        
+
         # Devanagari vowels (independent and matra forms)
         vowels_independent = 'अआइईउऊऋॠऌॡएऐओऔ'
         vowels_matra = 'ािीुूृॄॢॣेैोौं'
-        
+
         # Count independent vowels (stand-alone syllable nuclei)
         count = sum(1 for c in text if c in vowels_independent)
-        
+
         # Count matra forms (attached to consonants)
         count += sum(1 for c in text if c in vowels_matra)
-        
+
         # Count consonants without vowel signs (inherent 'a')
         # A consonant without virama or matra has inherent 'a'
         consonants = 'कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह'
         virama = '्'
-        
-        prev_char = ''
+
         for i, c in enumerate(text):
             if c in consonants:
                 # Check if followed by virama or matra
@@ -254,30 +252,29 @@ class TextClassifier:
                     elif next_c in consonants or next_c in vowels_independent:
                         break
                     next_idx += 1
-                
+
                 if not has_vowel_sign:
                     # Consonant with inherent 'a'
                     count += 1
-            prev_char = c
-        
+
         return count
-    
+
     def count_syllables_fast(self, text: str) -> int:
         """
         Fast syllable count using vowel counting heuristic.
         Less accurate but faster for classification purposes.
         """
         text = re.sub(r'[\s।॥|,;:\.\-\d]+', '', text)
-        
+
         # All vowel indicators (independent + matra)
         vowels = set('अआइईउऊऋॠऌॡएऐओऔािीुूृॄॢॣेैोौ')
-        
+
         count = sum(1 for c in text if c in vowels)
-        
+
         # Add inherent 'a' for consonants followed by consonants or end
         consonants = set('कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहळक्षज्ञ')
         virama = '्'
-        
+
         for i, c in enumerate(text):
             if c in consonants:
                 # Check if next char is virama or matra
@@ -286,14 +283,14 @@ class TextClassifier:
                 elif text[i + 1] not in vowels and text[i + 1] != virama:
                     if text[i + 1] in consonants:
                         count += 1  # Inherent 'a' before consonant cluster
-        
+
         return max(count, 1)
-    
+
     def check_vedic_unicode(self, text: str) -> Tuple[int, List[str]]:
         """Check for Vedic-specific Unicode characters"""
         vedic_chars_found = []
         count = 0
-        
+
         for char in text:
             cp = ord(char)
             # Check Vedic Unicode ranges
@@ -307,9 +304,9 @@ class TextClassifier:
                 if char not in vedic_chars_found:
                     vedic_chars_found.append(char)
                     count += 1
-        
+
         return count, vedic_chars_found
-    
+
     def check_vocabulary(self, text: str) -> Tuple[int, int, List[str], List[str]]:
         """
         Check text for Vedic and Classical vocabulary markers.
@@ -319,65 +316,64 @@ class TextClassifier:
         classical_hits = 0
         vedic_words = []
         classical_words = []
-        
+
         # Normalize text for matching
-        text_normalized = text.lower()
-        
+
         for word in self.VEDIC_VOCABULARY:
             if word in text:
                 vedic_hits += 1
                 vedic_words.append(word)
-        
+
         for word in self.CLASSICAL_VOCABULARY:
             if word in text:
                 classical_hits += 1
                 classical_words.append(word)
-        
+
         return vedic_hits, classical_hits, vedic_words, classical_words
-    
+
     def check_structural_markers(self, text: str) -> Tuple[int, List[str]]:
         """
         Check for Classical structural markers (dandas, verse numbers, etc.)
         """
         matches = []
         count = 0
-        
+
         for pattern in self.classical_patterns:
             found = pattern.findall(text)
             if found:
                 count += len(found)
                 matches.extend(found)
-        
+
         return count, matches
-    
+
     def check_syllable_pattern(self, text: str) -> Tuple[str, float]:
         """
         Check if syllable count matches Vedic meter patterns.
         Returns: (likely_meter, confidence)
         """
         syllables = self.count_syllables_fast(text)
-        
+
         if syllables in self.VEDIC_SYLLABLE_COUNTS:
             meter, is_exact = self.VEDIC_SYLLABLE_COUNTS[syllables]
             confidence = 0.9 if is_exact else 0.7
             return meter, confidence
-        
+
         # Check for classical per-line patterns
         # Split by danda and check per-line syllables
         lines = re.split(r'[।॥|\n]', text)
-        lines = [l.strip() for l in lines if l.strip()]
-        
+        lines = [ln.strip() for ln in lines if ln.strip()]
+
         if lines:
-            per_line_syllables = [self.count_syllables_fast(l) for l in lines]
+            per_line_syllables = [self.count_syllables_fast(ln) for ln in lines]
             avg_syllables = sum(per_line_syllables) / len(per_line_syllables)
-            
+
             # Classical meters typically have 11-21 syllables per quarter
             for count, meters in self.CLASSICAL_METERS_SYLLABLES.items():
                 if abs(avg_syllables - count) <= 1:
                     return meters[0], 0.6  # Classical meter match
-        
+
         return None, 0.0
-    
+
     def check_line_structure(self, text: str) -> Tuple[str, Dict]:
         """
         Analyze the line/pada structure of the text.
@@ -388,27 +384,27 @@ class TextClassifier:
         single_danda = text.count('।')
         double_danda = text.count('॥')
         newlines = text.count('\n')
-        
+
         # Check for space-separated structure (Vedic style)
         words = text.split()
-        
+
         structure = {
             'single_danda': single_danda,
             'double_danda': double_danda,
             'newlines': newlines,
             'word_count': len(words),
         }
-        
+
         # Classical typically has dandas separating lines
         if double_danda > 0 or (single_danda >= 2 and newlines > 0):
             return 'classical', structure
-        
+
         # Vedic often has continuous text or space-separated padas
         if single_danda <= 1 and double_danda == 0 and newlines == 0:
             return 'vedic', structure
-        
+
         return 'uncertain', structure
-    
+
     def classify(self, text: str) -> Tuple[str, float, Dict]:
         """
         Main classification method.
@@ -425,28 +421,28 @@ class TextClassifier:
         features = {}
         vedic_score = 0.0
         classical_score = 0.0
-        
+
         # 0. Quick check: if text has multiple lines with dandas, likely classical
         single_danda = text.count('।')
         double_danda = text.count('॥')
         newlines = text.count('\n')
-        
+
         # Strong classical indicators (multi-line with dandas)
         if double_danda >= 1 or (single_danda >= 2 and newlines >= 1):
             classical_score += 0.4  # Strong structural indicator
-        
+
         # 1. Check syllable count
         syllables = self.count_syllables_fast(text)
         features['syllable_count'] = syllables
-        
+
         # Vedic verses have specific total syllable counts
         # Check if it's in the exact Vedic meter range
         meter, meter_conf = self.check_syllable_pattern(text)
         features['likely_meter'] = meter
         features['meter_confidence'] = meter_conf
-        
+
         # Only boost Vedic score for exact Vedic counts if NO structural classical markers
-        if meter and meter in ['गायत्री', 'उष्णिक्', 'अनुष्टुभ्', 'बृहती', 
+        if meter and meter in ['गायत्री', 'उष्णिक्', 'अनुष्टुभ्', 'बृहती',
                                'पङ्क्ति', 'त्रिष्टुभ्', 'जगती']:
             if double_danda == 0 and single_danda <= 1:
                 vedic_score += meter_conf * 0.35  # Only if no dandas
@@ -454,22 +450,22 @@ class TextClassifier:
                 vedic_score += meter_conf * 0.1   # Reduced if dandas present
         elif meter:
             classical_score += meter_conf * 0.2
-        
+
         # 2. Check Vedic Unicode characters (very strong indicator)
         vedic_unicode_count, vedic_chars = self.check_vedic_unicode(text)
         features['vedic_unicode_count'] = vedic_unicode_count
         features['vedic_chars'] = vedic_chars
-        
+
         if vedic_unicode_count > 0:
             vedic_score += 0.5  # Strong Vedic indicator (increased)
-        
+
         # 3. Check vocabulary
         vedic_vocab, classical_vocab, v_words, c_words = self.check_vocabulary(text)
         features['vedic_vocab_hits'] = vedic_vocab
         features['classical_vocab_hits'] = classical_vocab
         features['vedic_words'] = v_words
         features['classical_words'] = c_words
-        
+
         # Vocabulary scoring (important differentiator)
         vocab_diff = vedic_vocab - classical_vocab
         if vocab_diff > 0:
@@ -478,29 +474,29 @@ class TextClassifier:
         elif vocab_diff < 0:
             # More Classical vocabulary
             classical_score += min(abs(vocab_diff) * 0.1, 0.3)
-        
+
         # Even a single Vedic vocabulary hit without dandas is strong signal
         if vedic_vocab > 0 and double_danda == 0 and single_danda <= 1:
             vedic_score += 0.15
-        
+
         # 4. Check structural markers (verse numbers, specific patterns)
         struct_count, struct_matches = self.check_structural_markers(text)
         features['structural_markers'] = struct_count
         features['structural_matches'] = struct_matches
-        
+
         if struct_count > 0:
             classical_score += 0.25  # Classical structural pattern
-        
+
         # 5. Check line structure
         line_type, line_struct = self.check_line_structure(text)
         features['line_structure'] = line_struct
         features['line_type'] = line_type
-        
+
         if line_type == 'vedic':
             vedic_score += 0.2
         elif line_type == 'classical':
             classical_score += 0.2
-        
+
         # 6. Text length heuristic
         # Vedic mantras tend to be single-line continuous
         # Classical shlokas tend to have multiple lines
@@ -508,30 +504,30 @@ class TextClassifier:
             classical_score += 0.15
         elif newlines == 0 and len(text) < 150:
             vedic_score += 0.15  # Increased weight
-        
+
         # 6b. No dandas at all is a strong Vedic indicator
         if single_danda == 0 and double_danda == 0:
             vedic_score += 0.2
-        
+
         # 7. Per-line syllable count (Classical has consistent per-line counts)
         lines = re.split(r'[।॥\n]', text)
-        lines = [l.strip() for l in lines if l.strip() and len(l.strip()) > 5]
+        lines = [ln.strip() for ln in lines if ln.strip() and len(ln.strip()) > 5]
         if len(lines) >= 2:
-            per_line_syllables = [self.count_syllables_fast(l) for l in lines]
+            per_line_syllables = [self.count_syllables_fast(ln) for ln in lines]
             avg = sum(per_line_syllables) / len(per_line_syllables)
-            
+
             # Classical meters have specific per-line counts
             if 10 <= avg <= 21 and len(lines) >= 2:
                 # Check variance - classical is very regular
                 variance = sum((s - avg) ** 2 for s in per_line_syllables) / len(per_line_syllables)
                 if variance < 4:  # Very consistent
                     classical_score += 0.2
-        
+
         # 8. Check for specific markers
         # "॥" at end strongly suggests classical
         if text.strip().endswith('॥') or text.strip().endswith('।।'):
             classical_score += 0.2
-        
+
         # 9. Compound word density (Classical has more elaborate compounds)
         # Approximated by average word length
         words = text.split()
@@ -539,12 +535,12 @@ class TextClassifier:
             avg_word_len = sum(len(w) for w in words) / len(words)
             if avg_word_len > 12:  # Long compound words
                 classical_score += 0.1
-        
+
         # 10. Final structural override
         # If absolutely no punctuation and syllables in Vedic range, boost Vedic
         if single_danda == 0 and double_danda == 0 and 20 <= syllables <= 50:
             vedic_score += 0.15
-        
+
         # Normalize scores
         total_score = vedic_score + classical_score
         if total_score > 0:
@@ -558,7 +554,7 @@ class TextClassifier:
             else:
                 vedic_score = 0.7  # Increased default Vedic score
                 classical_score = 0.3
-        
+
         # Determine classification
         if vedic_score > classical_score:
             classification = 'vedic'
@@ -566,16 +562,16 @@ class TextClassifier:
         else:
             classification = 'classical'
             confidence = classical_score
-        
+
         features['vedic_score'] = vedic_score
         features['classical_score'] = classical_score
-        
+
         return classification, confidence, features
-    
+
     def classify_batch(self, texts: List[str]) -> List[Tuple[str, float, Dict]]:
         """Classify multiple texts"""
         return [self.classify(text) for text in texts]
-    
+
     def get_recommended_mode(self, text: str) -> str:
         """
         Get the recommended mode for Chanda identification.
@@ -653,15 +649,15 @@ if __name__ == '__main__':
         "इन्द्रं मित्रं वरुणमग्निमाहुरथो दिव्यः स सुपर्णो गरुत्मान्",
         "वायवा याहि दर्शतेमे सोमा अरंकृताः तेषां पाहि श्रुधी हवं",
     ]
-    
+
     classical_samples = [
         "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः। मामकाः पाण्डवाश्चैव किमकुर्वत संजय॥",
         "श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं वक्त्रच्छायां शशिनि शिखिनां बर्हभारेषु केशान्",
         "न तातो न माता न बन्धुर्न दाता न पुत्रो न पुत्री न भृत्यो न भर्ता",
     ]
-    
+
     classifier = TextClassifier()
-    
+
     print("=" * 60)
     print("VEDIC SAMPLES")
     print("=" * 60)
@@ -672,7 +668,7 @@ if __name__ == '__main__':
         print(f"  Confidence: {conf:.2f}")
         print(f"  Syllables: {features['syllable_count']}")
         print(f"  Likely meter: {features.get('likely_meter', 'Unknown')}")
-    
+
     print("\n" + "=" * 60)
     print("CLASSICAL SAMPLES")
     print("=" * 60)

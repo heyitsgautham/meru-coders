@@ -3,10 +3,11 @@
 """Complete analysis of Bhagavad Gita 1.1"""
 
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 
-from core import Chanda
 from config import settings
+from core import Chanda
 
 chanda = Chanda(data_path=str(settings.DATA_DIR))
 
@@ -23,16 +24,16 @@ print()
 for i, line in enumerate(verse.strip().split('\n')):
     print(f"Line {i+1}: {line}")
     syllables, lg_marks = chanda.mark_lg(line)
-    
+
     # Flatten syllables
     flat_syls = syllables[0][0] if isinstance(syllables[0][0], list) else syllables[0]
-    
+
     print(f"  Syllables: {' '.join(flat_syls)}")
     print(f"  L-G Pattern: {' '.join(lg_marks)}")
     print(f"  Combined: {''.join(lg_marks)}")
-    
+
     # Show syllable-by-syllable
-    print(f"  Breakdown:")
+    print("  Breakdown:")
     for j, (syl, lg) in enumerate(zip(flat_syls, lg_marks)):
         print(f"    {j+1:2}. {syl:6} → {lg}")
     print()

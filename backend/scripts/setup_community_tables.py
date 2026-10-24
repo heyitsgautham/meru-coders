@@ -8,7 +8,6 @@ import os
 import sys
 
 from dotenv import load_dotenv
-
 from supabase import create_client
 
 # Supabase credentials come from the environment (see backend/.env.example)
@@ -37,12 +36,12 @@ def main():
     print("Community Tables Setup Script")
     print("=" * 60)
     print()
-    
+
     # Test connection
     if not test_connection():
         print("\nPlease check your Supabase credentials and try again.")
         return
-    
+
     print()
     print("=" * 60)
     print("IMPORTANT: Run the following SQL in Supabase SQL Editor")
@@ -56,7 +55,7 @@ def main():
     print("The schema file location:")
     print("  backend/scripts/community_schema.sql")
     print()
-    
+
     # Print simplified SQL for quick copy
     print("=" * 60)
     print("QUICK SQL (Copy this to Supabase SQL Editor):")

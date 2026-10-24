@@ -6,8 +6,8 @@ Tests the AI pre-validation layer for chandas identification.
 This test is designed to work standalone without heavy dependencies.
 """
 
-import sys
 import os
+import sys
 
 # Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,8 +15,9 @@ sys.path.insert(0, PROJECT_ROOT)
 
 # Import directly from the module file to avoid __init__.py importing heavy deps
 import importlib.util
+
 spec = importlib.util.spec_from_file_location(
-    "ai_validator", 
+    "ai_validator",
     os.path.join(PROJECT_ROOT, "backend", "core", "ai_validator.py")
 )
 ai_validator_module = importlib.util.module_from_spec(spec)
@@ -37,12 +38,12 @@ def test_validator_initialization():
 def test_empty_input():
     """Test that empty input is rejected."""
     should_proceed, reason, result = validate_shloka_input("", skip_ai=False)
-    
+
     if not should_proceed:
         print(f"✓ Empty input correctly rejected: {reason}")
         return True
     else:
-        print(f"✗ Empty input should be rejected")
+        print("✗ Empty input should be rejected")
         return False
 
 
@@ -50,37 +51,37 @@ def test_valid_shloka():
     """Test with a valid Sanskrit shloka."""
     # Bhagavad Gita 1.1
     text = "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"
-    
+
     should_proceed, reason, result = validate_shloka_input(text, skip_ai=False)
-    
+
     if result.get('ai_validated'):
-        print(f"✓ Valid shloka AI result:")
+        print("✓ Valid shloka AI result:")
         print(f"  - is_valid: {result.get('is_valid')}")
         print(f"  - text_type: {result.get('text_type')}")
         print(f"  - confidence: {result.get('confidence')}")
         print(f"  - should_proceed: {should_proceed}")
     else:
-        print(f"⚠ AI validation was skipped (no API keys?)")
-    
+        print("⚠ AI validation was skipped (no API keys?)")
+
     return True
 
 
 def test_english_text():
     """Test with English text (should be rejected)."""
     text = "The quick brown fox jumps over the lazy dog"
-    
+
     should_proceed, reason, result = validate_shloka_input(text, skip_ai=False)
-    
+
     if result.get('ai_validated'):
-        print(f"✓ English text AI result:")
+        print("✓ English text AI result:")
         print(f"  - is_valid: {result.get('is_valid')}")
         print(f"  - text_type: {result.get('text_type')}")
         print(f"  - should_proceed: {should_proceed}")
         if not should_proceed:
             print(f"  - rejection_reason: {reason}")
     else:
-        print(f"⚠ AI validation was skipped")
-    
+        print("⚠ AI validation was skipped")
+
     return True
 
 
@@ -88,31 +89,31 @@ def test_prose_text():
     """Test with Sanskrit prose (should be flagged)."""
     # Simple Sanskrit prose sentence
     text = "अहं गृहं गच्छामि"  # "I go home"
-    
+
     should_proceed, reason, result = validate_shloka_input(text, skip_ai=False)
-    
+
     if result.get('ai_validated'):
-        print(f"✓ Prose text AI result:")
+        print("✓ Prose text AI result:")
         print(f"  - is_valid: {result.get('is_valid')}")
         print(f"  - text_type: {result.get('text_type')}")
         print(f"  - should_proceed: {should_proceed}")
     else:
-        print(f"⚠ AI validation was skipped")
-    
+        print("⚠ AI validation was skipped")
+
     return True
 
 
 def test_skip_ai():
     """Test that AI can be skipped (for batch mode)."""
     text = "any text here"
-    
+
     should_proceed, reason, result = validate_shloka_input(text, skip_ai=True)
-    
+
     if should_proceed and not result.get('ai_validated'):
-        print(f"✓ AI correctly skipped when skip_ai=True")
+        print("✓ AI correctly skipped when skip_ai=True")
         return True
     else:
-        print(f"✗ AI should be skipped but wasn't")
+        print("✗ AI should be skipped but wasn't")
         return False
 
 
@@ -122,7 +123,7 @@ def run_all_tests():
     print("AI Shloka Validator Tests")
     print("=" * 60)
     print()
-    
+
     tests = [
         ("Validator Initialization", test_validator_initialization),
         ("Empty Input Rejection", test_empty_input),
@@ -131,10 +132,10 @@ def run_all_tests():
         ("English Text", test_english_text),
         ("Prose Text", test_prose_text),
     ]
-    
+
     passed = 0
     failed = 0
-    
+
     for name, test_func in tests:
         print(f"\n--- {name} ---")
         try:
@@ -145,11 +146,11 @@ def run_all_tests():
         except Exception as e:
             print(f"✗ Test failed with exception: {e}")
             failed += 1
-    
+
     print("\n" + "=" * 60)
     print(f"Results: {passed} passed, {failed} failed")
     print("=" * 60)
-    
+
     return failed == 0
 
 

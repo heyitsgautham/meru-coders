@@ -13,13 +13,12 @@ Purpose:
 Last Updated: 2025-12-09 - Updated to new google-genai SDK
 """
 
-import os
-import re
 import json
 import logging
-from typing import Tuple, Dict, Any, Optional
-from functools import lru_cache
+import os
 import random
+import re
+from typing import Any, Dict, Optional, Tuple
 
 # Try to import Google GenAI (new SDK)
 try:
@@ -104,7 +103,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
         Validation result dictionary
     """
     import re
-    
+
     if not text or not text.strip():
         return {
             'is_valid': False,
@@ -114,9 +113,9 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
             'action': 'reject',
             'ai_validated': False
         }
-    
+
     text = text.strip()
-    
+
     # Common English words to reject
     COMMON_ENGLISH_WORDS = {
         'i', 'me', 'my', 'you', 'your', 'he', 'she', 'it', 'we', 'they', 'them',
@@ -130,14 +129,14 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
         'ram', 'shyam', 'gopal', 'krishna', 'ganesh', 'shiva', 'vishnu',  # Religious names (without diacritics = English)
         'name', 'word', 'text', 'data', 'file', 'code', 'type', 'value',  # Tech words
     }
-    
+
     # Check for Devanagari characters
     devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097F')
-    
+
     # Check for IAST diacritics
     iast_diacritics = set('āīūṛṝḷḹṃḥñṅṭḍṇśṣĀĪŪṚṜḶḸṂḤÑṄṬḌṆŚṢ')
     iast_chars = sum(1 for c in text if c in iast_diacritics)
-    
+
     # If text has Devanagari, it's likely valid
     if devanagari_chars > 0:
         devanagari_ratio = devanagari_chars / len(text)
@@ -150,15 +149,15 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                 'action': 'proceed',
                 'ai_validated': False
             }
-    
+
     # Pure ASCII without IAST diacritics - likely English
     if iast_chars == 0:
         text_lower = text.lower()
         words = re.findall(r'[a-z]+', text_lower)
-        
+
         if words:
             english_word_count = sum(1 for word in words if word in COMMON_ENGLISH_WORDS)
-            
+
             # If ANY common English word is found without diacritics, reject
             if english_word_count >= 1:
                 return {
@@ -169,11 +168,11 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                     'action': 'reject',
                     'ai_validated': False
                 }
-            
+
             # Check vowel ratio (Sanskrit has ~0.3-0.5)
             latin_chars = sum(1 for c in text if c.isalpha() and c.isascii())
             latin_vowels = sum(1 for c in text if c.lower() in 'aeiou')
-            
+
             if latin_chars > 0:
                 vowel_ratio = latin_vowels / latin_chars
                 if vowel_ratio < 0.15:
@@ -185,7 +184,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                         'action': 'reject',
                         'ai_validated': False
                     }
-    
+
     # Has IAST diacritics - likely valid romanized Sanskrit
     if iast_chars > 0:
         return {
@@ -196,18 +195,18 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
             'action': 'proceed',
             'ai_validated': False
         }
-    
+
     # CRITICAL: If we reach here, text has:
     # - No Devanagari (or very little)
     # - No IAST diacritics
     # - No common English words detected
     # This is likely gibberish or romanized text without proper diacritics
     # Valid Sanskrit MUST have either Devanagari OR IAST diacritics
-    
+
     # Check if it's pure ASCII letters (no numbers, no special chars)
     ascii_letters = sum(1 for c in text if c.isalpha() and c.isascii())
     total_alpha = sum(1 for c in text if c.isalpha())
-    
+
     if ascii_letters > 0 and total_alpha > 0:
         # If mostly ASCII letters with no Devanagari/IAST, reject
         if ascii_letters / total_alpha > 0.8:
@@ -219,7 +218,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                 'action': 'reject',
                 'ai_validated': False
             }
-    
+
     # Default: uncertain, but proceed with warning (shouldn't reach here often)
     return {
         'is_valid': True,
@@ -236,7 +235,7 @@ class AIShlokaValidator:
     AI-powered validator to check if input text is a valid Sanskrit shloka
     before passing to the rule-based meter identification engine.
     """
-    
+
     def __init__(self, enabled: bool = True):
         """
         Initialize the AI validator.
@@ -246,25 +245,25 @@ class AIShlokaValidator:
         """
         self.enabled = enabled and GENAI_AVAILABLE and len(GEMINI_API_KEYS) > 0
         self._client = None
-        
+
         if not GENAI_AVAILABLE:
             logger.warning("google-genai not installed. AI validation disabled.")
         elif not GEMINI_API_KEYS:
             logger.warning("No Gemini API keys found. AI validation disabled.")
         else:
             logger.info(f"AI Shloka Validator initialized with {len(GEMINI_API_KEYS)} API keys")
-    
+
     def _get_client(self):
         """Get a configured Gemini client with load-balanced API key."""
         if not self.enabled:
             return None
-        
+
         # Select random API key for load balancing
         api_key = random.choice(GEMINI_API_KEYS)
-        
+
         # Create client with the new SDK
         return genai.Client(api_key=api_key)
-    
+
     def validate_shloka(self, text: str) -> Dict[str, Any]:
         """
         Validate if the input text is a valid Sanskrit shloka.
@@ -286,11 +285,11 @@ class AIShlokaValidator:
         # Fallback result uses rule-based validation when AI is unavailable
         def get_fallback_result():
             return _rule_based_validation(text)
-        
+
         if not self.enabled:
             logger.debug("AI validation disabled, using rule-based fallback")
             return get_fallback_result()
-        
+
         if not text or not text.strip():
             return {
                 'is_valid': False,
@@ -300,54 +299,54 @@ class AIShlokaValidator:
                 'action': 'reject',
                 'ai_validated': True
             }
-        
+
         # Skip AI for very long texts (batch mode efficiency)
         # AI validation is designed for single verse/line analysis
         if len(text) > 2000:
             logger.debug(f"Text too long ({len(text)} chars), using rule-based fallback")
             return get_fallback_result()
-        
+
         try:
             client = self._get_client()
             if not client:
                 logger.debug("No Gemini client available, using rule-based fallback")
                 return get_fallback_result()
-            
+
             # Generate validation prompt
             prompt = SHLOKA_VALIDATION_PROMPT.format(text=text)
-            
+
             # Configure generation settings
             config = types.GenerateContentConfig(
                 temperature=0.1,  # Low temperature for consistent classification
                 top_p=0.95,
                 max_output_tokens=1024,  # Increased from 500 - Gemini uses ~500 tokens for "thinking"
             )
-            
+
             # Call Gemini using new SDK
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt,
                 config=config
             )
-            
+
             # Handle response - check if text exists
             if not response or not response.text:
                 logger.warning("Gemini returned empty response, using rule-based fallback")
                 return get_fallback_result()
-                
+
             response_text = response.text.strip()
-            
+
             # Parse JSON response
             # Remove markdown code blocks if present
             if response_text.startswith('```'):
                 response_text = re.sub(r'^```json?\s*', '', response_text)
                 response_text = re.sub(r'\s*```$', '', response_text)
-            
+
             # Debug: Log raw response for troubleshooting
             logger.debug(f"Gemini raw response: {response_text[:500]}")
-            
+
             result = json.loads(response_text)
-            
+
             return {
                 'is_valid': result.get('is_valid_shloka', True),
                 'confidence': result.get('confidence', 0.5),
@@ -356,18 +355,18 @@ class AIShlokaValidator:
                 'action': result.get('suggested_action', 'proceed'),
                 'ai_validated': True
             }
-            
+
         except json.JSONDecodeError as e:
             logger.warning(f"Failed to parse AI response as JSON: {e}")
             logger.warning(f"Raw response was: {response_text[:300] if 'response_text' in dir() else 'N/A'}")
             # If JSON parsing fails, use rule-based validation as fallback
             return get_fallback_result()
-            
+
         except Exception as e:
             logger.error(f"AI validation error: {e}, using rule-based fallback")
             # On any error, fall back to rule-based validation
             return get_fallback_result()
-    
+
     def should_proceed_with_identification(self, validation_result: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
         """
         Determine if meter identification should proceed based on validation result.
@@ -379,16 +378,16 @@ class AIShlokaValidator:
             Tuple of (should_proceed: bool, rejection_reason: Optional[str])
         """
         action = validation_result.get('action', 'proceed')
-        
+
         if action == 'reject':
             reason = validation_result.get('reason', 'Invalid input')
-            
+
             # Use consistent format matching chanda.py prose_message format
             # This ensures UI displays errors consistently
             rejection_msg = f"अमान्य आदान: {reason} (Invalid input: {reason})"
-            
+
             return False, rejection_msg
-        
+
         # 'proceed' or 'warn' - allow identification to continue
         return True, None
 
@@ -408,10 +407,10 @@ def get_validator(enabled: bool = True) -> AIShlokaValidator:
         AIShlokaValidator instance
     """
     global _validator_instance
-    
+
     if _validator_instance is None:
         _validator_instance = AIShlokaValidator(enabled=enabled)
-    
+
     return _validator_instance
 
 
@@ -428,9 +427,9 @@ def validate_shloka_input(text: str, skip_ai: bool = False) -> Tuple[bool, Optio
     """
     if skip_ai:
         return True, None, {'ai_validated': False, 'is_valid': True, 'action': 'proceed'}
-    
+
     validator = get_validator()
     result = validator.validate_shloka(text)
     should_proceed, rejection_reason = validator.should_proceed_with_identification(result)
-    
+
     return should_proceed, rejection_reason, result

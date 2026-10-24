@@ -7,8 +7,9 @@ Tests all 8 test cases mentioned in the implementation checklist
 @author: Implementation Checklist Tests
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from core.chanda import Chanda
@@ -37,13 +38,13 @@ result1 = c.identify_line(gayatri_full)
 syllable_count = len(result1['lg'])
 print(f"Input: {gayatri_full}")
 print(f"Syllable count: {syllable_count}")
-print(f"Expected: 24 syllables")
+print("Expected: 24 syllables")
 print(f"Found: {result1['found']}")
 print(f"Chanda: {result1['display_chanda']}")
 
 test1_pass = syllable_count == 24
 test_results.append(("Test 1 (Gayatri - 24 syllables)", test1_pass))
-print(f"✓ PASS" if test1_pass else f"✗ FAIL")
+print("✓ PASS" if test1_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -68,7 +69,7 @@ else:
     print("No verse result found")
 
 test_results.append(("Test 2 (Anushtubh BG 2.47)", test2_pass))
-print(f"✓ PASS" if test2_pass else f"✗ FAIL")
+print("✓ PASS" if test2_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -94,7 +95,7 @@ else:
     print("No verse result found")
 
 test_results.append(("Test 3 (Anushtubh BG 1.1)", test3_pass))
-print(f"✓ PASS" if test3_pass else f"✗ FAIL")
+print("✓ PASS" if test3_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -114,7 +115,7 @@ print("See test_authentic_meters.py for verified meter tests")
 
 test4_pass = True  # Mark as pass since functionality is verified elsewhere
 test_results.append(("Test 4 (Trishtubh)", test4_pass))
-print(f"✓ PASS (functionality verified)")
+print("✓ PASS (functionality verified)")
 print()
 
 ###############################################################################
@@ -133,7 +134,7 @@ print(f"L-G pattern: {result5['display_lg']}")
 
 test5_pass = len(result5['lg']) > 0  # Just needs to process without error
 test_results.append(("Test 5 (Fragment)", test5_pass))
-print(f"✓ PASS" if test5_pass else f"✗ FAIL")
+print("✓ PASS" if test5_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -158,7 +159,7 @@ else:
     print("No verse result found")
 
 test_results.append(("Test 6 (Anushtubh BG 4.7)", test6_pass))
-print(f"✓ PASS" if test6_pass else f"✗ FAIL")
+print("✓ PASS" if test6_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -177,7 +178,7 @@ print(f"L-G pattern: {result7['display_lg']}")
 
 test7_pass = len(result7['lg']) > 0
 test_results.append(("Test 7 (Fragment 2)", test7_pass))
-print(f"✓ PASS" if test7_pass else f"✗ FAIL")
+print("✓ PASS" if test7_pass else "✗ FAIL")
 print()
 
 ###############################################################################
@@ -201,7 +202,7 @@ for line_result in result8['result']['line']:
     total_syllables += len(line_result['result']['lg'])
 
 print(f"Total syllables: {total_syllables}")
-print(f"Expected: 48 (4x12)")
+print("Expected: 48 (4x12)")
 
 if result8['result']['verse']:
     best_match = result8['result']['verse'][0]['chanda']
@@ -212,7 +213,7 @@ else:
     print(f"Syllable count correct: {test8_pass}")
 
 test_results.append(("Test 8 (Jagati)", test8_pass))
-print(f"✓ PASS" if test8_pass else f"✗ FAIL")
+print("✓ PASS" if test8_pass else "✗ FAIL")
 print()
 
 ###############################################################################

@@ -5,6 +5,7 @@ Test script to verify pada splitting in chatbot responses
 
 import os
 import sys
+
 sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
 os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
 
@@ -48,7 +49,7 @@ print("Identification Result:")
 print(f"  Meter: {result.get('display_chanda_primary', 'Unknown')}")
 print(f"  Total Syllables: {result.get('display_length', 0)}")
 print(f"  L-G Pattern (full): {lg_pattern}")
-print(f"\n  L-G Pattern by Pada:")
+print("\n  L-G Pattern by Pada:")
 for i, pada in enumerate(lg_padas, 1):
     print(f"    Pada {i}: {pada} ({len(pada)} syllables)")
 

@@ -9,10 +9,10 @@ print(f"✓ Total meter categories: {len(data)}")
 
 if "दण्डक" in data:
     dandaka = data["दण्डक"]
-    print(f"✓ Dandaka section found")
+    print("✓ Dandaka section found")
     print(f"  Description: {dandaka['description']}")
     print(f"  Total sub-categories: {len(dandaka['categories'])}")
-    
+
     for category_name, category_data in dandaka['categories'].items():
         example_count = len(category_data['examples'])
         print(f"\n  {category_name}:")

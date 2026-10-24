@@ -56,29 +56,29 @@ def normalize_meter_name(name):
 def parse_anukramani():
     """Parse WSC2023 Anukramani files to get hymn-meter mappings."""
     hymn_meters = {}  # {(mandala, hymn): meter_name}
-    
+
     for i in range(1, 11):
         filepath = os.path.join(ANUKRAMANI_DIR, f'Mandala_{i}.txt')
         if not os.path.exists(filepath):
             print(f"  Warning: {filepath} not found")
             continue
-        
+
         with open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-        
+
         for line in lines[1:]:  # Skip header
             line = line.strip()
             if not line:
                 continue
-            
+
             parts = line.split('.')
             if len(parts) < 5:
                 continue
-            
+
             try:
                 hymn = int(parts[0])
                 meter_field = parts[4] if len(parts) > 4 else ""
-                
+
                 # Parse meter field (may have verse ranges like "(1-6)jagatī,(7-9)triṣṭup")
                 # For simplicity, take the first/primary meter
                 meter_match = re.search(r'([a-zA-Zāīūṛḷṅñṭḍṇśṣḥṃ]+)(?:\s|,|$)', meter_field)
@@ -87,7 +87,7 @@ def parse_anukramani():
                     hymn_meters[(i, hymn)] = primary_meter
             except (ValueError, IndexError):
                 continue
-    
+
     return hymn_meters
 
 
@@ -95,7 +95,7 @@ def clean_sanskrit_text(text):
     """Remove Vedic accent marks and normalize text."""
     if not text:
         return ""
-    
+
     # Remove Vedic accent marks (svarita, anudatta, etc.)
     # These are Unicode characters in the range U+0951-U+0954 and others
     accent_chars = [
@@ -106,13 +106,13 @@ def clean_sanskrit_text(text):
         '\u1CD0', '\u1CD1', '\u1CD2',  # Vedic tone marks
         '॒', '॑', '᳚',  # Common accent representations
     ]
-    
+
     for char in accent_chars:
         text = text.replace(char, '')
-    
+
     # Remove extra whitespace
     text = ' '.join(text.split())
-    
+
     return text.strip()
 
 
@@ -121,22 +121,22 @@ def load_rigveda_verses():
     if not os.path.exists(RIGVEDA_JSON):
         print(f"ERROR: {RIGVEDA_JSON} not found!")
         return []
-    
+
     with open(RIGVEDA_JSON, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    
+
     # Deduplicate (some verses appear multiple times with different formats)
     seen = set()
     unique_verses = []
-    
+
     for v in data:
         key = (v.get('mandala'), v.get('hymn'), v.get('verse'))
         sanskrit = v.get('sanskrit', '')
-        
+
         # Skip if no Sanskrit text or already seen
         if not sanskrit or key in seen:
             continue
-        
+
         # Prefer verses with more content
         if len(sanskrit) > 20:  # Minimum length filter
             seen.add(key)
@@ -147,7 +147,7 @@ def load_rigveda_verses():
                 'sanskrit': clean_sanskrit_text(sanskrit),
                 'translation': v.get('translation', ''),
             })
-    
+
     return unique_verses
 
 
@@ -156,42 +156,42 @@ def build_dataset():
     print("=" * 60)
     print("Building Rigveda Authentic Test Dataset")
     print("=" * 60)
-    
+
     # Load data sources
     print("\n1. Parsing WSC2023 Anukramani...")
     hymn_meters = parse_anukramani()
     print(f"   Found meter annotations for {len(hymn_meters)} hymns")
-    
+
     print("\n2. Loading Rigveda_api verses...")
     verses = load_rigveda_verses()
     print(f"   Loaded {len(verses)} unique verses")
-    
+
     # Merge datasets
     print("\n3. Merging datasets...")
     merged = []
     meter_counts = defaultdict(int)
-    
+
     for v in verses:
         key = (v['mandala'], v['hymn'])
         meter_iast = hymn_meters.get(key)
-        
+
         if not meter_iast:
             continue  # Skip verses without meter annotation
-        
+
         # Normalize meter name
         meter_norm = normalize_meter_name(meter_iast)
-        
+
         # Look up meter info
         meter_info = None
         for m_key, m_val in VEDIC_METERS.items():
             if normalize_meter_name(m_key) == meter_norm:
                 meter_info = m_val
                 break
-        
+
         if not meter_info:
             # Unknown meter - skip for now
             continue
-        
+
         merged.append({
             'mandala': v['mandala'],
             'hymn': v['hymn'],
@@ -203,22 +203,22 @@ def build_dataset():
             'padas': meter_info['padas'],
             'source': f"RV {v['mandala']}.{v['hymn']}.{v['verse']} (Rigveda_api + WSC2023)"
         })
-        
+
         meter_counts[meter_iast] += 1
-    
+
     print(f"   Merged {len(merged)} verses with ground truth meters")
-    
+
     # Print meter distribution
     print("\n4. Meter Distribution:")
     for meter, count in sorted(meter_counts.items(), key=lambda x: -x[1]):
         print(f"   {meter}: {count} verses")
-    
+
     return merged
 
 
 def generate_python_file(verses):
     """Generate Python file with the dataset."""
-    
+
     content = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -238,7 +238,7 @@ DO NOT EDIT MANUALLY - regenerate using:
 
 RIGVEDA_AUTHENTIC = [
 '''
-    
+
     for v in verses:
         content += f'''    {{
         'mandala': {v['mandala']},
@@ -252,7 +252,7 @@ RIGVEDA_AUTHENTIC = [
         'source': '{v['source']}'
     }},
 '''
-    
+
     content += ''']
 
 # ============================================================================
@@ -285,26 +285,26 @@ def summary():
 if __name__ == '__main__':
     summary()
 '''
-    
+
     return content
 
 
 def main():
     # Build dataset
     verses = build_dataset()
-    
+
     if not verses:
         print("\nERROR: No verses merged! Check data sources.")
         return
-    
+
     # Generate output file
     print(f"\n5. Generating {OUTPUT_FILE}...")
     content = generate_python_file(verses)
-    
+
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(content)
-    
+
     print(f"   Written {len(verses)} verses to {OUTPUT_FILE}")
     print("\n" + "=" * 60)
     print("DONE! Run the test with:")

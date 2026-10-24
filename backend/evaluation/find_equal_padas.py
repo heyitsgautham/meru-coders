@@ -3,6 +3,7 @@
 
 import csv
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 from core.chanda import Chanda
 
@@ -27,24 +28,24 @@ print("=" * 80)
 with open('/home/harevasu/Projects/meru-coders/backend/data/rigveda_with_meters_complete.csv', 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
     header = next(reader)
-    
+
     for row in reader:
         if len(row) < 7:
             continue
         mandala, sukta, rik, verse, meter, lg_pattern, syllable_count = row[:7]
-        
+
         try:
             syl_count = int(syllable_count)
         except:
             continue
-        
+
         for meter_name, (total, per_pada, num_padas) in targets.items():
             if syl_count == total and len(found[meter_name]) < 5:
                 result = chanda.identify_line(verse)
                 if result and 'display_syllables' in result:
                     syllables = result['display_syllables']
                     actual_count = len(syllables)
-                    
+
                     if actual_count == total:
                         found[meter_name].append({
                             'ref': f'RV {mandala}.{sukta}.{rik}',
@@ -59,31 +60,31 @@ with open('/home/harevasu/Projects/meru-coders/backend/data/rigveda_with_meters_
 for meter_name in ['Gayatri', 'Ushnik', 'Anushtubh', 'Brihati', 'Pankti', 'Trishtubh', 'Jagati']:
     verses = found[meter_name]
     total, per_pada, num_padas = targets[meter_name]
-    
+
     print(f'\n{"=" * 80}')
     print(f'{meter_name.upper()} ({total} = {num_padas} × {per_pada} syllables per pada)')
     print(f'{"=" * 80}')
-    
+
     if verses:
         v = verses[0]  # Best match
         print(f"\n📜 Source: {v['ref']}")
-        print(f"\n📝 Verse:")
+        print("\n📝 Verse:")
         print(f"   {v['verse']}")
         print(f"\n🔍 Detected as: {v['meter_detected']}")
         print(f"\n🔢 Syllable Breakdown ({v['count']} total):\n")
-        
+
         syls = v['syllables']
         lg = v['lg']
-        
+
         for i in range(num_padas):
             start = i * per_pada
             end = (i + 1) * per_pada
             pada_syls = syls[start:end] if start < len(syls) else []
             pada_lg = lg[start:end] if start < len(lg) else []
-            
+
             syl_str = '-'.join(pada_syls)
             lg_str = ''.join(pada_lg)
-            
+
             print(f"   Pada {i+1} ({len(pada_syls)} syl): {syl_str}")
             print(f"           L-G: {lg_str}")
             print()

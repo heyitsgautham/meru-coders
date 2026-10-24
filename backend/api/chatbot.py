@@ -5,18 +5,18 @@ Includes agentic capabilities for automatic meter identification
 Last Updated: 2025-12-09 - Updated to new google-genai SDK
 """
 
-import os
-import json
 import base64
-import re
 import logging
+import os
+import random
+import re
 from datetime import datetime
-from typing import List, Dict, Optional, Any, Tuple
-from flask import Blueprint, request, jsonify
+from typing import Any, Dict, List, Optional, Tuple
+
+from dotenv import load_dotenv
+from flask import Blueprint, jsonify, request
 from google import genai
 from google.genai import types
-from dotenv import load_dotenv
-import random
 
 # Try to import Google Cloud Speech (optional dependency)
 try:
@@ -27,7 +27,6 @@ except ImportError:
     gcp_speech = None
 
 # Configure logging FIRST before RAG import
-import logging
 logger = logging.getLogger(__name__)
 
 # Try to import RAG engine (optional - requires vector database)
@@ -72,16 +71,16 @@ rag_initialized = False
 def get_rag_engine():
     """Lazy initialization of RAG engine on first request"""
     global rag_engine, rag_initialized
-    
+
     if rag_initialized:
         return rag_engine
-    
+
     rag_initialized = True
-    
+
     if not RAG_AVAILABLE:
         logger.warning("⚠️  RAG dependencies not installed. Install with: pip install -r requirements.txt")
         return None
-    
+
     try:
         logger.info("🔧 Initializing RAG engine (lazy load)...")
         rag_engine = RAGEngine(chroma_path="data/chroma_db")
@@ -232,23 +231,23 @@ def extract_sanskrit_text(message: str) -> Optional[str]:
         matches = re.findall(pattern, message)
         if matches:
             return matches[0].strip()
-    
+
     # Pattern 2: Continuous Devanagari text (including spaces, punctuation)
     # Match the entire span of Devanagari characters, spaces, and common punctuation
     devanagari_span_pattern = r'[\u0900-\u097F\s।॥\u0964\u0965]+'
     devanagari_matches = re.findall(devanagari_span_pattern, message)
-    
+
     if devanagari_matches:
         # Find the longest continuous span and clean it up
         longest_match = max(devanagari_matches, key=len).strip()
-        
+
         # Remove trailing/leading punctuation marks
         longest_match = re.sub(r'^[।॥\s]+|[।॥\s]+$', '', longest_match)
-        
+
         # If it's still substantial (more than just a word), return it
         if len(longest_match) > 5:  # At least a few characters
             return longest_match
-    
+
     # Pattern 3: Multiple Devanagari words separated by spaces
     # Fallback: collect all Devanagari words and join them
     word_pattern = r'[\u0900-\u097F]+'
@@ -257,7 +256,7 @@ def extract_sanskrit_text(message: str) -> Optional[str]:
         return ' '.join(words)
     elif words:  # Single word
         return words[0]
-    
+
     return None
 
 
@@ -274,10 +273,10 @@ def detect_meter_intent(message: str) -> Tuple[bool, Optional[str], Dict[str, bo
         'laghu', 'guru', 'gana', 'syllable', 'मात्रा', 'छन्द', 'वृत्त',
         'l-g pattern', 'lg pattern', 'scan', 'scansion'
     ]
-    
+
     message_lower = message.lower()
     has_intent = any(keyword in message_lower for keyword in intent_keywords)
-    
+
     # Detect what specific fields user is asking for
     requested_fields = {
         'meter_name': False,
@@ -287,31 +286,31 @@ def detect_meter_intent(message: str) -> Tuple[bool, Optional[str], Dict[str, bo
         'matra_count': False,
         'full_analysis': False  # Default to full analysis if not specified
     }
-    
+
     if has_intent:
         # Check for specific field requests
         if any(term in message_lower for term in ['chanda name', 'meter name', 'name of', 'which chanda', 'what chanda', 'chanda only', 'meter only']):
             requested_fields['meter_name'] = True
-        
+
         if any(term in message_lower for term in ['l-g', 'lg', 'laghu', 'guru', 'pattern']):
             requested_fields['lg_pattern'] = True
-        
+
         if any(term in message_lower for term in ['gana', 'gaṇa']):
             requested_fields['gana_pattern'] = True
-        
+
         if any(term in message_lower for term in ['syllable', 'akshara', 'अक्षर']):
             requested_fields['syllable_count'] = True
-        
+
         if any(term in message_lower for term in ['matra', 'mātrā', 'मात्रा']):
             requested_fields['matra_count'] = True
-        
+
         # If no specific fields requested, show full analysis
         if not any(requested_fields.values()):
             requested_fields['full_analysis'] = True
-        
+
         extracted_text = extract_sanskrit_text(message)
         return True, extracted_text, requested_fields
-    
+
     return False, None, requested_fields
 
 
@@ -335,54 +334,54 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
     with clear pada-by-pada L-G pattern display.
     """
     try:
-        from core.chanda import Chanda
         from config.settings import Settings
-        
+        from core.chanda import Chanda
+
         settings = Settings()
         chanda = Chanda(data_path=str(settings.DATA_DIR))
-        
+
         # Check if text has multiple lines (split by newlines OR danda separators)
         # Sanskrit verses often use । (single danda) to separate padas/lines
         lines = [line.strip() for line in text.split('\n') if line.strip()]
-        
+
         # If only one line, check for danda separators (।) first
         if len(lines) == 1 and '।' in text:
             # Split by danda and clean up
             lines = [line.strip() for line in text.replace('॥', '।').split('।') if line.strip()]
-        
+
         # If still one line, try smart pada detection based on syllable count
         if len(lines) == 1:
             # Analyze the whole line first to get syllable count
             test_result = chanda.identify_line(text)
             lg_pattern = ''.join([char for char in test_result.get('display_lg', []) if char])
             total_syllables = len(lg_pattern)
-            
+
             # Common pada structures in Sanskrit poetry
             # Śālinī: 11 syllables per pada
             # Anuṣṭubh: 8 syllables per pada (32 total for 4 padas)
             # Vasantatilaka: 14 syllables per pada
             # Mandākrāntā: 17 syllables per pada
             # Śārdūlavikrīḍita: 19 syllables per pada
-            
+
             common_pada_lengths = [8, 11, 12, 14, 17, 19, 21]
-            
+
             # Try to split into padas based on common structures
             for pada_length in common_pada_lengths:
                 if total_syllables % pada_length == 0:
                     num_padas = total_syllables // pada_length
                     # Split the text into padas based on syllable positions
                     lines = []
-                    
+
                     # Get syllable breakdown and L-G marks
                     syllables = test_result.get('display_syllables', [])
                     lg_marks = test_result.get('display_lg', [])
-                    
+
                     # Filter to only include items with valid L-G marks (actual syllables)
                     valid_syllables = []
-                    for i, (syl, lg) in enumerate(zip(syllables, lg_marks)):
+                    for syl, lg in zip(syllables, lg_marks, strict=False):
                         if lg and lg.strip():  # Only include if has L-G mark
                             valid_syllables.append(syl)
-                    
+
                     if len(valid_syllables) == total_syllables:
                         # Split based on syllable positions
                         for pada_idx in range(num_padas):
@@ -390,30 +389,30 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                             end = start + pada_length
                             pada_syllables = valid_syllables[start:end]
                             lines.append(''.join(pada_syllables))
-                    
+
                     if len(lines) == num_padas:
                         break  # Successfully split
-        
+
         if len(lines) > 1:
             # Multi-line verse - reconstruct as newline-separated text
             text_for_analysis = '\n'.join(lines)
-            
+
             # Multi-line verse - use identify_from_text with verse=True
             response = chanda.identify_from_text(text_for_analysis, verse=True, mode='auto')
-            
+
             # Extract data from verse result
             # identify_from_text returns: {'result': {'line': [...], 'verse': [...]}, 'path': {...}}
             result = response.get('result', {})
-            
+
             # Check for validation errors in first line
             if 'line' in result and len(result['line']) > 0:
                 first_line_result = result['line'][0].get('result', {})
-                
+
                 # Check if input validation failed
                 if not first_line_result.get('is_valid_input', True):
                     validation_error = first_line_result.get('validation_error', 'Invalid Sanskrit input')
                     prose_message = first_line_result.get('prose_message', validation_error)
-                    
+
                     return {
                         'success': False,
                         'is_valid_input': False,
@@ -421,18 +420,18 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                         'prose_message': prose_message,
                         'text': text
                     }
-            
+
             if 'verse' in result and len(result['verse']) > 0:
                 # Get first verse analysis
                 verse_data = result['verse'][0]
-                
+
                 # Collect all line results
                 all_lg = []
                 lg_by_line: List[str] = []
                 all_syllables = []
                 total_syllables = 0
                 total_matra = 0
-                
+
                 if 'line' in result:
                     for line_result in result['line']:
                         line_data = line_result.get('result', {})
@@ -447,7 +446,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                         # Some meters return formulas like "2 / (1 + 1) / (1 + 1)" - evaluate or extract first number
                         length = line_data.get('display_length', 0)
                         matra = line_data.get('display_matra', 0)
-                        
+
                         try:
                             if isinstance(length, str):
                                 # Try to extract first number from formula or convert directly
@@ -462,7 +461,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                                 total_syllables += int(length) if length else 0
                         except (ValueError, AttributeError):
                             pass  # Skip invalid values
-                        
+
                         try:
                             if isinstance(matra, str):
                                 # Try to extract first number from formula or convert directly
@@ -477,12 +476,12 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                                 total_matra += int(matra) if matra else 0
                         except (ValueError, AttributeError):
                             pass  # Skip invalid values
-                
+
                 # Get meter from verse or first line
                 meter_name = 'Unknown'
                 meter_display = 'Unknown'
                 found = False
-                
+
                 if 'result' in verse_data:
                     verse_result = verse_data['result']
                     meter_name = verse_result.get('display_chanda_primary', 'Unknown')
@@ -493,13 +492,13 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     meter_name = first_line.get('display_chanda_primary', 'Unknown')
                     meter_display = first_line.get('display_chanda', 'Unknown')
                     found = first_line.get('found', False)
-                
+
                 # Get confidence reason from first line result
                 confidence_reason = None
                 if 'line' in result and len(result['line']) > 0:
                     first_line_result = result['line'][0].get('result', {})
                     confidence_reason = first_line_result.get('primary_confidence_reason')
-                
+
                 return {
                     'success': True,
                     'text': text_for_analysis,  # Use the properly formatted text
@@ -522,12 +521,12 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
         else:
             # Single line - use identify_line
             result = chanda.identify_line(text)
-            
+
             # Check if input validation failed
             if not result.get('is_valid_input', True):
                 validation_error = result.get('validation_error', 'Invalid Sanskrit input')
                 prose_message = result.get('prose_message', validation_error)
-                
+
                 return {
                     'success': False,
                     'is_valid_input': False,
@@ -535,10 +534,10 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'prose_message': prose_message,
                     'text': text
                 }
-            
+
             # Get the full L-G pattern
             lg_pattern = ''.join([char for char in result.get('display_lg', []) if char])
-            
+
             # Split into padas for better visualization
             lg_padas = []
             total_syllables = len(lg_pattern)
@@ -559,7 +558,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                 else:
                     # No clear pada structure, keep as single unit
                     lg_padas.append(lg_pattern)
-            
+
             return {
                 'success': True,
                 'text': text,
@@ -593,15 +592,15 @@ def extract_primary_meter_name(meter_display: str) -> str:
     """
     if not meter_display:
         return "Unknown"
-    
+
     import re
-    
+
     # Split by pipe or slash separator to get first meter
     first_part = re.split(r'\s*[|/]\s*', meter_display)[0].strip()
-    
+
     # Remove confidence score in brackets [10.0]
     cleaned = re.sub(r'\s*\[\d+\.?\d*\]\s*', '', first_part).strip()
-    
+
     # Remove transliteration in parentheses if it's after the Devanagari name
     # Keep it if the whole name is in parentheses
     # Pattern: "sanskrit_text (transliteration)" -> "sanskrit_text"
@@ -612,7 +611,7 @@ def extract_primary_meter_name(meter_display: str) -> str:
         if has_devanagari:
             # Remove the transliteration part
             cleaned = re.sub(r'\s*\([^)]*\)\s*', '', cleaned).strip()
-    
+
     return cleaned if cleaned else "Unknown"
 
 
@@ -647,9 +646,9 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
     """
     if not lg_pattern:
         return ""
-    
+
     total_syllables = len(lg_pattern)
-    
+
     # Auto-detect pada structure if not specified
     if syllables_per_pada is None:
         # Common pada structures
@@ -660,19 +659,19 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
         else:
             # No clear pada structure, show as single line
             return lg_pattern
-    
+
     # Split into padas
     padas = []
     for i in range(0, total_syllables, syllables_per_pada):
         pada = lg_pattern[i:i+syllables_per_pada]
         if pada:
             padas.append(pada)
-    
+
     # Format with each pada on a new line with pada number
     formatted_padas = []
     for idx, pada in enumerate(padas, 1):
         formatted_padas.append(f"- **Pada {idx}:** {pada}")
-    
+
     # Use single newline - bullet points work better in markdown
     return "\n".join(formatted_padas)
 
@@ -685,51 +684,51 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     # Handle validation errors (invalid Sanskrit input)
     if not meter_data.get('success'):
         # Check if this is a validation error (invalid input)
-        if meter_data.get('is_valid_input') == False:
+        if meter_data.get('is_valid_input') is False:
             response = "**Invalid Input**\n\n"
             response += "Please enter valid Sanskrit text.\n\n"
             response += "Use Devanagari (देवनागरी) or IAST with diacritics (dharmakṣetre)"
-            
+
             return response
-        
+
         # Generic error
         return f"I encountered an error analyzing the text: {meter_data.get('error', 'Unknown error')}"
-    
+
     if not meter_data.get('found'):
         response = f"I have analyzed the text **'{meter_data['text']}'** but could not definitively identify the meter.\n\n"
-        response += f"**Analysis:**\n"
+        response += "**Analysis:**\n"
         response += f"- Syllable count: **{meter_data['syllables']}**\n"
         response += f"- L-G Pattern: `{meter_data['lg_pattern']}`\n"
         response += f"- Gana Pattern: `{meter_data['gana_pattern']}`\n"
         response += f"- Matra count: **{meter_data['matra']}**\n\n"
-        
+
         if meter_data.get('fuzzy_matches'):
             response += "**Possible matches (fuzzy):**\n"
             for match in meter_data['fuzzy_matches'][:3]:
                 response += f"- {match[0]} (similarity: {match[1]:.2f})\n"
-        
+
         if add_analyze_link:
             # URL encode the text for the link
             import urllib.parse
             encoded_text = urllib.parse.quote(meter_data.get('text', ''))
             analyze_url = f"/app?text={encoded_text}"
             response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
-        
+
         return response
-    
+
     # Default requested_fields if not provided
     if requested_fields is None:
         requested_fields = {'full_analysis': True}
-    
+
     # Successful identification
     response = ""
-    
+
     # Extract confidence information from the new confidence_reason structure
     confidence_reason = meter_data.get('confidence_reason')
     confidence_score = 0.0
     confidence_level = "High"  # Default
     confidence_reason_text = ""
-    
+
     if confidence_reason:
         confidence_score = confidence_reason.get('confidence', 0.0)
         confidence_level = confidence_reason.get('level', 'high').replace('_', ' ').title()
@@ -743,7 +742,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
                 score = float(match.group(1))
                 confidence_score = score
                 confidence_level = get_confidence_label(score)
-    
+
     # Check if user asked for specific fields only
     specific_fields_requested = any([
         requested_fields.get('meter_name'),
@@ -752,20 +751,20 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         requested_fields.get('syllable_count'),
         requested_fields.get('matra_count')
     ])
-    
+
     if specific_fields_requested:
         # PRECISION MODE - Show only what user asked for
-        
+
         # Show meter name if requested (with confidence score and reason)
         if requested_fields.get('meter_name'):
             # Extract primary meter name (without all the pada variations)
             primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
-            
+
             response += f"**Chanda:** {primary_meter}\n"
             response += f"**Confidence:** {confidence_level} ({confidence_score:.1f}/10)\n"
             if confidence_reason_text:
                 response += f"**Why:** {confidence_reason_text}\n"
-        
+
         # Show L-G pattern if requested (split by pada)
         if requested_fields.get('lg_pattern'):
             lg_pattern = meter_data['lg_pattern']
@@ -776,22 +775,22 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
             else:
                 formatted_lg = split_lg_pattern_by_pada(lg_pattern)
             response += f"**L-G Pattern (by Pada):**\n{formatted_lg}\n\n"
-        
+
         # Show gana pattern if requested
         if requested_fields.get('gana_pattern'):
             response += f"**Gana Pattern:** `{meter_data['gana_pattern']}`\n"
-        
+
         # Show syllable count if requested
         if requested_fields.get('syllable_count'):
             response += f"**Syllable Count:** {meter_data['syllables']}\n"
-        
+
         # Show matra count if requested
         if requested_fields.get('matra_count'):
             response += f"**Matra Count:** {meter_data['matra']}\n"
-        
+
     else:
         # FULL ANALYSIS MODE - Show complete information (clean format)
-        
+
         # Format text properly - show each line on separate line for multi-line verses
         if meter_data.get('is_multi_line'):
             response += f"**Sanskrit Verse ({meter_data.get('verse_lines', 2)} lines):**\n"
@@ -801,17 +800,17 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
             response += "\n"
         else:
             response += f"**Sanskrit Text:** {meter_data['text']}\n\n"
-        
+
         # Clean meter display - extract primary meter with confidence label
         primary_meter = extract_primary_meter_name(meter_data.get('meter_display') or meter_data['meter'])
-        
+
         # Show meter with confidence score and reason
         response += f"**Chanda:** {primary_meter}\n"
         response += f"**Confidence:** {confidence_level} ({confidence_score:.1f}/10)\n"
         if confidence_reason_text:
             response += f"**Why:** {confidence_reason_text}\n"
         response += "\n"
-        
+
         # L-G Pattern split by pada
         lg_pattern = meter_data['lg_pattern']
         lg_padas = [p for p in meter_data.get('lg_pattern_padas', []) if p]
@@ -820,18 +819,18 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         else:
             formatted_lg = split_lg_pattern_by_pada(lg_pattern)
         response += f"**L-G Pattern (by Pada):**\n{formatted_lg}\n\n"
-        
+
         response += f"**Gana Pattern:** `{meter_data['gana_pattern']}`\n\n"
         response += f"**Syllables:** {meter_data['syllables']} | **Matra:** {meter_data['matra']}\n"
-        
+
         if meter_data.get('is_multi_line'):
             response += f" | **Lines:** {meter_data.get('verse_lines', 2)}\n"
-        
+
         response += "\n"
-        
+
         if meter_data.get('syllable_breakdown') and len(meter_data['syllable_breakdown']) <= 25:
             response += f"**Syllables:** {' · '.join(meter_data['syllable_breakdown'])}\n\n"
-    
+
     # Add "Use Analyse Chanda" suggestion if agentic flow was used
     if add_analyze_link:
         # URL encode the text for the link
@@ -839,7 +838,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         encoded_text = urllib.parse.quote(meter_data.get('text', ''))
         analyze_url = f"/app?text={encoded_text}"
         response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
-    
+
     return response
 
 
@@ -855,19 +854,19 @@ def get_gemini_client(exclude_keys: List[str] = None):
     """
     if not GEMINI_API_KEYS:
         raise ValueError("No Gemini API keys found in environment variables")
-    
+
     # Filter out excluded keys
     available_keys = GEMINI_API_KEYS if not exclude_keys else [
         key for key in GEMINI_API_KEYS if key not in exclude_keys
     ]
-    
+
     if not available_keys:
         raise ValueError("All Gemini API keys are exhausted. Please wait for quota reset.")
-    
+
     # Randomly select an API key for load balancing
     api_key = random.choice(available_keys)
     logger.info(f"🔑 Using Gemini API key #{GEMINI_API_KEYS.index(api_key) + 1}/{len(GEMINI_API_KEYS)}")
-    
+
     # Return new SDK client
     return genai.Client(api_key=api_key)
 
@@ -878,21 +877,21 @@ def calculate_confidence_score(response_text: str, context: str = "") -> float:
     Returns a score between 0.0 and 1.0
     """
     score = 0.8  # Base confidence
-    
+
     # Increase confidence if response mentions specific meters
-    meters = ['अनुष्टुभ्', 'त्रिष्टुभ्', 'गायत्री', 'जगती', 'वसन्ततिलका', 'मन्दाक्रान्ता', 
+    meters = ['अनुष्टुभ्', 'त्रिष्टुभ्', 'गायत्री', 'जगती', 'वसन्ततिलका', 'मन्दाक्रान्ता',
               'Anushtubh', 'Trishtubh', 'Gayatri', 'Jagati', 'Vasantatilaka', 'Mandakranta']
     if any(meter in response_text for meter in meters):
         score += 0.1
-    
+
     # Increase confidence if response mentions L-G patterns
     if 'LGGL' in response_text or 'laghu' in response_text.lower() or 'guru' in response_text.lower():
         score += 0.05
-    
+
     # Decrease confidence for very short responses
     if len(response_text) < 50:
         score -= 0.2
-    
+
     # Cap at 1.0
     return min(score, 1.0)
 
@@ -919,17 +918,17 @@ def chat():
         persona = data.get('persona', 'default')
         image_data = data.get('image')
         audio_data = data.get('audio')
-        
+
         # Log incoming request for debugging
         logger.info(f"Chat request - Message length: {len(message)}, Has image: {bool(image_data)}, Has audio: {bool(audio_data)}")
-        
+
         # Validate persona
         if persona not in PERSONAS:
             return jsonify({
                 'success': False,
                 'error': f'Invalid persona. Choose from: {list(PERSONAS.keys())}'
             }), 400
-        
+
         # =====================================================================
         # AUDIO PROCESSING - Transcribe audio if provided
         # =====================================================================
@@ -937,14 +936,14 @@ def chat():
         if audio_data:
             try:
                 logger.info("Processing audio with speech-to-text...")
-                
+
                 # Decode base64 audio
                 if ',' in audio_data:
                     audio_data = audio_data.split(',', 1)[1]
-                
+
                 audio_bytes = base64.b64decode(audio_data)
                 logger.info(f"Audio decoded, size: {len(audio_bytes)} bytes")
-                
+
                 # Check if Speech-to-Text is available
                 if not SPEECH_AVAILABLE or gcp_speech is None:
                     logger.error("Google Cloud Speech is not available")
@@ -952,13 +951,13 @@ def chat():
                         'success': False,
                         'error': 'Audio transcription service is not available. Please use text or image input.'
                     }), 500
-                
+
                 try:
                     # Initialize Speech-to-Text client
                     client = gcp_speech.SpeechClient()
-                    
+
                     audio = gcp_speech.RecognitionAudio(content=audio_bytes)
-                    
+
                     # Step 1: Language Detection Configuration
                     # Use RecognitionConfig with language detection enabled
                     detection_config = gcp_speech.RecognitionConfig(
@@ -969,23 +968,23 @@ def chat():
                         enable_automatic_punctuation=True,
                         model="latest_long",
                     )
-                    
+
                     response = None
-                    
+
                     # Try transcription with the detection config
                     try:
                         logger.info("Attempting speech recognition with language detection...")
                         response = client.recognize(config=detection_config, audio=audio)
-                        
+
                         if response.results:
                             # Extract transcription and detected language
                             extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
-                            
+
                             # Log detected language if available
                             if response.results[0].language_code:
                                 detected_lang = response.results[0].language_code
                                 logger.info(f"Detected language: {detected_lang}")
-                            
+
                             logger.info(f"Speech-to-Text extracted: {extracted_audio_text}")
                         else:
                             # Fallback: Try with auto-detect encoding if WEBM_OPUS fails
@@ -998,7 +997,7 @@ def chat():
                                 model="latest_long",
                             )
                             response = client.recognize(config=fallback_config, audio=audio)
-                            
+
                             if response.results:
                                 extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
                                 logger.info(f"Speech-to-Text extracted (fallback): {extracted_audio_text}")
@@ -1008,135 +1007,136 @@ def chat():
                                     'success': False,
                                     'error': 'Could not understand the audio. Please speak clearly or use text/image input.'
                                 }), 400
-                                
+
                     except Exception as recognition_error:
                         logger.error(f"Recognition error: {str(recognition_error)}")
                         return jsonify({
                             'success': False,
                             'error': 'Audio transcription failed. Please try again or use text/image input.'
                         }), 500
-                        
+
                 except Exception as stt_error:
                     logger.error(f"Speech-to-Text error: {str(stt_error)}")
                     return jsonify({
                         'success': False,
                         'error': 'Audio transcription service is not available. Please use text or image input.'
                     }), 500
-                
+
                 # Append transcribed text to message
                 if message.strip():
                     message = f"{message}\n\n[Transcribed from audio]: {extracted_audio_text}"
                 else:
                     message = extracted_audio_text or "Analyze this"
-                
+
                 logger.info(f"Audio transcription complete. Final message: {message}")
-                
+
             except Exception as audio_error:
                 logger.error(f"Audio processing error: {str(audio_error)}")
                 return jsonify({
                     'success': False,
                     'error': f'Error processing audio: {str(audio_error)}'
                 }), 500
-        
+
         # =====================================================================
         # OCR PROCESSING - Extract text from image if provided
         # =====================================================================
         extracted_ocr_text = None
         image_preview_data = None  # Store image for chat history
-        
+
         if image_data:
             try:
                 logger.info("Processing image with OCR...")
-                
+
                 # Store original image data for chat history
                 image_preview_data = image_data
-                
+
                 # Decode base64 image
                 if ',' in image_data:
                     image_data = image_data.split(',', 1)[1]
-                
+
                 image_bytes = base64.b64decode(image_data)
                 logger.info(f"Image decoded, size: {len(image_bytes)} bytes")
-                
+
                 # Validate image size
                 if len(image_bytes) < 100:
                     return jsonify({
                         'success': False,
                         'error': 'Image data appears to be invalid or corrupted. Please try uploading again.'
                     }), 400
-                
+
                 # Use Cloud Vision OCR (primary) or Tesseract (fallback)
                 from flask import current_app
-                
+
                 if hasattr(current_app, 'cloud_vision_ocr') and current_app.cloud_vision_ocr:
                     logger.info("Using Google Cloud Vision OCR...")
                     # extract_text_from_bytes returns string directly, not dict
                     extracted_ocr_text = current_app.cloud_vision_ocr.extract_text_from_bytes(image_bytes)
                     extracted_ocr_text = extracted_ocr_text.strip()
                     logger.info(f"Cloud Vision OCR extracted {len(extracted_ocr_text)} characters")
-                    
+
                 elif hasattr(current_app, 'tesseract_ocr') and current_app.tesseract_ocr:
                     logger.info("Using Tesseract OCR (fallback)...")
-                    import PIL.Image
                     import io
+
+                    import PIL.Image
                     img = PIL.Image.open(io.BytesIO(image_bytes))
                     # Tesseract returns dict with 'text' key
                     ocr_result = current_app.tesseract_ocr.extract_text(img)
                     extracted_ocr_text = ocr_result.get('text', '').strip()
                     logger.info(f"Tesseract OCR extracted {len(extracted_ocr_text)} characters")
-                    
+
                 else:
                     logger.error("No OCR service available")
                     return jsonify({
                         'success': False,
                         'error': 'OCR service is not available. Please contact support.'
                     }), 500
-                
+
                 if not extracted_ocr_text:
                     logger.warning("OCR extracted no text from image")
                     return jsonify({
                         'success': False,
                         'error': 'Could not extract any text from the image. Please ensure the image contains clear, readable Sanskrit text.'
                     }), 400
-                
+
                 # Append extracted text to user message
                 if message.strip():
                     message = f"{message}\n\n[Extracted text from image]:\n{extracted_ocr_text}"
                 else:
                     message = f"Find the chanda of this text:\n\n{extracted_ocr_text}"
-                
+
                 logger.info(f"OCR complete. Final message length: {len(message)}")
-                
+
             except Exception as ocr_error:
                 logger.error(f"OCR processing error: {str(ocr_error)}")
                 return jsonify({
                     'success': False,
                     'error': f'Error processing image: {str(ocr_error)}'
                 }), 500
-        
+
         # Initialize conversation if new
         if conversation_id not in conversations:
             conversations[conversation_id] = []
-        
+
         # =====================================================================
         # AGENTIC METER IDENTIFICATION
         # Check if user is asking for meter analysis
         # =====================================================================
         has_meter_intent, extracted_text, requested_fields = detect_meter_intent(message)
-        
+
         # If we have OCR text and meter intent, use the OCR text for analysis
         if has_meter_intent and extracted_ocr_text:
             extracted_text = extracted_ocr_text
             logger.info(f"Using OCR-extracted text for meter analysis: {extracted_text[:100]}...")
-        
+
         meter_analysis = None
         if has_meter_intent and extracted_text:
             # Perform automatic meter identification
             meter_analysis = analyze_meter_agentic(extracted_text)
-            
+
             # Format the response with requested fields and add "Use Analyse Chanda" link
             agentic_response = format_meter_response(meter_analysis, persona, requested_fields, add_analyze_link=True)
-            
+
             # Store conversation with meter data and image
             conversations[conversation_id].append({
                 'role': 'user',
@@ -1148,7 +1148,7 @@ def chat():
                 'ocr_text': extracted_ocr_text,
                 'meter_intent_detected': True
             })
-            
+
             conversations[conversation_id].append({
                 'role': 'assistant',
                 'content': agentic_response,
@@ -1158,7 +1158,7 @@ def chat():
                 'meter_analysis': meter_analysis,
                 'agentic_action': 'meter_identification'
             })
-            
+
             return jsonify({
                 'success': True,
                 'response': agentic_response,
@@ -1169,35 +1169,35 @@ def chat():
                 'agentic_action': 'meter_identification',
                 'meter_data': meter_analysis
             })
-        
+
         # =====================================================================
         # REGULAR AI CHAT (No meter intent detected)
         # =====================================================================
-        
+
         # =====================================================================
         # RAG ENHANCEMENT - Retrieve relevant context for knowledge grounding
         # =====================================================================
         rag_context = None
         retrieved_docs = []
-        
+
         # Lazy-load RAG engine on first request
         rag_engine = get_rag_engine()
-        
+
         logger.info(f"🔍 RAG Check: rag_engine={rag_engine is not None}, is_ready={rag_engine.is_ready() if rag_engine else False}")
-        
+
         if rag_engine and rag_engine.is_ready():
             try:
                 logger.info(f"🔍 RAG: Retrieving relevant context for query: '{message[:100]}...'")
-                
+
                 # Retrieve relevant documents (k=5 for balance between context and token usage)
                 retrieved_docs = rag_engine.retrieve(
                     query=message,
                     k=5,
                     min_score=0.5  # Lowered threshold from 0.6 to 0.5 for better recall
                 )
-                
+
                 logger.info(f"📊 RAG: Retrieved {len(retrieved_docs)} documents (threshold: 0.5)")
-                
+
                 if retrieved_docs:
                     # Log document metadata (Document objects, not dicts)
                     for i, doc in enumerate(retrieved_docs[:3], 1):
@@ -1205,7 +1205,7 @@ def chat():
                         source = metadata.get('source', 'N/A')
                         doc_type = metadata.get('type', 'N/A')
                         logger.info(f"   Doc {i}: source={source}, type={doc_type}")
-                    
+
                     # Format context for prompt
                     rag_context = rag_engine.format_context_for_prompt(
                         documents=retrieved_docs,
@@ -1215,17 +1215,17 @@ def chat():
                     logger.info(f"✅ RAG: Using {len(retrieved_docs)} documents ({len(rag_context)} chars context)")
                 else:
                     logger.info("ℹ️  RAG: No relevant documents found (below threshold 0.5)")
-                    
+
             except Exception as rag_error:
                 logger.error(f"⚠️  RAG retrieval error: {rag_error}", exc_info=True)
                 # Continue without RAG if it fails
                 rag_context = None
         else:
             logger.warning("⚠️  RAG: Engine not available or not ready")
-        
+
         # Get Gemini client
         genai_client = get_gemini_client()
-        
+
         # Configure generation settings
         config = types.GenerateContentConfig(
             system_instruction=PERSONAS[persona]['system_instruction'],
@@ -1233,7 +1233,7 @@ def chat():
             top_p=PERSONAS[persona]['top_p'],
             max_output_tokens=4096,
         )
-        
+
         # Build chat history for context (convert to new format)
         history = []
         for conv in conversations[conversation_id][-10:]:  # Last 10 messages
@@ -1242,14 +1242,14 @@ def chat():
                 role=role,
                 parts=[types.Part(text=conv['content'])]
             ))
-        
+
         # Create chat session with the new SDK
         chat = genai_client.chats.create(
             model='gemini-2.5-flash',
             config=config,
             history=history
         )
-        
+
         # Enhance message with RAG context if available
         enhanced_message = message
         if rag_context:
@@ -1263,41 +1263,41 @@ User question: {message}
 
 Please answer using the provided context when relevant. Do not include source citations like [Source 1] or [Source N] in your response."""
             logger.info(f"📝 Enhanced message with {len(rag_context)} chars of context")
-        
+
         # Send message and get response with retry logic for quota exhaustion
         exhausted_keys = []
         max_retries = len(GEMINI_API_KEYS)
         response_text = None
-        
+
         for attempt in range(max_retries):
             try:
                 logger.info(f"Sending message to Gemini (RAG-enhanced: {bool(rag_context)}, attempt: {attempt + 1}/{max_retries})")
                 response = chat.send_message(enhanced_message)
-                
+
                 # Check if response has valid content
                 if not response or not hasattr(response, 'text'):
-                    logger.error(f"Gemini response failed - no text in response")
+                    logger.error("Gemini response failed - no text in response")
                     return jsonify({
                         'success': False,
                         'error': 'Unable to generate a response.'
                     }), 400
-                
+
                 response_text = response.text
                 logger.info(f"Gemini response received successfully, length: {len(response_text)}")
                 break  # Success! Exit retry loop
-                
+
             except Exception as gemini_error:
                 error_msg = str(gemini_error)
-                
+
                 # Check if quota exhausted - retry with different key
                 if 'quota' in error_msg.lower() or '429' in error_msg or 'RESOURCE_EXHAUSTED' in error_msg:
                     # Extract current API key and add to exhausted list
                     current_key = genai_client.api_key if hasattr(genai_client, 'api_key') else None
                     if current_key and current_key not in exhausted_keys:
                         exhausted_keys.append(current_key)
-                    
+
                     logger.warning(f"⚠️  API key quota exhausted ({len(exhausted_keys)}/{len(GEMINI_API_KEYS)} keys tried)")
-                    
+
                     # Try next key if available
                     if attempt < max_retries - 1:
                         try:
@@ -1308,9 +1308,9 @@ Please answer using the provided context when relevant. Do not include source ci
                                 config=config,
                                 history=history
                             )
-                            logger.info(f"🔄 Retrying with different API key...")
+                            logger.info("🔄 Retrying with different API key...")
                             continue  # Retry with new key
-                        except ValueError as ve:
+                        except ValueError:
                             # All keys exhausted
                             logger.error(f"❌ All {len(GEMINI_API_KEYS)} API keys quota exhausted")
                             return jsonify({
@@ -1318,15 +1318,15 @@ Please answer using the provided context when relevant. Do not include source ci
                                 'error': 'Service is temporarily busy. All API keys have reached their quota. Please try again later.'
                             }), 429
                     else:
-                        logger.error(f"❌ All retry attempts exhausted")
+                        logger.error("❌ All retry attempts exhausted")
                         return jsonify({
                             'success': False,
                             'error': 'Service is temporarily busy. Please wait a moment and try again.'
                         }), 429
-                
+
                 # Handle other errors
                 logger.error(f"Gemini API error: {error_msg}")
-                
+
                 if 'finish_reason is 2' in error_msg or 'SAFETY' in error_msg:
                     return jsonify({
                         'success': False,
@@ -1342,19 +1342,19 @@ Please answer using the provided context when relevant. Do not include source ci
                         'success': False,
                         'error': f'Error processing request: {error_msg}'
                     }), 500
-        
+
         # Check if we got a response after all retries
         if response_text is None:
             return jsonify({
                 'success': False,
                 'error': 'Failed to generate response after all retry attempts.'
             }), 500
-        
+
         # Calculate confidence score
         confidence = calculate_confidence_score(response_text, message)
-        
+
         # Don't add footer to response text - confidence will be shown in UI metadata only
-        
+
         # Store conversation with image data
         conversations[conversation_id].append({
             'role': 'user',
@@ -1365,7 +1365,7 @@ Please answer using the provided context when relevant. Do not include source ci
             'image_data': image_preview_data,  # Store image for display
             'ocr_text': extracted_ocr_text
         })
-        
+
         conversations[conversation_id].append({
             'role': 'assistant',
             'content': response_text,
@@ -1375,7 +1375,7 @@ Please answer using the provided context when relevant. Do not include source ci
             'response_source': 'rag' if rag_context else 'ai',
             'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
         })
-        
+
         return jsonify({
             'success': True,
             'response': response_text,
@@ -1386,7 +1386,7 @@ Please answer using the provided context when relevant. Do not include source ci
             'response_source': 'rag' if rag_context else 'ai',
             'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -1403,13 +1403,13 @@ def get_history(conversation_id: str):
                 'success': False,
                 'error': 'Conversation not found'
             }), 404
-        
+
         return jsonify({
             'success': True,
             'conversation_id': conversation_id,
             'messages': conversations[conversation_id]
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -1432,7 +1432,7 @@ def list_conversations():
                 for conv_id, messages in conversations.items()
             ]
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -1446,12 +1446,12 @@ def clear_conversation(conversation_id: str):
     try:
         if conversation_id in conversations:
             del conversations[conversation_id]
-        
+
         return jsonify({
             'success': True,
             'message': 'Conversation cleared'
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -1473,7 +1473,7 @@ def get_personas():
                 for key, value in PERSONAS.items()
             }
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -1492,32 +1492,32 @@ def analyze_meter():
         text = data.get('text', '')
         conversation_id = data.get('conversation_id', f"conv_{datetime.now().timestamp()}")
         persona = data.get('persona', 'default')
-        
+
         if not text:
             return jsonify({
                 'success': False,
                 'error': 'Text is required'
             }), 400
-        
+
         # First, analyze the meter using the core chanda module
         # Import here to avoid circular dependencies
-        from core.chanda import Chanda
         from config.settings import Settings
-        
+        from core.chanda import Chanda
+
         settings = Settings()
         chanda = Chanda(data_path=str(settings.DATA_DIR))
         meter_result = chanda.identify_line(text)
-        
+
         # Then, ask the AI to explain the result
         genai_client = get_gemini_client()
-        
+
         # Configure generation settings
         config = types.GenerateContentConfig(
             system_instruction=PERSONAS[persona]['system_instruction'],
             temperature=0.7,
             max_output_tokens=1024,
         )
-        
+
         explanation_prompt = f"""
         I have analyzed the following Sanskrit verse:
         "{text}"
@@ -1530,27 +1530,27 @@ def analyze_meter():
         Please provide a brief, educational explanation of this meter, its characteristics,
         and why it's commonly used in Sanskrit poetry. Keep it concise (3-4 sentences).
         """
-        
+
         response = genai_client.models.generate_content(
             model='gemini-2.5-flash',
             contents=explanation_prompt,
             config=config
         )
         explanation = response.text
-        
+
         confidence = calculate_confidence_score(explanation, text)
-        
+
         # Store in conversation history
         if conversation_id not in conversations:
             conversations[conversation_id] = []
-        
+
         conversations[conversation_id].append({
             'role': 'user',
             'content': f"Analyze meter: {text}",
             'timestamp': datetime.now().isoformat(),
             'type': 'meter_analysis'
         })
-        
+
         conversations[conversation_id].append({
             'role': 'assistant',
             'content': explanation,
@@ -1559,7 +1559,7 @@ def analyze_meter():
             'persona': persona,
             'meter_data': meter_result
         })
-        
+
         return jsonify({
             'success': True,
             'meter': meter_result.get('display_chanda_primary'),
@@ -1571,7 +1571,7 @@ def analyze_meter():
             'conversation_id': conversation_id,
             'full_analysis': meter_result
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,

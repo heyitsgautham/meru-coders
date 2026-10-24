@@ -60,7 +60,7 @@ RIGVEDA_VERSES = [
         'syllables': 24,
         'source': 'RV 3.62.10 - The Gayatri Mantra'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - ANUSHTUBH METERS (32 syllables = 4×8)
     # ========================================================================
@@ -80,7 +80,7 @@ RIGVEDA_VERSES = [
         'syllables': 32,
         'source': 'RV 1.11.1'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - TRISHTUBH METERS (44 syllables = 4×11)
     # ========================================================================
@@ -108,7 +108,7 @@ RIGVEDA_VERSES = [
         'syllables': 44,
         'source': 'RV 1.164.46 - Famous "Ekam Sat" verse'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - JAGATI METERS (48 syllables = 4×12)
     # ========================================================================
@@ -136,7 +136,7 @@ RIGVEDA_VERSES = [
         'syllables': 48,
         'source': 'RV 1.164.20 - Famous "Two Birds" verse'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - BRIHATI METERS (36 syllables = 4×9)
     # ========================================================================
@@ -156,7 +156,7 @@ RIGVEDA_VERSES = [
         'syllables': 36,
         'source': 'RV 1.39.1'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - PANKTI METERS (40 syllables = 5×8)
     # ========================================================================
@@ -168,7 +168,7 @@ RIGVEDA_VERSES = [
         'syllables': 40,
         'source': 'RV 1.29.1 - Pankti meter (5×8)'
     },
-    
+
     # ========================================================================
     # MANDALA 1 - USHNIK METERS (28 syllables = 4×7)
     # ========================================================================
@@ -180,7 +180,7 @@ RIGVEDA_VERSES = [
         'syllables': 28,
         'source': 'RV 1.8.1 - Ushnik (from WSC2023 hymn 8 annotation)'
     },
-    
+
     # ========================================================================
     # MIXED/COMPOSITE METERS (for testing edge cases)
     # ========================================================================
@@ -201,7 +201,7 @@ RIGVEDA_VERSES = [
 
 def get_verses_by_meter(meter_name):
     """Get all verses of a specific meter."""
-    return [v for v in RIGVEDA_VERSES if meter_name.lower() in v['meter'].lower() 
+    return [v for v in RIGVEDA_VERSES if meter_name.lower() in v['meter'].lower()
             or meter_name.lower() in v['meter_iast'].lower()]
 
 def get_verses_by_syllable_count(syllable_count):
@@ -222,10 +222,10 @@ def summary():
     """Print dataset summary."""
     meters = get_all_meters()
     print(f"\n{'='*60}")
-    print(f"RIGVEDA TEST DATASET SUMMARY")
+    print("RIGVEDA TEST DATASET SUMMARY")
     print(f"{'='*60}")
     print(f"Total verses: {len(RIGVEDA_VERSES)}")
-    print(f"\nMeters represented:")
+    print("\nMeters represented:")
     for iast, info in sorted(meters.items(), key=lambda x: x[1]['syllables']):
         print(f"  {info['name']} ({info['iast']}): {info['count']} verses, {info['syllables']} syllables")
     print(f"{'='*60}\n")

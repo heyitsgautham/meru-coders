@@ -14,6 +14,7 @@ sys.path.insert(0, str(backend_path))
 
 # Load environment variables
 from dotenv import load_dotenv
+
 load_dotenv(backend_path / '.env')
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
@@ -52,27 +53,27 @@ except ImportError:
 
 try:
     # Connect to database
-    print(f"📡 Connecting to database...")
+    print("📡 Connecting to database...")
     conn = psycopg2.connect(DB_URL)
     cursor = conn.cursor()
-    
+
     # Add password_hash column
     print("📝 Adding password_hash column...")
     cursor.execute("""
         ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS password_hash TEXT;
     """)
-    
+
     # Create index on username
     print("📝 Creating index on username...")
     cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_users_username 
         ON users(username);
     """)
-    
+
     # Commit changes
     conn.commit()
-    
+
     # Verify column exists
     print("✅ Verifying column...")
     cursor.execute("""
@@ -81,20 +82,20 @@ try:
         WHERE table_name = 'users' 
         AND column_name = 'password_hash';
     """)
-    
+
     result = cursor.fetchone()
     if result:
         print(f"✅ SUCCESS! Column 'password_hash' exists with type '{result[1]}'")
     else:
         print("⚠️  WARNING: Could not verify column creation")
-    
+
     cursor.close()
     conn.close()
-    
+
     print("=" * 70)
     print("✅ Migration completed successfully!")
     print("=" * 70)
-    
+
 except Exception as e:
     print(f"❌ ERROR: {e}")
     print("\nTroubleshooting:")

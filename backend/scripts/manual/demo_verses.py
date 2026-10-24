@@ -2,10 +2,11 @@
 """Demo verses for SIH 2025 judges showing different confidence scores."""
 
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders')
 
-from backend.core import Chanda
 from backend.config import settings
+from backend.core import Chanda
 
 chanda = Chanda(data_path=str(settings.DATA_DIR))
 
@@ -13,11 +14,11 @@ chanda = Chanda(data_path=str(settings.DATA_DIR))
 test_verses = [
     # 1. EXACT PATTERN MATCH (10.0) - Classic Anushtubh from Bhagavad Gita
     ("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "Bhagavad Gita 1.1 - Exact Pattern Match"),
-    
+
     # 2. VEDIC SYLLABLE COUNT (6.0) - Gayatri Mantra
     ("तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्", "Gayatri Mantra - Vedic Syllable Match"),
-    
-    # 3. MANDAKRANTA (10.0) - Complex 17-syllable classical meter  
+
+    # 3. MANDAKRANTA (10.0) - Complex 17-syllable classical meter
     ("कश्चित्कान्ताविरहगुरुणा स्वाधिकारात्प्रमत्तः", "Meghaduta Opening - Mandakranta"),
 ]
 
@@ -28,7 +29,7 @@ print("=" * 80)
 for verse, description in test_verses:
     result = chanda.identify_line(verse)
     reason = result.get('primary_confidence_reason', {})
-    
+
     if reason:
         print(f"\n{'─' * 80}")
         print(f"📜 VERSE: {verse}")

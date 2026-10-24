@@ -1,10 +1,12 @@
 """Test dandaka_detector with real examples"""
 
 import sys
+
 sys.path.insert(0, 'D:\\Projects\\meru-coders')
 
-from backend.core.dandaka_detector import analyze_dandaka_mode
 import json
+
+from backend.core.dandaka_detector import analyze_dandaka_mode
 
 # Test 1: Rajashyamala title
 print("=" * 80)

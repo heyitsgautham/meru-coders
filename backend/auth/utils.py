@@ -36,7 +36,7 @@ def is_admin_user(user_id: str) -> bool:
     try:
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         result = supabase.table('users').select('is_admin').eq('id', user_id).single().execute()
-        
+
         return bool(result.data and result.data.get('is_admin'))
     except Exception as e:
         current_app.logger.error(f"Admin check failed: {e}")
@@ -56,7 +56,7 @@ def get_user_profile(user_id: str) -> dict:
     try:
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         result = supabase.table('users').select('*').eq('id', user_id).single().execute()
-        
+
         if result.data:
             # Remove password_hash from response
             user_data = result.data.copy()
@@ -83,14 +83,14 @@ def create_user_profile(user_id: str, username: str, email: str = None, is_admin
     """
     try:
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
-        
+
         user_data = {
             'id': user_id,
             'username': username,
             'email': email,
             'is_admin': is_admin
         }
-        
+
         result = supabase.table('users').insert(user_data).execute()
         return bool(result.data)
     except Exception as e:

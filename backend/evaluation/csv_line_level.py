@@ -6,11 +6,11 @@ Tests individual line identification (each line of a verse separately).
 Dataset: page 1-47 chanda list - complete.csv (264 verses)
 """
 
-import sys
-import re
-import os
 import csv
 import io
+import os
+import re
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.chanda import Chanda
@@ -72,17 +72,17 @@ DEVA_TO_IAST = {
 def meters_match(expected, got_meters):
     """Check if expected meter matches any of the returned meters"""
     expected_norm = normalize(expected)
-    
+
     # Skip invalid entries (patterns instead of meter names)
     if expected_norm.startswith('u') and len(expected_norm) > 10 and expected_norm.count('u') > 5:
         return True  # Skip pattern entries
     if expected_norm.startswith('स') or expected_norm.startswith('"'):
         return True  # Skip malformed entries
-    
+
     for meter in got_meters[:5]:
         meter_iast = DEVA_TO_IAST.get(meter, meter)
         meter_norm = normalize(meter_iast)
-        
+
         # Exact match
         if expected_norm == meter_norm:
             return True
@@ -108,31 +108,31 @@ def meters_match(expected, got_meters):
         # Trishtubh family includes Indravajra, Upendravajra, Upajati
         if expected_norm in ['upajati', 'upendravajra', 'indravajra'] and meter_norm == 'tristup':
             return True
-            
+
     return False
 
 
 def run_test(verbose=False):
     """Run the line-by-line accuracy test"""
-    
+
     # Find data file
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(script_dir, '..', 'data')
     csv_path = os.path.join(data_path, 'page 1-47 chanda list - complete.csv')
-    
+
     if not os.path.exists(csv_path):
         print(f"ERROR: CSV file not found at {csv_path}")
         return
-    
+
     c = Chanda(data_path=data_path)
-    
+
     # Parse CSV properly using Python's CSV reader
     with open(csv_path, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     reader = csv.reader(io.StringIO(content))
     rows = list(reader)
-    
+
     # Extract valid entries
     valid_entries = []
     for i, row in enumerate(rows):
@@ -148,44 +148,44 @@ def run_test(verbose=False):
                     'gana': gana,
                     'chanda': chanda
                 })
-    
+
     print("=" * 70)
     print("LINE-BY-LINE ACCURACY TEST")
-    print(f"Dataset: page 1-47 chanda list - complete.csv")
+    print("Dataset: page 1-47 chanda list - complete.csv")
     print(f"Total verses with labels: {len(valid_entries)}")
     print("=" * 70)
     print()
-    
+
     total_lines = 0
     correct_lines = 0
     incorrect_lines = 0
     verse_results = []
-    
+
     for entry in valid_entries:
         verse = entry['shloka']
         expected = entry['chanda']
-        
+
         # Split verse into lines
         lines = [l.strip() for l in verse.split('\n') if l.strip()]
         lines = [l.replace('।', '').replace('॥', '').strip() for l in lines]
         lines = [l for l in lines if l]  # Remove empty
-        
+
         verse_correct = 0
         verse_total = 0
         line_results = []
-        
+
         for line in lines:
             if not line:
                 continue
-                
+
             result = c.identify_line(line, fuzzy=False)
             total_lines += 1
             verse_total += 1
-            
+
             if result['found'] and result['chanda']:
                 got_meters = [ch[0] for ch in result['chanda']]
                 is_match = meters_match(expected, got_meters)
-                
+
                 if is_match:
                     correct_lines += 1
                     verse_correct += 1
@@ -193,7 +193,7 @@ def run_test(verbose=False):
                 else:
                     incorrect_lines += 1
                     status = "✗"
-                    
+
                 line_results.append({
                     'line': line[:30],
                     'expected': expected,
@@ -210,7 +210,7 @@ def run_test(verbose=False):
                     'match': False,
                     'status': "✗"
                 })
-        
+
         verse_results.append({
             'idx': entry['idx'],
             'expected': expected,
@@ -218,30 +218,30 @@ def run_test(verbose=False):
             'correct': verse_correct,
             'total': verse_total
         })
-        
+
         if verbose:
             pct = 100 * verse_correct / verse_total if verse_total > 0 else 0
             print(f"Verse {entry['idx']:3}: {expected:<22} {verse_correct}/{verse_total} lines correct ({pct:.0f}%)")
-    
+
     # Print summary
     print()
     print("=" * 70)
     print("RESULTS SUMMARY")
     print("=" * 70)
-    
+
     accuracy = 100 * correct_lines / total_lines if total_lines else 0
     print(f"Total Lines:    {total_lines}")
     print(f"Correct Lines:  {correct_lines}")
     print(f"Incorrect:      {incorrect_lines}")
     print(f"LINE ACCURACY:  {accuracy:.1f}%")
     print()
-    
+
     # Calculate verse-level accuracy (all lines correct)
     verses_perfect = sum(1 for v in verse_results if v['correct'] == v['total'])
     verse_pct = 100 * verses_perfect / len(verse_results) if verse_results else 0
     print(f"Verses with ALL lines correct: {verses_perfect}/{len(verse_results)} ({verse_pct:.1f}%)")
     print()
-    
+
     # Show failure patterns
     print("FAILURE PATTERNS (by expected meter):")
     print("-" * 50)
@@ -250,13 +250,13 @@ def run_test(verbose=False):
         if vr['correct'] < vr['total']:
             meter = vr['expected']
             failure_by_meter[meter] = failure_by_meter.get(meter, 0) + (vr['total'] - vr['correct'])
-    
+
     for meter, count in sorted(failure_by_meter.items(), key=lambda x: -x[1]):
         print(f"  {meter:<25} {count} line failures")
-    
+
     print()
     print("=" * 70)
-    
+
     return accuracy, correct_lines, total_lines
 
 
@@ -265,5 +265,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test line-by-line accuracy')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show per-verse results')
     args = parser.parse_args()
-    
+
     run_test(verbose=args.verbose)

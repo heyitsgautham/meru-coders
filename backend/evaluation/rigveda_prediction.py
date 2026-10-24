@@ -20,19 +20,20 @@ Sources:
 - Ground truth: WSC2023 Anukramani dataset
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+
 from core.chanda import Chanda
-from collections import Counter
 
 # =============================================================================
 # RIG VEDA TEST VERSES WITH GROUND TRUTH METERS
 # =============================================================================
 # Format: {
 #     'mandala': mandala_number,
-#     'hymn': hymn_number, 
+#     'hymn': hymn_number,
 #     'verse': verse_number (or range),
 #     'text': actual_sanskrit_verse_text,
 #     'meter': ground_truth_meter_from_anukramani,
@@ -124,7 +125,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Agni Sukta verse 9 (final)'
     },
-    
+
     # ==========================================================================
     # MANDALA 1 - TRIṢṬUBH (44 syllables = 4×11)
     # ==========================================================================
@@ -182,7 +183,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Vishnu Sukta verse 3'
     },
-    
+
     # ==========================================================================
     # MANDALA 1 - JAGATĪ (48 syllables = 4×12)
     # ==========================================================================
@@ -213,7 +214,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Ekam Sat - One Truth, sages call it by many names'
     },
-    
+
     # ==========================================================================
     # MANDALA 1 - ANUṢṬUBH (32 syllables = 4×8)
     # ==========================================================================
@@ -226,7 +227,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Vishvedevah Sukta - Blessings prayer'
     },
-    
+
     # ==========================================================================
     # MANDALA 3 - GĀYATRĪ (Famous verses)
     # ==========================================================================
@@ -239,7 +240,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'THE GAYATRI MANTRA - Most famous Vedic verse!'
     },
-    
+
     # ==========================================================================
     # MANDALA 10 - MIXED METERS (Famous hymns)
     # ==========================================================================
@@ -288,7 +289,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Nasadiya Sukta verse 7 (final) - "Who really knows?"'
     },
-    
+
     # ==========================================================================
     # MORE TRIṢṬUBH EXAMPLES (Most common Vedic meter - 42% of Rig Veda)
     # ==========================================================================
@@ -310,7 +311,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Surya Sukta - Rising above darkness'
     },
-    
+
     # ==========================================================================
     # UṢṆIK (28 syllables = 4×7 or variants)
     # ==========================================================================
@@ -323,7 +324,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Indra Sukta in Uṣṇik meter'
     },
-    
+
     # ==========================================================================
     # BṚHATĪ (36 syllables = 4×9)
     # ==========================================================================
@@ -336,7 +337,7 @@ RIGVEDA_TEST_VERSES = [
         'source': 'sacred-texts',
         'notes': 'Maruts Sukta in Bṛhatī meter'
     },
-    
+
     # ==========================================================================
     # PAṄKTI (40 syllables = 5×8)
     # ==========================================================================
@@ -356,13 +357,13 @@ def normalize_meter_name(name):
     """Normalize meter name for comparison."""
     if not name:
         return ''
-    
+
     # Handle tuple results
     if isinstance(name, tuple):
         name = name[0] if name else ''
-    
+
     name = str(name).lower().strip()
-    
+
     # Remove diacritics for comparison
     replacements = {
         'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r',
@@ -372,7 +373,7 @@ def normalize_meter_name(name):
     }
     for old, new in replacements.items():
         name = name.replace(old, new)
-    
+
     # Normalize common variants
     name = name.replace('anushtubh', 'anustubh')
     name = name.replace('anushtup', 'anustubh')
@@ -387,11 +388,11 @@ def normalize_meter_name(name):
     name = name.replace('brihati', 'brhati')
     name = name.replace('usnik', 'usnik')
     name = name.replace('pankti', 'pankti')
-    
+
     # Remove parenthetical info
     if '(' in name:
         name = name.split('(')[0].strip()
-    
+
     return name
 
 
@@ -399,15 +400,15 @@ def is_vedic_meter_match(predicted, expected):
     """Check if predicted meter matches expected (with normalization)."""
     pred_norm = normalize_meter_name(predicted)
     exp_norm = normalize_meter_name(expected)
-    
+
     # Direct match
     if pred_norm == exp_norm:
         return True
-    
+
     # Check if expected is contained in predicted
     if exp_norm in pred_norm:
         return True
-    
+
     # Check if predicted is a Vedic meter and matches syllable count
     vedic_syllables = {
         'gayatri': 24,
@@ -418,33 +419,33 @@ def is_vedic_meter_match(predicted, expected):
         'tristubh': 44,
         'jagati': 48
     }
-    
+
     # Both should map to same syllable count
     if exp_norm in vedic_syllables and pred_norm in vedic_syllables:
         return vedic_syllables[exp_norm] == vedic_syllables[pred_norm]
-    
+
     return False
 
 
 def run_prediction_accuracy_test():
     """Run TRUE prediction accuracy test on Rig Veda verses."""
-    
+
     print("\n" + "=" * 80)
     print("   TRUE PREDICTION ACCURACY TEST - RIG VEDA VERSES")
     print("=" * 80)
     print("\nThis test uses ACTUAL Sanskrit verse text with ground truth meters.")
     print("NO DATA LEAKAGE - verses are from external sources.\n")
-    
+
     # Get data path
     data_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
     chanda = Chanda(data_path)
-    
+
     results = []
     correct = 0
     incorrect = 0
     vedic_found_somewhere = 0  # Count if Vedic meter is anywhere in results
     syllable_based_correct = 0  # Count if syllable-based identification works
-    
+
     meter_stats = {
         'gayatri': {'correct': 0, 'total': 0},
         'tristubh': {'correct': 0, 'total': 0},
@@ -454,29 +455,29 @@ def run_prediction_accuracy_test():
         'brhati': {'correct': 0, 'total': 0},
         'pankti': {'correct': 0, 'total': 0}
     }
-    
+
     incorrect_predictions = []
-    
+
     print(f"{'Verse':<15} {'Expected':<15} {'Predicted':<25} {'Status':<10}")
     print("-" * 75)
-    
+
     for test in RIGVEDA_TEST_VERSES:
         mandala = test['mandala']
         hymn = test['hymn']
         verse = test['verse']
         text = test['text']
         expected = test['meter']
-        
+
         verse_id = f"RV {mandala}.{hymn}.{verse}"
-        
+
         # Get prediction from Chanda
         try:
             result = chanda.identify_from_text(text, verse=True, fuzzy=True)
-            
+
             # Navigate the result structure: result['result']['verse'][0]['chanda']
             if result and result.get('result'):
                 inner_result = result['result']
-                
+
                 # Try verse-level result first
                 verses = inner_result.get('verse', [])
                 if verses and len(verses) > 0:
@@ -521,13 +522,12 @@ def run_prediction_accuracy_test():
                 predicted = 'Unknown'
                 confidence = 0
         except Exception as e:
-            import traceback
             predicted = f'Error: {str(e)[:30]}'
             confidence = 0
-        
+
         # Check if correct
         is_correct = is_vedic_meter_match(predicted, expected)
-        
+
         # Also check if syllable-based identification would work
         syllable_correct = False
         try:
@@ -539,7 +539,7 @@ def run_prediction_accuracy_test():
                 if clean_line:
                     syllables = chanda.get_syllables_icu(clean_line)
                     total_syllables += len(syllables)
-            
+
             # Check if syllable count matches expected Vedic meter
             vedic_syllable_map = {
                 'gayatri': 24, 'gāyatrī': 24,
@@ -550,7 +550,7 @@ def run_prediction_accuracy_test():
                 'tristubh': 44, 'triṣṭubh': 44,
                 'jagati': 48, 'jagatī': 48
             }
-            
+
             expected_syllables = vedic_syllable_map.get(expected.lower(), 0)
             # Allow ±2 syllables tolerance for Vedic text variations
             if expected_syllables > 0 and abs(total_syllables - expected_syllables) <= 2:
@@ -558,7 +558,7 @@ def run_prediction_accuracy_test():
                 syllable_based_correct += 1
         except Exception:
             pass
-        
+
         # Check if Vedic meter appears anywhere in all results
         vedic_found = False
         try:
@@ -581,14 +581,14 @@ def run_prediction_accuracy_test():
                     vedic_found_somewhere += 1
         except Exception:
             pass
-        
+
         # Update stats
         exp_norm = normalize_meter_name(expected)
         if exp_norm in meter_stats:
             meter_stats[exp_norm]['total'] += 1
             if is_correct:
                 meter_stats[exp_norm]['correct'] += 1
-        
+
         if is_correct:
             correct += 1
             status = "✓ PASS"
@@ -602,12 +602,12 @@ def run_prediction_accuracy_test():
                 'predicted': predicted,
                 'notes': test.get('notes', '')
             })
-        
+
         # Truncate prediction for display
         pred_display = predicted[:23] + '..' if len(str(predicted)) > 25 else predicted
-        
+
         print(f"{verse_id:<15} {expected:<15} {pred_display:<25} {status:<10}")
-        
+
         results.append({
             'verse_id': verse_id,
             'expected': expected,
@@ -615,17 +615,17 @@ def run_prediction_accuracy_test():
             'correct': is_correct,
             'confidence': confidence
         })
-    
+
     total = correct + incorrect
     accuracy = correct / total * 100 if total > 0 else 0
     syllable_accuracy = syllable_based_correct / total * 100 if total > 0 else 0
     vedic_found_pct = vedic_found_somewhere / total * 100 if total > 0 else 0
-    
+
     print("-" * 75)
     print(f"\n{'=' * 80}")
     print("   RESULTS SUMMARY")
     print("=" * 80)
-    
+
     print(f"""
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    RIG VEDA PREDICTION ACCURACY                               ║
@@ -654,7 +654,7 @@ def run_prediction_accuracy_test():
 ║                                                                               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """)
-    
+
     # Per-meter breakdown
     print("\n--- Per-Meter Breakdown ---")
     print(f"{'Meter':<15} {'Correct':<10} {'Total':<10} {'Accuracy':<10}")
@@ -663,7 +663,7 @@ def run_prediction_accuracy_test():
         if stats['total'] > 0:
             acc = stats['correct'] / stats['total'] * 100
             print(f"{meter:<15} {stats['correct']:<10} {stats['total']:<10} {acc:.1f}%")
-    
+
     # Show incorrect predictions
     if incorrect_predictions:
         print("\n" + "=" * 80)
@@ -674,17 +674,17 @@ def run_prediction_accuracy_test():
             print(f"    Expected: {pred['expected']}")
             print(f"    Predicted: {pred['predicted']}")
             print(f"    Text: {pred['text']}")
-    
+
     return accuracy, results, incorrect_predictions
 
 
 def generate_sample_verses_for_frontend():
     """Generate sample verses that can be tested in the frontend."""
-    
+
     print("\n" + "=" * 80)
     print("   SAMPLE VERSES FOR FRONTEND TESTING")
     print("=" * 80)
-    
+
     samples = [
         {
             'name': 'Gayatri Mantra (RV 3.62.10)',
@@ -727,15 +727,15 @@ def generate_sample_verses_for_frontend():
             'text': 'विष्णोर्नु कं वीर्याणि प्र वोचं यः पार्थिवानि विममे रजांसि ।\nयो अस्कभायदुत्तरं सधस्थं विचक्रमाणस्त्रेधोरुगायः ॥'
         },
     ]
-    
+
     print("\nCopy these verses to test in the frontend:\n")
-    
+
     for i, sample in enumerate(samples, 1):
         print(f"\n--- {i}. {sample['name']} ---")
         print(f"Expected: {sample['meter']}")
         print(f"\nVerse:\n{sample['text']}")
         print()
-    
+
     return samples
 
 
@@ -751,13 +751,13 @@ if __name__ == '__main__':
 ║                                                                               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """)
-    
+
     # Run the main prediction test
     accuracy, results, incorrect = run_prediction_accuracy_test()
-    
+
     # Generate sample verses for frontend
     samples = generate_sample_verses_for_frontend()
-    
+
     print("\n" + "=" * 80)
     print("   TEST COMPLETE")
     print("=" * 80)

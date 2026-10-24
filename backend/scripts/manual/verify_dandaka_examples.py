@@ -2,9 +2,10 @@
 Verify the syllable counts for the 4 Dandaka examples in examples.json
 """
 import sys
+
 sys.path.insert(0, '.')
 
-from core.dandaka_detector import count_aksaras, classify_dandaka_unit
+from core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 examples = {
     'संकीर्णदण्डकम्': "रामो राजमणिः सदा विजयते रामं रमेशं भजे",
@@ -30,18 +31,18 @@ for name, text in examples.items():
     aksara_count = count_aksaras(text)
     classification = classify_dandaka_unit(aksara_count)
     min_range, max_range = expected_ranges[name]
-    
+
     print(f"\n{name}:")
     print(f"  Akṣara Count: {aksara_count}")
     print(f"  Classification: {classification}")
     print(f"  Expected Range: {min_range}-{max_range}")
-    
+
     if min_range <= aksara_count <= max_range:
-        print(f"  ✓ CORRECT - Within expected range")
+        print("  ✓ CORRECT - Within expected range")
     else:
-        print(f"  ✗ INCORRECT - Outside expected range!")
+        print("  ✗ INCORRECT - Outside expected range!")
         all_correct = False
-        
+
     # Show first 80 chars of text
     preview = text[:80] + "..." if len(text) > 80 else text
     print(f"  Text: {preview}")

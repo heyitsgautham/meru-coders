@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """Test gTTS as a fallback"""
-from gtts import gTTS
 import os
+
+from gtts import gTTS
+
 
 def test_gtts():
     text = "अग्निना तूर्णं यद्वा परावतं उग्रादेवं हवामहे"
     output_file = "/tmp/test_gtts.mp3"
-    
+
     print(f"Text: {text}")
     print(f"Output: {output_file}")
-    
+
     try:
         tts = gTTS(text=text, lang='hi', slow=False)
         tts.save(output_file)
-        
+
         if os.path.exists(output_file):
             size = os.path.getsize(output_file)
             print(f"✅ Success! File created with size: {size} bytes")

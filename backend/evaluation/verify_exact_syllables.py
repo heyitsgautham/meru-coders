@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """Verify exact syllable counts for all 7 Vedic meters"""
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.chanda import Chanda
@@ -34,13 +35,13 @@ for name, expected, verse, source in VERSES:
     if isinstance(actual, str):
         actual = int(actual) if actual.isdigit() else 0
     meter = r.get('display_chanda_primary', '')
-    
+
     if actual == expected:
         status = '✅ EXACT'
     else:
         status = f'❌ OFF BY {abs(actual - expected)}'
         all_pass = False
-    
+
     print(f'{name:12} | {status}')
     print(f'  Expected: {expected} syllables | Actual: {actual} syllables')
     print(f'  Meter: {meter}')

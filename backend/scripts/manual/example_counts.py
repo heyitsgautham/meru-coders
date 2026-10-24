@@ -1,9 +1,10 @@
 """Test akṣara counts for dandaka examples"""
 
 import sys
+
 sys.path.insert(0, 'D:\\Projects\\meru-coders')
 
-from backend.core.dandaka_detector import count_aksaras, classify_dandaka_unit
+from backend.core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 examples = [
     ('Ati', 'तस्याः प्रभावादिव धूमजालेरन्तर्हितः कौशिकसप्तरश्मिः। महार्णवोर्मिस्फुरदाविलत्वाद्बभूव तेजस्तिमिरेण मिश्रः। क्षणेन गृध्रप्रतिमानभःस्थच्छायातपत्रं जगतीश्वरस्य।'),
@@ -21,7 +22,7 @@ for expected_type, text in examples:
     classification = classify_dandaka_unit(count)
     match = "✓" if expected_type.lower() in classification.lower() else "✗"
     print(f"\n{match} {expected_type}: {count} akṣaras → {classification}")
-    
+
 print("\n" + "=" * 80)
 print("\nCLASSIFICATION RANGES:")
 print("  Saṃkīrṇa: ≤26 akṣaras")

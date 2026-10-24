@@ -4,34 +4,34 @@ Test voice quality of Sanskrit TTS
 This script helps you test the TTS system and hear sample outputs
 """
 
-import os
 import sys
 from pathlib import Path
+
 
 def check_dependencies():
     """Check if all required dependencies are installed"""
     missing = []
-    
+
     try:
         import torch
     except ImportError:
         missing.append("torch")
-    
+
     try:
         from parler_tts import ParlerTTSForConditionalGeneration
     except ImportError:
         missing.append("parler_tts")
-    
+
     try:
         from transformers import AutoTokenizer
     except ImportError:
         missing.append("transformers")
-    
+
     try:
         import soundfile
     except ImportError:
         missing.append("soundfile")
-    
+
     return missing
 
 def show_installation_guide():
@@ -51,18 +51,18 @@ def show_installation_guide():
 def generate_test_samples():
     """Generate test audio samples to evaluate voice quality"""
     from sanskrit_tts import SanskritTTS
-    
+
     print("\n" + "="*70)
     print("GENERATING SANSKRIT TTS TEST SAMPLES")
     print("="*70)
     print("\nModel: ai4bharat/indic-parler-tts")
     print("Speaker: Aryan (optimized for Sanskrit)")
     print("Expected quality: 99.79% accuracy\n")
-    
+
     # Initialize TTS
     print("Initializing TTS system...")
     tts = SanskritTTS()
-    
+
     # Test samples with different characteristics
     test_samples = [
         {
@@ -91,18 +91,18 @@ def generate_test_samples():
             "description": "Simple greeting - tests basic clarity"
         }
     ]
-    
+
     results = []
     output_dir = Path("./test_outputs")
     output_dir.mkdir(exist_ok=True)
-    
+
     print(f"\nGenerating {len(test_samples)} test samples...\n")
-    
+
     for i, sample in enumerate(test_samples, 1):
         print(f"[{i}/{len(test_samples)}] {sample['name']}")
         print(f"   Text: {sample['text']}")
         print(f"   Testing: {sample['description']}")
-        
+
         try:
             result = tts.synthesize(
                 sample['text'],
@@ -127,9 +127,9 @@ def generate_test_samples():
                 "success": False,
                 "error": str(e)
             })
-        
+
         print()
-    
+
     return results
 
 def print_results(results):
@@ -137,12 +137,12 @@ def print_results(results):
     print("="*70)
     print("TEST RESULTS")
     print("="*70)
-    
+
     successful = [r for r in results if r.get('success')]
     failed = [r for r in results if not r.get('success')]
-    
+
     print(f"\n✓ Successfully generated: {len(successful)}/{len(results)} samples\n")
-    
+
     if successful:
         print("Generated Audio Files:")
         print("-" * 70)
@@ -152,13 +152,13 @@ def print_results(results):
             print(f"  Audio: {result['audio']}")
             if result.get('spectrogram'):
                 print(f"  Spectrogram: {result['spectrogram']}")
-    
+
     if failed:
         print("\n\nFailed Samples:")
         print("-" * 70)
         for result in failed:
             print(f"\n{result['name']}: {result.get('error', 'Unknown error')}")
-    
+
     print("\n" + "="*70)
     print("HOW TO LISTEN")
     print("="*70)
@@ -179,15 +179,15 @@ def main():
     """Main function"""
     print("Sanskrit TTS Voice Quality Test")
     print("="*70)
-    
+
     # Check dependencies
     print("\nChecking dependencies...")
     missing = check_dependencies()
-    
+
     if missing:
         print(f"\n✗ Missing dependencies: {', '.join(missing)}")
         show_installation_guide()
-        
+
         response = input("\nWould you like to see sample info without generating? [y/N]: ")
         if response.lower() == 'y':
             print("\n" + "="*70)
@@ -200,16 +200,16 @@ def main():
             print("Quality: High-fidelity, studio quality")
             print("\nTo hear actual samples, install dependencies and run again.")
             print("="*70)
-        
+
         return 1
-    
+
     print("✓ All dependencies installed")
-    
+
     # Generate samples
     try:
         results = generate_test_samples()
         print_results(results)
-        
+
         # Offer to play first sample
         successful = [r for r in results if r.get('success')]
         if successful and sys.platform == 'darwin':  # macOS
@@ -219,9 +219,9 @@ def main():
                 audio_file = successful[0]['audio']
                 subprocess.run(['open', str(audio_file)])
                 print(f"Playing: {audio_file}")
-        
+
         return 0
-    
+
     except Exception as e:
         print(f"\n✗ Error: {e}")
         import traceback

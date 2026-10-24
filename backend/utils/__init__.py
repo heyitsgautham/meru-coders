@@ -7,6 +7,6 @@ Contains data management, benchmarking, TTS utilities, and file processing
 for the Sanskrit Meter Identification System.
 """
 
-from .file_processor import FileProcessor, FileProcessingError
+from .file_processor import FileProcessingError, FileProcessor
 
 __all__ = ['FileProcessor', 'FileProcessingError']

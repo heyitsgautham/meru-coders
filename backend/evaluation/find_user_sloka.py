@@ -5,9 +5,9 @@ import os
 # Search for 'माता रामो' or 'शालिन्युक्ता' in all CSVs
 search_terms = ['माता रामो', 'शालिन्युक्ता', 'रामचन्द्र', 'शालिनी']
 files = [
-    'source/chandovallari.csv', 
-    'source/rigveda-with-meters.csv', 
-    'source/atharvaveda.csv', 
+    'source/chandovallari.csv',
+    'source/rigveda-with-meters.csv',
+    'source/atharvaveda.csv',
     'source/chandas-as-vedanga.csv'
 ]
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Test TTS API with male and female voices"""
-import requests
 import json
+
+import requests
 
 api_url = "http://localhost:5000/api/tts/generate"
 text = "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजम्"
@@ -14,7 +15,7 @@ result = response.json()
 print(json.dumps(result, indent=2))
 
 if result.get('success'):
-    print(f"\n✅ Male voice SUCCESS!")
+    print("\n✅ Male voice SUCCESS!")
     print(f"   Audio URL: {result['audio_url']}")
 else:
     print(f"\n❌ Male voice FAILED: {result.get('error')}")
@@ -29,7 +30,7 @@ result = response.json()
 print(json.dumps(result, indent=2))
 
 if result.get('success'):
-    print(f"\n✅ Female voice SUCCESS!")
+    print("\n✅ Female voice SUCCESS!")
     print(f"   Audio URL: {result['audio_url']}")
 else:
     print(f"\n❌ Female voice FAILED: {result.get('error')}")

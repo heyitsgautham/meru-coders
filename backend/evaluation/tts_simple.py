@@ -6,7 +6,6 @@ Tests basic functionality with mock outputs
 def test_basic_import():
     """Test if the module can be imported"""
     try:
-        from sanskrit_tts import SanskritTTS
         print("✓ Module imported successfully")
         return True
     except Exception as e:
@@ -18,7 +17,7 @@ def test_initialization():
     """Test basic initialization"""
     try:
         from sanskrit_tts import SanskritTTS
-        
+
         # This should fail gracefully without dependencies
         try:
             tts = SanskritTTS(mode="local")
@@ -37,7 +36,7 @@ def test_api_mode_check():
     """Test API mode requirements"""
     try:
         from sanskrit_tts import SanskritTTS
-        
+
         try:
             tts = SanskritTTS(mode="api")
             print("✗ Should have required HF_TOKEN")
@@ -79,22 +78,22 @@ def print_installation_guide():
 
 if __name__ == "__main__":
     print("Testing Sanskrit TTS Module\n")
-    
+
     results = []
     results.append(("Basic Import", test_basic_import()))
     results.append(("Initialization Check", test_initialization()))
     results.append(("API Mode Check", test_api_mode_check()))
-    
+
     print("\n" + "="*50)
     print("TEST RESULTS")
     print("="*50)
     for name, passed in results:
         status = "✓ PASS" if passed else "✗ FAIL"
         print(f"{status} - {name}")
-    
+
     total = len(results)
     passed = sum(1 for _, p in results if p)
     print(f"\nTotal: {passed}/{total} tests passed")
-    
+
     if not all(p for _, p in results):
         print_installation_guide()

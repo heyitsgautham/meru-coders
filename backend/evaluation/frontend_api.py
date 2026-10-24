@@ -7,8 +7,8 @@ Verifies all 7 showcase verses using the direct Python backend API.
 This is the authoritative test for meter identification accuracy.
 """
 
-import sys
 import os
+import sys
 
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -78,59 +78,59 @@ def test_direct_api():
     print("Testing 7 Vedic Meters via Direct Python API (EXACT SYLLABLE COUNTS)")
     print("=" * 75)
     print()
-    
+
     # Initialize Chanda analyzer
     chanda = Chanda(DATA_PATH)
-    
+
     passed = 0
     exact_syl = 0
     total = len(SEVEN_VERSES)
-    
+
     for v in SEVEN_VERSES:
         try:
             # Use direct Python API
             result = chanda.identify_line(v['verse'])
-            
+
             meter = result.get('display_chanda_primary', 'Unknown')
             syllables = result.get('display_length', 0)
             lg_pattern = ''.join(result.get('display_lg', []))
-            
+
             # Handle case where syllables might be a string
             if isinstance(syllables, str):
                 syllables = int(syllables) if syllables.isdigit() else 0
-            
+
             # Check if meter matches any expected variant
             match = any(exp in meter for exp in v['expected'])
-            
+
             # Check exact syllable match
             syl_exact = (syllables == v['expected_syllables'])
             if syl_exact:
                 exact_syl += 1
-            
+
             test_pass = match and syl_exact
             if test_pass:
                 passed += 1
-            
+
             status = '✅ EXACT' if test_pass else ('⚠️ CLOSE' if match else '❌ FAIL')
             syl_status = '✓' if syl_exact else f'✗ (off by {abs(syllables - v["expected_syllables"])})'
-            
+
             print(f"  {v['name']:12} | {status}")
             print(f"    Meter: {meter} {'✓' if match else '✗'}")
             print(f"    Syllables: {syllables} / {v['expected_syllables']} {syl_status}")
             print(f"    Source: {v.get('source', 'N/A')}")
             print()
-            
+
         except Exception as e:
             print(f"  {v['name']:12} | ❌ FAIL - {e}")
             print()
-    
+
     print("=" * 75)
     pct = (passed / total) * 100
     print(f"  RESULT: {passed}/{total} meters with EXACT syllable counts ({pct:.0f}%)")
     print(f"  Syllable accuracy: {exact_syl}/{total}")
     print("=" * 75)
     print()
-    
+
     return passed, total
 
 

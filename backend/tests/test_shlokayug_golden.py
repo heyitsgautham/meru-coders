@@ -20,18 +20,19 @@ import pytest
 from backend.config import settings
 from backend.core.chanda import Chanda
 
+
 class TestShlokaYugGolden(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.c = Chanda(str(settings.DATA_DIR))
-        
+
     def check_meter(self, expected_meter, text, is_verse=False):
         if is_verse:
             # Use identify_from_text for full verses
             result_dict = self.c.identify_from_text(text, verse=True)
             line_results = result_dict['result']['line']
             verse_results = result_dict['result']['verse']
-            
+
             # Check verse results first
             found_meters = []
             if verse_results:
@@ -39,18 +40,18 @@ class TestShlokaYugGolden(unittest.TestCase):
                     if vr['chanda']:
                         # vr['chanda'] is (['Meter1', 'Meter2'], score)
                         found_meters.extend(vr['chanda'][0])
-            
+
             # Also check line results as fallback
             for lr in line_results:
                 if lr['result']['found']:
                     found_meters.append(lr['result']['display_chanda'])
-            
+
             found_meter_str = " / ".join(found_meters)
         else:
             # Use identify_line for single lines
             result = self.c.identify_line(text)
             found_meter_str = result['display_chanda']
-        
+
         # Normalize for comparison
         expected_variants = [expected_meter]
         if expected_meter == 'Anushtubh':
@@ -61,14 +62,14 @@ class TestShlokaYugGolden(unittest.TestCase):
             expected_variants.extend(['Triṣṭubh', 'Trishtubh', 'त्रिष्टुभ्'])
         elif expected_meter == 'Jagati':
             expected_variants.extend(['Jagatī', 'Jagati', 'जगती'])
-        
+
         match_found = False
         if found_meter_str:
             for variant in expected_variants:
                 if variant.lower() in found_meter_str.lower():
                     match_found = True
                     break
-        
+
         self.assertTrue(match_found, f"Expected {expected_meter} (or variants {expected_variants}), but found '{found_meter_str}' for text: {text[:50]}...")
 
     # --- VERIFIED CORRECT EXAMPLES ---
@@ -129,7 +130,7 @@ class TestShlokaYugGolden(unittest.TestCase):
         self.check_meter('Trishtubh', text, is_verse=False)
 
     # --- ADDITIONAL CORRECTED EXAMPLES FROM SHLOKAYUG DATABASE ---
-    
+
     def test_gayatri_rigveda_1_1_1_full(self):
         # ShlokaYug labeled this Trishtubh, but it is Gayatri
         text = 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजम् होतारं रत्नधातमम्'

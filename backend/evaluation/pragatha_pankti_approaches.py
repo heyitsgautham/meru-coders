@@ -13,13 +13,14 @@ Key discriminating features discovered:
 3. Seer-based hints: Some seers exclusive to one meter
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from typing import Tuple
+
 import pandas as pd
-from collections import Counter
-from typing import Dict, List, Tuple, Optional
 
 # Known Paṅkti refrain patterns (found in 35.8% of Paṅkti, <1% of Pragātha)
 PANKTI_REFRAINS = [
@@ -53,7 +54,7 @@ PANKTI_EXCLUSIVE_SEQUENCES = [
     'परि स्रव',             # 19 in Paṅkti
     'इंद्र उत्तरः',          # 16+ in Paṅkti
     'अस्य रोदसी',           # 10 in Paṅkti
-    'अश्वसूनृते',           # 10 in Paṅkti  
+    'अश्वसूनृते',           # 10 in Paṅkti
     'श्रुतं हवं',            # 9 in Paṅkti
     'सहस्रेषु तुवीमघ',     # 7 in Paṅkti
     'ते हरी',               # 5 in Paṅkti
@@ -115,11 +116,11 @@ def approach_b_refrain_first(verse_text: str, syllable_count: int) -> Tuple[str,
     """
     # Check for Paṅkti refrain patterns in last 40 characters
     last_40 = verse_text[-40:] if len(verse_text) > 40 else verse_text
-    
+
     for refrain in PANKTI_REFRAINS:
         if refrain in last_40:
             return 'paṅktiḥ', 0.95  # High confidence if refrain found
-    
+
     # No refrain found - use syllable count with Pragātha bias
     if syllable_count <= 36:
         return 'pragāthaḥ', 0.90
@@ -139,17 +140,17 @@ def approach_c_seer_aware(verse_text: str, syllable_count: int, seer: str) -> Tu
     """
     # Check seer first
     seer_lower = seer.lower() if seer else ''
-    
+
     # "prāgātha" in seer name is a strong signal
     if 'prāgātha' in seer_lower or 'prāgātho' in seer_lower:
         return 'pragāthaḥ', 0.95
-    
+
     if any(s.lower() in seer_lower for s in PRAGATHA_SEERS):
         return 'pragāthaḥ', 0.85
-    
+
     if any(s.lower() in seer_lower for s in PANKTI_SEERS):
         return 'paṅktiḥ', 0.85
-    
+
     # Fall back to refrain + syllable approach
     return approach_b_refrain_first(verse_text, syllable_count)
 
@@ -163,7 +164,7 @@ def approach_d_hybrid_weighted(verse_text: str, syllable_count: int, seer: str) 
     - Positive = Pragātha, Negative = Paṅkti
     """
     score = 0.0
-    
+
     # 1. Syllable count signal (strongest outside overlap zone)
     if syllable_count <= 33:
         score += 3.0  # Strong Pragātha
@@ -181,14 +182,14 @@ def approach_d_hybrid_weighted(verse_text: str, syllable_count: int, seer: str) 
         score -= 1.5  # Paṅkti
     else:
         score -= 2.5  # Strong Paṅkti/mahāpaṅkti
-    
+
     # 2. Refrain signal (strong for Paṅkti)
     last_40 = verse_text[-40:] if len(verse_text) > 40 else verse_text
     for refrain in PANKTI_REFRAINS:
         if refrain in last_40:
             score -= 3.0  # Strong Paṅkti signal
             break
-    
+
     # 3. Seer signal
     seer_lower = seer.lower() if seer else ''
     if 'prāgātha' in seer_lower or 'prāgātho' in seer_lower:
@@ -197,7 +198,7 @@ def approach_d_hybrid_weighted(verse_text: str, syllable_count: int, seer: str) 
         score += 1.0
     elif any(s.lower() in seer_lower for s in PANKTI_SEERS):
         score -= 1.0
-    
+
     # Convert score to prediction
     if score > 0.5:
         confidence = min(0.95, 0.5 + abs(score) * 0.1)
@@ -231,7 +232,7 @@ def approach_e_simple_threshold(syllable_count: int, verse_text: str) -> Tuple[s
             if syllable_count >= 43:
                 return 'mahāpaṅktiḥ', 0.90
             return 'paṅktiḥ', 0.90
-    
+
     # Syllable-based
     if syllable_count <= 36:
         return 'pragāthaḥ', 0.92  # 92%+ accurate in this range
@@ -252,13 +253,13 @@ def approach_f_exclusive_endings(verse_text: str, syllable_count: int, seer: str
     # Get last word
     words = verse_text.strip().split()
     last_word = words[-1] if words else ''
-    
+
     # Check for Paṅkti-exclusive endings (100% precision)
     if last_word in PANKTI_EXCLUSIVE_ENDINGS:
         if syllable_count >= 43:
             return 'mahāpaṅktiḥ', 0.99
         return 'paṅktiḥ', 0.99
-    
+
     # Check for exclusive word sequences in last part
     last_text = verse_text[-50:] if len(verse_text) > 50 else verse_text
     for seq in PANKTI_EXCLUSIVE_SEQUENCES:
@@ -266,7 +267,7 @@ def approach_f_exclusive_endings(verse_text: str, syllable_count: int, seer: str
             if syllable_count >= 43:
                 return 'mahāpaṅktiḥ', 0.98
             return 'paṅktiḥ', 0.98
-    
+
     # Check traditional refrains
     last_40 = verse_text[-40:] if len(verse_text) > 40 else verse_text
     for refrain in PANKTI_REFRAINS:
@@ -274,12 +275,12 @@ def approach_f_exclusive_endings(verse_text: str, syllable_count: int, seer: str
             if syllable_count >= 43:
                 return 'mahāpaṅktiḥ', 0.95
             return 'paṅktiḥ', 0.95
-    
+
     # Check seer
     seer_lower = seer.lower() if seer else ''
     if 'prāgātha' in seer_lower or 'prāgātho' in seer_lower:
         return 'pragāthaḥ', 0.95
-    
+
     # Syllable-based fallback
     if syllable_count <= 36:
         return 'pragāthaḥ', 0.92
@@ -303,28 +304,28 @@ def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_p
     5. L-G pattern suffix hints
     """
     score = 0.0  # Positive = Pragātha, Negative = Paṅkti
-    
+
     # 1. Exclusive endings (strongest for Paṅkti)
     words = verse_text.strip().split()
     last_word = words[-1] if words else ''
-    
+
     if last_word in PANKTI_EXCLUSIVE_ENDINGS:
         score -= 5.0  # Very strong Paṅkti signal
-    
+
     # 2. Exclusive sequences
     last_text = verse_text[-50:] if len(verse_text) > 50 else verse_text
     for seq in PANKTI_EXCLUSIVE_SEQUENCES:
         if seq in last_text:
             score -= 4.0
             break
-    
+
     # 3. Refrain patterns
     last_40 = verse_text[-40:] if len(verse_text) > 40 else verse_text
     for refrain in PANKTI_REFRAINS:
         if refrain in last_40:
             score -= 3.0
             break
-    
+
     # 4. Seer signals
     seer_lower = seer.lower() if seer else ''
     if 'prāgātha' in seer_lower or 'prāgātho' in seer_lower:
@@ -333,7 +334,7 @@ def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_p
         score += 1.5
     elif any(s.lower() in seer_lower for s in PANKTI_SEERS):
         score -= 1.5
-    
+
     # 5. Syllable count
     if syllable_count <= 33:
         score += 3.0
@@ -345,7 +346,7 @@ def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_p
         score += 0.3
     elif syllable_count >= 43:
         score -= 2.5
-    
+
     # 6. L-G pattern suffix hints (some suffixes are more Paṅkti)
     if lg_pattern and len(lg_pattern) >= 8:
         suffix = lg_pattern[-8:]
@@ -353,7 +354,7 @@ def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_p
         pankti_suffixes = ['लगगलगलगग', 'लगगगलगलल', 'लगगललगलल']
         if suffix in pankti_suffixes:
             score -= 1.0
-    
+
     # Convert to prediction
     if score > 1.0:
         confidence = min(0.95, 0.6 + abs(score) * 0.05)
@@ -373,14 +374,14 @@ def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_p
 
 def run_evaluation():
     """Run all approaches on the test data and compare accuracy."""
-    
+
     # Load test data
     csv_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'pragatha_pankti_verses.csv')
     df = pd.read_csv(csv_path)
-    
+
     # Filter to main meters (exclude variants with complex names)
     df = df[df['meter'].isin(['pragāthaḥ', 'paṅktiḥ', 'mahāpaṅktiḥ'])]
-    
+
     print("=" * 80)
     print("PRAGĀTHA vs PAṄKTI DETECTION - MULTI-APPROACH EVALUATION")
     print("=" * 80)
@@ -388,7 +389,7 @@ def run_evaluation():
     print(f"  - Pragātha: {len(df[df['meter'] == 'pragāthaḥ'])}")
     print(f"  - Paṅkti: {len(df[df['meter'] == 'paṅktiḥ'])}")
     print(f"  - Mahāpaṅkti: {len(df[df['meter'] == 'mahāpaṅktiḥ'])}")
-    
+
     approaches = {
         'A: Syllable Only': lambda r: approach_a_syllable_only(r['syllable_count']),
         'B: Refrain First': lambda r: approach_b_refrain_first(r['verse_text'], r['syllable_count']),
@@ -398,84 +399,84 @@ def run_evaluation():
         'F: Exclusive Endings': lambda r: approach_f_exclusive_endings(r['verse_text'], r['syllable_count'], r['seer']),
         'G: All Signals': lambda r: approach_g_all_signals(r['verse_text'], r['syllable_count'], r['seer'], r['lg_pattern']),
     }
-    
+
     results = {name: {'correct': 0, 'total': 0, 'by_meter': {}} for name in approaches}
-    
+
     for idx, row in df.iterrows():
         actual = row['meter']
-        
+
         for name, approach_fn in approaches.items():
             predicted, confidence = approach_fn(row)
-            
+
             is_correct = (predicted == actual)
             results[name]['total'] += 1
             if is_correct:
                 results[name]['correct'] += 1
-            
+
             # Track by actual meter
             if actual not in results[name]['by_meter']:
                 results[name]['by_meter'][actual] = {'correct': 0, 'total': 0}
             results[name]['by_meter'][actual]['total'] += 1
             if is_correct:
                 results[name]['by_meter'][actual]['correct'] += 1
-    
+
     # Print results
     print("\n" + "=" * 80)
     print("RESULTS")
     print("=" * 80)
-    
+
     print("\n### Overall Accuracy ###\n")
     print(f"{'Approach':<25} {'Accuracy':>10} {'Correct':>10} {'Total':>8}")
     print("-" * 55)
-    
+
     sorted_results = sorted(results.items(), key=lambda x: x[1]['correct']/x[1]['total'], reverse=True)
-    
+
     for name, data in sorted_results:
         acc = 100 * data['correct'] / data['total']
         print(f"{name:<25} {acc:>9.1f}% {data['correct']:>10} {data['total']:>8}")
-    
+
     # Detailed breakdown by meter
     print("\n### Accuracy by Meter ###\n")
-    
+
     for name, data in sorted_results:
         print(f"\n{name}:")
         for meter, stats in sorted(data['by_meter'].items()):
             if stats['total'] > 0:
                 acc = 100 * stats['correct'] / stats['total']
                 print(f"  {meter:<15} {acc:>6.1f}% ({stats['correct']}/{stats['total']})")
-    
+
     # Focus on overlap zone (37-40 syllables)
     print("\n" + "=" * 80)
     print("OVERLAP ZONE ANALYSIS (37-40 syllables)")
     print("=" * 80)
-    
+
     overlap_df = df[df['syllable_count'].isin([37, 38, 39, 40])]
     print(f"\nOverlap zone: {len(overlap_df)} verses")
     print(f"  - Pragātha: {len(overlap_df[overlap_df['meter'] == 'pragāthaḥ'])}")
     print(f"  - Paṅkti: {len(overlap_df[overlap_df['meter'] == 'paṅktiḥ'])}")
-    
+
     overlap_results = {name: {'correct': 0, 'total': 0} for name in approaches}
-    
+
     for idx, row in overlap_df.iterrows():
         actual = row['meter']
-        
+
         for name, approach_fn in approaches.items():
             predicted, confidence = approach_fn(row)
-            
+
             overlap_results[name]['total'] += 1
             if predicted == actual:
                 overlap_results[name]['correct'] += 1
-    
+
     print("\n### Overlap Zone Accuracy ###\n")
     print(f"{'Approach':<25} {'Accuracy':>10}")
     print("-" * 37)
-    
+
     sorted_overlap = sorted(overlap_results.items(), key=lambda x: x[1]['correct']/max(1, x[1]['total']), reverse=True)
     for name, data in sorted_overlap:
         if data['total'] > 0:
             acc = 100 * data['correct'] / data['total']
             print(f"{name:<25} {acc:>9.1f}%")
-    
+
     return sorted_results[0][0]  # Return best approach name
 
 

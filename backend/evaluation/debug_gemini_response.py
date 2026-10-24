@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Debug script to see what Gemini returns for invalid input."""
 
-import sys
 import json
-import re
 import os
+import re
+import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 
 from dotenv import load_dotenv
+
 load_dotenv('/home/harevasu/Projects/meru-coders/backend/.env')
 
 from google import genai
@@ -77,32 +79,32 @@ try:
         top_p=0.95,
         max_output_tokens=1024,  # Increased from 500!
     )
-    
+
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=PROMPT,
         config=config
     )
-    
+
     print("\n--- RAW RESPONSE ---")
     print(f"response.text exists: {hasattr(response, 'text')}")
-    
+
     if response and response.text:
         raw_text = response.text
         print(f"Length: {len(raw_text)} chars")
         print(f"Content:\n{raw_text}")
         print("--- END RAW RESPONSE ---\n")
-        
+
         # Try to parse
         response_text = raw_text.strip()
         if response_text.startswith('```'):
             response_text = re.sub(r'^```json?\s*', '', response_text)
             response_text = re.sub(r'\s*```$', '', response_text)
             print(f"After removing markdown:\n{response_text}")
-        
+
         try:
             result = json.loads(response_text)
-            print(f"\n✓ JSON parsed successfully!")
+            print("\n✓ JSON parsed successfully!")
             print(f"Result: {json.dumps(result, indent=2)}")
         except json.JSONDecodeError as e:
             print(f"\n✗ JSON parse error: {e}")
@@ -111,6 +113,6 @@ try:
     else:
         print("Response was empty or None!")
         print(f"Full response object: {response}")
-        
+
 except Exception as e:
     print(f"ERROR: {type(e).__name__}: {e}")

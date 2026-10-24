@@ -9,19 +9,18 @@ Our Model: Uses large dataset (~2055 meters)
 IITK Model: Uses small dataset (~398 meters)
 """
 
+import csv
 import os
 import sys
-import csv
 import time
-import re
 
 # Add paths
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')))
 
-from core.chanda import Chanda as OurChanda
 from chanda_iitk import Chanda as IITKChanda
+from core.chanda import Chanda as OurChanda
 
 # Mapping of English names to Devanagari/Sanskrit equivalents
 METER_NAME_MAPPING = {
@@ -78,14 +77,14 @@ def names_match(expected, detected):
     """Check if expected and detected meter names match (handles Devanagari/English)"""
     if not expected or not detected:
         return False
-    
+
     expected_norm = normalize_name(expected)
     detected_norm = normalize_name(detected)
-    
+
     # Direct comparison
     if expected_norm in detected_norm or detected_norm in expected_norm:
         return True
-    
+
     # Check via mapping
     for key, aliases in METER_NAME_MAPPING.items():
         if expected_norm in key or key in expected_norm:
@@ -97,7 +96,7 @@ def names_match(expected, detected):
                 # Also check if detected (in Devanagari) is the alias
                 if alias in detected or detected in alias:
                     return True
-    
+
     return False
 
 
@@ -105,11 +104,11 @@ def check_match(expected, result_dict):
     """Check if expected meter is found in results"""
     if not result_dict:
         return False, None
-    
+
     # Handle the result format from identify_line
     # Format: {'found': bool, 'chanda': [...], 'fuzzy': [...], 'lg_marks': ...}
     first_name = None
-    
+
     # Check exact matches in 'chanda'
     chanda_list = result_dict.get('chanda', [])
     if chanda_list:
@@ -121,7 +120,7 @@ def check_match(expected, result_dict):
                     first_name = name
                 if names_match(expected, name):
                     return True, first_name
-    
+
     # Check fuzzy matches
     fuzzy_list = result_dict.get('fuzzy', [])
     for fuzzy in fuzzy_list:
@@ -133,7 +132,7 @@ def check_match(expected, result_dict):
                     first_name = name
                 if names_match(expected, name):
                     return True, first_name
-    
+
     # Also check alternative result formats (results key)
     results = result_dict.get('results', [])
     if results:
@@ -145,7 +144,7 @@ def check_match(expected, result_dict):
                 for name in names:
                     if names_match(expected, name):
                         return True, first_name
-    
+
     return False, first_name
 
 
@@ -155,26 +154,26 @@ def run_test():
     print("CHANDAS IDENTIFIER - MODEL PERFORMANCE COMPARISON")
     print("=" * 90)
     print()
-    
+
     # Initialize paths
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     our_data_path = os.path.join(base_path, 'data')
     iitk_data_path = os.path.join(base_path, '..', 'repos', 'chanda', 'data')
     dataset_path = os.path.join(our_data_path, 'chanda_dataset_verified.csv')
-    
+
     # Initialize models
     print("Initializing models...")
     start = time.time()
     our_model = OurChanda(our_data_path)
     our_init = time.time() - start
     print(f"  ✓ Our Model (2055 meters) initialized in {our_init:.3f}s")
-    
+
     start = time.time()
     iitk_model = IITKChanda(iitk_data_path)
     iitk_init = time.time() - start
     print(f"  ✓ IITK Model (398 meters) initialized in {iitk_init:.3f}s")
     print()
-    
+
     # Load test dataset
     test_cases = []
     with open(dataset_path, 'r', encoding='utf-8') as f:
@@ -187,35 +186,35 @@ def run_test():
                     'syllables': row.get('Syllables per Quarter', ''),
                     'lg_pattern': row.get('L-G Pattern', '')
                 })
-    
+
     print(f"Loaded {len(test_cases)} test cases from chanda_dataset_verified.csv")
     print()
     print("-" * 90)
     print(f"{'#':3} {'Expected Meter':25} {'Our Model':20} {'IITK Model':20} {'Our':5} {'IITK':5}")
     print("-" * 90)
-    
+
     # Run tests
     our_correct = 0
     our_times = []
     iitk_correct = 0
     iitk_times = []
-    
+
     our_wins = []
     iitk_wins = []
     both_fail = []
-    
+
     for i, tc in enumerate(test_cases, 1):
         expected = tc['expected']
         shloka = tc['shloka']
-        
+
         # Clean up the shloka - extract first pada for single-line testing
         # Remove special punctuation and split into padas
         clean_shloka = shloka.replace('।', ' ').replace('॥', ' ').strip()
         padas = [p.strip() for p in clean_shloka.split() if p.strip()]
-        
+
         # Use first half (first 2 padas if available) for testing
         test_text = ' '.join(padas[:4]) if len(padas) >= 4 else clean_shloka
-        
+
         # Test our model
         start = time.time()
         try:
@@ -225,7 +224,7 @@ def run_test():
             our_match, our_got = False, f"Error: {str(e)[:15]}"
         our_time = time.time() - start
         our_times.append(our_time)
-        
+
         # Test IITK model
         start = time.time()
         try:
@@ -235,13 +234,13 @@ def run_test():
             iitk_match, iitk_got = False, f"Error: {str(e)[:15]}"
         iitk_time = time.time() - start
         iitk_times.append(iitk_time)
-        
+
         # Update counts
         if our_match:
             our_correct += 1
         if iitk_match:
             iitk_correct += 1
-        
+
         # Track wins
         if our_match and not iitk_match:
             our_wins.append(expected)
@@ -249,27 +248,27 @@ def run_test():
             iitk_wins.append(expected)
         elif not our_match and not iitk_match:
             both_fail.append(expected)
-        
+
         # Display
         our_status = "✅" if our_match else "❌"
         iitk_status = "✅" if iitk_match else "❌"
         our_display = (our_got or "None")[:18]
         iitk_display = (iitk_got or "None")[:18]
-        
+
         print(f"{i:3} {expected:25} {our_display:20} {iitk_display:20} {our_status:5} {iitk_status:5}")
-    
+
     # Summary
     print()
     print("=" * 90)
     print("RESULTS SUMMARY")
     print("=" * 90)
     print()
-    
+
     our_accuracy = our_correct / max(1, len(test_cases)) * 100
     iitk_accuracy = iitk_correct / max(1, len(test_cases)) * 100
     our_avg_time = sum(our_times) / max(1, len(our_times)) * 1000
     iitk_avg_time = sum(iitk_times) / max(1, len(iitk_times)) * 1000
-    
+
     print(f"{'Metric':<35} {'Our Model':>20} {'IITK Model':>20}")
     print("-" * 75)
     print(f"{'Database Size':<35} {'2,055 meters':>20} {'398 meters':>20}")
@@ -278,7 +277,7 @@ def run_test():
     print(f"{'Accuracy':<35} {our_accuracy:>19.1f}% {iitk_accuracy:>19.1f}%")
     print(f"{'Average Time (ms)':<35} {our_avg_time:>19.2f} {iitk_avg_time:>19.2f}")
     print()
-    
+
     # Comparison
     print("COMPARISON:")
     print("-" * 40)
@@ -288,38 +287,38 @@ def run_test():
     elif diff < 0:
         print(f"  📉 IITK model is {-diff:.1f}% more accurate")
     else:
-        print(f"  🤝 Both models have same accuracy")
-    
+        print("  🤝 Both models have same accuracy")
+
     speed_ratio = iitk_avg_time / max(0.001, our_avg_time)
     if speed_ratio > 1:
         print(f"  ⚡ Our model is {speed_ratio:.1f}x faster")
     else:
         print(f"  🐢 IITK model is {1/speed_ratio:.1f}x faster")
     print()
-    
+
     # Detailed breakdown
     if our_wins:
         print(f"METERS ONLY OUR MODEL IDENTIFIED ({len(our_wins)}):")
         for m in our_wins:
             print(f"  ✅ {m}")
         print()
-    
+
     if iitk_wins:
         print(f"METERS ONLY IITK MODEL IDENTIFIED ({len(iitk_wins)}):")
         for m in iitk_wins:
             print(f"  ⚠️ {m}")
         print()
-    
+
     if both_fail:
         print(f"METERS BOTH MODELS FAILED ({len(both_fail)}):")
         for m in both_fail:
             print(f"  ❌ {m}")
         print()
-    
+
     print("=" * 90)
     print(f"FINAL VERDICT: Our Model {our_accuracy:.1f}% vs IITK Model {iitk_accuracy:.1f}%")
     print("=" * 90)
-    
+
     return our_accuracy, iitk_accuracy
 
 

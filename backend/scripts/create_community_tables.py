@@ -8,7 +8,6 @@ import sys
 
 import psycopg2
 from dotenv import load_dotenv
-from psycopg2 import sql
 
 # Supabase PostgreSQL connection details, read from the environment.
 # Direct connection (not pooler), for example db.<project-ref>.supabase.co
@@ -128,15 +127,15 @@ def main():
     print("Community Tables Creation - Direct PostgreSQL Connection")
     print("=" * 60)
     print()
-    
+
     try:
         # Connect to database
-        print(f"Connecting to Supabase PostgreSQL...")
+        print("Connecting to Supabase PostgreSQL...")
         print(f"  Host: {DB_HOST}")
         print(f"  Port: {DB_PORT}")
         print(f"  Database: {DB_NAME}")
         print()
-        
+
         conn = psycopg2.connect(
             host=DB_HOST,
             port=DB_PORT,
@@ -147,30 +146,30 @@ def main():
         )
         conn.autocommit = True
         cursor = conn.cursor()
-        
+
         print("✅ Connected to Supabase PostgreSQL!")
         print()
-        
+
         # Create tables
         print("Creating tables...")
         cursor.execute(CREATE_TABLES_SQL)
         print("✅ Tables created (posts, post_likes, post_comments, notifications)")
-        
+
         # Create indexes
         print("Creating indexes...")
         cursor.execute(CREATE_INDEXES_SQL)
         print("✅ Indexes created")
-        
+
         # Create helper functions
         print("Creating helper functions...")
         cursor.execute(CREATE_FUNCTIONS_SQL)
         print("✅ Helper functions created")
-        
+
         # Add avatar_url column to users
         print("Adding avatar_url column to users table...")
         cursor.execute(ADD_AVATAR_COLUMN_SQL)
         print("✅ Avatar column added (if not exists)")
-        
+
         # Verify tables exist
         print()
         print("Verifying tables...")
@@ -184,11 +183,11 @@ def main():
         print(f"✅ Verified {len(tables)} community tables:")
         for table in tables:
             print(f"   - {table[0]}")
-        
+
         # Close connection
         cursor.close()
         conn.close()
-        
+
         print()
         print("=" * 60)
         print("✅ ALL COMMUNITY TABLES CREATED SUCCESSFULLY!")
@@ -198,7 +197,7 @@ def main():
         print("1. Start the backend: cd backend && python run.py")
         print("2. Start the frontend: cd frontend && npm run dev")
         print("3. Visit /community to see the community page")
-        
+
     except Exception as e:
         print(f"❌ Error: {e}")
         print()

@@ -1707,8 +1707,8 @@ RIGVEDA_AUTHENTIC = [
 
 def get_by_meter(meter_name):
     """Get verses by meter name."""
-    return [v for v in RIGVEDA_AUTHENTIC 
-            if meter_name.lower() in v['meter'].lower() 
+    return [v for v in RIGVEDA_AUTHENTIC
+            if meter_name.lower() in v['meter'].lower()
             or meter_name.lower() in v['meter_iast'].lower()]
 
 def get_by_mandala(mandala):
@@ -1719,9 +1719,9 @@ def summary():
     """Print dataset summary."""
     from collections import Counter
     meters = Counter(v['meter_iast'] for v in RIGVEDA_AUTHENTIC)
-    
+
     print(f"\nTotal verses: {len(RIGVEDA_AUTHENTIC)}")
-    print(f"\nBy meter:")
+    print("\nBy meter:")
     for meter, count in meters.most_common():
         info = next((v for v in RIGVEDA_AUTHENTIC if v['meter_iast'] == meter), None)
         if info:

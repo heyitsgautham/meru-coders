@@ -7,16 +7,16 @@ This module creates and configures the Flask REST API for the
 Sanskrit Meter Identification System backend.
 """
 
+import atexit
+import logging
+import os
+from pathlib import Path
+
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from pathlib import Path
-import logging
-import atexit
-import os
-
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from backend.config import settings
 
@@ -31,8 +31,9 @@ else:
 
 # Global SocketIO instance (for access from other modules)
 socketio = None
-from backend.core import Chanda
-from backend.ocr import TesseractOCR, CloudVisionOCR
+# Imported after GOOGLE_APPLICATION_CREDENTIALS is set above.
+from backend.core import Chanda  # noqa: E402
+from backend.ocr import CloudVisionOCR, TesseractOCR  # noqa: E402
 
 
 def create_app():
@@ -45,20 +46,20 @@ def create_app():
     app = Flask(__name__,
                 static_folder=None,  # No static files in API
                 template_folder=None)  # No templates in API
-    
+
     # Load configuration
     app.config['SECRET_KEY'] = settings.SECRET_KEY
     app.config['MAX_CONTENT_LENGTH'] = settings.MAX_CONTENT_LENGTH
     app.config['DEBUG'] = settings.DEBUG
     app.config['CORS_ORIGINS'] = settings.CORS_ORIGINS  # For SocketIO
-    
+
     # Configure logging
     logging.basicConfig(
         level=getattr(logging, settings.LOG_LEVEL),
         format=settings.LOG_FORMAT
     )
     app.logger.setLevel(getattr(logging, settings.LOG_LEVEL))
-    
+
     # Enable CORS for frontend
     # Allow all origins for development - handles localhost and local network IPs
     CORS(app, resources={
@@ -84,7 +85,7 @@ def create_app():
             "supports_credentials": True
         }
     })
-    
+
     # Initialize WebSocket support
     global socketio
     app.logger.info("Initializing Flask-SocketIO...")
@@ -96,7 +97,7 @@ def create_app():
     except Exception as e:
         app.logger.warning(f"Flask-SocketIO not available: {e}")
         app.socketio = None
-    
+
     # Initialize rate limiter
     app.logger.info("Initializing rate limiter...")
     limiter = Limiter(
@@ -106,11 +107,11 @@ def create_app():
         storage_uri=settings.RATELIMIT_STORAGE_URL
     )
     app.limiter = limiter
-    
+
     # Initialize Supabase client
     app.logger.info("Initializing Supabase client...")
     try:
-        from supabase import create_client, Client
+        from supabase import Client, create_client
         if settings.SUPABASE_URL and settings.SUPABASE_SERVICE_KEY:
             app.supabase: Client = create_client(
                 settings.SUPABASE_URL,
@@ -127,14 +128,14 @@ def create_app():
         app.logger.error(f"Failed to initialize Supabase client: {e}")
         app.supabase = None
         app.config['SUPABASE_CLIENT'] = None
-    
+
     # Initialize core components
     app.logger.info("Initializing Chanda Analyzer...")
     app.chanda = Chanda(
         data_path=str(settings.DATA_DIR),
         syllabization_method=settings.SYLLABIZATION_METHOD
     )
-    
+
     # Initialize Tesseract OCR
     app.logger.info("Initializing Tesseract OCR...")
     try:
@@ -145,7 +146,7 @@ def create_app():
     except Exception as e:
         app.logger.warning(f"Tesseract OCR not available: {e}")
         app.tesseract_ocr = None
-    
+
     # Initialize Cloud Vision OCR (primary OCR, with Tesseract as fallback)
     app.logger.info("Initializing Cloud Vision OCR...")
     try:
@@ -160,11 +161,11 @@ def create_app():
     except Exception as e:
         app.logger.warning(f"Cloud Vision OCR not available: {e}")
         app.cloud_vision_ocr = None
-    
+
     # Register API routes
     from backend.api import register_routes
     register_routes(app)
-    
+
     # Health check endpoint
     @app.route('/health', methods=['GET'])
     def health_check():
@@ -174,7 +175,7 @@ def create_app():
             'service': 'Sanskrit Meter Identification API',
             'version': '2.0.0'
         }
-    
+
     # API info endpoint
     @app.route(f'{settings.API_PREFIX}/info', methods=['GET'])
     def api_info():
@@ -205,12 +206,12 @@ def create_app():
                 'multi_format_upload': True  # DOCX, TXT support
             }
         }
-    
+
     # Initialize background scheduler for upload cleanup
     app.logger.info("Initializing upload cleanup scheduler...")
     try:
         from backend.utils.cleanup import scheduled_cleanup_job
-        
+
         scheduler = BackgroundScheduler(daemon=True)
         scheduler.add_job(
             func=lambda: scheduled_cleanup_job(app),
@@ -222,10 +223,10 @@ def create_app():
         )
         scheduler.start()
         app.scheduler = scheduler
-        
+
         # Register shutdown handler
         atexit.register(lambda: scheduler.shutdown(wait=False))
-        
+
         app.logger.info(
             f"Upload cleanup scheduler started "
             f"(interval: {settings.CLEANUP_INTERVAL_MINUTES}min, "
@@ -234,6 +235,6 @@ def create_app():
     except Exception as e:
         app.logger.warning(f"Failed to initialize cleanup scheduler: {e}")
         app.scheduler = None
-    
+
     app.logger.info("Flask REST API application initialized successfully")
     return app

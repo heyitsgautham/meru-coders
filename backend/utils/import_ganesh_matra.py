@@ -24,10 +24,10 @@ Reference: Shatavadhani Dr. R. Ganesh
 YouTube: https://www.youtube.com/playlist?list=PLABJEFgj0PWVXr2ERGu2xtoSXrNdBs5xS
 """
 
-import json
 import csv
-import re
+import json
 from collections import OrderedDict
+
 
 def parse_matra_pattern(pattern_str):
     """
@@ -44,15 +44,15 @@ def parse_matra_pattern(pattern_str):
     """
     # Remove dashes, dots (caesura markers) but keep spaces initially
     clean = pattern_str.replace('—', '').replace('-', '').replace('.', '')
-    
+
     # Handle special patterns
     if '|' in clean or '(' in clean:
         # Variant patterns - take first option
         clean = clean.split('|')[0].replace('(', '').replace(')', '')
-    
+
     # Now remove spaces for counting
     clean = clean.replace(' ', '')
-    
+
     total = 0
     i = 0
     while i < len(clean):
@@ -67,7 +67,7 @@ def parse_matra_pattern(pattern_str):
             i += 1
         else:
             i += 1
-    
+
     return total
 
 def parse_matra_meter(meter_data):
@@ -83,34 +83,34 @@ def parse_matra_meter(meter_data):
     - video: YouTube video ID if available
     """
     name = meter_data[0]
-    
+
     # Extract name variants (handle parentheses)
     # e.g., "Anuṣṭup (Śloka)" -> main name is Anuṣṭup
     name = name.split('(')[0].strip()
-    
+
     if isinstance(meter_data[1], str):
         # Simple pattern string - not a mātrā meter
         return None
-    
+
     if not isinstance(meter_data[1], dict):
         return None
-    
+
     meter_info = meter_data[1]
-    
+
     # Check if this is a mātrā meter (has 'regex' field)
     if 'regex' not in meter_info:
         return None
-    
+
     regex_patterns = meter_info['regex']
     if regex_patterns == "TODO01":
         # Anuṣṭup - not a simple mātrā meter
         return None
-    
+
     # IMPORTANT: Extract mātrā counts from the COMMENT field
     # The regex patterns are symbolic and complex
     # The comment has the authoritative mātrā counts
     comment = meter_info.get('comment', '')
-    
+
     # Parse comment like "The four pādas have 12, 18, 12, and 15 mātrās respectively."
     pada_matras = []
     if 'pādas have' in comment or 'padas have' in comment:
@@ -119,24 +119,24 @@ def parse_matra_meter(meter_data):
         numbers = re.findall(r'\d+', comment)
         if numbers:
             pada_matras = [int(n) for n in numbers]
-    
+
     # If we couldn't parse from comment, try parsing patterns (fallback)
     if not pada_matras:
         if isinstance(regex_patterns, str):
             regex_patterns = [regex_patterns]
-        
+
         for pattern in regex_patterns:
             if pattern.strip():
                 matra_count = parse_matra_pattern(pattern)
                 if matra_count > 0:
                     pada_matras.append(matra_count)
-    
+
     if not pada_matras:
         return None
-    
+
     # Create the mātrā sequence string
     matra_sequence = ''.join(str(m) for m in pada_matras)
-    
+
     return {
         'name': name,
         'matra_sequence': matra_sequence,
@@ -168,11 +168,11 @@ def main():
     ganesh_file = 'repos/sanskrit/data/ganesh.json'
     with open(ganesh_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    
+
     # Parse mātrā meters
     matra_meters = []
     other_info = {}
-    
+
     print("Parsing mātrā meters from ganesh.json...")
     for meter_entry in data['metres']:
         result = parse_matra_meter(meter_entry)
@@ -183,35 +183,35 @@ def main():
                 print(f"    Comment: {result['comment']}")
             if result['video']:
                 print(f"    Video: {result['video']}")
-            
+
             # Store additional info for examples.json
             other_info[result['name']] = {
                 'comment': result['comment'],
                 'examples': result['examples'],
                 'video': result['video']
             }
-    
+
     print(f"\nFound {len(matra_meters)} mātrā meters")
-    
+
     # Load existing mātrā meters
     csv_file = 'data/chanda_matra.csv'
     existing = load_existing_matra_meters(csv_file)
     print(f"\nExisting mātrā meters: {len(existing)}")
-    
+
     # Merge - keep existing, add new ones
     merged = OrderedDict()
-    
+
     # First add existing (to preserve order)
     for name, matra in existing.items():
         merged[name] = matra
         print(f"  Existing: {name} -> {matra}")
-    
+
     # Add new ones (check for duplicates)
     new_count = 0
     for meter in matra_meters:
         name = meter['name']
         matra_seq = meter['matra_sequence']
-        
+
         if name not in merged:
             merged[name] = matra_seq
             new_count += 1
@@ -222,26 +222,26 @@ def main():
                 print(f"  ⚠ CONFLICT: {name}")
                 print(f"    Existing: {merged[name]}")
                 print(f"    Ganesh: {matra_seq}")
-                print(f"    Keeping existing definition")
-    
+                print("    Keeping existing definition")
+
     print(f"\nTotal merged: {len(merged)} ({new_count} new)")
-    
+
     # Write updated CSV
     backup_file = csv_file + '.backup'
-    import shutil
     import os
+    import shutil
     if os.path.exists(csv_file):
         shutil.copy(csv_file, backup_file)
         print(f"\nBackup created: {backup_file}")
-    
+
     with open(csv_file, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['वृत्त', 'मात्रा'])
         for name, matra in merged.items():
             writer.writerow([name, matra])
-    
+
     print(f"\nUpdated {csv_file}")
-    
+
     # Update examples.json if needed
     examples_file = 'data/examples.json'
     try:
@@ -249,7 +249,7 @@ def main():
             examples = json.load(f)
     except FileNotFoundError:
         examples = {}
-    
+
     # Add new examples and metadata
     updated_examples = False
     for name, info in other_info.items():
@@ -261,14 +261,14 @@ def main():
             }
             updated_examples = True
             print(f"  Added examples for: {name}")
-    
+
     if updated_examples:
         with open(examples_file, 'w', encoding='utf-8', newline='\n') as f:
             json.dump(examples, f, ensure_ascii=False, indent=2)
         print(f"\nUpdated {examples_file}")
-    
+
     print("\n✓ Import complete!")
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  - Total mātrā meters: {len(merged)}")
     print(f"  - New meters added: {new_count}")
     print(f"  - Examples added: {sum(1 for i in other_info.values() if i['examples'])}")

@@ -6,8 +6,8 @@ Author: Meru Coders (SIH 2025)
 Date: December 9, 2025
 """
 
-from typing import List, Dict, Any
 import logging
+from typing import List
 
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
@@ -44,15 +44,15 @@ def get_embedding_model(
         full_model_name = EMBEDDING_MODELS[model_name]
     else:
         full_model_name = model_name
-    
+
     logger.info(f"📦 Loading embedding model: {full_model_name}")
-    
+
     embeddings = HuggingFaceEmbeddings(
         model_name=full_model_name,
         model_kwargs={'device': device},
         encode_kwargs={'normalize_embeddings': normalize}
     )
-    
+
     return embeddings
 
 
@@ -72,7 +72,7 @@ def get_embedding_dimensions(model_name: str = "default") -> int:
         "small": 384,    # MiniLM
         "indic": 768     # indic-bert
     }
-    
+
     return dimensions.get(model_name, 768)
 
 
@@ -95,17 +95,17 @@ def batch_embed_texts(
         List of embedding vectors
     """
     embeddings_model = get_embedding_model(model_name, device)
-    
+
     # Embed in batches
     all_embeddings = []
     for i in range(0, len(texts), batch_size):
         batch = texts[i:i + batch_size]
         batch_embeddings = embeddings_model.embed_documents(batch)
         all_embeddings.extend(batch_embeddings)
-        
+
         if (i + batch_size) % 100 == 0:
             logger.info(f"  Embedded {min(i + batch_size, len(texts))}/{len(texts)} texts")
-    
+
     return all_embeddings
 
 
@@ -128,16 +128,16 @@ def compute_similarity(
         Cosine similarity score (0.0 to 1.0)
     """
     import numpy as np
-    
+
     embeddings_model = get_embedding_model(model_name, device)
-    
+
     # Get embeddings
     emb1 = embeddings_model.embed_query(text1)
     emb2 = embeddings_model.embed_query(text2)
-    
+
     # Compute cosine similarity
     similarity = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
-    
+
     return float(similarity)
 
 
@@ -153,12 +153,12 @@ def preprocess_text_for_embedding(text: str) -> str:
     """
     # Remove excessive whitespace
     text = ' '.join(text.split())
-    
+
     # Truncate if too long (most models have 512 token limit)
     max_chars = 2000  # Rough approximation
     if len(text) > max_chars:
         text = text[:max_chars] + "..."
-    
+
     return text
 
 
@@ -166,37 +166,37 @@ def preprocess_text_for_embedding(text: str) -> str:
 def test_embeddings():
     """Test embedding functionality"""
     print("🧪 Testing Embeddings Module\n")
-    
+
     # Test texts (Sanskrit prosody related)
     test_texts = [
         "अनुष्टुभ् छन्द में प्रत्येक पाद में आठ अक्षर होते हैं",
         "Anushtubh meter has 8 syllables per pada",
         "गायत्री वैदिक छन्द है जिसमें तीन पाद होते हैं"
     ]
-    
+
     # Get embedding model
     model = get_embedding_model("default", "cpu")
-    
+
     # Test single embedding
     print("📝 Testing single text embedding:")
     emb = model.embed_query(test_texts[0])
     print(f"   Text: {test_texts[0][:50]}...")
     print(f"   Embedding dimensions: {len(emb)}")
     print(f"   First 5 values: {emb[:5]}\n")
-    
+
     # Test batch embedding
     print("📝 Testing batch embedding:")
     embeddings = model.embed_documents(test_texts)
     print(f"   Number of texts: {len(test_texts)}")
     print(f"   Embeddings shape: {len(embeddings)} x {len(embeddings[0])}\n")
-    
+
     # Test similarity
     print("📝 Testing similarity computation:")
     sim = compute_similarity(test_texts[0], test_texts[1], "default", "cpu")
     print(f"   Text 1: {test_texts[0][:40]}...")
     print(f"   Text 2: {test_texts[1][:40]}...")
     print(f"   Similarity: {sim:.4f}\n")
-    
+
     print("✅ All tests passed!")
 
 

@@ -3,10 +3,11 @@
 """Compare ICU vs sanskrit_text syllabization for युयुत्सवः"""
 
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 
-from core import Chanda
 from config import settings
+from core import Chanda
 
 # Test with both methods
 print("=" * 60)
@@ -18,14 +19,14 @@ word = 'युयुत्सवः'
 # Test with ICU method
 chanda_icu = Chanda(data_path=str(settings.DATA_DIR), syllabization_method='icu')
 syllables_icu, lg_icu = chanda_icu.mark_lg(word)
-print(f"\nICU Method:")
+print("\nICU Method:")
 print(f"  Syllables: {syllables_icu}")
 print(f"  LG marks:  {lg_icu}")
 
 # Test with sanskrit_text method
 chanda_skt = Chanda(data_path=str(settings.DATA_DIR), syllabization_method='sanskrit_text')
 syllables_skt, lg_skt = chanda_skt.mark_lg(word)
-print(f"\nsanskrit_text Method:")
+print("\nsanskrit_text Method:")
 print(f"  Syllables: {syllables_skt}")
 print(f"  LG marks:  {lg_skt}")
 

@@ -2,9 +2,10 @@
 Test user-provided examples to determine correct dandaka classification
 """
 import sys
+
 sys.path.insert(0, '.')
 
-from core.dandaka_detector import count_aksaras, classify_dandaka_unit
+from core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 # User provided examples
 examples = {
@@ -13,7 +14,7 @@ examples = {
 जातिस्मरत्वमाप्नोति ब्रह्मज्ञानमनुत्तमम् ।
 सदाशिवत्वमाप्नोति सोन्ते नात्र विचारणा ॥ २४ ॥
 इति श्री श्यामला स्तोत्रम् ।""",
-    
+
     'Example 2': """अणिमादिगुणाधारे जय नीलाद्रिसन्निभे ।
 शङ्खपद्मादिसम्युक्ते सिद्धिदे त्वां भजाम्यहम् ॥ १२ ॥
 जय त्वं वरभूषाङ्गि वराङ्गीं त्वां भजाम्यहम् ।
@@ -36,7 +37,7 @@ examples = {
 लभेदष्टगुणैश्वर्यं दारिद्र्येण विमुच्यते ॥ २१ ॥
 शङ्खादि निधयो द्वार्स्थाः सान्निध्यं पर्युपासते ।
 व्याचष्टे सर्वशास्त्राणि सर्वविद्यानिधिर्भवेत् ॥ २२ ॥""",
-    
+
     'Example 3': """जय मातर्विशालाक्षि जय सङ्गीतमातृके ।
 जय मातङ्गि चण्डालि गृहीतमधुपात्रके ॥ १ ॥
 नमस्तेऽस्तु महादेवि नमो भगवतीश्वरि ।
@@ -66,10 +67,10 @@ print("=" * 80)
 
 for name, text in examples.items():
     lines = [line.strip() for line in text.strip().split('\n') if line.strip() and not line.strip().startswith('॥')]
-    
+
     print(f"\n{name}:")
     print(f"Total lines: {len(lines)}")
-    
+
     # Count aksaras for each line
     classifications = []
     total_aksaras = 0
@@ -79,10 +80,10 @@ for name, text in examples.items():
         classifications.append(classification)
         total_aksaras += aksara_count
         print(f"  Line {i}: {aksara_count} akṣaras → {classification}")
-    
+
     if len(lines) > 5:
         print(f"  ... ({len(lines) - 5} more lines)")
-    
+
     # Determine overall classification
     from collections import Counter
     overall = Counter(classifications).most_common(1)[0][0] if classifications else "Unknown"
@@ -93,6 +94,6 @@ for name, text in examples.items():
 print("\n" + "=" * 80)
 print("\n✓ Use SINGLE lines from these examples for each dandaka category")
 print("✓ Sankīrṇa: Pick a line with ~16-20 akṣaras")
-print("✓ Madhyama: Pick a line with ~30-40 akṣaras") 
+print("✓ Madhyama: Pick a line with ~30-40 akṣaras")
 print("✓ Prabandha: Pick a line with ~60-70 akṣaras")
 print("✓ Ati: Combine multiple lines to reach >108 akṣaras")

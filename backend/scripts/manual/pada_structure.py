@@ -5,6 +5,7 @@ Analyze the verse to understand its pada structure
 
 import os
 import sys
+
 sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
 os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
 
@@ -33,12 +34,12 @@ for i, pada in enumerate(pada_lines, 1):
     lg = ''.join([char for char in result.get('display_lg', []) if char])
     syllables = len(lg)
     meter = result.get('display_chanda_primary', 'Unknown')
-    
+
     print(f"\nPada {i}: {pada}")
     print(f"  L-G Pattern: {lg}")
     print(f"  Syllables: {syllables}")
     print(f"  Meter: {meter}")
-    
+
     all_lg_patterns.append(lg)
 
 print("\n" + "=" * 80)
@@ -50,4 +51,4 @@ print(f"All patterns identical: {all(lg == all_lg_patterns[0] for lg in all_lg_p
 
 if all_lg_patterns:
     print(f"\nPattern: {all_lg_patterns[0]} (repeats {len(all_lg_patterns)} times)")
-    print(f"This is शालिनी (Śālinī) meter - 11 syllables per pada")
+    print("This is शालिनी (Śālinī) meter - 11 syllables per pada")

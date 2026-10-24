@@ -31,8 +31,8 @@ Date: November 20, 2025
 
 import re
 import unicodedata
-from typing import List, Dict, Tuple
 from pathlib import Path
+from typing import Dict, List, Tuple
 
 
 def normalize_sandhi_text(text: str) -> str:
@@ -47,26 +47,26 @@ def normalize_sandhi_text(text: str) -> str:
     """
     if text is None:
         return ""
-    
+
     # Unicode NFC normalization
     text = unicodedata.normalize('NFC', text)
-    
+
     # Replace danda characters with space (preserve pada boundaries)
     text = re.sub(r'[॥।]+', ' ', text)
-    
+
     # Ensure OM (ॐ) is spaced
     text = re.sub(r'\u0950', ' \u0950 ', text)
-    
+
     # Replace common punctuation with space
     punct_re = re.compile(r'[\u2000-\u206F\u2E00-\u2E7F\.,;:"\?\!\(\)\[\]\{\}—\-–/\\\|<>@#\$%\^&\*\+=_`~]')
     text = punct_re.sub(' ', text)
-    
+
     # Remove ASCII control chars
     text = ''.join(ch for ch in text if ord(ch) >= 32)
-    
+
     # Collapse multiple spaces
     text = re.sub(r'\s+', ' ', text)
-    
+
     return text.strip()
 
 
@@ -96,11 +96,11 @@ REVERSE_RULES = [
     (r'ो', r' ओ ', 'guṇa (o split)'),
     (r'ै', r' ऐ ', 'vṛddhi (ai split)'),
     (r'ौ', r' औ ', 'vṛddhi (au split)'),
-    
+
     # Visarga and anusvara
     (r'ः', r' ः ', 'visarga-space'),
     (r'ं', r' ं ', 'anusvara-space'),
-    
+
     # Avagraha (elision marker)
     (r'ऽ', r' ', 'avagraha-split'),
 ]
@@ -109,38 +109,38 @@ REVERSE_RULES = [
 def reverse_vowel_sandhi_variants(text: str) -> List[Tuple[str, str]]:
     """Generate plausible reverse-splits for vowel sandhi."""
     variants = []
-    
+
     # These are conservative splits preserving word boundaries
     if 'ो' in text and 'ः' not in text:  # Avoid visarga cases
         variants.append((text.replace('ो', ' अ उ '), 'o->a+u'))
-    
+
     if 'े' in text:
         variants.append((text.replace('े', ' अ इ '), 'e->a+i'))
-    
+
     return variants
 
 
 def reverse_visarga_variants(text: str) -> List[Tuple[str, str]]:
     """Attempt conservative visarga reversals."""
     variants = []
-    
+
     if 'ः' in text:
         # Try word boundary around visarga
         variants.append((re.sub(r'ः', ' ः ', text), 'visarga-boundary'))
-    
+
     return variants
 
 
 def reverse_anusvara_variants(text: str) -> List[Tuple[str, str]]:
     """Expand anusvara into probable nasal consonants based on context."""
     variants = []
-    
+
     # Context-aware anusvara expansion
     for m in re.finditer(r'ं', text):
         idx = m.start()
         if idx + 1 < len(text):
             nxt = text[idx + 1]
-            
+
             # Determine appropriate nasal based on following consonant
             if nxt in 'कखगघङ':
                 variants.append((text[:idx] + 'ङ्' + text[idx+1:], 'anusvara->ṅ'))
@@ -152,7 +152,7 @@ def reverse_anusvara_variants(text: str) -> List[Tuple[str, str]]:
                 variants.append((text[:idx] + 'न्' + text[idx+1:], 'anusvara->n'))
             elif nxt in 'पफबभम':
                 variants.append((text[:idx] + 'म्' + text[idx+1:], 'anusvara->m'))
-    
+
     return variants
 
 
@@ -160,7 +160,7 @@ def _one_step_candidates(text: str, lexicon: set) -> List[Dict]:
     """Apply each reverse rule once and return scored candidates."""
     out = []
     seen = set()
-    
+
     # Apply simple regex rules
     for pat, repl, name in REVERSE_RULES:
         if re.search(pat, text):
@@ -170,7 +170,7 @@ def _one_step_candidates(text: str, lexicon: set) -> List[Dict]:
                 seen.add(cand)
                 score = _baseline_score(text, cand, name, lexicon)
                 out.append({'cand': cand, 'score': score, 'rules': [name]})
-    
+
     # Add variant splits
     for cand, rule_name in reverse_vowel_sandhi_variants(text):
         cand = re.sub(r'\s+', ' ', cand).strip()
@@ -178,21 +178,21 @@ def _one_step_candidates(text: str, lexicon: set) -> List[Dict]:
             seen.add(cand)
             score = _baseline_score(text, cand, rule_name, lexicon)
             out.append({'cand': cand, 'score': score, 'rules': [rule_name]})
-    
+
     for cand, rule_name in reverse_visarga_variants(text):
         cand = re.sub(r'\s+', ' ', cand).strip()
         if cand not in seen:
             seen.add(cand)
             score = _baseline_score(text, cand, rule_name, lexicon)
             out.append({'cand': cand, 'score': score, 'rules': [rule_name]})
-    
+
     for cand, rule_name in reverse_anusvara_variants(text):
         cand = re.sub(r'\s+', ' ', cand).strip()
         if cand not in seen:
             seen.add(cand)
             score = _baseline_score(text, cand, rule_name, lexicon)
             out.append({'cand': cand, 'score': score, 'rules': [rule_name]})
-    
+
     return out
 
 
@@ -207,36 +207,36 @@ def _baseline_score(orig: str, cand: str, rule_name: str, lexicon: set) -> float
     - Rule complexity (small penalty)
     """
     score = 1.0
-    
+
     # Penalize isolated independent vowels
-    iso_vowels = len([t for t in re.split(r'\s+', cand) 
+    iso_vowels = len([t for t in re.split(r'\s+', cand)
                       if len(t) == 1 and re.match(r'[\u0905-\u0914]', t)])
     score -= 0.25 * iso_vowels
-    
+
     # Lexicon reward: fraction of tokens in lexicon
     tokens = [t for t in re.split(r'\s+', cand) if t]
     if tokens and lexicon:
         found = sum(1 for t in tokens if t in lexicon)
         frac = found / len(tokens)
         score += 0.7 * frac
-    
+
     # Small penalty for large edit distance
     diff = abs(len(cand) - len(orig))
     score -= 0.02 * diff
-    
+
     # Prefer candidates with more word boundaries
     word_count = len(tokens)
     score += 0.05 * word_count
-    
+
     # Rule complexity penalty
     if rule_name and rule_name != 'identity':
         score -= 0.03
-    
+
     # Clip score range
     return max(-2.0, min(2.0, score))
 
 
-def gen_candidates(line: str, k: int = 8, lexicon_path: str = None, 
+def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
                    allow_aggressive: bool = False) -> List[Dict]:
     """
     Generate up to k candidate reverse-sandhi decompositions for line.
@@ -257,23 +257,23 @@ def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
         ...     print(f"{c['score']:.2f}: {c['cand']}")
     """
     line = normalize_sandhi_text(line)
-    
+
     # Load lexicon
     lexicon = set(DEFAULT_LEXICON)
     if lexicon_path:
         lexicon |= load_lexicon(lexicon_path)
-    
+
     # Start with original as baseline
     candidates = [{
         'cand': line,
         'score': _baseline_score(line, line, 'identity', lexicon),
         'rules': ['identity']
     }]
-    
+
     # Generate one-step candidates
     one_step = _one_step_candidates(line, lexicon)
     candidates.extend(one_step)
-    
+
     # Optionally generate two-step expansions
     if allow_aggressive:
         expanded = []
@@ -288,14 +288,14 @@ def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
                     'rules': combined_rules
                 })
         candidates.extend(expanded)
-    
+
     # Deduplicate by candidate text, keeping best score
     best = {}
     for c in candidates:
         txt = c['cand']
         if txt not in best or c['score'] > best[txt]['score']:
             best[txt] = c
-    
+
     # Sort by score descending and return top k
     result = sorted(best.values(), key=lambda x: x['score'], reverse=True)
     return result[:k]
@@ -311,10 +311,10 @@ def main():
         "सह नाववतु",
         "धर्मो रक्षति रक्षितः"
     ]
-    
+
     print("Sanskrit Sandhi Resolution Test")
     print("=" * 80)
-    
+
     for text in examples:
         print(f"\nInput: {text}")
         candidates = gen_candidates(text, k=5)

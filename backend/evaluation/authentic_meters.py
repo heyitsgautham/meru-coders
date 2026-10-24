@@ -13,12 +13,13 @@ All verses have been syllable-count verified and sourced from:
 @date: November 2025
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from core.chanda import Chanda
 import sanskrit_text as skt
+from core.chanda import Chanda
 
 # Initialize the Chanda system
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
@@ -37,59 +38,59 @@ def verify_syllable_count(verse, expected):
 def test_meter(meter_name, verses, expected_syllables, expected_identification=None):
     """Test a specific meter with multiple authentic verses"""
     global total_tests, passed_tests
-    
+
     print("=" * 80)
     print(f"TESTING: {meter_name} ({expected_syllables} syllables)")
     print("=" * 80)
-    
+
     meter_passed = 0
     meter_total = len(verses)
-    
+
     for idx, verse_data in enumerate(verses, 1):
         total_tests += 1
         verse = verse_data['text']
         source = verse_data.get('source', 'Unknown')
-        
+
         # Verify syllable count
         actual_syl, syl_match = verify_syllable_count(verse, expected_syllables)
-        
+
         # Identify meter
         result = c.identify_line(verse)
         identified = result.get('chanda', [])
-        
+
         # Check if expected meter is in top 3 results
         top_3_names = [name for name, pada in identified[:3]]
-        
+
         # For Vedic meters, check both English and Devanagari names
         if expected_identification:
             found_meter = any(exp in str(top_3_names) for exp in expected_identification)
         else:
             found_meter = meter_name in str(top_3_names)
-        
+
         # Test passes if syllable count is correct (±1 tolerance for sandhi/prakrti)
         syllable_tolerance = 1
         test_pass = abs(actual_syl - expected_syllables) <= syllable_tolerance
-        
+
         if test_pass:
             status = "✓ PASS"
             meter_passed += 1
             passed_tests += 1
         else:
             status = "✗ FAIL"
-        
+
         print(f"\nTest {idx}: {status}")
         print(f"  Source: {source}")
         print(f"  Verse: {verse[:60]}...")
         print(f"  Expected syllables: {expected_syllables}")
         print(f"  Actual syllables: {actual_syl}")
         print(f"  Top identified: {top_3_names[0] if top_3_names else 'None'}")
-        
+
         test_results.append((f"{meter_name} Test {idx}", test_pass))
-    
+
     print(f"\n{'-'*80}")
     print(f"{meter_name} Results: {meter_passed}/{meter_total} PASS")
     print(f"{'-'*80}\n")
-    
+
     return meter_passed, meter_total
 
 ###############################################################################
@@ -139,26 +140,26 @@ jagati_verses = [
 def run_all_tests():
     """Run comprehensive test suite for all major Vedic meters"""
     global total_tests, passed_tests
-    
+
     print("\n" + "=" * 80)
     print("AUTHENTIC SANSKRIT METER COMPREHENSIVE TEST SUITE")
     print("Testing Vedic meters with verified authentic verses")
     print("=" * 80 + "\n")
-    
+
     # Test Gayatri
     test_meter("Gayatri", gayatri_verses, 24, ['Gayatri', 'गायत्री'])
-    
-    # Test Anushtubh  
+
+    # Test Anushtubh
     test_meter("Anushtubh", anushtubh_verses, 32, ['Anushtubh', 'अनुष्टुभ्'])
-    
+
     # Test Jagati
     test_meter("Jagati", jagati_verses, 48, ['Jagati', 'जगती'])
-    
+
     # Final Summary
     print("\n" + "=" * 80)
     print("COMPREHENSIVE TEST SUMMARY")
     print("=" * 80)
-    
+
     # Group by meter
     meters_tested = {}
     for test_name, result in test_results:
@@ -168,27 +169,27 @@ def run_all_tests():
         meters_tested[meter]['total'] += 1
         if result:
             meters_tested[meter]['passed'] += 1
-    
+
     for meter, stats in meters_tested.items():
         percentage = (stats['passed'] / stats['total']) * 100
         status = "✅" if stats['passed'] == stats['total'] else "⚠️"
         print(f"{status} {meter:20} : {stats['passed']}/{stats['total']} PASS ({percentage:.0f}%)")
-    
+
     print(f"\n{'='*80}")
     overall_percentage = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
     print(f"OVERALL: {passed_tests}/{total_tests} TESTS PASSED ({overall_percentage:.1f}%)")
     print(f"{'='*80}\n")
-    
+
     if passed_tests == total_tests:
         print("🎉 SUCCESS! All authentic verses correctly identified!")
         print("✓ System ready for SIH 2025 Grand Finale demonstration")
     else:
         print(f"⚠️  {total_tests - passed_tests} tests need attention")
-    
+
     return passed_tests, total_tests
 
 if __name__ == "__main__":
     passed, total = run_all_tests()
-    
+
     # Exit with appropriate code
     exit(0 if passed == total else 1)

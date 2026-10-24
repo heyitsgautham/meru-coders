@@ -6,22 +6,24 @@ REST API Routes
 API endpoints for Sanskrit meter identification.
 """
 
+import asyncio
 import base64
 import csv
 import json
 import logging
-import asyncio
-import uuid
 import time
+import uuid
 from pathlib import Path
-from flask import request, jsonify, send_from_directory, current_app
+
+from flask import jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from backend.api.text_matching import calculate_similarity, normalize_sanskrit_text
 from backend.config import settings
 
 # Import AI validator for shloka pre-validation
 from backend.core.ai_validator import validate_shloka_input
-from backend.api.text_matching import calculate_similarity, normalize_sanskrit_text
+from backend.utils.file_processor import FileProcessingError, get_processor
 
 # Import edge-tts for text-to-speech functionality
 try:
@@ -50,7 +52,7 @@ except ImportError:
 
 # Import pyttsx3 (offline TTS with voice selection)
 try:
-    import pyttsx3
+    import pyttsx3  # noqa: F401 - availability probe
     PYTTSX3_AVAILABLE = True
 except ImportError:
     PYTTSX3_AVAILABLE = False
@@ -58,13 +60,6 @@ except ImportError:
 
 # Path to source datasets
 SOURCE_DIR = Path(__file__).parent.parent / 'source'
-from backend.utils.file_processor import (
-    get_processor,
-    FileProcessingError,
-    FileType,
-    ExtractionResult
-)
-
 
 logger = logging.getLogger(__name__)
 
@@ -86,20 +81,20 @@ def register_routes(app):
     Args:
         app: Flask application instance
     """
-    
+
     # Register chatbot blueprint
     from backend.api.chatbot import chatbot_bp
     app.register_blueprint(chatbot_bp)
-    
+
     # Register auth and contribution blueprints
+    from backend.api.community import community_bp
     from backend.auth.routes import auth_bp
     from backend.contributions.routes import contribution_bp
-    from backend.api.community import community_bp
-    
+
     app.register_blueprint(auth_bp, url_prefix=f'{settings.API_PREFIX}/auth')
     app.register_blueprint(contribution_bp, url_prefix=f'{settings.API_PREFIX}/contributions')
     app.register_blueprint(community_bp, url_prefix=f'{settings.API_PREFIX}/community')
-    
+
     @app.route(f'{settings.API_PREFIX}/identify/text', methods=['POST'])
     def identify_text():
         """
@@ -124,12 +119,12 @@ def register_routes(app):
         """
         try:
             data = request.get_json()
-            
+
             if not data or 'text' not in data:
                 return jsonify({
                     'error': 'Missing required field: text'
                 }), 400
-            
+
             text = data['text']
             output_scheme = data.get('output_scheme', None)
             # Accept both 'text_mode' and 'mode' for compatibility with frontend
@@ -138,7 +133,7 @@ def register_routes(app):
             # New: identification_mode for Vedic vs Classical detection
             identification_mode = data.get('identification_mode', 'auto')
             verse_mode = (text_mode == 'verse')
-            
+
             # Start timing for latency measurement
             start_time = time.time()
             timing_info = {
@@ -149,9 +144,9 @@ def register_routes(app):
                 'cache_hit': False,
                 'ai_skipped': False
             }
-            
+
             logger.info(f"Analyzing text (text_mode: {text_mode}, id_mode: {identification_mode}, sandhi: {enable_sandhi})")
-            
+
             # =====================================================================
             # STEP 1: VERSE CACHE LOOKUP - Check if we have this verse already
             # If found with high similarity, skip AI validation entirely
@@ -159,20 +154,20 @@ def register_routes(app):
             cache_start = time.time()
             cache_result = find_cached_verse_match(text, threshold=CACHE_CLOSE_MATCH_THRESHOLD)
             timing_info['cache_lookup_ms'] = round((time.time() - cache_start) * 1000, 2)
-            
+
             skip_ai = cache_result.get('skip_ai', False)
             timing_info['cache_hit'] = cache_result.get('found', False)
             timing_info['ai_skipped'] = skip_ai
-            
+
             if cache_result.get('found'):
                 logger.info(f"Cache hit! Similarity: {cache_result['similarity']:.2%}, Skip AI: {skip_ai}")
-            
+
             # =====================================================================
             # STEP 2: AI PRE-VALIDATION (skipped if cache hit with high similarity)
             # This prevents the rule-based model from predicting invalid chandas
             # =====================================================================
             ai_validation = {'ai_validated': False, 'text_type': 'unknown', 'confidence': 0.0}
-            
+
             if skip_ai:
                 # Cache hit - assume valid Sanskrit (it's in our verified dataset)
                 logger.info("Skipping AI validation - verse found in cache")
@@ -188,11 +183,11 @@ def register_routes(app):
                 ai_start = time.time()
                 should_proceed, rejection_reason, ai_validation = validate_shloka_input(text, skip_ai=False)
                 timing_info['ai_validation_ms'] = round((time.time() - ai_start) * 1000, 2)
-            
+
             if not should_proceed:
                 logger.info(f"AI validation rejected input: {rejection_reason}")
                 timing_info['total_ms'] = round((time.time() - start_time) * 1000, 2)
-                
+
                 # Return a 200 OK with invalid input result (same format as chanda.py)
                 # This allows the frontend to display it nicely instead of as an error
                 invalid_result = {
@@ -224,7 +219,7 @@ def register_routes(app):
                         }
                     }]
                 }
-                
+
                 return jsonify({
                     'success': True,  # Return success so frontend doesn't show error box
                     'result': invalid_result,
@@ -238,7 +233,7 @@ def register_routes(app):
                     'timing': timing_info
                 })
             # =====================================================================
-            
+
             # =====================================================================
             # STEP 3: METER IDENTIFICATION (rule engine)
             # =====================================================================
@@ -254,11 +249,11 @@ def register_routes(app):
             )
             timing_info['rule_engine_ms'] = round((time.time() - rule_start) * 1000, 2)
             timing_info['total_ms'] = round((time.time() - start_time) * 1000, 2)
-            
+
             # Generate summary
             summary = app.chanda.summarize_results(result['result'])
             summary_formatted = app.chanda.format_summary(summary)
-            
+
             # Handle result path
             result_path = None
             if result.get('path'):
@@ -266,14 +261,14 @@ def register_routes(app):
                     result_path = result['path'].name
                 else:
                     result_path = str(result['path'])
-            
+
             # Log timing summary
             if timing_info['cache_hit']:
                 ai_status = 'SKIPPED' if timing_info['ai_skipped'] else f"{timing_info['ai_validation_ms']}ms"
                 logger.info(f"[TIMING] Cache HIT | Total: {timing_info['total_ms']}ms | Cache: {timing_info['cache_lookup_ms']}ms | AI: {ai_status} | Rule: {timing_info['rule_engine_ms']}ms")
             else:
                 logger.info(f"[TIMING] Cache MISS | Total: {timing_info['total_ms']}ms | Cache: {timing_info['cache_lookup_ms']}ms | AI: {timing_info['ai_validation_ms']}ms | Rule: {timing_info['rule_engine_ms']}ms")
-            
+
             return jsonify({
                 'success': True,
                 'result': result['result'],
@@ -301,14 +296,14 @@ def register_routes(app):
                     'enable_sandhi': enable_sandhi
                 }
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in identify_text: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/identify/dandaka', methods=['POST'])
     def identify_dandaka():
         """
@@ -324,33 +319,33 @@ def register_routes(app):
         """
         try:
             from backend.core.dandaka_detector import analyze_dandaka_mode
-            
+
             data = request.get_json()
-            
+
             if not data or 'text' not in data:
                 return jsonify({
                     'error': 'Missing required field: text'
                 }), 400
-            
+
             text = data['text']
-            
-            logger.info(f"Analyzing text in Dandaka mode")
-            
+
+            logger.info("Analyzing text in Dandaka mode")
+
             # Call the dandaka analyzer
             result = analyze_dandaka_mode(text)
-            
+
             return jsonify({
                 'success': True,
                 'result': result
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in identify_dandaka: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/identify/image', methods=['POST'])
     def identify_image():
         """
@@ -376,14 +371,14 @@ def register_routes(app):
                 text_mode = data.get('text_mode', 'line')
                 enable_sandhi = data.get('enable_sandhi', False)
                 identification_mode = data.get('identification_mode', 'auto')
-                
+
                 # Handle base64 encoded image
                 if 'image_data' in data:
                     image_data = data['image_data']
                     # Remove data URL prefix if present
                     if ',' in image_data:
                         image_data = image_data.split(',', 1)[1]
-                    
+
                     # Decode and save
                     image_bytes = base64.b64decode(image_data)
                     filename = 'uploaded_image.png'
@@ -399,39 +394,39 @@ def register_routes(app):
                     return jsonify({
                         'error': 'No image file provided'
                     }), 400
-                
+
                 file = request.files['image_file']
                 if file.filename == '':
                     return jsonify({
                         'error': 'Empty filename'
                     }), 400
-                
+
                 if not allowed_file(file.filename, settings.ALLOWED_IMAGE_EXTENSIONS):
                     return jsonify({
                         'error': f'Invalid file type. Allowed: {settings.ALLOWED_IMAGE_EXTENSIONS}'
                     }), 400
-                
+
                 filename = secure_filename(file.filename)
                 filepath = settings.PHOTOS_DIR / filename
                 file.save(filepath)
-                
+
                 ocr_engine = request.form.get('ocr_engine', 'tesseract')
                 output_scheme = request.form.get('output_scheme', None)
                 text_mode = request.form.get('text_mode', 'line')
                 enable_sandhi = request.form.get('enable_sandhi', 'false').lower() == 'true'
                 identification_mode = request.form.get('identification_mode', 'auto')
-            
+
             # Perform OCR - Cloud Vision first, fallback to Tesseract
             text = None
             engine_used = None
-            
+
             if app.cloud_vision_ocr:
                 try:
                     text = app.cloud_vision_ocr.extract_text(filepath)
                     engine_used = 'cloud_vision'
                 except Exception as e:
                     logger.warning(f"Cloud Vision OCR failed, falling back to Tesseract: {e}")
-            
+
             if text is None and app.tesseract_ocr:
                 try:
                     text = app.tesseract_ocr.extract_text(filepath)
@@ -442,14 +437,14 @@ def register_routes(app):
                         'success': False,
                         'error': f'OCR extraction failed: {e}'
                     }), 500
-            
+
             if text is None:
                 return jsonify({
                     'error': 'No OCR engine available'
                 }), 503
-            
+
             logger.info(f"Extracted text via {engine_used}: {text[:100] if text else '(empty)'}...")
-            
+
             # Perform meter identification
             verse_mode = (text_mode == 'verse')
             result = app.chanda.identify_from_text(
@@ -461,11 +456,11 @@ def register_routes(app):
                 use_sandhi=enable_sandhi,
                 mode=identification_mode
             )
-            
+
             # Generate summary
             summary = app.chanda.summarize_results(result['result'])
             summary_formatted = app.chanda.format_summary(summary)
-            
+
             # Handle result path
             result_path = None
             if result.get('path'):
@@ -473,11 +468,11 @@ def register_routes(app):
                     result_path = result['path'].name
                 else:
                     result_path = str(result['path'])
-            
+
             # Encode image for response
             with open(filepath, 'rb') as f:
                 image_base64 = base64.b64encode(f.read()).decode('utf-8')
-            
+
             return jsonify({
                 'success': True,
                 'text': text,
@@ -494,14 +489,14 @@ def register_routes(app):
                     'identification_mode': identification_mode
                 }
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in identify_image: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/identify/file', methods=['POST'])
     def identify_file():
         """
@@ -523,7 +518,7 @@ def register_routes(app):
                     'error': 'No file provided',
                     'error_code': 'NO_FILE'
                 }), 400
-            
+
             file = request.files['text_file']
             if file.filename == '':
                 return jsonify({
@@ -531,23 +526,23 @@ def register_routes(app):
                     'error': 'Empty filename',
                     'error_code': 'EMPTY_FILENAME'
                 }), 400
-            
+
             # Check extension first (fast validation)
             if not allowed_file(file.filename, ALLOWED_DOCUMENT_EXTENSIONS):
                 return jsonify({
                     'success': False,
-                    'error': f'Unsupported file type. Allowed: PDF, DOCX, TXT',
+                    'error': 'Unsupported file type. Allowed: PDF, DOCX, TXT',
                     'error_code': 'INVALID_TYPE'
                 }), 400
-            
+
             # Save uploaded file
             filename = secure_filename(file.filename)
             filepath = settings.TEXTS_DIR / filename
             file.save(filepath)
-            
+
             # Use file processor for text extraction
             processor = get_processor()
-            
+
             try:
                 extraction_result = processor.process_file(
                     filepath,
@@ -560,21 +555,21 @@ def register_routes(app):
                     'error_code': e.error_code,
                     'details': e.details
                 }), 400
-            
+
             text = extraction_result.text
-            
+
             # Get parameters
             output_scheme = request.form.get('output_scheme', None)
             text_mode = request.form.get('text_mode', 'line')
             enable_sandhi = request.form.get('enable_sandhi', 'false').lower() == 'true'
             identification_mode = request.form.get('identification_mode', 'auto')
-            
+
             logger.info(f"Analyzing file: {filename} ({extraction_result.file_type.value}, {extraction_result.page_count} pages)")
-            
+
             # NOTE: AI validation is SKIPPED for file uploads (batch mode)
             # This is intentional to save API quota and reduce latency for large files
             # The rule-based validation in chanda.py still applies
-            
+
             # Perform meter identification
             verse_mode = (text_mode == 'verse')
             result = app.chanda.identify_from_text(
@@ -586,11 +581,11 @@ def register_routes(app):
                 use_sandhi=enable_sandhi,
                 mode=identification_mode
             )
-            
+
             # Generate summary
             summary = app.chanda.summarize_results(result['result'])
             summary_formatted = app.chanda.format_summary(summary)
-            
+
             # Handle result path
             result_path = None
             if result.get('path'):
@@ -598,7 +593,7 @@ def register_routes(app):
                     result_path = result['path'].name
                 else:
                     result_path = str(result['path'])
-            
+
             return jsonify({
                 'success': True,
                 'text': text,
@@ -620,7 +615,7 @@ def register_routes(app):
                     'identification_mode': identification_mode
                 }
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in identify_file: {e}")
             return jsonify({
@@ -628,7 +623,7 @@ def register_routes(app):
                 'error': str(e),
                 'error_code': 'INTERNAL_ERROR'
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/file/extract', methods=['POST'])
     def extract_file():
         """
@@ -649,7 +644,7 @@ def register_routes(app):
                     'error': 'No file provided',
                     'error_code': 'NO_FILE'
                 }), 400
-            
+
             file = request.files['file']
             if file.filename == '':
                 return jsonify({
@@ -657,25 +652,25 @@ def register_routes(app):
                     'error': 'Empty filename',
                     'error_code': 'EMPTY_FILENAME'
                 }), 400
-            
+
             # Check extension first (fast validation)
             if not allowed_file(file.filename, ALLOWED_DOCUMENT_EXTENSIONS):
                 return jsonify({
                     'success': False,
-                    'error': f'Unsupported file type. Allowed: PDF, DOCX, TXT',
+                    'error': 'Unsupported file type. Allowed: PDF, DOCX, TXT',
                     'error_code': 'INVALID_TYPE'
                 }), 400
-            
+
             # Save uploaded file
             filename = secure_filename(file.filename)
             filepath = settings.TEXTS_DIR / filename
             file.save(filepath)
-            
+
             logger.info(f"Extracting text from file: {filename}")
-            
+
             # Use file processor for text extraction
             processor = get_processor()
-            
+
             try:
                 extraction_result = processor.process_file(
                     filepath,
@@ -688,9 +683,9 @@ def register_routes(app):
                     'error_code': e.error_code,
                     'details': e.details
                 }), 400
-            
+
             logger.info(f"Extracted {len(extraction_result.text)} characters from {filename}")
-            
+
             response_data = {
                 'success': True,
                 'text': extraction_result.text,
@@ -701,13 +696,13 @@ def register_routes(app):
                     'encoding': extraction_result.encoding
                 }
             }
-            
+
             # Include warnings if any (e.g., CID encoding issues)
             if extraction_result.warnings:
                 response_data['warnings'] = extraction_result.warnings
-            
+
             return jsonify(response_data)
-            
+
         except Exception as e:
             logger.exception(f"Error in extract_file: {e}")
             return jsonify({
@@ -715,7 +710,7 @@ def register_routes(app):
                 'error': str(e),
                 'error_code': 'INTERNAL_ERROR'
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/download/<filename>', methods=['GET'])
     def download_result(filename):
         """
@@ -735,11 +730,11 @@ def register_routes(app):
             return jsonify({
                 'error': 'File not found'
             }), 404
-    
+
     # ============================================================
     # DATASETS API - Browse CSV datasets with filtering
     # ============================================================
-    
+
     def load_dataset_catalog():
         """Load the dataset catalog from JSON file."""
         catalog_path = SOURCE_DIR / 'dataset_sources.json'
@@ -747,7 +742,7 @@ def register_routes(app):
             with open(catalog_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         return {"datasets": {}, "sourceDescriptions": {}}
-    
+
     def read_csv_data(filename, limit=None, offset=0, chandas_filter=None, source_filter=None):
         """
         Read CSV data with optional filtering and pagination.
@@ -765,52 +760,52 @@ def register_routes(app):
         filepath = SOURCE_DIR / filename
         if not filepath.exists():
             return [], 0, []
-        
+
         rows = []
         columns = []
-        
+
         with open(filepath, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             columns = reader.fieldnames or []
-            
+
             all_rows = list(reader)
-            
+
             # Apply chandas filter if specified
             if chandas_filter:
                 catalog = load_dataset_catalog()
                 dataset_info = None
-                for ds_id, ds_data in catalog.get('datasets', {}).items():
+                for _ds_id, ds_data in catalog.get('datasets', {}).items():
                     if ds_data.get('filename') == filename:
                         dataset_info = ds_data
                         break
-                
+
                 if dataset_info and dataset_info.get('chandasColumn'):
                     chandas_col = dataset_info['chandasColumn']
                     chandas_filter_lower = chandas_filter.lower()
                     all_rows = [
                         row for row in all_rows
-                        if chandas_col in row and 
+                        if chandas_col in row and
                         chandas_filter_lower in row[chandas_col].lower()
                     ]
-            
+
             total_count = len(all_rows)
-            
+
             # Apply pagination
             if offset:
                 all_rows = all_rows[offset:]
             if limit:
                 all_rows = all_rows[:limit]
-            
+
             rows = all_rows
-        
+
         return rows, total_count, columns
-    
+
     def get_unique_chandas(filename, chandas_column):
         """Get unique chandas values from a dataset."""
         filepath = SOURCE_DIR / filename
         if not filepath.exists():
             return []
-        
+
         chandas_set = set()
         with open(filepath, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
@@ -822,9 +817,9 @@ def register_routes(app):
                         v = v.strip()
                         if v:
                             chandas_set.add(v)
-        
+
         return sorted(list(chandas_set))
-    
+
     @app.route(f'{settings.API_PREFIX}/datasets', methods=['GET'])
     def list_datasets():
         """
@@ -836,7 +831,7 @@ def register_routes(app):
         try:
             catalog = load_dataset_catalog()
             datasets = []
-            
+
             for ds_id, ds_data in catalog.get('datasets', {}).items():
                 # Handle merged datasets (like iitk_meters)
                 if 'files' in ds_data:
@@ -864,7 +859,7 @@ def register_routes(app):
                     if filepath.exists():
                         with open(filepath, 'r', encoding='utf-8') as f:
                             actual_row_count = sum(1 for _ in f) - 1  # Subtract header
-                    
+
                     # Get unique chandas for filtering
                     chandas_column = ds_data.get('chandasColumn')
                     unique_chandas = []
@@ -873,7 +868,7 @@ def register_routes(app):
                             ds_data.get('filename', ''),
                             chandas_column
                         )
-                
+
                 datasets.append({
                     'id': ds_id,
                     'name': ds_data.get('name', ds_id),
@@ -890,24 +885,24 @@ def register_routes(app):
                     'isMerged': 'files' in ds_data,
                     'uniqueChandas': unique_chandas[:100]  # Limit to first 100 for UI
                 })
-            
+
             # Get all unique sources for filtering
             sources = list(set(ds.get('source') for ds in datasets if ds.get('source')))
-            
+
             return jsonify({
                 'success': True,
                 'datasets': datasets,
                 'sources': sorted(sources),
                 'sourceDescriptions': catalog.get('sourceDescriptions', {})
             })
-            
+
         except Exception as e:
             logger.exception(f"Error listing datasets: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/datasets/<dataset_id>', methods=['GET'])
     def get_dataset(dataset_id):
         """
@@ -923,34 +918,34 @@ def register_routes(app):
         """
         try:
             catalog = load_dataset_catalog()
-            
+
             if dataset_id not in catalog.get('datasets', {}):
                 return jsonify({
                     'success': False,
                     'error': f'Dataset not found: {dataset_id}'
                 }), 404
-            
+
             ds_data = catalog['datasets'][dataset_id]
-            
+
             # Get query parameters
             limit = min(int(request.args.get('limit', 50)), 500)
             offset = int(request.args.get('offset', 0))
             chandas_filter = request.args.get('chandas', '').strip()
-            
+
             # Handle merged datasets (like iitk_meters)
             if 'files' in ds_data:
                 all_rows = []
                 all_columns = set()
-                
+
                 for file_info in ds_data['files']:
                     filepath = SOURCE_DIR / file_info.get('filename', '')
                     if not filepath.exists():
                         continue
-                    
+
                     chandas_col = file_info.get('chandasColumn')
                     pattern_col = file_info.get('patternColumn')
                     category = file_info.get('category', '')
-                    
+
                     with open(filepath, 'r', encoding='utf-8') as f:
                         reader = csv.DictReader(f)
                         all_columns.update(reader.fieldnames or [])
@@ -958,7 +953,7 @@ def register_routes(app):
                             # Add category for merged datasets
                             row['_category'] = category
                             row['_source_file'] = file_info.get('filename', '')
-                            
+
                             # Apply chandas filter if specified
                             if chandas_filter:
                                 if chandas_col and chandas_col in row:
@@ -966,18 +961,18 @@ def register_routes(app):
                                         continue
                                 else:
                                     continue
-                            
+
                             all_rows.append(row)
-                
+
                 total_count = len(all_rows)
-                
+
                 # Apply pagination
                 paginated_rows = all_rows[offset:offset + limit]
-                
+
                 # Map to standardized format
                 chandas_col = ds_data.get('chandasColumn')
                 pattern_col = ds_data.get('patternColumn')
-                
+
                 formatted_rows = []
                 for row in paginated_rows:
                     formatted_row = {
@@ -989,12 +984,12 @@ def register_routes(app):
                         'raw': {k: v for k, v in row.items() if not k.startswith('_')}
                     }
                     formatted_rows.append(formatted_row)
-                
+
                 columns = sorted(list(all_columns))
             else:
                 # Single file dataset
                 filename = ds_data.get('filename', '')
-                
+
                 # Read data with filters
                 rows, total_count, columns = read_csv_data(
                     filename,
@@ -1002,12 +997,12 @@ def register_routes(app):
                     offset=offset,
                     chandas_filter=chandas_filter if chandas_filter else None
                 )
-                
+
                 # Map to standardized format
                 sloka_col = ds_data.get('slokaColumn')
                 chandas_col = ds_data.get('chandasColumn')
                 pattern_col = ds_data.get('patternColumn')
-                
+
                 formatted_rows = []
                 for row in rows:
                     formatted_row = {
@@ -1019,7 +1014,7 @@ def register_routes(app):
                         'raw': row  # Include all original columns
                     }
                     formatted_rows.append(formatted_row)
-            
+
             return jsonify({
                 'success': True,
                 'datasetId': dataset_id,
@@ -1039,7 +1034,7 @@ def register_routes(app):
                 'offset': offset,
                 'hasMore': offset + len(formatted_rows) < total_count
             })
-            
+
         except ValueError as e:
             return jsonify({
                 'success': False,
@@ -1051,18 +1046,18 @@ def register_routes(app):
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     # ============================================================
     # SLOKA SEARCH API - Fast fuzzy search for verse validation
     # ============================================================
-    
+
     # Cache for sloka search index (loaded on first request)
     _sloka_search_cache = {
         'initialized': False,
         'slokas': [],  # List of (sloka_text, dataset_id, chandas, row_data)
         'normalized_map': {}  # normalized_text -> original indices
     }
-    
+
     def build_sloka_search_index():
         """
         Build search index from all datasets containing slokas.
@@ -1070,28 +1065,28 @@ def register_routes(app):
         """
         if _sloka_search_cache['initialized']:
             return
-        
+
         logger.info("Building sloka search index...")
         catalog = load_dataset_catalog()
         slokas = []
-        
+
         for ds_id, ds_data in catalog.get('datasets', {}).items():
             sloka_col = ds_data.get('slokaColumn')
             chandas_col = ds_data.get('chandasColumn')
-            
+
             if not sloka_col:
                 continue  # Skip datasets without slokas
-            
+
             # Handle merged datasets
             if 'files' in ds_data:
                 continue  # Skip merged datasets (they contain meter definitions, not verses)
-            
+
             filename = ds_data.get('filename', '')
             filepath = SOURCE_DIR / filename
-            
+
             if not filepath.exists():
                 continue
-            
+
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     reader = csv.DictReader(f)
@@ -1111,19 +1106,19 @@ def register_routes(app):
                             })
             except Exception as e:
                 logger.warning(f"Error loading dataset {ds_id} for search index: {e}")
-        
+
         _sloka_search_cache['slokas'] = slokas
         _sloka_search_cache['initialized'] = True
         logger.info(f"Sloka search index built with {len(slokas)} entries")
-    
+
     # ============================================================
     # VERSE CACHE LOOKUP - Skip AI for known verses
     # ============================================================
-    
+
     # Configurable thresholds for cache-based AI skipping
     CACHE_EXACT_MATCH_THRESHOLD = 0.98   # Skip AI + use cached meter directly
     CACHE_CLOSE_MATCH_THRESHOLD = 0.90   # Skip AI, but still run rule engine
-    
+
     def find_cached_verse_match(text, threshold=CACHE_CLOSE_MATCH_THRESHOLD):
         """
         Search the verse cache for an exact or close match.
@@ -1143,31 +1138,31 @@ def register_routes(app):
         """
         # Build index if not already done
         build_sloka_search_index()
-        
+
         if not _sloka_search_cache['slokas']:
             return {'found': False, 'similarity': 0.0, 'skip_ai': False, 'use_cached_meter': False}
-        
+
         # Normalize input for comparison
         normalized_input = normalize_sanskrit_text(text)
-        
+
         if not normalized_input:
             return {'found': False, 'similarity': 0.0, 'skip_ai': False, 'use_cached_meter': False}
-        
+
         best_match = None
         best_similarity = 0.0
-        
+
         # Search through cached verses
         for sloka_data in _sloka_search_cache['slokas']:
             similarity = calculate_similarity(normalized_input, sloka_data['normalized'])
-            
+
             if similarity > best_similarity:
                 best_similarity = similarity
                 best_match = sloka_data
-                
+
                 # Early exit for exact match (optimization)
                 if similarity >= CACHE_EXACT_MATCH_THRESHOLD:
                     break
-        
+
         if best_match and best_similarity >= threshold:
             return {
                 'found': True,
@@ -1183,14 +1178,14 @@ def register_routes(app):
                 'skip_ai': True,  # Skip AI validation for close matches
                 'use_cached_meter': best_similarity >= CACHE_EXACT_MATCH_THRESHOLD
             }
-        
+
         return {
             'found': False,
             'similarity': best_similarity,
             'skip_ai': False,
             'use_cached_meter': False
         }
-    
+
     @app.route(f'{settings.API_PREFIX}/sloka/search', methods=['POST'])
     def search_sloka():
         """
@@ -1209,41 +1204,41 @@ def register_routes(app):
         try:
             # Build index if not already done
             build_sloka_search_index()
-            
+
             data = request.get_json()
-            
+
             if not data or 'text' not in data:
                 return jsonify({
                     'success': False,
                     'error': 'Missing required field: text'
                 }), 400
-            
+
             query_text = data['text'].strip()
             if not query_text:
                 return jsonify({
                     'success': False,
                     'error': 'Search text cannot be empty'
                 }), 400
-            
+
             threshold = float(data.get('threshold', 0.7))
             limit = min(int(data.get('limit', 10)), 50)  # Cap at 50 results
-            
+
             # Normalize query for comparison
             query_normalized = normalize_sanskrit_text(query_text)
-            
+
             if not query_normalized:
                 return jsonify({
                     'success': False,
                     'error': 'Query text is empty after normalization'
                 }), 400
-            
+
             # Search through all slokas
             matches = []
-            
+
             for sloka_data in _sloka_search_cache['slokas']:
                 # Calculate similarity on normalized text
                 similarity = calculate_similarity(query_normalized, sloka_data['normalized'])
-                
+
                 if similarity >= threshold:
                     matches.append({
                         'original_text': sloka_data['text'],
@@ -1254,28 +1249,28 @@ def register_routes(app):
                         'similarity': round(similarity, 4),
                         'is_exact_match': similarity >= 0.99
                     })
-            
+
             # Sort by similarity descending
             matches.sort(key=lambda x: x['similarity'], reverse=True)
-            
+
             # Limit results
             matches = matches[:limit]
-            
+
             # Determine if input appears to have errors
             has_exact_match = any(m['is_exact_match'] for m in matches)
             best_match = matches[0] if matches else None
-            
+
             # Generate diff hints for the best match
             diff_hints = []
             if best_match and not best_match['is_exact_match']:
                 # Simple character-level diff hints
                 original = best_match['original_text']
                 query = query_text
-                
+
                 # Find potential differences
                 if len(query) != len(original):
                     diff_hints.append(f"Length difference: your input has {len(query)} chars, original has {len(original)} chars")
-            
+
             return jsonify({
                 'success': True,
                 'query': query_text,
@@ -1287,7 +1282,7 @@ def register_routes(app):
                 'diff_hints': diff_hints,
                 'total_slokas_indexed': len(_sloka_search_cache['slokas'])
             })
-            
+
         except ValueError as e:
             return jsonify({
                 'success': False,
@@ -1299,7 +1294,7 @@ def register_routes(app):
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/sloka/validate', methods=['POST'])
     def validate_sloka():
         """
@@ -1318,38 +1313,38 @@ def register_routes(app):
         """
         try:
             import difflib
-            
+
             # Build index if not already done
             build_sloka_search_index()
-            
+
             data = request.get_json()
-            
+
             if not data or 'text' not in data:
                 return jsonify({
                     'success': False,
                     'error': 'Missing required field: text'
                 }), 400
-            
+
             query_text = data['text'].strip()
             if not query_text:
                 return jsonify({
                     'success': False,
                     'error': 'Text cannot be empty'
                 }), 400
-            
+
             # Normalize query for finding best match
             query_normalized = normalize_sanskrit_text(query_text)
-            
+
             # Find best match using similarity
             best_match = None
             best_similarity = 0
-            
+
             for sloka_data in _sloka_search_cache['slokas']:
                 similarity = calculate_similarity(query_normalized, sloka_data['normalized'])
                 if similarity > best_similarity:
                     best_similarity = similarity
                     best_match = sloka_data
-            
+
             if not best_match or best_similarity < 0.5:
                 return jsonify({
                     'success': True,
@@ -1357,14 +1352,14 @@ def register_routes(app):
                     'message': 'No similar sloka found in the database. This verse may not be in our collection.',
                     'query': query_text
                 })
-            
+
             original = best_match['text']
-            
+
             # Normalize both texts for comparison (remove line breaks, extra spaces)
             # but keep track of original for display
             query_clean = ' '.join(query_text.split())
             original_clean = ' '.join(original.split())
-            
+
             # If user's input is shorter, they might have entered partial sloka
             # In that case, only compare up to user's input length in original
             # Find the best matching substring in original
@@ -1372,7 +1367,7 @@ def register_routes(app):
                 # User entered a partial sloka - find the matching portion
                 # Use get_close_matches on chunks to find best alignment
                 matcher = difflib.SequenceMatcher(None, query_clean, original_clean)
-                
+
                 # Find longest matching block
                 blocks = matcher.get_matching_blocks()
                 if blocks:
@@ -1383,16 +1378,16 @@ def register_routes(app):
                     original_portion = original_clean
             else:
                 original_portion = original_clean
-            
+
             # Use SequenceMatcher to find the real differences
             matcher = difflib.SequenceMatcher(None, query_clean, original_portion)
-            
+
             # Get the opcodes which tell us what operations transform query into original
             opcodes = matcher.get_opcodes()
-            
+
             differences = []
             error_positions = set()  # Track positions in user's text that are wrong
-            
+
             for tag, i1, i2, j1, j2 in opcodes:
                 if tag == 'equal':
                     # These characters match, no error
@@ -1438,12 +1433,11 @@ def register_routes(app):
                             'correct_text': missing_segment,
                             'description': f"Missing: '{missing_segment}'"
                         })
-            
+
             # Build highlighted segments for the frontend
             # Each segment is either normal or an error
             highlighted_segments = []
-            sorted_positions = sorted(error_positions)
-            
+
             i = 0
             while i < len(query_clean):
                 if i in error_positions:
@@ -1464,12 +1458,12 @@ def register_routes(app):
                         'text': query_clean[start:i],
                         'isError': False
                     })
-            
+
             is_valid = len(differences) == 0
-            
+
             # Recalculate similarity on cleaned texts for more accurate percentage
             final_similarity = difflib.SequenceMatcher(None, query_clean, original_clean).ratio()
-            
+
             return jsonify({
                 'success': True,
                 'found': True,
@@ -1486,14 +1480,14 @@ def register_routes(app):
                 'difference_count': len(differences),
                 'message': 'Perfect match!' if is_valid else f'Found {len(differences)} difference(s).'
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in sloka validation: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/tts/generate', methods=['POST'])
     def generate_tts():
         """
@@ -1513,45 +1507,45 @@ def register_routes(app):
                 'success': False,
                 'error': 'Text-to-speech functionality is not available. Please install edge-tts, gTTS, pyttsx3, or google-cloud-texttospeech.'
             }), 503
-        
+
         try:
             data = request.get_json()
-            
+
             if not data or 'text' not in data:
                 return jsonify({
                     'success': False,
                     'error': 'Missing required field: text'
                 }), 400
-            
+
             text = data['text'].strip()
             if not text:
                 return jsonify({
                     'success': False,
                     'error': 'Text cannot be empty'
                 }), 400
-            
+
             logger.info(f"TTS request received - text length: {len(text)} chars")
-            
+
             # Voice selection
             voice_type = data.get('voice', 'male')
             logger.info(f"TTS voice requested: {voice_type}")
-            
+
             # Generate unique filename
             filename = f"tts_{uuid.uuid4().hex}.mp3"
             output_path = settings.AUDIO_DIR / filename
-            
+
             # Ensure audio directory exists
             settings.AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-            
+
             # Try Google Cloud TTS first (best quality with proper voice selection)
             generation_success = False
             used_engine = None
-            
+
             if GOOGLE_TTS_AVAILABLE:
                 try:
                     logger.info("Attempting TTS generation with Google Cloud TTS...")
                     client = texttospeech.TextToSpeechClient()
-                    
+
                     # Configure voice selection - Google Cloud TTS with Chirp3-HD voices for Sanskrit
                     voice_configs = {
                         "male": {
@@ -1560,40 +1554,40 @@ def register_routes(app):
                             "ssml_gender": texttospeech.SsmlVoiceGender.MALE
                         },
                         "female": {
-                            "language_code": "hi-IN", 
+                            "language_code": "hi-IN",
                             "name": "hi-IN-Wavenet-A",  # Female voice (Google Cloud TTS)
                             "ssml_gender": texttospeech.SsmlVoiceGender.FEMALE
                         }
                     }
-                    
+
                     voice_config = voice_configs.get(voice_type, voice_configs['male'])
-                    
+
                     # Set up synthesis input
                     synthesis_input = texttospeech.SynthesisInput(text=text)
-                    
+
                     # Select voice parameters
                     voice = texttospeech.VoiceSelectionParams(
                         language_code=voice_config["language_code"],
                         name=voice_config["name"],
                         ssml_gender=voice_config["ssml_gender"]
                     )
-                    
+
                     # Select audio config
                     audio_config = texttospeech.AudioConfig(
                         audio_encoding=texttospeech.AudioEncoding.MP3
                     )
-                    
+
                     # Perform TTS request
                     response = client.synthesize_speech(
                         input=synthesis_input,
                         voice=voice,
                         audio_config=audio_config
                     )
-                    
+
                     # Write audio to file
                     with open(str(output_path), 'wb') as out:
                         out.write(response.audio_content)
-                    
+
                     if output_path.exists() and output_path.stat().st_size > 0:
                         generation_success = True
                         used_engine = f"Google Cloud TTS ({voice_config['name']})"
@@ -1606,7 +1600,7 @@ def register_routes(app):
                     logger.warning(f"Google Cloud TTS failed: {e}. Falling back to edge-tts...")
                     if output_path.exists():
                         output_path.unlink()
-            
+
             # Try edge-tts second, fallback to gTTS
             if not generation_success and EDGE_TTS_AVAILABLE:
                 try:
@@ -1618,19 +1612,19 @@ def register_routes(app):
                     }
                     voice = voices.get(voice_type, voices['male'])
                     logger.info(f"TTS using edge-tts voice: {voice}")
-                    
+
                     async def generate_speech():
                         communicate = edge_tts.Communicate(text, voice)
                         await communicate.save(str(output_path))
-                    
+
                     # Run async function
                     asyncio.run(generate_speech())
-                    
+
                     # Check if file was created successfully
                     if output_path.exists() and output_path.stat().st_size > 0:
                         generation_success = True
                         used_engine = "edge-tts"
-                        logger.info(f"TTS generated successfully with edge-tts")
+                        logger.info("TTS generated successfully with edge-tts")
                     else:
                         logger.warning("edge-tts created empty file, falling back to gTTS")
                         if output_path.exists():
@@ -1639,7 +1633,7 @@ def register_routes(app):
                     logger.warning(f"edge-tts failed: {e}. Falling back to gTTS...")
                     if output_path.exists():
                         output_path.unlink()
-            
+
             # Fallback to gTTS if edge-tts failed or not available
             if not generation_success and GTTS_AVAILABLE:
                 try:
@@ -1650,25 +1644,25 @@ def register_routes(app):
                     # We'll use slow=False for male (normal speed) and could adjust other params
                     tts = gTTS(text=text, lang='hi', slow=False)
                     tts.save(str(output_path))
-                    
+
                     if output_path.exists() and output_path.stat().st_size > 0:
                         generation_success = True
-                        used_engine = f"gTTS (Note: Voice selection not supported in fallback mode)"
-                        logger.info(f"TTS generated successfully with gTTS")
+                        used_engine = "gTTS (Note: Voice selection not supported in fallback mode)"
+                        logger.info("TTS generated successfully with gTTS")
                         logger.warning("gTTS doesn't support voice selection - using default Hindi voice")
                 except Exception as e:
                     logger.error(f"gTTS also failed: {e}")
                     if output_path.exists():
                         output_path.unlink()
-            
+
             # Verify file was created and has content
             if not generation_success or not output_path.exists():
-                logger.error(f"Audio file was not created")
+                logger.error("Audio file was not created")
                 return jsonify({
                     'success': False,
                     'error': 'Failed to generate audio file with all available engines'
                 }), 500
-            
+
             file_size = output_path.stat().st_size
             if file_size == 0:
                 logger.error(f"Audio file is empty: {output_path}")
@@ -1677,9 +1671,9 @@ def register_routes(app):
                     'success': False,
                     'error': 'Generated audio file is empty'
                 }), 500
-            
+
             logger.info(f"TTS audio generated successfully using {used_engine}: {filename} ({file_size} bytes)")
-            
+
             return jsonify({
                 'success': True,
                 'audio_url': f'{settings.API_PREFIX}/tts/audio/{filename}',
@@ -1687,14 +1681,14 @@ def register_routes(app):
                 'engine': used_engine,
                 'voice': voice_type
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in generate_tts: {e}")
             return jsonify({
                 'success': False,
                 'error': str(e)
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/tts/audio/<filename>', methods=['GET'])
     def serve_tts_audio(filename):
         """
@@ -1708,16 +1702,16 @@ def register_routes(app):
         """
         try:
             audio_path = settings.AUDIO_DIR / filename
-            
+
             if not audio_path.exists():
                 return jsonify({
                     'success': False,
                     'error': 'Audio file not found'
                 }), 404
-            
+
             # Check if download is requested
             download = request.args.get('download', 'false').lower() == 'true'
-            
+
             response = send_from_directory(
                 settings.AUDIO_DIR,
                 filename,
@@ -1725,14 +1719,14 @@ def register_routes(app):
                 as_attachment=download,
                 download_name='sanskrit_recitation.mp3' if download else None
             )
-            
+
             # Add explicit headers for better browser compatibility
             response.headers['Accept-Ranges'] = 'bytes'
             response.headers['Cache-Control'] = 'no-cache'
             response.headers['Access-Control-Allow-Origin'] = '*'
-            
+
             return response
-            
+
         except Exception as e:
             logger.exception(f"Error serving TTS audio: {e}")
             return jsonify({
@@ -1750,7 +1744,7 @@ def register_routes(app):
         """
         try:
             examples_dict = app.chanda.read_examples()
-            
+
             # Convert dictionary to array format for frontend
             examples_array = []
             for meter_name, content in examples_dict.items():
@@ -1773,7 +1767,7 @@ def register_routes(app):
                                 'lines': example_text.split('\n'),
                                 'description': content.get('description', '')
                             })
-            
+
             return jsonify({
                 'success': True,
                 'examples': examples_array
@@ -1785,7 +1779,7 @@ def register_routes(app):
                 'error': str(e),
                 'examples': []
             }), 500
-    
+
     @app.route(f'{settings.API_PREFIX}/schemes', methods=['GET'])
     def get_schemes():
         """
@@ -1811,12 +1805,12 @@ def register_routes(app):
             {"value": "tamil", "label": "Tamil"},
             {"value": "telugu", "label": "Telugu"}
         ]
-        
+
         return jsonify({
             'success': True,
             'schemes': schemes
         })
-    
+
     @app.route(f'{settings.API_PREFIX}/ocr/extract', methods=['POST'])
     def ocr_extract():
         """
@@ -1836,30 +1830,30 @@ def register_routes(app):
                     'success': False,
                     'error': 'No image file provided'
                 }), 400
-            
+
             file = request.files['image_file']
             if file.filename == '':
                 return jsonify({
                     'success': False,
                     'error': 'Empty filename'
                 }), 400
-            
+
             if not allowed_file(file.filename, settings.ALLOWED_IMAGE_EXTENSIONS):
                 return jsonify({
                     'success': False,
                     'error': f'Invalid file type. Allowed: {settings.ALLOWED_IMAGE_EXTENSIONS}'
                 }), 400
-            
+
             filename = secure_filename(file.filename)
             filepath = settings.PHOTOS_DIR / filename
             file.save(filepath)
-            
+
             logger.info(f"OCR extraction requested for: {filename}")
-            
+
             # Try Cloud Vision first, fallback to Tesseract
             text = None
             engine_used = None
-            
+
             if app.cloud_vision_ocr:
                 try:
                     text = app.cloud_vision_ocr.extract_text(filepath)
@@ -1867,7 +1861,7 @@ def register_routes(app):
                     logger.info(f"Cloud Vision OCR extracted {len(text)} characters")
                 except Exception as e:
                     logger.warning(f"Cloud Vision OCR failed, falling back to Tesseract: {e}")
-            
+
             if text is None and app.tesseract_ocr:
                 try:
                     text = app.tesseract_ocr.extract_text(filepath)
@@ -1879,20 +1873,20 @@ def register_routes(app):
                         'success': False,
                         'error': f'OCR extraction failed: {e}'
                     }), 500
-            
+
             if text is None:
                 return jsonify({
                     'success': False,
                     'error': 'No OCR engine available'
                 }), 503
-            
+
             logger.info(f"OCR extraction complete via {engine_used}: {len(text)} chars")
-            
+
             return jsonify({
                 'success': True,
                 'text': text
             })
-            
+
         except Exception as e:
             logger.exception(f"Error in ocr_extract: {e}")
             return jsonify({
@@ -1914,12 +1908,12 @@ def register_routes(app):
         Returns:
             JSON with transcribed text
         """
-        import requests as http_requests
         import subprocess
-        import tempfile
-        
+
+        import requests as http_requests
+
         ALLOWED_AUDIO_EXTENSIONS = {'wav', 'mp3', 'webm', 'ogg', 'm4a', 'flac'}
-        
+
         try:
             # Handle multipart form data
             if 'audio_file' not in request.files:
@@ -1927,36 +1921,36 @@ def register_routes(app):
                     'success': False,
                     'error': 'No audio file provided'
                 }), 400
-            
+
             file = request.files['audio_file']
             if file.filename == '':
                 return jsonify({
                     'success': False,
                     'error': 'Empty filename'
                 }), 400
-            
+
             if not allowed_file(file.filename, ALLOWED_AUDIO_EXTENSIONS):
                 return jsonify({
                     'success': False,
                     'error': f'Invalid file type. Allowed: {ALLOWED_AUDIO_EXTENSIONS}'
                 }), 400
-            
+
             filename = secure_filename(file.filename)
             filepath = settings.AUDIO_DIR / filename
             file.save(filepath)
-            
+
             logger.info(f"Audio transcription requested for: {filename}")
-            
+
             # Check if we need to convert WebM to WAV (browser recordings are WebM/Opus)
             file_ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
             audio_filepath = filepath
             converted_filepath = None
-            
+
             if file_ext in ('webm', 'ogg', 'm4a'):
                 # Convert to WAV using ffmpeg
                 converted_filepath = settings.AUDIO_DIR / f"{filename.rsplit('.', 1)[0]}.wav"
                 logger.info(f"Converting {file_ext.upper()} to WAV: {converted_filepath}")
-                
+
                 try:
                     # Use ffmpeg to convert to 16kHz mono WAV (optimal for ASR)
                     result = subprocess.run([
@@ -1966,16 +1960,16 @@ def register_routes(app):
                         '-f', 'wav',
                         str(converted_filepath)
                     ], capture_output=True, text=True, timeout=60)
-                    
+
                     if result.returncode != 0:
                         logger.error(f"ffmpeg conversion failed: {result.stderr}")
                         return jsonify({
                             'success': False,
                             'error': 'Audio format conversion failed. Please upload a WAV or MP3 file.'
                         }), 400
-                    
+
                     audio_filepath = converted_filepath
-                    
+
                     # Get audio duration using ffprobe
                     try:
                         probe_result = subprocess.run([
@@ -1984,7 +1978,7 @@ def register_routes(app):
                         ], capture_output=True, text=True, timeout=10)
                         duration = float(probe_result.stdout.strip()) if probe_result.stdout.strip() else 0
                         logger.info(f"Conversion successful: {converted_filepath} (duration: {duration:.2f}s)")
-                        
+
                         if duration < 1.0:
                             logger.warning(f"Audio too short: {duration:.2f}s")
                             return jsonify({
@@ -1994,7 +1988,7 @@ def register_routes(app):
                     except Exception as e:
                         logger.warning(f"Could not get audio duration: {e}")
                         logger.info(f"Conversion successful: {converted_filepath}")
-                    
+
                 except FileNotFoundError:
                     logger.error("ffmpeg not found. Cannot convert WebM to WAV.")
                     return jsonify({
@@ -2007,7 +2001,7 @@ def register_routes(app):
                         'success': False,
                         'error': 'Audio conversion timed out. Please try a shorter recording.'
                     }), 400
-            
+
             # Call IndicConformer ASR API
             asr_url = settings.INDIC_ASR_URL
             if not asr_url:
@@ -2017,12 +2011,12 @@ def register_routes(app):
                     'error': 'Speech recognition is not configured on this server.'
                 }), 503
             send_filename = audio_filepath.name
-            
+
             try:
                 with open(audio_filepath, 'rb') as audio_file:
                     files = {'file': (send_filename, audio_file)}
                     data = {'decoder': 'rnnt'}
-                    
+
                     logger.info(f"Calling IndicConformer ASR at: {asr_url} with file: {send_filename}")
                     response = http_requests.post(
                         asr_url,
@@ -2030,43 +2024,43 @@ def register_routes(app):
                         data=data,
                         timeout=120  # 2 minute timeout for large audio files
                     )
-                    
+
                     if response.status_code != 200:
                         logger.error(f"ASR API returned status {response.status_code}: {response.text}")
                         return jsonify({
                             'success': False,
                             'error': f'ASR service error: {response.status_code}'
                         }), 502
-                    
+
                     result = response.json()
                     logger.info(f"ASR API response: {result}")
-                    
+
                     # Extract transcription from response
                     transcription = result.get('transcription', [])
                     logger.info(f"Transcription field: {transcription}, type: {type(transcription)}")
-                    
+
                     if isinstance(transcription, list) and len(transcription) > 0:
                         text = transcription[0].strip()
                     elif isinstance(transcription, str):
                         text = transcription.strip()
                     else:
                         text = ''
-                    
+
                     if not text:
                         logger.warning("ASR returned empty transcription - audio may be silent or too short")
                         return jsonify({
                             'success': False,
                             'error': 'No speech detected in the audio. Please ensure you are speaking clearly into the microphone and try recording again.'
                         }), 400
-                    
+
                     logger.info(f"ASR transcription complete: {len(text)} chars")
-                    
+
                     return jsonify({
                         'success': True,
                         'text': text,
                         'decoder_used': result.get('decoder_used', 'rnnt')
                     })
-                    
+
             except http_requests.exceptions.Timeout:
                 logger.error("ASR API request timed out")
                 return jsonify({
@@ -2090,7 +2084,7 @@ def register_routes(app):
                         converted_filepath.unlink()
                     except Exception:
                         pass
-            
+
         except Exception as e:
             logger.exception(f"Error in audio_transcribe: {e}")
             return jsonify({

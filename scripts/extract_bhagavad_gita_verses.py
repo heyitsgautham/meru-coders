@@ -4,10 +4,10 @@ Extract all verses from Bhagavad Gita JSON files and save to CSV.
 This script reads all 18 chapters and extracts just the verse text.
 """
 
-import json
 import csv
-import os
+import json
 from pathlib import Path
+
 
 def extract_verse_text(text):
     """
@@ -90,7 +90,7 @@ def main():
     
     print(f"\n✅ Successfully extracted {len(all_verses)} verses!")
     print(f"📄 Output file: {output_file}")
-    print(f"\nBreakdown by chapter:")
+    print("\nBreakdown by chapter:")
     
     # Show breakdown by chapter
     chapter_counts = {}

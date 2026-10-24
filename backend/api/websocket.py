@@ -7,10 +7,11 @@ Provides real-time notification updates to connected clients
 using Flask-SocketIO.
 """
 
-from flask_socketio import SocketIO, emit, join_room, leave_room
-from flask import request, current_app
-import jwt
 import logging
+
+import jwt
+from flask import request
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ def init_socketio(app):
         SocketIO: Configured SocketIO instance
     """
     global socketio
-    
+
     socketio = SocketIO(
         app,
         cors_allowed_origins=app.config.get('CORS_ORIGINS', '*'),
@@ -39,10 +40,10 @@ def init_socketio(app):
         ping_timeout=60,
         ping_interval=25
     )
-    
+
     # Register event handlers
     register_handlers()
-    
+
     app.logger.info("Flask-SocketIO initialized successfully")
     return socketio
 
@@ -65,7 +66,7 @@ def verify_socket_token(token):
     """
     try:
         from backend.config import settings
-        
+
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
@@ -83,44 +84,44 @@ def verify_socket_token(token):
 def register_handlers():
     """Register all WebSocket event handlers."""
     global socketio
-    
+
     @socketio.on('connect')
     def handle_connect(auth=None):
         """Handle client connection."""
         logger.info(f"WebSocket client connecting: {request.sid}")
-        
+
         # Check for auth token
         token = None
         if auth and isinstance(auth, dict):
             token = auth.get('token')
-        
+
         if not token:
             logger.warning("WebSocket connection rejected: No auth token")
             return False  # Reject connection
-        
+
         # Verify token
         user = verify_socket_token(token)
         if not user:
             logger.warning("WebSocket connection rejected: Invalid token")
             return False
-        
+
         # Join user's personal room for targeted notifications
         user_id = user['id']
         join_room(f"user_{user_id}")
-        
+
         logger.info(f"WebSocket client connected: user {user_id}, sid {request.sid}")
-        
+
         # Send connection confirmation
         emit('connected', {
             'message': 'Connected to notification server',
             'user_id': user_id
         })
-    
+
     @socketio.on('disconnect')
     def handle_disconnect():
         """Handle client disconnection."""
         logger.info(f"WebSocket client disconnected: {request.sid}")
-    
+
     @socketio.on('subscribe_notifications')
     def handle_subscribe(data):
         """Subscribe to notification updates."""
@@ -128,21 +129,21 @@ def register_handlers():
         if not token:
             emit('error', {'message': 'Authentication required'})
             return
-        
+
         user = verify_socket_token(token)
         if not user:
             emit('error', {'message': 'Invalid authentication'})
             return
-        
+
         user_id = user['id']
         join_room(f"notifications_{user_id}")
-        
+
         emit('subscribed', {
             'channel': 'notifications',
             'user_id': user_id
         })
         logger.info(f"User {user_id} subscribed to notifications")
-    
+
     @socketio.on('unsubscribe_notifications')
     def handle_unsubscribe(data):
         """Unsubscribe from notification updates."""
@@ -152,26 +153,26 @@ def register_handlers():
             if user:
                 leave_room(f"notifications_{user['id']}")
                 emit('unsubscribed', {'channel': 'notifications'})
-    
+
     @socketio.on('mark_read')
     def handle_mark_read(data):
         """Handle marking notification as read via WebSocket."""
         token = data.get('token')
         notification_id = data.get('notification_id')
-        
+
         if not token or not notification_id:
             emit('error', {'message': 'Missing required fields'})
             return
-        
+
         user = verify_socket_token(token)
         if not user:
             emit('error', {'message': 'Invalid authentication'})
             return
-        
+
         try:
             from backend.models.community import CommunityModel
             community_model = CommunityModel()
-            
+
             result = community_model.mark_notification_read(notification_id, user['id'])
             if result.get('success'):
                 emit('notification_read', {
@@ -183,7 +184,7 @@ def register_handlers():
         except Exception as e:
             logger.error(f"Error marking notification read: {e}")
             emit('error', {'message': str(e)})
-    
+
     @socketio.on('ping')
     def handle_ping():
         """Handle ping/keepalive."""
@@ -199,11 +200,11 @@ def send_notification_to_user(user_id: str, notification: dict):
         notification: Notification data to send
     """
     global socketio
-    
+
     if socketio is None:
         logger.warning("SocketIO not initialized, cannot send notification")
         return
-    
+
     try:
         # Emit to user's personal room
         socketio.emit(
@@ -225,11 +226,11 @@ def broadcast_notification(notification: dict, room: str = None):
         room: Optional room to broadcast to (None = all clients)
     """
     global socketio
-    
+
     if socketio is None:
         logger.warning("SocketIO not initialized, cannot broadcast")
         return
-    
+
     try:
         if room:
             socketio.emit('notification', notification, room=room)
@@ -249,10 +250,10 @@ def emit_notification_count(user_id: str, count: int):
         count: New unread count
     """
     global socketio
-    
+
     if socketio is None:
         return
-    
+
     try:
         socketio.emit(
             'notification_count',

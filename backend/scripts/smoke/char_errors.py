@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """Test the improved sloka validation with actual character errors"""
 
+
 import requests
-import json
 
 # Test 1: Wrong characters (not missing)
 # Original: माता रामो मत्पिता रामचन्द्रः
@@ -24,7 +24,7 @@ if data.get('success') and data.get('found'):
     print(f"Differences: {data.get('difference_count')}")
     for diff in data.get('differences', []):
         print(f"  • {diff['type']}: {diff['description']}")
-    print(f"\nHighlighted segments:")
+    print("\nHighlighted segments:")
     for seg in data.get('highlighted_segments', []):
         marker = "❌" if seg['isError'] else "✓"
         text_preview = seg['text'][:50] + "..." if len(seg['text']) > 50 else seg['text']
@@ -66,7 +66,7 @@ if data.get('success') and data.get('found'):
     print(f"Differences: {data.get('difference_count')}")
     for diff in data.get('differences', []):
         print(f"  • {diff['type']}: '{diff.get('your_text', '')}' → '{diff.get('correct_text', '')}'")
-    print(f"\nHighlighted segments:")
+    print("\nHighlighted segments:")
     for seg in data.get('highlighted_segments', []):
         marker = "❌" if seg['isError'] else "✓"
         print(f"  {marker} '{seg['text']}'")

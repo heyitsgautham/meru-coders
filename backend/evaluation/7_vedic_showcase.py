@@ -22,8 +22,9 @@ THE 7 MAJOR VEDIC METERS:
 @date: December 2025
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from core.chanda import Chanda
@@ -51,7 +52,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['गायत्री', 'Gayatri', 'gāyatrī'],
         'expected_syllables': 24
     },
-    
+
     # -------------------------------------------------------------------------
     # 2. USHNIK (उष्णिक्) - 28 syllables = 4×7 padas
     # Rigveda hymn to Agni (Fire God)
@@ -67,7 +68,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['उष्णिक्', 'Ushnik', 'uṣṇik'],
         'expected_syllables': 28
     },
-    
+
     # -------------------------------------------------------------------------
     # 3. ANUSHTUBH (अनुष्टुभ्) - 32 syllables = 4×8 padas
     # Rigveda hymn to Indra - EXACT 32 syllables
@@ -82,7 +83,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['अनुष्टुभ्', 'Anushtubh', 'anuṣṭup', 'anuṣṭubh'],
         'expected_syllables': 32
     },
-    
+
     # -------------------------------------------------------------------------
     # 4. BRIHATI (बृहती) - 36 syllables = 4×9 padas
     # Rigveda hymn to Agni - EXACT 36 syllables
@@ -97,7 +98,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['बृहती', 'Brihati', 'bṛhatī'],
         'expected_syllables': 36
     },
-    
+
     # -------------------------------------------------------------------------
     # 5. PANKTI (पङ्क्ति) - 40 syllables = 5×8 padas
     # Rigveda hymn to Indra - EXACT 40 syllables
@@ -112,7 +113,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['पङ्क्ति', 'Pankti', 'paṅktiḥ', 'paṅkti'],
         'expected_syllables': 40
     },
-    
+
     # -------------------------------------------------------------------------
     # 6. TRISHTUBH (त्रिष्टुभ्) - 44 syllables = 4×11 padas
     # Most common Rigveda meter - EXACT 44 syllables
@@ -127,7 +128,7 @@ SEVEN_VEDIC_VERSES = [
         'expected_meters': ['त्रिष्टुभ्', 'Trishtubh', 'triṣṭup', 'triṣṭubh'],
         'expected_syllables': 44
     },
-    
+
     # -------------------------------------------------------------------------
     # 7. JAGATI (जगती) - 48 syllables = 4×12 padas
     # Largest of the 7 major meters - EXACT 48 syllables
@@ -165,33 +166,33 @@ def run_showcase():
     print("║" + " " * 22 + "SIH 2025 Grand Finale - Meru Coders" + " " * 21 + "║")
     print("╚" + "═" * 78 + "╝")
     print()
-    
+
     passed = 0
     total = len(SEVEN_VEDIC_VERSES)
-    
+
     for i, verse_info in enumerate(SEVEN_VEDIC_VERSES, 1):
         # Identify the verse
         result = c.identify_line(verse_info['verse'])
-        
+
         # Extract results
         primary_meter = result.get('display_chanda_primary', 'Unknown')
         lg_pattern = ''.join(result.get('display_lg', []))
         syllable_count = len(result.get('lg', []))
-        
+
         # Check match
         meter_match = check_meter_match(primary_meter, verse_info['expected_meters'])
-        
+
         # Allow syllable tolerance of ±3 for Vedic texts (sandhi variations)
         syllable_close = abs(syllable_count - verse_info['expected_syllables']) <= 3
-        
+
         # Pass if meter matches OR syllable count is within tolerance
         test_pass = meter_match or syllable_close
         if test_pass:
             passed += 1
-        
+
         status = "✅ PASS" if test_pass else "❌ FAIL"
         meter_status = "✓" if meter_match else "✗"
-        
+
         print(f"{'─' * 80}")
         print(f"  {i}. {verse_info['meter_name']} ({verse_info['syllable_structure']})")
         print(f"{'─' * 80}")
@@ -203,14 +204,14 @@ def run_showcase():
         print(f"  💡 Meaning: {verse_info['meaning'][:60]}...")
         print(f"  ➡️  Result: {status}")
         print()
-    
+
     # Summary
     percentage = (passed / total) * 100
     print("═" * 80)
     print()
     print(f"  📊 FINAL RESULT: {passed}/{total} VEDIC METERS CORRECTLY IDENTIFIED ({percentage:.0f}%)")
     print()
-    
+
     if passed == total:
         print("  🎉 PERFECT SCORE! All 7 Vedic meters correctly identified!")
         print("  🏆 Ready for SIH 2025 Grand Finale demonstration!")
@@ -219,11 +220,11 @@ def run_showcase():
         print(f"  ✅ EXCELLENT! {passed}/7 major Vedic meters identified correctly.")
     else:
         print(f"  ⚠️  {passed}/7 meters identified. Further tuning needed.")
-    
+
     print()
     print("═" * 80)
     print()
-    
+
     return passed, total
 
 

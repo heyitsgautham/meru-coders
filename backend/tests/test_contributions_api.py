@@ -6,6 +6,7 @@ it works without Supabase credentials.
 """
 
 import jwt
+
 from backend.app import create_app
 from backend.config import settings
 

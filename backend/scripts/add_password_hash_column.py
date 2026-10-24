@@ -11,8 +11,8 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from supabase import create_client
 from dotenv import load_dotenv
+from supabase import create_client
 
 # Load environment variables
 load_dotenv()
@@ -40,7 +40,7 @@ try:
     -- Add index for faster username lookups
     CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
     """
-    
+
     # Supabase Python client doesn't support direct SQL execution
     # We need to use the REST API or run this in Supabase SQL editor
     print("\n⚠️  Please run the following SQL in Supabase SQL Editor:")
@@ -51,7 +51,7 @@ try:
     print("📝 Copy and paste the SQL above")
     print("▶️  Click 'Run' to execute")
     print("\n✅ After running, your users table will have the password_hash column")
-    
+
 except Exception as e:
     print(f"\n❌ Error: {e}")
     sys.exit(1)

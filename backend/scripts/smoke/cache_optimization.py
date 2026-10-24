@@ -7,11 +7,10 @@ Compares latency for cache hits vs cache misses.
 Run: python tests/test_cache_optimization.py
 """
 
-import sys
 import os
-import time
-import json
 import statistics
+import sys
+import time
 
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -66,12 +65,12 @@ def test_single_verse(verse_data):
         "text": verse_data["text"],
         "text_mode": "line"
     }
-    
+
     start = time.time()
     try:
         response = requests.post(url, json=payload, timeout=30)
         elapsed_ms = (time.time() - start) * 1000
-        
+
         if response.status_code != 200:
             return {
                 "name": verse_data["name"],
@@ -79,11 +78,11 @@ def test_single_verse(verse_data):
                 "error": f"HTTP {response.status_code}",
                 "elapsed_ms": elapsed_ms
             }
-        
+
         data = response.json()
         timing = data.get("timing", {})
         cache_info = data.get("cache_info", {})
-        
+
         return {
             "name": verse_data["name"],
             "success": data.get("success", False),
@@ -99,7 +98,7 @@ def test_single_verse(verse_data):
             "expected_cache_hit": verse_data.get("expected_cache_hit"),
             "identified_meter": data.get("summary", {}).get("line", {}).get("match", {}).get("chanda", {})
         }
-        
+
     except Exception as e:
         return {
             "name": verse_data["name"],
@@ -115,21 +114,21 @@ def run_benchmark(iterations=3):
     print("CACHE OPTIMIZATION BENCHMARK")
     print("=" * 70)
     print(f"Running {iterations} iterations for each test case...\n")
-    
+
     all_results = []
-    
+
     for verse in TEST_CASES:
         print(f"\n📝 Testing: {verse['name']}")
         print(f"   Text: {verse['text'][:50]}...")
-        
+
         verse_results = []
         for i in range(iterations):
             result = test_single_verse(verse)
             verse_results.append(result)
-            
+
             # Small delay between requests
             time.sleep(0.1)
-        
+
         # Calculate averages
         successful = [r for r in verse_results if r.get("success")]
         if successful:
@@ -137,18 +136,18 @@ def run_benchmark(iterations=3):
             avg_cache = statistics.mean([r["cache_lookup_ms"] for r in successful])
             avg_ai = statistics.mean([r["ai_validation_ms"] for r in successful])
             avg_rule = statistics.mean([r["rule_engine_ms"] for r in successful])
-            
+
             cache_hit = successful[0].get("cache_hit", False)
             ai_skipped = successful[0].get("ai_skipped", False)
             similarity = successful[0].get("similarity", 0)
-            
+
             print(f"   ✓ Cache Hit: {cache_hit} (similarity: {similarity:.2%})")
             print(f"   ✓ AI Skipped: {ai_skipped}")
             print(f"   ⏱️  Avg Total: {avg_total:.1f}ms")
             print(f"      - Cache lookup: {avg_cache:.1f}ms")
             print(f"      - AI validation: {avg_ai:.1f}ms {'(SKIPPED)' if ai_skipped else ''}")
             print(f"      - Rule engine: {avg_rule:.1f}ms")
-            
+
             all_results.append({
                 "name": verse["name"],
                 "cache_hit": cache_hit,
@@ -160,40 +159,40 @@ def run_benchmark(iterations=3):
                 "similarity": similarity
             })
         else:
-            print(f"   ❌ All iterations failed!")
+            print("   ❌ All iterations failed!")
             if verse_results:
                 print(f"   Error: {verse_results[0].get('error', 'Unknown')}")
-    
+
     # Summary
     print("\n" + "=" * 70)
     print("SUMMARY")
     print("=" * 70)
-    
+
     cache_hits = [r for r in all_results if r.get("cache_hit")]
     cache_misses = [r for r in all_results if not r.get("cache_hit")]
-    
+
     if cache_hits:
         avg_hit_time = statistics.mean([r["avg_total_ms"] for r in cache_hits])
         print(f"\n🎯 CACHE HITS ({len(cache_hits)} cases):")
         print(f"   Average total time: {avg_hit_time:.1f}ms")
         for r in cache_hits:
             print(f"   - {r['name']}: {r['avg_total_ms']:.1f}ms (AI {'skipped' if r['ai_skipped'] else 'ran'})")
-    
+
     if cache_misses:
         avg_miss_time = statistics.mean([r["avg_total_ms"] for r in cache_misses])
         print(f"\n❌ CACHE MISSES ({len(cache_misses)} cases):")
         print(f"   Average total time: {avg_miss_time:.1f}ms")
         for r in cache_misses:
             print(f"   - {r['name']}: {r['avg_total_ms']:.1f}ms")
-    
+
     if cache_hits and cache_misses:
         speedup = avg_miss_time / avg_hit_time if avg_hit_time > 0 else 0
         savings = avg_miss_time - avg_hit_time
-        print(f"\n⚡ OPTIMIZATION IMPACT:")
+        print("\n⚡ OPTIMIZATION IMPACT:")
         print(f"   Speedup: {speedup:.1f}x faster for cached verses")
         print(f"   Time saved: {savings:.1f}ms per request")
         print(f"   AI calls avoided: {len(cache_hits)} / {len(all_results)} ({100*len(cache_hits)/len(all_results):.0f}%)")
-    
+
     return all_results
 
 
@@ -212,11 +211,11 @@ if __name__ == "__main__":
         print("❌ API not available at", BASE_URL)
         print("Please start the backend server: cd backend && python run.py")
         sys.exit(1)
-    
+
     print("✓ API is running\n")
-    
+
     # Run benchmark
     results = run_benchmark(iterations=3)
-    
+
     print("\n" + "=" * 70)
     print("Test completed!")

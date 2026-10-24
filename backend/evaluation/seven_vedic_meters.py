@@ -19,12 +19,12 @@ These are the 7 canonical Vedic meters mentioned in the SIH 2025 problem stateme
 @date: December 2025
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from core.chanda import Chanda
-import sanskrit_text as skt
 
 # Initialize Chanda
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
@@ -41,7 +41,7 @@ def check_meter_identified(result, expected_names):
     """Check if expected meter is in the identified results"""
     if not result.get('chanda'):
         return False, None
-    
+
     identified_names = []
     for item in result['chanda']:
         if isinstance(item, tuple):
@@ -49,13 +49,13 @@ def check_meter_identified(result, expected_names):
         else:
             name = item
         identified_names.append(name)
-    
+
     # Check if any expected name is in identified
     for expected in expected_names:
         for identified in identified_names:
             if expected.lower() in identified.lower() or identified.lower() in expected.lower():
                 return True, identified
-    
+
     return False, identified_names[0] if identified_names else None
 
 def run_meter_test(meter_name, sanskrit_names, expected_syllables, test_verses):
@@ -64,42 +64,42 @@ def run_meter_test(meter_name, sanskrit_names, expected_syllables, test_verses):
     print(f"TESTING: {meter_name} ({expected_syllables} syllables)")
     print(f"Expected identification: {', '.join(sanskrit_names)}")
     print(f"{'='*80}")
-    
+
     meter_passed = 0
     meter_total = len(test_verses)
-    
+
     for idx, verse_info in enumerate(test_verses, 1):
         verse = verse_info['text']
         source = verse_info.get('source', 'Unknown')
-        
+
         # Get syllable count
         actual_syllables = get_syllable_count(verse)
-        
+
         # Identify meter
         result = c.identify_line(verse)
         meter_found, identified = check_meter_identified(result, sanskrit_names)
-        
+
         # Test passes if:
         # 1. Syllable count is within ±2 of expected (allows for sandhi/prakrti variations)
         # 2. OR meter is correctly identified in top results
         syllable_ok = abs(actual_syllables - expected_syllables) <= 2
         test_pass = syllable_ok or meter_found
-        
+
         if test_pass:
             status = "✓ PASS"
             meter_passed += 1
         else:
             status = "✗ FAIL"
-        
+
         print(f"\n  Test {idx}: {status}")
         print(f"  Source: {source}")
         print(f"  Verse: {verse[:70]}..." if len(verse) > 70 else f"  Verse: {verse}")
         print(f"  Syllables: {actual_syllables} (expected: {expected_syllables})")
         print(f"  Meter identified: {identified}")
         print(f"  Match found: {meter_found}")
-        
+
         test_results.append((f"{meter_name} Test {idx}", test_pass, source))
-    
+
     print(f"\n  {'─'*40}")
     print(f"  {meter_name} Results: {meter_passed}/{meter_total} PASS")
     return meter_passed, meter_total
@@ -179,7 +179,7 @@ def test_syllable_count_based_identification():
     print("\n" + "=" * 80)
     print("TESTING: Syllable-Count Based Vedic Meter Identification")
     print("=" * 80)
-    
+
     # The 7 Vedic meters are primarily identified by syllable count
     vedic_meter_syllables = {
         'गायत्री': 24,     # Gayatri - 3×8
@@ -190,126 +190,126 @@ def test_syllable_count_based_identification():
         'त्रिष्टुभ्': 44,   # Trishtubh - 4×11
         'जगती': 48         # Jagati - 4×12
     }
-    
+
     results = []
     for meter_name, expected_syllables in vedic_meter_syllables.items():
         # Call the identify_vedic_meter function directly
         identified_name, info = c.identify_vedic_meter(expected_syllables)
-        
+
         match = identified_name == meter_name
         status = "✓ PASS" if match else "✗ FAIL"
-        
+
         print(f"\n  {status}: {meter_name} ({expected_syllables} syllables)")
         print(f"    Expected: {meter_name}")
         print(f"    Identified: {identified_name}")
-        
+
         results.append((meter_name, match))
         test_results.append((f"Syllable ID: {meter_name}", match, "Direct function test"))
-    
+
     passed = sum(1 for _, m in results if m)
     print(f"\n  {'─'*40}")
     print(f"  Syllable-Count Identification: {passed}/{len(results)} PASS")
-    
+
     return passed, len(results)
 
 
 def main():
     global test_results
-    
+
     print("\n" + "=" * 80)
     print("╔══════════════════════════════════════════════════════════════════════════════╗")
     print("║     COMPREHENSIVE TEST: ALL 7 MAJOR VEDIC METERS                            ║")
     print("║     Testing: Gayatri, Ushnik, Anushtubh, Brihati, Pankti, Trishtubh, Jagati ║")
     print("╚══════════════════════════════════════════════════════════════════════════════╝")
     print("=" * 80)
-    
+
     results = {}
-    
+
     # FIRST: Test the core syllable-count identification function
     # This is the foundational mechanism for Vedic meter identification
     syllable_passed, syllable_total = test_syllable_count_based_identification()
     results['Syllable-Based'] = (syllable_passed, syllable_total)
-    
+
     # Test all 7 meters with authentic verses (where available)
     if gayatri_verses:
         results['Gayatri'] = run_meter_test(
-            "Gayatri (गायत्री)", 
+            "Gayatri (गायत्री)",
             ['गायत्री', 'Gayatri', 'gayatri'],
-            24, 
+            24,
             gayatri_verses
         )
-    
+
     if ushnik_verses:
         results['Ushnik'] = run_meter_test(
-            "Ushnik (उष्णिक्)", 
+            "Ushnik (उष्णिक्)",
             ['उष्णिक्', 'Ushnik', 'ushnik', 'usnik'],
-            28, 
+            28,
             ushnik_verses
         )
-    
+
     if anushtubh_verses:
         results['Anushtubh'] = run_meter_test(
-            "Anushtubh (अनुष्टुभ्)", 
+            "Anushtubh (अनुष्टुभ्)",
             ['अनुष्टुभ्', 'Anushtubh', 'anushtubh', 'anustubh'],
-            32, 
+            32,
             anushtubh_verses
         )
-    
+
     if brihati_verses:
         results['Brihati'] = run_meter_test(
-            "Brihati (बृहती)", 
+            "Brihati (बृहती)",
             ['बृहती', 'Brihati', 'brihati', 'brhati'],
-            36, 
+            36,
             brihati_verses
         )
-    
+
     if pankti_verses:
         results['Pankti'] = run_meter_test(
-            "Pankti (पङ्क्ति)", 
+            "Pankti (पङ्क्ति)",
             ['पङ्क्ति', 'Pankti', 'pankti'],
-            40, 
+            40,
             pankti_verses
         )
-    
+
     if trishtubh_verses:
         results['Trishtubh'] = run_meter_test(
-            "Trishtubh (त्रिष्टुभ्)", 
+            "Trishtubh (त्रिष्टुभ्)",
             ['त्रिष्टुभ्', 'Trishtubh', 'trishtubh', 'tristubh'],
-            44, 
+            44,
             trishtubh_verses
         )
-    
+
     if jagati_verses:
         results['Jagati'] = run_meter_test(
-            "Jagati (जगती)", 
+            "Jagati (जगती)",
             ['जगती', 'Jagati', 'jagati'],
-            48, 
+            48,
             jagati_verses
         )
-    
+
     # Final Summary
     print("\n" + "=" * 80)
     print("╔══════════════════════════════════════════════════════════════════════════════╗")
     print("║                            FINAL SUMMARY                                     ║")
     print("╚══════════════════════════════════════════════════════════════════════════════╝")
     print("=" * 80)
-    
+
     total_passed = 0
     total_tests = 0
-    
+
     for meter, (passed, total) in results.items():
         percentage = (passed / total * 100) if total > 0 else 0
         status = "✅" if passed == total else "⚠️" if passed > 0 else "❌"
         print(f"  {status} {meter:20}: {passed}/{total} PASS ({percentage:.0f}%)")
         total_passed += passed
         total_tests += total
-    
+
     overall_percentage = (total_passed / total_tests * 100) if total_tests > 0 else 0
-    
+
     print(f"\n{'─' * 80}")
     print(f"  OVERALL: {total_passed}/{total_tests} TESTS PASSED ({overall_percentage:.1f}%)")
     print(f"{'─' * 80}\n")
-    
+
     # Determine if we can claim "1000% accuracy" (meaning 100% reliable)
     if overall_percentage == 100:
         print("🎉 PERFECT SCORE! 100% accuracy on all 7 Vedic meters!")
@@ -324,9 +324,9 @@ def main():
     else:
         print(f"❌ NEEDS WORK: {overall_percentage:.1f}% accuracy")
         print("❌ Cannot guarantee correct prediction for all 7 meters")
-    
+
     print("\n" + "=" * 80 + "\n")
-    
+
     return total_passed, total_tests, overall_percentage
 
 if __name__ == "__main__":

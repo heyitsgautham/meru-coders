@@ -4,22 +4,20 @@ Handles signup, login, logout using Supabase built-in auth.
 """
 
 import os
-from email.utils import parseaddr
-
 import time
 import uuid
 
 import bcrypt
 import jwt
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, current_app, jsonify, request
 from supabase import Client
 
-from .utils import create_user_profile, get_user_profile, ADMIN_USERNAME, check_admin_credentials
+from .middleware import get_current_user
+from .utils import ADMIN_USERNAME, check_admin_credentials, create_user_profile, get_user_profile
 
 EMAIL_DOMAIN = os.environ.get("AUTH_EMAIL_DOMAIN", "merucoders.app")
 # FRONTEND_URL is used as fallback only - prefer Origin header for dynamic redirects
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:8080")
-from .middleware import get_current_user
 
 
 def _get_frontend_origin() -> str:
@@ -28,7 +26,7 @@ def _get_frontend_origin() -> str:
     origin = request.headers.get('Origin')
     if origin:
         return origin
-    
+
     # Try Referer header as fallback
     referer = request.headers.get('Referer')
     if referer:
@@ -37,7 +35,7 @@ def _get_frontend_origin() -> str:
         parsed = urlparse(referer)
         if parsed.scheme and parsed.netloc:
             return f"{parsed.scheme}://{parsed.netloc}"
-    
+
     # Fallback to environment variable
     return FRONTEND_URL
 
@@ -69,14 +67,14 @@ def signup():
         data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
-        
+
         if not username or not password:
             return jsonify({
                 'success': False,
                 'error': 'Missing credentials',
                 'message': 'Username and password are required'
             }), 400
-        
+
         # Validate username
         if len(username) < 3:
             return jsonify({
@@ -84,14 +82,14 @@ def signup():
                 'error': 'Invalid username',
                 'message': 'Username must be at least 3 characters long'
             }), 400
-        
+
         if len(password) < 6:
             return jsonify({
                 'success': False,
                 'error': 'Invalid password',
                 'message': 'Password must be at least 6 characters long'
             }), 400
-        
+
         # Check if admin username (reserved)
         if username == ADMIN_USERNAME:
             return jsonify({
@@ -99,7 +97,7 @@ def signup():
                 'error': 'Username reserved',
                 'message': 'This username is reserved for admin use'
             }), 400
-        
+
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         if supabase is None:
             return jsonify({
@@ -107,7 +105,7 @@ def signup():
                 'error': 'Signup unavailable',
                 'message': 'Account storage is not configured on this server'
             }), 503
-        
+
         # Check if username already exists
         existing = supabase.table('users').select('id').eq('username', username).execute()
         if existing.data:
@@ -119,10 +117,10 @@ def signup():
 
         # Hash password with bcrypt
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        
+
         # Create user in database
         user_id = str(uuid.uuid4())
-        
+
         user_data = {
             'id': user_id,
             'username': username,
@@ -130,19 +128,19 @@ def signup():
             'is_admin': False,
             'created_at': 'now()'
         }
-        
+
         result = supabase.table('users').insert(user_data).execute()
-        
+
         if not result.data:
             return jsonify({
                 'success': False,
                 'error': 'Signup failed',
                 'message': 'Could not create user account'
             }), 500
-        
+
         # Generate JWT token
         from backend.config import settings
-        
+
         payload = {
             'sub': user_id,
             'username': username,
@@ -151,7 +149,7 @@ def signup():
             'exp': int(time.time()) + 3600 * 24  # 24 hours
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        
+
         return jsonify({
             'success': True,
             'message': 'Account created successfully',
@@ -164,7 +162,7 @@ def signup():
                 'refresh_token': None
             }
         }), 201
-        
+
     except Exception as e:
         current_app.logger.error(f"Signup error: {e}")
         return jsonify({
@@ -184,16 +182,16 @@ def login():
         data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
-        
+
         if not username or not password:
             return jsonify({
                 'success': False,
                 'error': 'Missing credentials',
                 'message': 'Username and password are required'
             }), 400
-        
+
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
-        
+
         # Fallback for local/dev when Supabase is not configured
         if supabase is None:
             user_id = f"local-{username}" or str(uuid.uuid4())
@@ -221,7 +219,7 @@ def login():
 
         # Look up user by username
         result = supabase.table('users').select('*').eq('username', username).execute()
-        
+
         if not result.data or len(result.data) == 0:
             return jsonify({
                 'success': False,
@@ -230,7 +228,7 @@ def login():
             }), 401
 
         user = result.data[0]
-        
+
         # Verify password with bcrypt
         if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
             return jsonify({
@@ -238,10 +236,10 @@ def login():
                 'error': 'Login failed',
                 'message': 'Invalid username or password'
             }), 401
-        
+
         # Generate JWT token
         from backend.config import settings
-        
+
         payload = {
             'sub': user['id'],
             'username': user['username'],
@@ -250,7 +248,7 @@ def login():
             'exp': int(time.time()) + 3600 * 24  # 24 hours
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        
+
         return jsonify({
             'success': True,
             'message': 'Login successful',
@@ -264,7 +262,7 @@ def login():
                 'refresh_token': None
             }
         }), 200
-        
+
     except Exception as e:
         current_app.logger.error(f"Login error: {e}")
         return jsonify({
@@ -284,7 +282,7 @@ def admin_login():
         data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
-        
+
         # Verify admin credentials
         if not check_admin_credentials(username, password):
             return jsonify({
@@ -292,7 +290,7 @@ def admin_login():
                 'error': 'Invalid credentials',
                 'message': 'Invalid admin username or password'
             }), 401
-        
+
         # Issue a local JWT to bypass Supabase email constraints
         # Use a fixed UUID-like subject so downstream Supabase UUID columns accept it
         payload = {
@@ -317,7 +315,7 @@ def admin_login():
                 'refresh_token': None
             }
         }), 200
-        
+
     except Exception as e:
         current_app.logger.error(f"Admin login error: {e}")
         return jsonify({
@@ -481,23 +479,23 @@ def get_profile():
     Requires authentication.
     """
     user = get_current_user()
-    
+
     if not user:
         return jsonify({
             'success': False,
             'error': 'Not authenticated',
             'message': 'Please log in to view profile'
         }), 401
-    
+
     profile = get_user_profile(user.id)
-    
+
     if not profile:
         return jsonify({
             'success': False,
             'error': 'Profile not found',
             'message': 'User profile could not be retrieved'
         }), 404
-    
+
     return jsonify({
         'success': True,
         'user': profile
@@ -511,14 +509,14 @@ def logout():
     Invalidates Supabase session.
     """
     user = get_current_user()
-    
+
     if user:
         try:
             supabase: Client = current_app.config['SUPABASE_CLIENT']
             supabase.auth.sign_out()
         except Exception as e:
             current_app.logger.error(f"Logout error: {e}")
-    
+
     return jsonify({
         'success': True,
         'message': 'Logged out successfully'

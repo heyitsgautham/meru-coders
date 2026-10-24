@@ -8,9 +8,9 @@ Author: Meru Coders (SIH 2025)
 Date: December 9, 2025
 """
 
-import requests
-import json
 import time
+
+import requests
 
 BASE_URL = "http://localhost:5000/api/chatbot"
 
@@ -19,18 +19,18 @@ def test_agentic_response():
     print("="*70)
     print("TEST 1: AGENTIC METER IDENTIFICATION")
     print("="*70)
-    
+
     payload = {
         "message": "Find the meter: धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
         "persona": "default"
     }
-    
+
     response = requests.post(f"{BASE_URL}/chat", json=payload)
     data = response.json()
-    
+
     if data['success']:
         print(f"\n✅ Response received (Agentic Action: {data.get('agentic_action', 'N/A')})")
-        print(f"\nResponse excerpt:")
+        print("\nResponse excerpt:")
         print(data['response'][:500] + "...")
         print(f"\n{'='*70}\n")
         return True
@@ -44,28 +44,28 @@ def test_rag_response():
     print("="*70)
     print("TEST 2: RAG-ENHANCED RESPONSE")
     print("="*70)
-    
+
     payload = {
         "message": "What is the difference between Sama and Vishama chandas?",
         "persona": "default"
     }
-    
+
     response = requests.post(f"{BASE_URL}/chat", json=payload)
     data = response.json()
-    
+
     if data['success']:
-        print(f"\n✅ Response received")
+        print("\n✅ Response received")
         print(f"   Response Source: {data.get('response_source', 'N/A')}")
         print(f"   RAG Docs Used: {data.get('rag_docs_used', 0)}")
-        print(f"\nResponse excerpt:")
+        print("\nResponse excerpt:")
         print(data['response'][:500] + "...")
-        
+
         # Check if footer is present
         if 'Response generated with **RAG**' in data['response']:
-            print(f"\n✅ RAG footer found in response!")
+            print("\n✅ RAG footer found in response!")
         else:
-            print(f"\n⚠️  RAG footer not found")
-        
+            print("\n⚠️  RAG footer not found")
+
         print(f"\n{'='*70}\n")
         return True
     else:
@@ -78,29 +78,29 @@ def test_ai_response():
     print("="*70)
     print("TEST 3: PURE AI RESPONSE (No RAG context)")
     print("="*70)
-    
+
     # Use a query unlikely to match any documents
     payload = {
         "message": "Tell me a motivational quote about learning",
         "persona": "default"
     }
-    
+
     response = requests.post(f"{BASE_URL}/chat", json=payload)
     data = response.json()
-    
+
     if data['success']:
-        print(f"\n✅ Response received")
+        print("\n✅ Response received")
         print(f"   Response Source: {data.get('response_source', 'N/A')}")
         print(f"   RAG Docs Used: {data.get('rag_docs_used', 0)}")
-        print(f"\nResponse excerpt:")
+        print("\nResponse excerpt:")
         print(data['response'][:500] + "...")
-        
+
         # Check if footer is present
         if 'Response generated with **AI**' in data['response']:
-            print(f"\n✅ AI footer found in response!")
+            print("\n✅ AI footer found in response!")
         else:
-            print(f"\n⚠️  AI footer not found")
-        
+            print("\n⚠️  AI footer not found")
+
         print(f"\n{'='*70}\n")
         return True
     else:
@@ -113,13 +113,13 @@ def main():
     print("RESPONSE SOURCE INDICATOR TEST")
     print("Testing: Agentic | RAG | AI")
     print("="*70 + "\n")
-    
+
     print("⚠️  Make sure backend is running: python run.py")
     print("Waiting 3 seconds...\n")
     time.sleep(3)
-    
+
     results = []
-    
+
     # Test all three types
     try:
         results.append(("Agentic", test_agentic_response()))
@@ -131,29 +131,29 @@ def main():
         print("\n❌ Connection Error: Backend server not running!")
         print("Start with: cd backend && python run.py\n")
         return False
-    
+
     # Summary
     print("="*70)
     print("SUMMARY")
     print("="*70)
-    
+
     for test_name, result in results:
         status = "✅ PASS" if result else "❌ FAIL"
         print(f"{status}: {test_name} response source indicator")
-    
+
     all_passed = all(r for _, r in results)
-    
+
     if all_passed:
-        print(f"\n🎉 All tests passed! Response sources are correctly indicated.")
-        print(f"\nUsers will now see at the end of each response:")
-        print(f"  • Agentic: Already has 'Use Analyse Chanda for detailed analysis'")
-        print(f"  • RAG: 'Response generated with RAG - X knowledge base sources used'")
-        print(f"  • AI: 'Response generated with AI (Gemini 2.5 Flash)'")
+        print("\n🎉 All tests passed! Response sources are correctly indicated.")
+        print("\nUsers will now see at the end of each response:")
+        print("  • Agentic: Already has 'Use Analyse Chanda for detailed analysis'")
+        print("  • RAG: 'Response generated with RAG - X knowledge base sources used'")
+        print("  • AI: 'Response generated with AI (Gemini 2.5 Flash)'")
     else:
-        print(f"\n⚠️  Some tests failed. Check server logs.")
-    
+        print("\n⚠️  Some tests failed. Check server logs.")
+
     print("="*70 + "\n")
-    
+
     return all_passed
 
 

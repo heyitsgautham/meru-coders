@@ -7,14 +7,13 @@ Comprehensive tests for API endpoints, meter identification, and OCR functionali
 """
 
 import sys
-import json
-import base64
 from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import pytest
+
 from backend.app import create_app
 from backend.config import settings
 
@@ -45,7 +44,7 @@ def sample_verse():
 
 class TestHealthAndInfo:
     """Test health check and info endpoints."""
-    
+
     def test_health_check(self, client):
         """Test the health check endpoint."""
         response = client.get('/health')
@@ -53,7 +52,7 @@ class TestHealthAndInfo:
         data = response.get_json()
         assert data['status'] == 'healthy'
         assert 'version' in data
-    
+
     def test_api_info(self, client):
         """Test the API info endpoint."""
         response = client.get('/api/info')
@@ -66,7 +65,7 @@ class TestHealthAndInfo:
 
 class TestTextIdentification:
     """Test text-based meter identification."""
-    
+
     def test_identify_text_basic(self, client, sample_text):
         """Test basic text identification."""
         response = client.post('/api/identify/text',
@@ -79,7 +78,7 @@ class TestTextIdentification:
         assert data['success'] is True
         assert 'result' in data
         assert 'summary' in data
-    
+
     def test_identify_text_verse_mode(self, client, sample_verse):
         """Test verse mode identification."""
         response = client.post('/api/identify/text',
@@ -92,7 +91,7 @@ class TestTextIdentification:
         data = response.get_json()
         assert data['success'] is True
         assert 'result' in data
-    
+
     def test_identify_text_with_sandhi(self, client, sample_text):
         """Test identification with sandhi splitting."""
         response = client.post('/api/identify/text',
@@ -104,7 +103,7 @@ class TestTextIdentification:
         assert response.status_code == 200
         data = response.get_json()
         assert data['success'] is True
-    
+
     def test_identify_text_with_scheme(self, client, sample_text):
         """Test identification with output scheme."""
         response = client.post('/api/identify/text',
@@ -116,7 +115,7 @@ class TestTextIdentification:
         assert response.status_code == 200
         data = response.get_json()
         assert data['success'] is True
-    
+
     def test_identify_text_missing_text(self, client):
         """Test error handling for missing text."""
         response = client.post('/api/identify/text',
@@ -126,7 +125,7 @@ class TestTextIdentification:
         assert response.status_code == 400
         data = response.get_json()
         assert 'error' in data
-    
+
     def test_identify_text_empty(self, client):
         """Test handling of empty text."""
         response = client.post('/api/identify/text',
@@ -140,7 +139,7 @@ class TestTextIdentification:
 
 class TestExamplesEndpoint:
     """Test examples endpoint."""
-    
+
     def test_get_examples(self, client):
         """Test retrieving examples."""
         response = client.get('/api/examples')
@@ -153,7 +152,7 @@ class TestExamplesEndpoint:
 
 class TestSchemesEndpoint:
     """Test transliteration schemes endpoint."""
-    
+
     def test_get_schemes(self, client):
         """Test retrieving available schemes."""
         response = client.get('/api/schemes')
@@ -162,7 +161,7 @@ class TestSchemesEndpoint:
         assert data['success'] is True
         assert 'schemes' in data
         assert isinstance(data['schemes'], list)
-        
+
         # Check for essential schemes
         scheme_values = [s['value'] for s in data['schemes']]
         assert 'devanagari' in scheme_values
@@ -172,7 +171,7 @@ class TestSchemesEndpoint:
 
 class TestImageIdentification:
     """Test image-based meter identification (OCR)."""
-    
+
     def test_identify_image_no_file(self, client):
         """Test error handling when no image is provided."""
         response = client.post('/api/identify/image',
@@ -186,7 +185,7 @@ class TestImageIdentification:
 
 class TestFileIdentification:
     """Test file-based meter identification."""
-    
+
     def test_identify_file_no_file(self, client):
         """Test error handling when no file is provided."""
         response = client.post('/api/identify/file',
@@ -200,7 +199,7 @@ class TestFileIdentification:
 
 class TestChandaCore:
     """Test core Chanda functionality."""
-    
+
     def test_chanda_initialization(self):
         """Test Chanda class initialization."""
         from backend.core import Chanda
@@ -208,33 +207,33 @@ class TestChandaCore:
         assert chanda is not None
         assert hasattr(chanda, 'identify_from_text')
         assert hasattr(chanda, 'summarize_results')
-    
+
     def test_chanda_identify(self, sample_text):
         """Test Chanda identification."""
         from backend.core import Chanda
         chanda = Chanda(data_path=str(settings.DATA_DIR))
-        
+
         result = chanda.identify_from_text(
             sample_text,
             verse=False,
             fuzzy=True
         )
-        
+
         assert 'result' in result
         assert isinstance(result['result']['line'], list)
         assert result['result']['line'][0]['result']['found'] is True
-    
+
     def test_chanda_summarize(self, sample_text):
         """Test Chanda summarization."""
         from backend.core import Chanda
         chanda = Chanda(data_path=str(settings.DATA_DIR))
-        
+
         result = chanda.identify_from_text(
             sample_text,
             verse=False,
             fuzzy=True
         )
-        
+
         summary = chanda.summarize_results(result['result'])
         assert summary is not None
         assert isinstance(summary, dict)
@@ -242,7 +241,7 @@ class TestChandaCore:
 
 class TestConfiguration:
     """Test configuration settings."""
-    
+
     def test_settings_exist(self):
         """Test that settings are properly configured."""
         assert settings.DATA_DIR.exists()
@@ -250,7 +249,7 @@ class TestConfiguration:
         assert settings.PHOTOS_DIR.exists()
         assert settings.TEXTS_DIR.exists()
         assert settings.RESULTS_DIR.exists()
-    
+
     def test_data_files_exist(self):
         """Test that required data files exist."""
         assert (settings.DATA_DIR / 'chanda_sama.csv').exists()

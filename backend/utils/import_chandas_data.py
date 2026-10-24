@@ -7,8 +7,8 @@ This script converts the meter data from the chandas repository into our
 existing CSV format for integration into the Chandojñānam project.
 """
 
-import json
 import csv
+import json
 import re
 from pathlib import Path
 
@@ -42,7 +42,7 @@ def convert_to_gana_notation(pattern):
     """Convert L-G pattern to gana notation (य र त न भ ज स म)"""
     gana_map = {
         'LGG': 'य',
-        'GLG': 'र', 
+        'GLG': 'र',
         'GGL': 'त',
         'LLL': 'न',
         'GLL': 'भ',
@@ -50,10 +50,10 @@ def convert_to_gana_notation(pattern):
         'LLG': 'स',
         'GGG': 'म'
     }
-    
+
     if not pattern or not re.match(r'^[LG]+$', pattern):
         return ''
-    
+
     gana_str = ''
     i = 0
     while i < len(pattern):
@@ -66,52 +66,51 @@ def convert_to_gana_notation(pattern):
         # If not a complete triplet, add the remaining characters
         gana_str += pattern[i:].lower()
         break
-    
+
     return gana_str
 
 
 def process_json_files():
     """Process all JSON files and convert to CSV format"""
-    
+
     base_path = Path('/Users/gauthamkrishna/Projects/chanda/repos/chandas/chandas/svat/data')
     output_path = Path('/Users/gauthamkrishna/Projects/chanda/data')
-    
+
     json_files = ['curated.json', 'ganesh.json', 'vrttaratnakara.json', 'mishra.json']
-    
+
     # Categorize meters by type
     sama_meters = []
     ardhasama_meters = []
     vishama_meters = []
     regex_meters = []  # Meters with regex patterns (mostly matra-based)
-    
+
     total_imported = 0
     skipped = 0
-    
+
     for json_file in json_files:
         filepath = base_path / json_file
         if not filepath.exists():
             print(f"Warning: {json_file} not found")
             continue
-            
+
         print(f"\nProcessing {json_file}...")
-        
+
         with open(filepath, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        
+
         if 'metres' not in data:
             print(f"  No 'metres' key in {json_file}")
             continue
-        
+
         for name, pattern_data in data['metres']:
             # Skip TODO entries
             if isinstance(pattern_data, str) and pattern_data.startswith('TODO'):
                 skipped += 1
                 continue
-            
+
             # Extract pattern from different formats
             pattern = None
-            is_regex = False
-            
+
             if isinstance(pattern_data, str):
                 # Simple string pattern
                 pattern = clean_pattern(pattern_data)
@@ -121,7 +120,6 @@ def process_json_files():
                     pattern = clean_pattern(pattern_data['pattern'])
                 elif 'regex' in pattern_data:
                     # Skip regex-based patterns for now (need special handling)
-                    is_regex = True
                     regex_meters.append((name, pattern_data['regex'], json_file))
                     skipped += 1
                     continue
@@ -158,13 +156,13 @@ def process_json_files():
                     else:
                         skipped += 1
                     continue
-            
+
             # Process sama-vrtta meters
             if pattern and re.match(r'^[LG]+$', pattern):
                 gana = convert_to_gana_notation(pattern)
                 syllables = calculate_syllables(pattern)
                 matra = calculate_matra(pattern)
-                
+
                 sama_meters.append({
                     'name': name,
                     'gana': gana,
@@ -180,18 +178,18 @@ def process_json_files():
                 print(f"  Skipped {name}: non-standard pattern '{pattern}'")
             else:
                 skipped += 1
-    
-    print(f"\n=== Import Summary ===")
+
+    print("\n=== Import Summary ===")
     print(f"Total meters imported: {total_imported}")
     print(f"  Sama-vrtta: {len(sama_meters)}")
     print(f"  Ardhasama-vrtta: {len(ardhasama_meters)}")
     print(f"  Vishama-vrtta: {len(vishama_meters)}")
     print(f"Skipped: {skipped} (regex-based or invalid patterns)")
     print(f"Regex meters (for future processing): {len(regex_meters)}")
-    
+
     # Write to CSV files
     print("\n=== Writing CSV files ===")
-    
+
     # Write sama meters to new file (we'll merge with existing later)
     sama_output = output_path / 'chanda_sama_imported.csv'
     with open(sama_output, 'w', encoding='utf-8', newline='') as f:
@@ -209,7 +207,7 @@ def process_json_files():
                 ''  # यति (empty)
             ])
     print(f"Written {len(sama_meters)} sama meters to {sama_output}")
-    
+
     # Write ardhasama meters
     ardhasama_output = output_path / 'chanda_ardhasama_imported.csv'
     with open(ardhasama_output, 'w', encoding='utf-8', newline='') as f:
@@ -227,7 +225,7 @@ def process_json_files():
                 meter['source']
             ])
     print(f"Written {len(ardhasama_meters)} ardhasama meters to {ardhasama_output}")
-    
+
     # Write vishama meters
     vishama_output = output_path / 'chanda_vishama_imported.csv'
     with open(vishama_output, 'w', encoding='utf-8', newline='') as f:
@@ -250,7 +248,7 @@ def process_json_files():
                 meter['source']
             ])
     print(f"Written {len(vishama_meters)} vishama meters to {vishama_output}")
-    
+
     # Save regex meters info for manual review
     regex_output = output_path / 'regex_meters_for_review.txt'
     with open(regex_output, 'w', encoding='utf-8') as f:
@@ -259,7 +257,7 @@ def process_json_files():
             f.write(f"{name} (from {source}):\n")
             f.write(f"  {regex}\n\n")
     print(f"Written {len(regex_meters)} regex meters info to {regex_output}")
-    
+
     return sama_meters, ardhasama_meters, vishama_meters, regex_meters
 
 
@@ -267,9 +265,9 @@ if __name__ == '__main__':
     print("=" * 70)
     print("Importing Meter Data from sanskrit-coders/chandas Repository")
     print("=" * 70)
-    
+
     sama, ardhasama, vishama, regex = process_json_files()
-    
+
     print("\n" + "=" * 70)
     print("Import Complete!")
     print("=" * 70)

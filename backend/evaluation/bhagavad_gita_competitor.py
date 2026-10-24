@@ -10,16 +10,15 @@ Expected meters for Bhagavad Gita:
 - Some verses: Trishtubh (त्रिष्टुभ्) - 44 syllables (4×11)
 """
 
-import sys
 import re
-import os
+import sys
 from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core import Chanda
 from config import settings
+from core import Chanda
 
 
 def extract_shlokas_from_file(file_path: str) -> list:
@@ -29,53 +28,53 @@ def extract_shlokas_from_file(file_path: str) -> list:
     """
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     shlokas = []
     current_category = "Unknown"
-    
+
     lines = content.split('\n')
-    
+
     # Valid category names (skip PURPORT, TRANSLATION, etc.)
     valid_categories = {
-        'ANGER', 'CONFUSION', 'FEAR', 'GREED', 'LUST', 'PRIDE', 
+        'ANGER', 'CONFUSION', 'FEAR', 'GREED', 'LUST', 'PRIDE',
         'DEPRESSION', 'LONELINESS', 'JEALOUSY', 'LAZINESS', 'DEATH',
         'FEELING SINFUL', 'MIND CONTROL', 'FORGETFULNESS', 'DEMOTIVATED',
         'FEELING DISCRIMINATED', 'SEEKING PEACE', 'TEMPTATION',
         'PRACTISING FORGIVENESS', 'LOSING HOPE', 'ENVY (JEALOUSY)'
     }
-    
+
     i = 0
     while i < len(lines):
         line = lines[i].strip()
-        
+
         # Detect category headers (ALL CAPS, must be in valid list or contains key emotions)
         if line and line.isupper() and len(line) < 30:
             if line in valid_categories or any(cat in line for cat in ['ANGER', 'FEAR', 'GREED', 'LUST', 'PRIDE', 'DEATH']):
                 current_category = line
             i += 1
             continue
-        
+
         # Detect chapter references like "Chapter 2 - Text 56" or "CHAPTER 16 - TEXT 4"
         chapter_match = re.match(r'[Cc]hapter\s+(\d+)\s*[-–]\s*[Tt]ext\s+(\d+(?:-\d+)?)', line, re.IGNORECASE)
         if chapter_match:
             chapter = chapter_match.group(1)
             verse = chapter_match.group(2)
-            
+
             # Look for Devanagari text (next lines with Devanagari characters)
             devanagari_lines = []
             iast_lines = []
             i += 1
-            
+
             # Collect Devanagari lines until we hit IAST or word meanings
             while i < len(lines):
                 next_line = lines[i].strip()
-                
+
                 # Check if line contains Devanagari (Unicode range)
                 if re.search(r'[\u0900-\u097F]', next_line):
                     devanagari_lines.append(next_line)
                     i += 1
                 # Check if line is IAST (has diacritics)
-                elif re.search(r'[āīūṛṝḷḹēōṁḥśṣṇṭḍṅñ]', next_line.lower()) and next_line and not '—' in next_line:
+                elif re.search(r'[āīūṛṝḷḹēōṁḥśṣṇṭḍṅñ]', next_line.lower()) and next_line and '—' not in next_line:
                     iast_lines.append(next_line)
                     i += 1
                 # Skip empty lines but stop after finding Devanagari + some IAST
@@ -94,7 +93,7 @@ def extract_shlokas_from_file(file_path: str) -> list:
                     # Stop if we have enough content
                     if len(devanagari_lines) >= 2 and len(iast_lines) >= 2:
                         break
-            
+
             if devanagari_lines:
                 # Combine lines into full verse
                 devanagari_text = ' '.join(devanagari_lines)
@@ -102,7 +101,7 @@ def extract_shlokas_from_file(file_path: str) -> list:
                 devanagari_text = re.sub(r'॥\s*[\d०-९]+\s*॥', '', devanagari_text).strip()
                 # Also clean single danda and verse numbers
                 devanagari_text = re.sub(r'\s*।\s*$', '', devanagari_text).strip()
-                
+
                 if devanagari_text and len(devanagari_text) > 10:
                     shlokas.append({
                         'category': current_category,
@@ -113,9 +112,9 @@ def extract_shlokas_from_file(file_path: str) -> list:
                         'reference': f"BG {chapter}.{verse}"
                     })
             continue
-        
+
         i += 1
-    
+
     # Remove duplicates (same reference)
     seen_refs = set()
     unique_shlokas = []
@@ -123,34 +122,34 @@ def extract_shlokas_from_file(file_path: str) -> list:
         if s['reference'] not in seen_refs:
             seen_refs.add(s['reference'])
             unique_shlokas.append(s)
-    
+
     return unique_shlokas
 
 
 def test_bhagavad_gita_shlokas():
     """Main test function to validate Bhagavad Gita shlokas."""
-    
+
     # Path to competitor's file
     competitor_file = Path(__file__).parent.parent.parent / "repos/ShlokaYug/BHAGAVAD-GITA SHLOKAS.txt"
-    
+
     if not competitor_file.exists():
         print(f"❌ File not found: {competitor_file}")
         return
-    
+
     print("=" * 80)
     print("BHAGAVAD GITA SHLOKAS VALIDATION TEST")
     print("Source: repos/ShlokaYug/BHAGAVAD-GITA SHLOKAS.txt")
     print("=" * 80)
-    
+
     # Extract shlokas
     print("\n📖 Extracting shlokas from competitor dataset...")
     shlokas = extract_shlokas_from_file(str(competitor_file))
     print(f"   Found {len(shlokas)} shlokas across {len(set(s['category'] for s in shlokas))} categories")
-    
+
     # Initialize our engine
     print("\n🔧 Initializing Chandas engine...")
     chanda = Chanda(data_path=str(settings.DATA_DIR))
-    
+
     # Test results tracking
     results = {
         'total': len(shlokas),
@@ -161,7 +160,7 @@ def test_bhagavad_gita_shlokas():
         'failed': 0,
         'details': []
     }
-    
+
     # Expected meters for Bhagavad Gita
     expected_meters = {'अनुष्टुभ्', 'anuṣṭubh', 'anushtubh', 'Anuṣṭubh', 'Anushtubh',
                        'त्रिष्टुभ्', 'triṣṭubh', 'trishtubh', 'Triṣṭubh',
@@ -170,16 +169,16 @@ def test_bhagavad_gita_shlokas():
                        'वंशस्थ', 'Vamshastha', 'vaṃśastha',
                        'इन्द्रवज्रा', 'Indravajra', 'indravajrā',
                        'उपेन्द्रवज्रा', 'Upendravajra'}
-    
+
     anushtubh_patterns = {'अनुष्टुभ्', 'anuṣṭubh', 'anushtubh', 'Anuṣṭubh', 'Anushtubh', 'श्लोक', 'Shloka'}
     trishtubh_patterns = {'त्रिष्टुभ्', 'triṣṭubh', 'trishtubh', 'Triṣṭubh', 'Trishtubh',
                           'इन्द्रवज्रा', 'Indravajra', 'उपेन्द्रवज्रा', 'Upendravajra',
                           'उपजाति', 'Upajati', 'वंशस्थ', 'Vamshastha'}
-    
+
     print("\n" + "=" * 80)
     print("VALIDATION RESULTS")
     print("=" * 80)
-    
+
     # Group by category for organized output
     categories = {}
     for shloka in shlokas:
@@ -187,27 +186,27 @@ def test_bhagavad_gita_shlokas():
         if cat not in categories:
             categories[cat] = []
         categories[cat].append(shloka)
-    
+
     for category, cat_shlokas in categories.items():
         print(f"\n📂 {category}")
         print("-" * 40)
-        
+
         for shloka in cat_shlokas:
             ref = shloka['reference']
             text = shloka['devanagari']
-            
+
             # Identify using verse mode for full verse analysis
             result = chanda.identify_from_text(text, verse=True)
-            
+
             # Extract primary meter
             identified_meter = "Unknown"
             syllable_count = 0
             confidence = 0
-            
+
             # Navigate to the actual result structure
             if result and 'result' in result:
                 inner_result = result['result']
-                
+
                 # Try verse-level analysis first
                 if 'verse' in inner_result and inner_result['verse']:
                     verse_data = inner_result['verse']
@@ -227,7 +226,7 @@ def test_bhagavad_gita_shlokas():
                                     line_len = inner_result['line'][idx].get('result', {}).get('length', 0)
                                     if line_len:
                                         syllable_count += int(line_len)
-                
+
                 # Fallback: try line-by-line
                 if identified_meter == "Unknown" and 'line' in inner_result and inner_result['line']:
                     for line_entry in inner_result['line']:
@@ -236,11 +235,11 @@ def test_bhagavad_gita_shlokas():
                             identified_meter = line_res.get('display_chanda_primary', 'Unknown')
                             syllable_count = line_res.get('length', 0) or 0
                             break
-            
+
             # Classify result
             is_anushtubh = any(p.lower() in identified_meter.lower() for p in anushtubh_patterns)
             is_trishtubh = any(p.lower() in identified_meter.lower() for p in trishtubh_patterns)
-            
+
             if is_anushtubh:
                 results['anushtubh'] += 1
                 status = "✅"
@@ -253,7 +252,7 @@ def test_bhagavad_gita_shlokas():
             else:
                 results['failed'] += 1
                 status = "❌"
-            
+
             # Store detail
             results['details'].append({
                 'ref': ref,
@@ -262,20 +261,20 @@ def test_bhagavad_gita_shlokas():
                 'syllables': syllable_count,
                 'status': status
             })
-            
+
             # Print result
             text_preview = text[:50] + "..." if len(text) > 50 else text
             print(f"  {status} {ref}: {identified_meter} ({syllable_count} syl)")
-    
+
     # Summary
     print("\n" + "=" * 80)
     print("SUMMARY")
     print("=" * 80)
-    
+
     total = results['total']
     success = results['anushtubh'] + results['trishtubh'] + results['other_classical']
     accuracy = (success / total * 100) if total > 0 else 0
-    
+
     print(f"""
 📊 Total Shlokas Tested: {total}
 
@@ -287,7 +286,7 @@ def test_bhagavad_gita_shlokas():
 
 ✨ Overall Accuracy: {accuracy:.1f}% ({success}/{total})
 """)
-    
+
     # Expected: Most BG verses are Anushtubh
     if results['anushtubh'] >= total * 0.7:
         print("✅ PASS: Majority correctly identified as Anushtubh (expected for Bhagavad Gita)")
@@ -295,14 +294,14 @@ def test_bhagavad_gita_shlokas():
         print("✅ PASS: High accuracy on classical Sanskrit meters")
     else:
         print("⚠️ NOTE: Review failed identifications for edge cases")
-    
+
     # Print failed cases for debugging
     failed_cases = [d for d in results['details'] if d['status'] == '❌']
     if failed_cases:
         print("\n📋 Failed Cases (for debugging):")
         for case in failed_cases[:10]:  # Show first 10
             print(f"   • {case['ref']}: {case['meter']}")
-    
+
     return results
 
 

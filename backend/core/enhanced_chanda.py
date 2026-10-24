@@ -18,22 +18,17 @@ Implements all rules from Chandovallari (Dr. Sampadananda Mishra):
 
 ###############################################################################
 
+import csv
+import functools
 import os
 import re
-import csv
-import json
-import hashlib
-import functools
-
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 
 import Levenshtein as Lev
-
+import sanskrit_text as skt
 from indic_transliteration import sanscript
 from indic_transliteration.detect import detect
 from indic_transliteration.sanscript import transliterate
-
-import sanskrit_text as skt
 
 # size of LRU cache
 MAX_CACHE = 1024
@@ -43,7 +38,7 @@ MAX_CACHE = 1024
 
 class EnhancedChanda:
     """Enhanced Chanda Identifier with Chandovallari rules"""
-    
+
     # Gaṇa symbols
     Y = 'Y'
     R = 'R'
@@ -56,7 +51,7 @@ class EnhancedChanda:
     L = 'L'
     G = 'G'
     SYMBOLS = f'{Y}{R}{T}{N}{B}{J}{S}{M}{L}{G}'
-    
+
     # Gaṇa patterns (from Chandovallari Section 3)
     GANA = {
         Y: f'{L}{G}{G}',  # ya-gaṇa: u--
@@ -68,7 +63,7 @@ class EnhancedChanda:
         S: f'{L}{L}{G}',  # sa-gaṇa: uu-
         M: f'{G}{G}{G}'   # ma-gaṇa: ---
     }
-    
+
     # Vedic Meters (from Chandovallari Section 6)
     VEDIC_METERS = {
         'Gayatri': {'syllables': 24, 'padas': 3, 'per_pada': 8, 'description': '3×8'},
@@ -79,7 +74,7 @@ class EnhancedChanda:
         'Trishtubh': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11'},
         'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'}
     }
-    
+
     # Extended Vedic Meters
     EXTENDED_VEDIC = {
         'Atijagati': {'syllables': 52, 'per_pada': 13},
@@ -90,7 +85,7 @@ class EnhancedChanda:
         'Dhriti': {'syllables': 72, 'per_pada': 18},
         'Atidhriti': {'syllables': 76, 'per_pada': 19}
     }
-    
+
     # Vedic family names (used to prevent boosting over specific meters)
     VEDIC_FAMILY_NAMES = {
         'त्रिष्टुभ्', 'Trishtubh', 'Triṣṭubh', 'त्रिष्टुप्',
@@ -101,7 +96,7 @@ class EnhancedChanda:
         'बृहती', 'Brihati', 'Bṛhatī',
         'पङ्क्ति', 'Pankti', 'Paṅkti'
     }
-    
+
     # Classical pada patterns (from Chandovallari Section 11)
     # Pattern: (Devanagari name, IAST name, Gaṇa formula)
     CLASSICAL_PADA_PATTERNS = {
@@ -112,7 +107,7 @@ class EnhancedChanda:
         'GLGLLLGLGLGL': ('रथोद्धता', 'Rathoddhata', 'र न र ल ग'),
         'GLGLLLGLLGG': ('स्वागता', 'Svāgatā', 'र न भ ग ग'),
         'GLLGLLGLLGG': ('दोधक', 'Dodhakam', 'भ भ भ ग ग'),
-        
+
         # 12-syllable Jagatī class
         'LGLLGGLGGLGLG': ('वंशस्थ', 'Vaṁśasthavilam', 'ज त ज र'),
         'GGLGGLGGLGLG': ('इन्द्रवंशा', 'Indravaṁśā', 'त त ज र'),
@@ -120,28 +115,28 @@ class EnhancedChanda:
         'LLGLLGLLGLLG': ('तोटक', 'Toṭakam', 'स स स स'),
         'GLGGLGGLGGLG': ('स्रग्विणी', 'Sragviṇī', 'र र र र'),
         'LLLGLLGLLGLG': ('द्रुतविलम्बित', 'Drutavilambitam', 'न भ भ र'),
-        
+
         # 13-syllable meters
         'GGGLLLLLGLGLGG': ('प्रहर्षिणी', 'Praharṣiṇī', 'म न ज र ग'),
         'LGLLGLLLLGLGLG': ('रुचिरा', 'Rucirā', 'ज भ स ज ग'),
-        
+
         # 14-syllable Śakvarī class
         'GGLGLLLLGLLGG': ('वसन्ततिलका', 'Vasantatilakam', 'त भ ज ज ग ग'),
-        
+
         # 15-syllable Atiśakvarī class
         'LLLLLLGGGLGGLGG': ('मालिनी', 'Mālinī', 'न न म य य'),
-        
+
         # 17-syllable Atyaṣṭi class
         'LGGGGGLLLLLLGGLLLG': ('शिखरिणी', 'Śikhariṇī', 'य म न स भ ल ग'),
         'GGGGLLLLLLGGLGGLGG': ('मन्दाक्रान्ता', 'Mandākrāntā', 'म भ न त त ग ग'),
-        
+
         # 19-syllable Atidhṛti class
         'GGGLLLGLLLLGGGLLGLG': ('शार्दूलविक्रीडित', 'Śārdūlavikrīḍitam', 'म स ज स त त ग'),
-        
+
         # 21-syllable Prakṛti class
         'GGGGLLGLLLLLLGGLGGLGG': ('स्रग्धरा', 'Sragdharā', 'म र भ न य य य'),
     }
-    
+
     # Yati (caesura) positions for meters (from Chandovallari Section 5 & 11)
     YATI_POSITIONS = {
         'इन्द्रवज्रा': [5, 11],
@@ -159,7 +154,7 @@ class EnhancedChanda:
         'शार्दूलविक्रीडित': [12, 19],
         'स्रग्धरा': [7, 14, 21],
     }
-    
+
     # 14 Upajāti varieties (from Chandovallari Section on Upajāti)
     # इ = Indravajrā pada, उ = Upendravajrā pada
     UPAJATI_VARIETIES = {
@@ -178,11 +173,11 @@ class EnhancedChanda:
         ('उ', 'इ', 'उ', 'उ'): 'ऋद्धिः',
         ('इ', 'उ', 'उ', 'उ'): 'बुद्धिः',
     }
-    
+
     # Indravajrā and Upendravajrā patterns for Upajāti detection
     INDRAVAJRA_PATTERN = 'GGLGGLGGLGG'
     UPENDRAVAJRA_PATTERN = 'LGLLGGLGGLGG'
-    
+
     # Āryā family mātrā patterns (from Chandovallari Section 10)
     ARYA_FAMILY = {
         'आर्या': {'matras': [12, 18, 12, 15], 'description': 'Base Āryā'},
@@ -194,8 +189,8 @@ class EnhancedChanda:
 
     def __init__(self, data_path, symbols='यरतनभजसमलग'):
         """Initialize Enhanced Chanda identifier"""
-        self.input_map = dict(zip(symbols, self.SYMBOLS))
-        self.output_map = dict(zip(self.SYMBOLS, symbols))
+        self.input_map = dict(zip(symbols, self.SYMBOLS, strict=False))
+        self.output_map = dict(zip(self.SYMBOLS, symbols, strict=False))
         self.ttable_in = str.maketrans(self.input_map)
         self.ttable_out = str.maketrans(self.output_map)
         self.gana = self.GANA.copy()
@@ -213,7 +208,7 @@ class EnhancedChanda:
 
         # Read Data
         self.read_data()
-        
+
         # Build pada pattern index for fast lookup
         self._build_pada_pattern_index()
 
@@ -221,14 +216,14 @@ class EnhancedChanda:
     # Core L-G Marking
     ###########################################################################
 
-    @functools.lru_cache(maxsize=MAX_CACHE)
+    @functools.lru_cache(maxsize=MAX_CACHE)  # noqa: B019 - one long-lived engine per process
     def mark_lg(self, text):
         """Mark Laghu-Guru for text (matching original implementation)"""
         skip_syllables = [skt.AVAGRAHA]
         lg_marks = []
         syllables = skt.get_syllables(text)
         flat_syllables = [s for ln in syllables for w in ln for s in w]
-        
+
         if not flat_syllables:
             return flat_syllables, lg_marks
 
@@ -236,7 +231,7 @@ class EnhancedChanda:
             if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
                 lg_marks.append('')
                 continue
-            # A syllable is laghu if it's naturally short AND 
+            # A syllable is laghu if it's naturally short AND
             # the next syllable doesn't start with conjunct (no halanta)
             laghu = (
                 skt.is_laghu(syllable) and
@@ -284,11 +279,11 @@ class EnhancedChanda:
     def _build_pada_pattern_index(self):
         """Build index of pada patterns from CHANDA database"""
         self.PADA_INDEX = {}  # pattern -> [(meter_name, confidence)]
-        
+
         # Add classical patterns with high confidence
-        for pattern, (dev_name, iast_name, gana) in self.CLASSICAL_PADA_PATTERNS.items():
+        for pattern, (dev_name, _iast_name, _gana) in self.CLASSICAL_PADA_PATTERNS.items():
             self.PADA_INDEX[pattern] = [(dev_name, 9.8, 'classical_definition')]
-        
+
         # Index pada patterns from loaded database
         for lg_pattern, meter_names in self.CHANDA.items():
             # Patterns with 11, 12, 13, 14, 15 syllables are pada-level
@@ -318,7 +313,7 @@ class EnhancedChanda:
         results = []
         syllable_count = len(lg_pattern)
         seen_meters = set()  # Track to avoid duplicates
-        
+
         # Level 1: Exact full match (highest confidence)
         if lg_pattern in self.CHANDA:
             for meter_name in self.CHANDA[lg_pattern]:
@@ -326,7 +321,7 @@ class EnhancedChanda:
                 if name not in seen_meters:
                     results.append((meter_name, 10.0, 'exact'))
                     seen_meters.add(name)
-        
+
         # Level 1.5: Pada-level exact matching (NEW - Key improvement)
         pada_matches = self._match_pada_patterns(lg_pattern)
         for meter_name, confidence, match_type in pada_matches:
@@ -337,7 +332,7 @@ class EnhancedChanda:
             if name not in seen_meters:
                 results.append((meter_name, confidence, match_type))
                 seen_meters.add(name)
-        
+
         # Level 2: Upajāti detection (NEW)
         upajati_result = self._detect_upajati(lg_pattern)
         if upajati_result:
@@ -345,7 +340,7 @@ class EnhancedChanda:
             if meter_name not in seen_meters:
                 results.append(((f'उपजाति ({variety_name})', ''), 9.3, 'upajati'))
                 seen_meters.add(meter_name)
-        
+
         # Level 3: Vedic pada-level matching (REDUCED confidence)
         # Only if no pada-exact matches found
         if not pada_matches:
@@ -355,7 +350,7 @@ class EnhancedChanda:
                 if name not in seen_meters:
                     results.append((meter_name, confidence, match_type))
                     seen_meters.add(name)
-        
+
         # Level 4: Vedic full syllable count (REDUCED confidence)
         vedic_meter = self._identify_vedic_by_syllable(syllable_count)
         if vedic_meter:
@@ -363,7 +358,7 @@ class EnhancedChanda:
             if name not in seen_meters:
                 results.append((vedic_meter, 4.0, 'vedic_syllable'))
                 seen_meters.add(name)
-        
+
         # Level 5: Mātrā-based matching (NEW)
         matra_result = self._match_matra_meter(lg_pattern)
         if matra_result:
@@ -371,7 +366,7 @@ class EnhancedChanda:
             if meter_name not in seen_meters:
                 results.append(((meter_name, ''), confidence, 'matra'))
                 seen_meters.add(meter_name)
-        
+
         # Level 6: Fuzzy matching (lowest confidence)
         if fuzzy and len(results) < max_fuzzy:
             fuzzy_results = self._fuzzy_match(lg_pattern, max_fuzzy - len(results))
@@ -380,10 +375,10 @@ class EnhancedChanda:
                 if name not in seen_meters:
                     results.append((meter_name, confidence, match_type))
                     seen_meters.add(name)
-        
+
         # Sort by confidence (descending)
         results.sort(key=lambda x: x[1], reverse=True)
-        
+
         return results
 
     def _match_pada_patterns(self, lg_pattern):
@@ -396,23 +391,23 @@ class EnhancedChanda:
         - etc.
         """
         results = []
-        
+
         for num_padas in [4, 3, 2]:
             padas = self.split_into_padas(lg_pattern, num_padas)
             if not padas:
                 continue
-            
+
             first_pada = padas[0]
-            
+
             # Check if first pada matches a known pattern
             if first_pada in self.PADA_INDEX:
                 all_sama = all(pada == first_pada for pada in padas)
-                
-                for meter_name, base_conf, source in self.PADA_INDEX[first_pada]:
+
+                for meter_name, base_conf, _source in self.PADA_INDEX[first_pada]:
                     # Skip Vedic family names if we're looking for specific meters
                     if meter_name in self.VEDIC_FAMILY_NAMES:
                         continue
-                    
+
                     if all_sama:
                         # All padas identical - Samavṛtta (highest pada confidence)
                         confidence = base_conf
@@ -422,20 +417,20 @@ class EnhancedChanda:
                         # Or other ardhasamavṛtta
                         confidence = base_conf - 0.5
                         results.append(((meter_name, ''), confidence, 'pada_partial'))
-            
+
             # Also check each pada individually
             for pada in padas:
                 if pada in self.PADA_INDEX and pada != first_pada:
-                    for meter_name, base_conf, source in self.PADA_INDEX[pada]:
+                    for meter_name, base_conf, _source in self.PADA_INDEX[pada]:
                         if meter_name in self.VEDIC_FAMILY_NAMES:
                             continue
                         confidence = base_conf - 1.0  # Lower confidence for mixed
                         existing = [r[0][0] if isinstance(r[0], tuple) else r[0] for r in results]
                         if meter_name not in existing:
                             results.append(((meter_name, ''), confidence, 'pada_mixed'))
-            
+
             break  # Use first successful split
-        
+
         return results
 
     def _detect_upajati(self, lg_pattern):
@@ -446,11 +441,11 @@ class EnhancedChanda:
         """
         if len(lg_pattern) != 44:  # 4 × 11 syllables
             return None
-        
+
         padas = self.split_into_padas(lg_pattern, 4)
         if not padas:
             return None
-        
+
         # Classify each pada as Indravajrā (इ) or Upendravajrā (उ)
         pada_types = []
         for pada in padas:
@@ -461,17 +456,17 @@ class EnhancedChanda:
                 pada_types.append('उ')
             else:
                 return None  # Not an Upajāti
-        
+
         # Check if all padas are same type (not Upajāti, but pure Indravajrā/Upendravajrā)
         if len(set(pada_types)) == 1:
             return None
-        
+
         # Look up the specific Upajāti variety
         pada_tuple = tuple(pada_types)
         if pada_tuple in self.UPAJATI_VARIETIES:
             variety_name = self.UPAJATI_VARIETIES[pada_tuple]
             return ('उपजाति', variety_name)
-        
+
         # Generic Upajāti (mixed but not named variety)
         return ('उपजाति', 'मिश्र')
 
@@ -479,13 +474,13 @@ class EnhancedChanda:
         """Check if two patterns match within tolerance"""
         if len(pattern1) != len(pattern2):
             return False
-        differences = sum(1 for a, b in zip(pattern1, pattern2) if a != b)
+        differences = sum(1 for a, b in zip(pattern1, pattern2, strict=False) if a != b)
         return differences <= tolerance
 
     def _match_vedic_pada(self, lg_pattern):
         """Match Vedic meters by pada syllable count (reduced confidence)"""
         results = []
-        
+
         vedic_pada_meters = {
             7: ('उष्णिक्', 'Ushnik'),
             8: [('गायत्री', 'Gayatri'), ('अनुष्टुभ्', 'Anushtubh')],
@@ -493,31 +488,31 @@ class EnhancedChanda:
             11: ('त्रिष्टुभ्', 'Trishtubh'),
             12: ('जगती', 'Jagati')
         }
-        
+
         for num_padas in [4, 3, 2]:
             padas = self.split_into_padas(lg_pattern, num_padas)
             if not padas:
                 continue
-            
+
             pada_syllables = len(padas[0])
-            
+
             if pada_syllables in vedic_pada_meters:
                 candidates = vedic_pada_meters[pada_syllables]
                 if not isinstance(candidates, list):
                     candidates = [candidates]
-                
+
                 all_sama = all(pada == padas[0] for pada in padas)
-                
-                for dev_name, eng_name in candidates:
+
+                for dev_name, _eng_name in candidates:
                     if all_sama:
                         confidence = 6.0  # REDUCED from 8.0
                         results.append(((dev_name, ''), confidence, 'vedic_pada_sama'))
                     else:
                         confidence = 5.5  # REDUCED from 6.5
                         results.append(((dev_name, ''), confidence, 'vedic_pada_vishama'))
-            
+
             break
-        
+
         return results
 
     def _identify_vedic_by_syllable(self, syllable_count):
@@ -531,45 +526,45 @@ class EnhancedChanda:
             44: 'त्रिष्टुभ्',
             48: 'जगती'
         }
-        
+
         # Exact match
         if syllable_count in vedic_mapping:
             return (vedic_mapping[syllable_count], '')
-        
+
         # Vedic tolerance: ±1-2 syllables (from Chandovallari)
         for expected, meter in vedic_mapping.items():
             if abs(syllable_count - expected) <= 2:
                 return (meter, '')
-        
+
         return None
 
     def _match_matra_meter(self, lg_pattern):
         """Match mātrā-based meters (Āryā family)"""
         total_matra = self.count_matra(lg_pattern)
-        
+
         # Check Āryā family patterns
         for meter_name, info in self.ARYA_FAMILY.items():
             expected_total = sum(info['matras'])
             if abs(total_matra - expected_total) <= 2:
                 return (meter_name, 5.0)
-        
+
         return None
 
     def _fuzzy_match(self, lg_pattern, max_results):
         """Fuzzy matching using Levenshtein distance"""
         results = []
         syllable_count = len(lg_pattern)
-        
+
         for chanda_lg, chanda_names in self.CHANDA.items():
             if len(chanda_lg) == syllable_count:
                 distance = Lev.distance(lg_pattern, chanda_lg)
                 if distance <= 3:
                     similarity = 1 - (distance / len(chanda_lg))
                     confidence = similarity * 4.0
-                    
+
                     for name in chanda_names:
                         results.append((name, confidence, 'fuzzy'))
-        
+
         results.sort(key=lambda x: x[1], reverse=True)
         return results[:max_results]
 
@@ -582,14 +577,14 @@ class EnhancedChanda:
         length = len(lg_pattern)
         if length % num_padas != 0:
             return None
-        
+
         pada_length = length // num_padas
         padas = []
         for i in range(num_padas):
             start = i * pada_length
             end = start + pada_length
             padas.append(lg_pattern[start:end])
-        
+
         return padas
 
     def classify_verse_type(self, lg_pattern):
@@ -600,7 +595,7 @@ class EnhancedChanda:
         padas = self.split_into_padas(lg_pattern, 4)
         if not padas:
             return 'unknown'
-        
+
         if all(pada == padas[0] for pada in padas):
             return 'samavṛtta'  # All 4 quarters identical
         elif padas[0] == padas[2] and padas[1] == padas[3]:
@@ -615,13 +610,13 @@ class EnhancedChanda:
         From Chandovallari: At end of quarter, short can be long and vice versa
         """
         variants = [lg_pattern]
-        
+
         # Try flipping last character
         if lg_pattern[-1] == self.L:
             variants.append(lg_pattern[:-1] + self.G)
         else:
             variants.append(lg_pattern[:-1] + self.L)
-        
+
         # For 4-pada verses, also try flipping end of each pada
         padas = self.split_into_padas(lg_pattern, 4)
         if padas:
@@ -635,7 +630,7 @@ class EnhancedChanda:
                         variant = lg_pattern[:pos] + self.L + lg_pattern[pos+1:]
                     if variant not in variants:
                         variants.append(variant)
-        
+
         return variants
 
     ###########################################################################
@@ -672,23 +667,23 @@ class EnhancedChanda:
                 if header:
                     header = False
                     continue
-                
+
                 if len(row) < 4:
                     continue
-                
+
                 chanda_names = tuple([c.strip() for c in row[0].split(',')])
                 pada = tuple([c.strip() for c in row[1].split(',')]) if row[1] else ('',)
                 gana_pattern = row[2].strip() if len(row) > 2 else ''
                 lg_pattern = row[3].strip() if len(row) > 3 else ''
-                
+
                 if not lg_pattern and gana_pattern:
                     lg_pattern = self.gana_to_lg(gana_pattern.translate(self.ttable_in))
-                
+
                 if not lg_pattern:
                     continue
-                
+
                 lg_pattern = lg_pattern.upper().replace('U', self.L).replace('-', self.G)
-                
+
                 if pada == ('',):
                     for name in chanda_names:
                         chanda[lg_pattern].append((name, pada))
@@ -702,7 +697,7 @@ class EnhancedChanda:
             for _pada, _lakshana in _pada_lakshana.items():
                 multi_pada.append(_pada)
                 multi_lakshana.append(_lakshana)
-            
+
             if multi_lakshana:
                 combined_lg = ''.join(multi_lakshana)
                 for name in _chanda_names:
@@ -714,7 +709,7 @@ class EnhancedChanda:
         for k, v in multi_chanda.items():
             self.MULTI_CHANDA[k].extend(v)
             self.CHANDA[k].extend(v)
-        
+
         self.SPLITS.update(splits)
         return chanda
 
@@ -740,13 +735,13 @@ class EnhancedChanda:
             devanagari_text = transliterate(text, scheme, sanscript.DEVANAGARI)
         else:
             devanagari_text = text
-        
+
         lines = []
         for line in skt.split_lines(devanagari_text):
             clean_line = skt.clean(line).strip()
             if clean_line:
                 lines.append(clean_line)
-        
+
         return lines, scheme
 
     ###########################################################################
@@ -760,7 +755,7 @@ class EnhancedChanda:
         syllables, lg_marks = self.mark_lg(skt.clean(line))
         flat_syllables = [s for ln in syllables for w in ln for s in w]
         lg_str = ''.join(lg_marks)
-        
+
         if not lg_str:
             return None
 
@@ -778,7 +773,7 @@ class EnhancedChanda:
         gana = []
         length = []
         matra = []
-        
+
         if not multi:
             if found:
                 chanda = self.SINGLE_CHANDA.get(lg_str, [])
@@ -837,7 +832,7 @@ class EnhancedChanda:
         gana = []
         length = []
         matra = []
-        
+
         if found:
             if direct_match['found']:
                 chanda.extend(direct_match['chanda'])
@@ -867,15 +862,15 @@ class EnhancedChanda:
 
         # ENHANCED: Multi-level matching with confidence scores
         multi_level_matches = self.match_with_confidence(lg_str, fuzzy=fuzzy, max_fuzzy=k)
-        
+
         # Build confidence map
         confidence_map = {}
-        
+
         # Add existing exact matches
         for c in chanda:
             meter_name = c[0] if isinstance(c, tuple) else c
             confidence_map[meter_name] = (10.0, 'exact_direct')
-        
+
         # Add multi-level matches
         for match_item, confidence, match_type in multi_level_matches:
             if isinstance(match_item, tuple):
@@ -884,13 +879,13 @@ class EnhancedChanda:
             else:
                 meter_name = match_item
                 meter_tuple = (match_item, ('',))
-            
+
             # Don't let Vedic family names override specific meters
             if meter_name in self.VEDIC_FAMILY_NAMES:
                 if any(m not in self.VEDIC_FAMILY_NAMES for m in confidence_map.keys()):
                     # We have specific meters, skip Vedic family
                     confidence = min(confidence, 3.0)
-            
+
             if meter_name in confidence_map:
                 existing_conf, existing_type = confidence_map[meter_name]
                 if confidence > existing_conf:
@@ -899,7 +894,7 @@ class EnhancedChanda:
                 confidence_map[meter_name] = (confidence, match_type)
                 if meter_tuple not in chanda:
                     chanda.append(meter_tuple)
-        
+
         # Sort chanda by confidence
         chanda_with_confidence = [
             (name, confidence_map.get(name[0] if isinstance(name, tuple) else name, (0, ''))[0])
@@ -907,7 +902,7 @@ class EnhancedChanda:
         ]
         chanda_with_confidence.sort(key=lambda x: x[1], reverse=True)
         chanda = [item[0] for item in chanda_with_confidence]
-        
+
         if chanda:
             found = True
 
@@ -948,7 +943,7 @@ class EnhancedChanda:
         answer['display_jaati'] = display_jaati
 
         answer['fuzzy'] = []
-        
+
         # Add fuzzy results if not found
         if not found and fuzzy:
             fuzzy_results = self._fuzzy_match(lg_str, k)
@@ -997,28 +992,28 @@ class EnhancedChanda:
                 'scores': [],
                 'lines': []
             }
-            
+
             line_count = 0
             ongoing_score = Counter()
-            
-            for line_idx, line_result in enumerate(line_results):
+
+            for _line_idx, line_result in enumerate(line_results):
                 line_count += 1
                 result = line_result['result']
-                
+
                 if result.get('chanda'):
                     for c in result['chanda'][:3]:
                         name = c[0] if isinstance(c, tuple) else c
                         ongoing_score[name] += 1
-                
+
                 verse_result['lines'].append(line_result)
-                
+
                 if line_count == 4:
                     if ongoing_score:
                         best_chanda = ongoing_score.most_common(1)[0]
                         verse_result['chanda'] = best_chanda
                         verse_result['scores'] = ongoing_score.most_common()
                     verse_results.append(verse_result)
-                    
+
                     verse_result = {
                         'chanda': None,
                         'scheme': scheme,
@@ -1027,7 +1022,7 @@ class EnhancedChanda:
                     }
                     line_count = 0
                     ongoing_score = Counter()
-            
+
             # Handle remaining lines
             if verse_result['lines']:
                 if ongoing_score:

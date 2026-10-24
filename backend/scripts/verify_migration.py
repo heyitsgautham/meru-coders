@@ -2,9 +2,11 @@
 """Verify Phase 2 database migration was successful."""
 
 import sys
+
 sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
 
 from config.supabase_client import get_supabase_client
+
 
 def main():
     supabase = get_supabase_client()
@@ -20,7 +22,7 @@ def main():
         try:
             supabase.table(t).select("id").limit(1).execute()
             print(f"✅ Table {t}: OK")
-        except Exception as e:
+        except Exception:
             print(f"❌ Table {t}: MISSING")
             all_ok = False
 
@@ -28,24 +30,24 @@ def main():
     try:
         supabase.table("users").select("bio, followers_count, following_count").limit(1).execute()
         print("✅ User columns (bio, followers_count, following_count): OK")
-    except Exception as e:
-        print(f"❌ User columns: MISSING")
+    except Exception:
+        print("❌ User columns: MISSING")
         all_ok = False
 
-    # Check post columns  
+    # Check post columns
     try:
         supabase.table("posts").select("image_url").limit(1).execute()
         print("✅ Post column (image_url): OK")
-    except Exception as e:
-        print(f"❌ Post column image_url: MISSING")
+    except Exception:
+        print("❌ Post column image_url: MISSING")
         all_ok = False
 
     # Check comment parent_id
     try:
         supabase.table("post_comments").select("parent_id").limit(1).execute()
         print("✅ Comment column (parent_id): OK")
-    except Exception as e:
-        print(f"❌ Comment parent_id: MISSING")
+    except Exception:
+        print("❌ Comment parent_id: MISSING")
         all_ok = False
 
     print()

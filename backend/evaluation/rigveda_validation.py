@@ -11,16 +11,16 @@ This tests using VEDIC MODE since the dataset is from Rigveda.
 """
 
 import csv
-import sys
 import os
+import sys
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core import Chanda
-from config import settings
 from collections import Counter, defaultdict
 
+from config import settings
+from core import Chanda
 
 # ============================================================================
 # METER NAME NORMALIZATION
@@ -49,7 +49,7 @@ METER_NORMALIZATION = {
     'jagatī': 'जगती',
     'jagati': 'जगती',
     'jagatiī': 'जगती',  # Typo in dataset
-    
+
     # Extended Vedic meters
     'virāṭ': 'विराट्',
     'virat': 'विराट्',
@@ -76,12 +76,12 @@ METER_NORMALIZATION = {
     'kṛti': 'कृति',
     'ādhṛtiḥ': 'आधृति',
     'ādhṛti': 'आधृति',
-    
+
     # Dvipadā variants
     'dvipadā virāṭ': 'द्विपदा विराट्',
     'dvipadā triṣṭup': 'द्विपदा त्रिष्टुभ्',
     'dvipadā': 'द्विपदा',
-    
+
     # Other variants
     'prastārapaṅktiḥ': 'प्रस्तारपङ्क्ति',
     'abhisāriṇī': 'अभिसारिणी',
@@ -141,25 +141,25 @@ def normalize_meter_name(name):
     """Normalize meter name from IAST to Devanagari"""
     if not name:
         return None
-    
+
     # Clean the name
     name = name.strip().lower()
-    
+
     # Skip entries that look like verse references (start with '(')
     if name.startswith('('):
         return None
-    
+
     # Direct lookup
     if name in METER_NORMALIZATION:
         return METER_NORMALIZATION[name]
-    
+
     # Try without diacritics variations
     simple_name = name.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
     for key, value in METER_NORMALIZATION.items():
         simple_key = key.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
         if simple_name == simple_key:
             return value
-    
+
     return None
 
 
@@ -180,28 +180,28 @@ def meters_match(expected, predicted):
     """
     if not expected or not predicted:
         return False, False
-    
+
     # Exact match
     if expected == predicted:
         return True, True
-    
+
     # Check composite meters (e.g., Pragatha -> Brhati is acceptable)
     if expected in COMPOSITE_METERS:
         if predicted in COMPOSITE_METERS[expected]:
             return False, True
-    
+
     # Family match
     expected_family = get_meter_family(expected)
     predicted_family = get_meter_family(predicted)
-    
+
     if expected_family == predicted_family:
         return False, True
-    
+
     # Check if predicted is in expected's family
     for family, members in METER_FAMILIES.items():
         if expected in members and predicted in members:
             return False, True
-    
+
     return False, False
 
 
@@ -209,7 +209,7 @@ def load_rigveda_dataset(filepath):
     """Load and parse the Rigveda dataset"""
     data = []
     errors = []
-    
+
     with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row_num, row in enumerate(reader, start=2):
@@ -222,21 +222,21 @@ def load_rigveda_dataset(filepath):
                 meter = row.get('meter', '').strip()
                 lg_pattern = row.get('lg_pattern', '').strip()
                 syllable_count = row.get('syllable_count', '').strip()
-                
+
                 # Skip rows with missing essential data
                 if not verse_text or not meter:
                     continue
-                
+
                 # Skip rows where meter looks like a reference (starts with '(')
                 if meter.startswith('('):
                     continue
-                
+
                 # Normalize meter name
                 normalized_meter = normalize_meter_name(meter)
                 if not normalized_meter:
                     errors.append(f"Row {row_num}: Unknown meter '{meter}'")
                     continue
-                
+
                 data.append({
                     'row_num': row_num,
                     'ref': f"{mandala}.{sukta}.{rik}",
@@ -248,7 +248,7 @@ def load_rigveda_dataset(filepath):
                 })
             except Exception as e:
                 errors.append(f"Row {row_num}: Parse error - {str(e)}")
-    
+
     return data, errors
 
 
@@ -265,50 +265,50 @@ def test_rigveda_accuracy(verbose=False, limit=None):
     """
     # Initialize Chanda identifier
     chanda = Chanda(data_path=str(settings.DATA_DIR))
-    
+
     # Load dataset
     dataset_path = os.path.join(settings.DATA_DIR, 'rigveda_with_meters_complete.csv')
     data, parse_errors = load_rigveda_dataset(dataset_path)
-    
+
     if parse_errors and verbose:
         print(f"\n⚠️ Parse errors ({len(parse_errors)}):")
         for err in parse_errors[:10]:
             print(f"  {err}")
         if len(parse_errors) > 10:
             print(f"  ... and {len(parse_errors) - 10} more")
-    
+
     # Limit data if requested
     if limit:
         data = data[:limit]
-    
+
     # Statistics
     total = len(data)
     exact_matches = 0
     family_matches = 0
     mismatches = 0
-    
+
     # Track mismatches by meter type
     mismatch_details = defaultdict(list)
     meter_stats = defaultdict(lambda: {'total': 0, 'exact': 0, 'family': 0, 'miss': 0})
-    
+
     print(f"\n🔍 Testing {total} verses from Rigveda dataset...")
     print("=" * 60)
-    
+
     for i, entry in enumerate(data):
         if i % 1000 == 0 and i > 0:
             print(f"  Progress: {i}/{total} ({i*100//total}%)")
-        
+
         verse_text = entry['verse_text']
         expected_meter = entry['expected_meter']
         ref = entry['ref']
-        
+
         # Use VEDIC MODE for identification
         result = chanda._identify_vedic_mode(verse_text)
         predicted_meter = result.get('meter')
-        
+
         # Also try standard identification for comparison
         line_result = chanda.identify_line(verse_text)
-        
+
         # Get primary meter from line result
         standard_meter = None
         if line_result.get('found') and line_result.get('chanda'):
@@ -317,16 +317,16 @@ def test_rigveda_accuracy(verbose=False, limit=None):
                 standard_meter = first_chanda[0]
             else:
                 standard_meter = first_chanda
-        
+
         # Use vedic mode result primarily, but consider standard result too
         predicted = predicted_meter or standard_meter
-        
+
         # Check match
         exact, family = meters_match(expected_meter, predicted)
-        
+
         # Update stats
         meter_stats[expected_meter]['total'] += 1
-        
+
         if exact:
             exact_matches += 1
             meter_stats[expected_meter]['exact'] += 1
@@ -343,16 +343,16 @@ def test_rigveda_accuracy(verbose=False, limit=None):
                 'syllables': result.get('syllable_count'),
                 'text_preview': verse_text[:50] + '...' if len(verse_text) > 50 else verse_text
             })
-        
+
         if verbose and not exact:
             print(f"\n{'✓' if family else '✗'} {ref}: Expected '{expected_meter}', Got '{predicted}'")
             print(f"   Syllables: {result.get('syllable_count')}")
             print(f"   Text: {verse_text[:60]}...")
-    
+
     # Calculate metrics
     exact_accuracy = (exact_matches / total * 100) if total > 0 else 0
     family_accuracy = ((exact_matches + family_matches) / total * 100) if total > 0 else 0
-    
+
     # Print results
     print("\n" + "=" * 60)
     print("📊 RIGVEDA VALIDATION RESULTS")
@@ -366,19 +366,19 @@ def test_rigveda_accuracy(verbose=False, limit=None):
     print()
     print(f"📈 EXACT ACCURACY:  {exact_accuracy:.2f}%")
     print(f"📈 FAMILY ACCURACY: {family_accuracy:.2f}%")
-    
+
     # Print per-meter breakdown
     print("\n" + "-" * 60)
     print("Per-Meter Statistics:")
     print("-" * 60)
     print(f"{'Meter':<20} {'Total':>8} {'Exact':>8} {'Family':>8} {'Miss':>8} {'Acc%':>8}")
     print("-" * 60)
-    
+
     for meter in sorted(meter_stats.keys(), key=lambda m: meter_stats[m]['total'], reverse=True):
         stats = meter_stats[meter]
         acc = (stats['exact'] / stats['total'] * 100) if stats['total'] > 0 else 0
         print(f"{meter:<20} {stats['total']:>8} {stats['exact']:>8} {stats['family']:>8} {stats['miss']:>8} {acc:>7.1f}%")
-    
+
     # Print some mismatch examples
     if mismatch_details and verbose:
         print("\n" + "-" * 60)
@@ -388,7 +388,7 @@ def test_rigveda_accuracy(verbose=False, limit=None):
             print(f"\n{meter} ({len(details)} mismatches):")
             for d in details[:5]:
                 print(f"  - {d['ref']}: predicted '{d['predicted']}' (syllables: {d['syllables']})")
-    
+
     return {
         'total': total,
         'exact_matches': exact_matches,
@@ -408,46 +408,46 @@ def main():
     parser.add_argument('-n', '--limit', type=int, help='Limit number of verses to test')
     parser.add_argument('--check-authenticity', action='store_true', help='Check dataset authenticity')
     args = parser.parse_args()
-    
+
     if args.check_authenticity:
         print("\n" + "=" * 60)
         print("🔍 DATASET AUTHENTICITY CHECK")
         print("=" * 60)
-        
+
         dataset_path = os.path.join(settings.DATA_DIR, 'rigveda_with_meters_complete.csv')
         data, errors = load_rigveda_dataset(dataset_path)
-        
-        print(f"\nDataset: rigveda_with_meters_complete.csv")
+
+        print("\nDataset: rigveda_with_meters_complete.csv")
         print(f"Total valid entries: {len(data)}")
         print(f"Parse errors: {len(errors)}")
-        
+
         # Check meter distribution
         meter_counts = Counter(d['expected_meter'] for d in data)
-        print(f"\nMeter distribution (top 10):")
+        print("\nMeter distribution (top 10):")
         for meter, count in meter_counts.most_common(10):
             print(f"  {meter}: {count}")
-        
+
         # Check Mandala distribution
         mandala_counts = Counter(d['ref'].split('.')[0] for d in data)
-        print(f"\nMandala distribution:")
+        print("\nMandala distribution:")
         for mandala in sorted(mandala_counts.keys(), key=int):
             print(f"  Mandala {mandala}: {mandala_counts[mandala]}")
-        
+
         # Spot check: First verse of Mandala 1
         first_verse = next((d for d in data if d['ref'] == '1.1.1'), None)
         if first_verse:
-            print(f"\n✓ First verse (RV 1.1.1) present:")
+            print("\n✓ First verse (RV 1.1.1) present:")
             print(f"  Text: {first_verse['verse_text'][:50]}...")
             print(f"  Meter: {first_verse['expected_meter']} ({first_verse['original_meter']})")
-        
+
         print("\n" + "=" * 60)
         print("✅ AUTHENTICITY CHECK PASSED" if len(data) > 10000 else "⚠️ DATASET SMALLER THAN EXPECTED")
         print("=" * 60)
         return
-    
+
     # Run accuracy test
     results = test_rigveda_accuracy(verbose=args.verbose, limit=args.limit)
-    
+
     # Return exit code based on accuracy
     if results['exact_accuracy'] >= 80:
         print("\n✅ EXCELLENT: Accuracy meets threshold (≥80%)")
