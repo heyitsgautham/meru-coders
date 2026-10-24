@@ -1,0 +1,3 @@
+# Mechanical reformats, skipped by git blame --ignore-revs-file and GitHub blame
+# style(backend): apply ruff format to the Python code
+cf0fd6f742edddf50ff033d17596b4ccce70db89
