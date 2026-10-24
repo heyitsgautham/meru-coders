@@ -24,8 +24,6 @@ try:
 except ImportError:
     from langchain.schema import Document
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

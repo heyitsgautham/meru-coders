@@ -72,7 +72,8 @@ class Settings:
 
     # Logging
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
-    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    # "text" for humans, "json" for log collectors
+    LOG_FORMAT = os.environ.get("LOG_FORMAT", "text")
 
     # OCR configuration
     TESSERACT_LANGUAGES = ["san", "hin", "eng"]

@@ -19,6 +19,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from backend.config import settings
+from backend.config.logging_config import configure_logging, init_request_logging
 
 # Set up Google Cloud credentials BEFORE importing routes
 # This ensures TTS and other Google Cloud services can initialize properly
@@ -55,9 +56,9 @@ def create_app():
     app.config['DEBUG'] = settings.DEBUG
     app.config['CORS_ORIGINS'] = settings.CORS_ORIGINS  # For SocketIO
 
-    # Configure logging
-    logging.basicConfig(level=getattr(logging, settings.LOG_LEVEL), format=settings.LOG_FORMAT)
-    app.logger.setLevel(getattr(logging, settings.LOG_LEVEL))
+    # Configure logging: text or JSON lines, each tagged with the request ID
+    configure_logging(settings.LOG_LEVEL, settings.LOG_FORMAT)
+    init_request_logging(app)
 
     # Enable CORS for frontend
     # Allow all origins for development - handles localhost and local network IPs
