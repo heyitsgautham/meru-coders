@@ -25,6 +25,11 @@ jobs:
           enable-cache: true
       - name: Install dependencies from uv.lock
         run: uv sync --frozen
+      - name: Check backend/requirements.txt matches uv.lock
+        # The Docker image installs from requirements.txt; see CONTRIBUTING.md.
+        run: |
+          uv export --frozen --no-hashes --no-dev --extra rag --no-emit-project -q -o /tmp/requirements.txt
+          diff <(grep -v '^#' /tmp/requirements.txt) <(grep -v '^#' backend/requirements.txt)
       - name: Ruff lint
         run: uv run ruff check .
       - name: Ruff format check
