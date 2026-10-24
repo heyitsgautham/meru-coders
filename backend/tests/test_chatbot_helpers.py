@@ -135,3 +135,11 @@ class TestFormatMeterResponse:
         assert "could not definitively identify" in response
         assert "Syllable count: **3**" in response
         assert "मधुमती (similarity: 0.66)" in response
+
+
+def test_analyze_meter_agentic_identifies_anushtubh_half_verse():
+    result = chatbot.analyze_meter_agentic("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः")
+
+    assert result["success"] is True
+    assert result["found"] is True
+    assert "अनुष्टुभ्" in result["meter"]

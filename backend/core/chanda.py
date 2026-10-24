@@ -3711,7 +3711,7 @@ class Chanda:
 
         if mode == 'auto' and verse:
             try:
-                from core.text_classifier import classify_text
+                from .text_classifier import classify_text
 
                 text_class, classifier_confidence = classify_text(text)
                 # Use classifier result if confidence is high enough
