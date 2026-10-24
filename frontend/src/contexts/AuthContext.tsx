@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getAPIURL } from '../services/api';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 const redactToken = (token?: string | null) =>
   token ? `${token.slice(0, 4)}...${token.slice(-4)} (len=${token.length})` : '<empty>';
@@ -165,6 +165,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const startOAuth = async (provider = 'google'): Promise<AuthResult> => {
+    if (!isSupabaseConfigured) {
+      return { error: 'Google sign-in is not configured on this deployment' };
+    }
     try {
       const redirect_to = typeof window !== 'undefined' ? `${window.location.origin}/oauth/callback` : undefined;
       console.info('[AuthContext] Starting OAuth via supabase-js (PKCE)', {

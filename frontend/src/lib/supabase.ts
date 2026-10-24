@@ -3,15 +3,24 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
+if (!isSupabaseConfigured) {
+  console.warn('VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is unset; Google sign-in is disabled');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    storage: window.localStorage,
+// createClient throws on an empty URL, which used to stop the whole app from
+// rendering on a fresh clone. A placeholder keeps the client constructible;
+// startOAuth refuses to use it.
+export const supabase = createClient(
+  isSupabaseConfigured ? supabaseUrl : 'http://localhost:54321',
+  isSupabaseConfigured ? supabaseAnonKey : 'supabase-not-configured',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage,
+    },
   },
-});
+);
