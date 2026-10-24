@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { ScrollInput } from "./ScrollInput";
 import { ResultsDisplay } from "./ResultsDisplay";
 import { DandakaResultsDisplay } from "./DandakaResultsDisplay";
+import type { DandakaModeResult } from "../types/api";
 import { PingalaAcharyaSpeaker } from "./PingalaAcharyaSpeaker";
 import { useAPIInfo, useIdentifyText, useIdentifyFile, useExtractText, useExtractFile, useExtractAudio } from "../hooks/useApi";
 import type { AnalysisMode, IdentifyResponse, FileInfo, IdentificationMode, SlokaValidateResponse } from "../types/api";
@@ -1579,7 +1580,8 @@ export function AnalysisForm({ initialText = "", initialMode, onTextChange, auto
       {result && activeTab === "text" && (
         <div ref={resultsRef} style={{ width: '1400px', maxWidth: '100%', margin: '40px auto 0 auto' }}>
           {identificationMode === 'dandaka' && result.result ? (
-            <DandakaResultsDisplay result={result.result} />
+            // identifyDandaka() returns the dandaka endpoint's payload in `result`
+            <DandakaResultsDisplay result={result.result as unknown as DandakaModeResult} />
           ) : (
             <ResultsDisplay
               result={result}

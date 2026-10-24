@@ -1,6 +1,6 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Brain, Music, Wind, Leaf, Calculator, Heart, Waves, Bird, Sparkles } from 'lucide-react';
+import { ArrowLeft, Brain, Music, Wind, Leaf, Calculator, Heart } from 'lucide-react';
 
 // Lazy load heavy components
 const FibonacciVisualizer = lazy(() => import('@/components/lg-lab/FibonacciVisualizer'));

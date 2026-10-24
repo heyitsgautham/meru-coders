@@ -9,8 +9,9 @@ import type { AnalysisMode, IdentifyResponse, IdentificationMode } from "../type
 const ANALYSIS_MODE: AnalysisMode = "verse";
 const OUTPUT_SCRIPT = "";
 
-// Mode descriptions for UI
-const MODE_INFO: Record<IdentificationMode, { label: string; description: string }> = {
+// Mode descriptions for UI. Split view has no dandaka mode.
+type SplitViewMode = Exclude<IdentificationMode, 'dandaka'>;
+const MODE_INFO: Record<SplitViewMode, { label: string; description: string }> = {
   auto: {
     label: "Auto Detect",
     description: "Automatically chooses the best identification method based on text characteristics"
@@ -187,7 +188,7 @@ export function SplitViewAnalysis({ initialTextLeft = "", initialTextRight = "" 
           {/* Identification Mode Selector */}
           <div className="mt-8 flex flex-col items-center">
             <div className="inline-flex rounded-xl border-2 border-[var(--color-border-subtle)] p-1.5 bg-[#faf7f4] shadow-sm">
-              {(Object.keys(MODE_INFO) as IdentificationMode[]).map((mode) => (
+              {(Object.keys(MODE_INFO) as SplitViewMode[]).map((mode) => (
                 <button
                   key={mode}
                   onClick={() => setIdentificationMode(mode)}
