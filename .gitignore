@@ -35,3 +35,10 @@ backend/uploads/*
 # Local env files (examples are committed as .env.example)
 .env.*
 !.env.example
+
+# Test and lint caches
+.coverage
+coverage/
+htmlcov/
+.pytest_cache/
+.ruff_cache/
