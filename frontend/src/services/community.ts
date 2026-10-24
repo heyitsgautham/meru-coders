@@ -327,7 +327,7 @@ export async function sharePost(post: Post): Promise<{ success: boolean; method:
         url: shareUrl,
       });
       return { success: true, method: 'share' };
-    } catch (err) {
+    } catch {
       // User cancelled or share failed, fall back to clipboard
     }
   }

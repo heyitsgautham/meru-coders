@@ -200,7 +200,7 @@ function extractTopMeter(lineItem: LineResult): string | null {
   if (result.found && result.display_chanda) {
     const meters = result.display_chanda.split('/').map(m => m.trim());
     if (meters.length > 0) {
-      const cleanMatch = meters[0].match(/^([^\(]+)/);
+      const cleanMatch = meters[0].match(/^([^(]+)/);
       return cleanMatch ? cleanMatch[1].trim() : meters[0];
     }
   }
@@ -937,14 +937,12 @@ export function ResultsDisplay({ result, type, onClose, compact = false }: Resul
             {(() => {
               // Aggregate all verse results - combine scores for same meters
               const meterScores: Record<string, number> = {};
-              let totalScore = 0;
 
               verseResults.forEach(verse => {
                 if (verse.chanda && Array.isArray(verse.chanda[0])) {
                   const meterName = verse.chanda[0][0];
                   const score = verse.chanda[1] || 0;
                   meterScores[meterName] = (meterScores[meterName] || 0) + score;
-                  totalScore += score;
                 }
               });
 
