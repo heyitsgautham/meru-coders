@@ -40,8 +40,8 @@ from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 
 # Import our comprehensive Vedic-Classical mappings
-from vedic_classical_mappings import meters_match as vedic_meters_match
-from vedic_classical_mappings import normalize_meter_name
+from core.vedic_mappings import meters_match as vedic_meters_match
+from core.vedic_mappings import normalize_meter_name
 
 
 def to_iast(text):

@@ -31,6 +31,7 @@ docs/
 
 # Tests
 **/tests/
+**/evaluation/
 experiments/
 reference/
 

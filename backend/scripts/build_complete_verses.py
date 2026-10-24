@@ -156,7 +156,7 @@ def main():
     output_lines.append('')
     
     # Write to file
-    output_path = os.path.join(base_dir, 'backend/tests/data/rigveda_complete.py')
+    output_path = os.path.join(base_dir, 'backend/evaluation/data/rigveda_complete.py')
     with open(output_path, 'w') as f:
         f.write('\n'.join(output_lines))
     

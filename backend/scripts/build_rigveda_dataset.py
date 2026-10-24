@@ -18,7 +18,7 @@ from collections import defaultdict
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RIGVEDA_JSON = os.path.join(BASE_DIR, 'repos', 'Rigveda_api', 'data', 'rigveda.json')
 ANUKRAMANI_DIR = os.path.join(BASE_DIR, 'repos', 'WSC2023', 'Anukramani')
-OUTPUT_FILE = os.path.join(BASE_DIR, 'backend', 'tests', 'data', 'rigveda_authentic.py')
+OUTPUT_FILE = os.path.join(BASE_DIR, 'backend', 'evaluation', 'data', 'rigveda_authentic.py')
 
 
 # Meter syllable counts (Vedic tradition)
