@@ -1,6 +1,6 @@
 """Integration test for contribution submission endpoint.
 
-Ensures the /api/submit route exists, honors auth, and returns a JSON
+Ensures the /api/contributions/submit route exists, honors auth, and returns a JSON
 payload rather than failing with 404/401. Uses a locally signed JWT so
 it works without Supabase credentials.
 """
@@ -34,7 +34,7 @@ def test_submit_contribution_route_accessible():
     }
 
     resp = client.post(
-        '/api/submit',
+        '/api/contributions/submit',
         headers={**_auth_header(), 'Content-Type': 'application/json'},
         json=payload,
     )

@@ -221,7 +221,8 @@ class TestChandaCore:
         )
         
         assert 'result' in result
-        assert isinstance(result['result'], list)
+        assert isinstance(result['result']['line'], list)
+        assert result['result']['line'][0]['result']['found'] is True
     
     def test_chanda_summarize(self, sample_text):
         """Test Chanda summarization."""
@@ -245,7 +246,7 @@ class TestConfiguration:
     def test_settings_exist(self):
         """Test that settings are properly configured."""
         assert settings.DATA_DIR.exists()
-        assert settings.UPLOAD_DIR.exists()
+        assert settings.UPLOADS_DIR.exists()
         assert settings.PHOTOS_DIR.exists()
         assert settings.TEXTS_DIR.exists()
         assert settings.RESULTS_DIR.exists()

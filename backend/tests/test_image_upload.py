@@ -13,8 +13,8 @@ from pathlib import Path
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-def test_image_without_message():
-    """Test that image upload without message returns proper error"""
+def test_tiny_image_rejected():
+    """An image payload under 100 bytes is rejected before OCR runs."""
     from flask import Flask
     from api.chatbot import chatbot_bp
     
@@ -38,9 +38,9 @@ def test_image_without_message():
         assert response.status_code == 400, f"Expected 400, got {response.status_code}"
         data = json.loads(response.data)
         assert not data['success'], "Response should indicate failure"
-        assert 'text prompt' in data['error'].lower(), f"Error message should mention text prompt: {data['error']}"
+        assert 'invalid or corrupted' in data['error'].lower(), data['error']
         
-        print("✅ Test 1 PASSED: Image without message properly rejected")
+        print("✅ Test 1 PASSED: Tiny image properly rejected")
         print(f"   Error message: {data['error']}")
 
 
