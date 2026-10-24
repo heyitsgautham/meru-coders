@@ -33,13 +33,7 @@ except ImportError:
 
 # Vedic-Classical meter mappings (SIH 2025)
 try:
-    import sys
-    from pathlib import Path
-    # Add tests directory to path for vedic_classical_mappings
-    tests_dir = Path(__file__).parent.parent / 'tests'
-    if str(tests_dir) not in sys.path:
-        sys.path.insert(0, str(tests_dir))
-    from vedic_classical_mappings import (
+    from .vedic_mappings import (
         get_classical_equivalents,
         meters_match as vedic_meters_match,
         normalize_meter_name as normalize_vedic_meter
