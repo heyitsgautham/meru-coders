@@ -21,8 +21,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire backend directory
 COPY backend/ /app/backend/
 
-# Use settings.sample.py as settings.py (since settings.py is gitignored)
-RUN cp /app/backend/config/settings.sample.py /app/backend/config/settings.py
 
 # Copy data files
 COPY backend/data/ /app/backend/data/

@@ -2054,6 +2054,12 @@ def register_routes(app):
             
             # Call IndicConformer ASR API
             asr_url = settings.INDIC_ASR_URL
+            if not asr_url:
+                logger.warning("INDIC_ASR_URL is not set; speech recognition is disabled")
+                return jsonify({
+                    'success': False,
+                    'error': 'Speech recognition is not configured on this server.'
+                }), 503
             send_filename = audio_filepath.name
             
             try:
