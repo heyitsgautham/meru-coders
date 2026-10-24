@@ -21,6 +21,7 @@ from backend.config import settings
 
 # Import AI validator for shloka pre-validation
 from backend.core.ai_validator import validate_shloka_input
+from backend.api.text_matching import calculate_similarity, normalize_sanskrit_text
 
 # Import edge-tts for text-to-speech functionality
 try:
@@ -1062,36 +1063,6 @@ def register_routes(app):
         'normalized_map': {}  # normalized_text -> original indices
     }
     
-    def normalize_sanskrit_text(text):
-        """
-        Normalize Sanskrit text for comparison.
-        Removes accent marks, normalizes Unicode, and standardizes whitespace.
-        """
-        import unicodedata
-        if not text:
-            return ""
-        
-        # Normalize to NFC form
-        text = unicodedata.normalize('NFC', text)
-        
-        # Remove Vedic accent marks (svarita, anudatta, etc.)
-        # Common Vedic accent marks: U+0951 (॑), U+0952 (॒), U+0953 (॓), U+0954 (॔)
-        vedic_marks = '\u0951\u0952\u0953\u0954\u1CD0\u1CD1\u1CD2\u1CD3\u1CD4\u1CD5\u1CD6\u1CD7\u1CD8\u1CD9\u1CDA\u1CDB\u1CDC\u1CDD\u1CDE\u1CDF\u1CE0\u1CE1'
-        for mark in vedic_marks:
-            text = text.replace(mark, '')
-        
-        # Normalize whitespace
-        text = ' '.join(text.split())
-        
-        # Remove common punctuation but keep essential characters
-        text = text.replace('।', ' ').replace('॥', ' ').replace('।।', ' ')
-        text = text.replace(',', ' ').replace('.', ' ').replace(':', ' ')
-        
-        # Clean up multiple spaces
-        text = ' '.join(text.split())
-        
-        return text.strip().lower()
-    
     def build_sloka_search_index():
         """
         Build search index from all datasets containing slokas.
@@ -1144,21 +1115,6 @@ def register_routes(app):
         _sloka_search_cache['slokas'] = slokas
         _sloka_search_cache['initialized'] = True
         logger.info(f"Sloka search index built with {len(slokas)} entries")
-    
-    def calculate_similarity(text1, text2):
-        """
-        Calculate similarity between two strings using Levenshtein ratio.
-        Returns a value between 0 and 1 (1 = exact match).
-        """
-        try:
-            import Levenshtein
-            return Levenshtein.ratio(text1, text2)
-        except ImportError:
-            # Fallback to simple character matching if Levenshtein not available
-            if not text1 or not text2:
-                return 0.0
-            matches = sum(1 for a, b in zip(text1, text2) if a == b)
-            return matches / max(len(text1), len(text2))
     
     # ============================================================
     # VERSE CACHE LOOKUP - Skip AI for known verses
