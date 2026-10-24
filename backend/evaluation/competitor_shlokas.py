@@ -1,16 +1,17 @@
-import sys
 import os
 import re
+import sys
 from pathlib import Path
 
 # Add backend to path
-# Assuming script is in tests/ and backend is in backend/
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# This script lives in backend/evaluation/
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 backend_path = os.path.join(project_root, 'backend')
 sys.path.insert(0, backend_path)
 
-from core.chanda import Chanda
 from config import settings
+from core.chanda import Chanda
+
 
 def parse_shlokas(file_path):
     """Extracts Sanskrit shlokas from the text file using Devanagari detection."""
@@ -106,7 +107,8 @@ def test_competitor_dataset():
             if result and 'result' in result and 'line' in result['result']:
                 for line_res in result['result']['line']:
                     line_text = line_res['line'].strip()
-                    if not line_text: continue
+                    if not line_text:
+                        continue
                     
                     res = line_res['result']
                     meter = res.get('display_chanda_primary', 'Unknown')
