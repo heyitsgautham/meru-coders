@@ -2,12 +2,25 @@
 Authentication utility functions.
 """
 
+import hmac
+import os
+
 from flask import current_app
 from supabase import Client
 
+# Admin credentials come from the environment. Admin login stays disabled
+# until ADMIN_PASSWORD is set.
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin-erase-sure")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 
-ADMIN_USERNAME = "admin-erase-sure"
-ADMIN_PASSWORD = "Pazz!$79UNO"
+
+def check_admin_credentials(username: str, password: str) -> bool:
+    """Return True only when admin login is configured and both values match."""
+    if not ADMIN_PASSWORD:
+        return False
+    username_ok = hmac.compare_digest(username.encode(), ADMIN_USERNAME.encode())
+    password_ok = hmac.compare_digest(password.encode(), ADMIN_PASSWORD.encode())
+    return username_ok and password_ok
 
 
 def is_admin_user(user_id: str) -> bool:

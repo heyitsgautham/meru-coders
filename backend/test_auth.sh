@@ -70,11 +70,13 @@ echo ""
 
 # Test 3: Admin Login
 echo "3. Testing Admin Login (POST /api/auth/admin-login)"
-echo "Request: {username: 'admin-erase-sure', password: 'Pazz!\$79UNO'}"
+ADMIN_USERNAME="${ADMIN_USERNAME:-admin-erase-sure}"
+: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD to the backend's admin password}"
+echo "Request: {username: '$ADMIN_USERNAME', password: '***'}"
 echo ""
 ADMIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/admin-login" \
   -H 'Content-Type: application/json' \
-  -d '{"username":"admin-erase-sure","password":"Pazz!$79UNO"}')
+  -d "{\"username\":\"$ADMIN_USERNAME\",\"password\":\"$ADMIN_PASSWORD\"}")
 
 echo "Response:"
 echo "$ADMIN_RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$ADMIN_RESPONSE"

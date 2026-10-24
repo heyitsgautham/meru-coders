@@ -4,14 +4,19 @@ Script to create community tables in Supabase using the REST API.
 Run this once to set up the database schema.
 """
 
+import os
 import sys
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders')
+
+from dotenv import load_dotenv
 
 from supabase import create_client
 
-# Supabase credentials
-SUPABASE_URL = 'https://qogojsxaoevcalqvdpof.supabase.co'
-SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvZ29qc3hhb2V2Y2FscXZkcG9mIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDk2MTcxMSwiZXhwIjoyMDgwNTM3NzExfQ.76h1iXzABb0wvcW49D_mAYYMRWvmm6FYvwR8jiOYniQ'
+# Supabase credentials come from the environment (see backend/.env.example)
+load_dotenv()
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
+if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+    sys.exit('Set SUPABASE_URL and SUPABASE_SERVICE_KEY before running this script.')
 
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
@@ -43,13 +48,13 @@ def main():
     print("IMPORTANT: Run the following SQL in Supabase SQL Editor")
     print("=" * 60)
     print()
-    print("1. Go to: https://supabase.com/dashboard/project/qogojsxaoevcalqvdpof/sql")
+    print("1. Go to: https://supabase.com/dashboard/project/_/sql")
     print("2. Create a new query")
     print("3. Paste the contents of: backend/scripts/community_schema.sql")
     print("4. Click 'Run' to execute")
     print()
     print("The schema file location:")
-    print("  /home/harevasu/Projects/meru-coders/backend/scripts/community_schema.sql")
+    print("  backend/scripts/community_schema.sql")
     print()
     
     # Print simplified SQL for quick copy

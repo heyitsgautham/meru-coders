@@ -3,16 +3,23 @@
 Direct PostgreSQL connection to create community tables in Supabase.
 """
 
+import os
+import sys
+
 import psycopg2
+from dotenv import load_dotenv
 from psycopg2 import sql
 
-# Supabase PostgreSQL connection details
-# Direct connection (not pooler)
-DB_HOST = "db.qogojsxaoevcalqvdpof.supabase.co"
-DB_PORT = 5432
-DB_NAME = "postgres"
-DB_USER = "postgres"
-DB_PASSWORD = "AEkIsXtBWHxRk0dO"  # From .env SUPABASE_DB_PASSWORD
+# Supabase PostgreSQL connection details, read from the environment.
+# Direct connection (not pooler), for example db.<project-ref>.supabase.co
+load_dotenv()
+DB_HOST = os.environ.get("SUPABASE_DB_HOST", "")
+DB_PORT = int(os.environ.get("SUPABASE_DB_PORT", "5432"))
+DB_NAME = os.environ.get("SUPABASE_DB_NAME", "postgres")
+DB_USER = os.environ.get("SUPABASE_DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("SUPABASE_DB_PASSWORD", "")
+if not DB_HOST or not DB_PASSWORD:
+    sys.exit("Set SUPABASE_DB_HOST and SUPABASE_DB_PASSWORD before running this script.")
 
 # SQL statements to create tables
 CREATE_TABLES_SQL = """

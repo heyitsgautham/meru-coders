@@ -1,5 +1,5 @@
 -- Create approved_contributions table for storing approved user submissions
--- Run this in Supabase SQL Editor: https://app.supabase.com/project/qogojsxaoevcalqvdpof/editor
+-- Run this in Supabase SQL Editor: https://app.supabase.com/project/_/editor
 
 -- Drop existing table if it has wrong foreign key constraints
 DROP TABLE IF EXISTS approved_contributions CASCADE;

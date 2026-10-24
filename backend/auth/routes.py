@@ -10,7 +10,7 @@ from flask import Blueprint, request, jsonify, current_app
 from supabase import Client
 import jwt
 import time
-from .utils import create_user_profile, get_user_profile, ADMIN_USERNAME, ADMIN_PASSWORD
+from .utils import create_user_profile, get_user_profile, ADMIN_USERNAME, check_admin_credentials
 
 EMAIL_DOMAIN = os.environ.get("AUTH_EMAIL_DOMAIN", "merucoders.app")
 # FRONTEND_URL is used as fallback only - prefer Origin header for dynamic redirects
@@ -275,7 +275,7 @@ def login():
 @auth_bp.route('/admin-login', methods=['POST'])
 def admin_login():
     """
-    Admin login with hardcoded credentials.
+    Admin login with the ADMIN_USERNAME and ADMIN_PASSWORD environment credentials.
     Returns a local JWT (no email) to avoid Supabase email validation issues.
     """
     try:
@@ -284,7 +284,7 @@ def admin_login():
         password = data.get('password', '')
         
         # Verify admin credentials
-        if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+        if not check_admin_credentials(username, password):
             return jsonify({
                 'success': False,
                 'error': 'Invalid credentials',

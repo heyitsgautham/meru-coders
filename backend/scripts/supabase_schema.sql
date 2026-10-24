@@ -285,9 +285,8 @@ CREATE TRIGGER update_meter_definitions_updated_at BEFORE UPDATE ON meter_defini
 -- ================================================
 -- ADMIN USER CREATION
 -- ================================================
--- NOTE: Admin credentials are hardcoded in backend:
--- Username: admin-erase-sure
--- Password: Pazz!$79UNO
+-- NOTE: The backend reads admin credentials from the ADMIN_USERNAME and
+-- ADMIN_PASSWORD environment variables (see backend/.env.example).
 -- 
 -- After admin signs up via Supabase Auth, run:
 -- UPDATE users SET is_admin = true WHERE username = 'admin-erase-sure';
