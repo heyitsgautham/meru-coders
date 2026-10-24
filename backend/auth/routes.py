@@ -6,10 +6,14 @@ Handles signup, login, logout using Supabase built-in auth.
 import os
 from email.utils import parseaddr
 
+import time
+import uuid
+
+import bcrypt
+import jwt
 from flask import Blueprint, request, jsonify, current_app
 from supabase import Client
-import jwt
-import time
+
 from .utils import create_user_profile, get_user_profile, ADMIN_USERNAME, check_admin_credentials
 
 EMAIL_DOMAIN = os.environ.get("AUTH_EMAIL_DOMAIN", "merucoders.app")
@@ -62,7 +66,7 @@ def signup():
     Password is securely hashed using bcrypt.
     """
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
         
@@ -97,6 +101,12 @@ def signup():
             }), 400
         
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
+        if supabase is None:
+            return jsonify({
+                'success': False,
+                'error': 'Signup unavailable',
+                'message': 'Account storage is not configured on this server'
+            }), 503
         
         # Check if username already exists
         existing = supabase.table('users').select('id').eq('username', username).execute()
@@ -108,11 +118,9 @@ def signup():
             }), 409
 
         # Hash password with bcrypt
-        import bcrypt
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
         # Create user in database
-        import uuid
         user_id = str(uuid.uuid4())
         
         user_data = {
@@ -133,8 +141,6 @@ def signup():
             }), 500
         
         # Generate JWT token
-        import jwt
-        import time
         from backend.config import settings
         
         payload = {
@@ -175,7 +181,7 @@ def login():
     Verifies password hash with bcrypt.
     """
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
         
@@ -190,7 +196,6 @@ def login():
         
         # Fallback for local/dev when Supabase is not configured
         if supabase is None:
-            import uuid
             user_id = f"local-{username}" or str(uuid.uuid4())
             payload = {
                 'sub': user_id,
@@ -227,7 +232,6 @@ def login():
         user = result.data[0]
         
         # Verify password with bcrypt
-        import bcrypt
         if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
             return jsonify({
                 'success': False,
@@ -236,8 +240,6 @@ def login():
             }), 401
         
         # Generate JWT token
-        import jwt
-        import time
         from backend.config import settings
         
         payload = {
@@ -279,7 +281,7 @@ def admin_login():
     Returns a local JWT (no email) to avoid Supabase email validation issues.
     """
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         username = data.get('username', '').strip()
         password = data.get('password', '')
         
