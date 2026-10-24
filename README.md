@@ -2,7 +2,7 @@
 
 **SIH 2025 Grand Finale | Problem Statement #25158 | Team: Erase Sure**
 
-A comprehensive AI-powered platform for identifying, analyzing, and learning Sanskrit meters (Chandas) with **100% accuracy** on authentic texts. Combines 2,500-year-old traditional knowledge from Pingala's Chandas Shastra with modern AI/ML technologies.
+A comprehensive AI-powered platform for identifying, analyzing, and learning Sanskrit meters (Chandas). Combines 2,500-year-old traditional knowledge from Pingala's Chandas Shastra with modern AI/ML technologies.
 
 ---
 
@@ -10,172 +10,153 @@ A comprehensive AI-powered platform for identifying, analyzing, and learning San
 
 | Feature | Achievement |
 |---------|-------------|
-| **Accuracy** | 100% on core tests + authentic Vedic/Classical texts |
+| **Accuracy** | 94.6% whole-verse and 99.3% first-line on a 147-verse benchmark ([details](#accuracy-evaluation)) |
 | **Database** | 1,920+ meters across all categories (largest digital collection) |
 | **AI Features** | Multi-modal chatbot, RAG-powered knowledge base, voice interaction |
 | **Input Modes** | Text, Image (OCR), Audio (STT), File upload (PDF/DOCX/TXT) |
 | **Special Features** | Daṇḍaka detection, Community platform, Interactive LG Lab, TTS with voice selection |
 | **Architecture** | Modern REST API + React SPA with real-time WebSocket support |
-| **Test Coverage** | 85+ test files with comprehensive validation |
+| **Testing** | Offline pytest and vitest suites in CI, plus corpus evaluation harnesses |
 
 ---
 
-## 📁 Repository Structure
+## Repository layout
 
 ```
-erase-sure/                               # Primary working directory
-├── 📄 README.md                         📖 This file - Complete documentation
-│
-├── 📂 backend/                          🔧 Production Backend (Flask + AI)
-│   ├── 📂 core/                        💎 Core Identification Engine
-│   │   ├── chanda.py                   4,600+ lines - 100% accuracy
-│   │   ├── rag_engine.py               RAG with 2,844 documents
-│   │   ├── dandaka_detector.py         Daṇḍaka/Rājaśyāmalā identification
-│   │   ├── text_classifier.py          Vedic vs Classical classifier
-│   │   ├── ai_validator.py             Gemini-powered input validation
-│   │   └── sandhi_rules.py             Advanced sandhi resolution
-│   │
-│   ├── 📂 api/                         🌐 REST API Endpoints
-│   │   ├── routes.py                   16 endpoints (identify, TTS, OCR, etc.)
-│   │   ├── chatbot.py                  Multi-modal AI chatbot (1,591 lines)
-│   │   ├── community.py                Twitter-like social platform
-│   │   ├── contributions.py            User submissions & crowd-sourcing
-│   │   └── websocket.py                Real-time notifications
-│   │
-│   ├── 📂 auth/                        🔐 Authentication System
-│   │   ├── routes.py                   Supabase auth (signup/login/OAuth)
-│   │   ├── middleware.py               JWT verification & role-based access
-│   │   └── utils.py                    User profile management
-│   │
-│   ├── 📂 data/                        📚 Comprehensive Database
-│   │   ├── chanda_sama.csv             1,629 Sama meters
-│   │   ├── chanda_vishama.csv          71 Vishama meters  
-│   │   ├── chanda_vedic.csv            28 Vedic meters
-│   │   ├── chanda_matra.csv            9 Mātrā-based meters
-│   │   ├── chanda_jaati.csv            Jāti-based meters
-│   │   ├── chanda_ardhasama.csv        Ardhasama meters
-│   │   └── chroma_db/                  Vector database (2,844 docs)
-│   │
-│   ├── 📂 tests/                       ✅ Comprehensive Test Suite
-│   │   ├── test_all_fixes.py           8 core tests (100% pass)
-│   │   ├── test_authentic_meters.py    Authentic Vedic validation
-│   │   ├── test_csv_accuracy.py        Dataset-level accuracy (147 verses)
-│   │   ├── test_rag_chatbot.py         RAG functionality
-│   │   ├── test_copilot_api.py         API testing
-│   │   └── [80+ more test files]       Extensive coverage
-│   │
-│   ├── 📂 ocr/                         👁️ Multi-Script OCR
-│   │   ├── tesseract_ocr.py            9+ Indian scripts
-│   │   └── google_ocr.py               Google Vision API
-│   │
-│   ├── 📂 utils/                       🛠️ Utilities & Scripts
-│   ├── 📂 models/                      💾 Database Models (Supabase)
-│   ├── 📂 config/                      ⚙️ Configuration & Settings
-│   └── 📂 scripts/                     📜 Build & deployment scripts
-│
-├── 📂 frontend/                         💻 Modern React SPA
-│   ├── 📂 src/
-│   │   ├── 📂 components/              🎨 UI Components
-│   │   │   ├── AnalysisForm.tsx        4 input modes (Text/Image/Audio/File)
-│   │   │   ├── ResultsDisplay.tsx      Interactive meter results
-│   │   │   ├── DandakaResultsDisplay.tsx  Daṇḍaka visualization
-│   │   │   ├── TextToSpeech.tsx        TTS with voice selection
-│   │   │   ├── SplitViewAnalysis.tsx   Side-by-side comparison
-│   │   │   ├── 📂 chatbot/             AI Chatbot UI (multi-modal)
-│   │   │   ├── 📂 community/           Social platform (10+ components)
-│   │   │   ├── 📂 lg-lab/              Interactive learning modules
-│   │   │   └── 📂 ui/                  Shadcn/UI components (30+)
-│   │   │
-│   │   ├── 📂 pages/                   📄 Main Pages
-│   │   │   ├── LGLab.tsx               Laghu-Guru exploration lab
-│   │   │   └── [other pages]
-│   │   │
-│   │   ├── 📂 services/                🔌 API Integration
-│   │   │   └── api.ts                  REST client
-│   │   │
-│   │   ├── 📂 contexts/                🌐 Global State
-│   │   │   └── AuthContext.tsx         Authentication state
-│   │   │
-│   │   └── 📂 utils/                   🧰 Helper Functions
-│   │       ├── audioUtils.ts           Audio recording & WAV conversion
-│   │       └── sanskritNumbers.ts      Sanskrit numeral conversion
-│   │
-│   ├── package.json                    Dependencies (50+ packages)
-│   └── [Vite config, TypeScript, etc.]
-│
-├── 📂 Chandas-game/                     🎮 Gamified Learning Platform
-│   ├── 📂 backend/                     FastAPI backend
-│   ├── 📂 frontend/                    React game interface
-│   └── 📂 tests/                       Game tests
-│
-├── 📂 docs/                            📖 Documentation
-│   ├── chandas_rules.md                Prosody rules reference
-│   ├── meter.md                        Meter classification
-│   └── [reference texts and resources]
-│
-├── 📂 experiments/                      🧪 Research & Validation
-├── 📂 outputs/                          📊 Generated Results
-└── 📂 reference/                        📚 Historical Versions
+meru-coders/
+├── backend/                    Flask API, Python 3.11
+│   ├── app.py, run.py          app factory and server entry point
+│   ├── api/                    REST routes, chatbot, community feed, WebSocket
+│   ├── auth/                   username and password login, Google OAuth through Supabase
+│   ├── contributions/          crowd-sourced verse and meter submissions
+│   ├── core/                   meter engine (chanda.py), daṇḍaka detector, text classifier,
+│   │                           Gemini input validator, RAG engine
+│   ├── models/                 Supabase data access for community and contributions
+│   ├── ocr/                    Google Cloud Vision and Tesseract OCR
+│   ├── utils/                  file processing, pada splitting, TTS, upload cleanup
+│   ├── config/settings.py      every setting, read from environment variables
+│   ├── data/                   meter definition CSVs and the ChromaDB index
+│   ├── source/                 verse corpora behind the dataset browser and verse search
+│   ├── tests/                  offline pytest suite that CI runs
+│   ├── evaluation/             corpus accuracy runs and comparisons with other engines
+│   └── scripts/                dataset builders, Supabase setup, smoke and manual scripts
+├── frontend/                   React 18, Vite and TypeScript single-page app
+├── reference/                  IITK, GPT and ICU baseline engines used by evaluation/
+├── docs/                       prosody references and hackathon write-ups
+├── scripts/deploy.sh           Google Cloud Run deployment
+├── docker-compose.yml          backend on :5000 and frontend on :8080
+└── pyproject.toml, uv.lock     Python dependencies
 ```
 
----
+## Quick start
 
-## 🚀 Quick Start
-
-### For Judges/Reviewers (Start Here!)
-
-1. **Setup & Run System** (5 min)
-   ```bash
-   # Backend
-   cd backend
-   pip install -r requirements.txt
-   python run.py
-   # API starts on http://localhost:5000
-   
-   # Frontend (new terminal)
-   cd frontend
-   npm install
-   npm run dev
-   # Opens at http://localhost:5173
-   ```
-
-2. **Verify 100% Accuracy** (2 min)
-   ```bash
-   cd backend
-   PYTHONPATH=. python tests/test_all_fixes.py
-   # Expected: 8/8 PASS (100%)
-   ```
-
-### For Development
+You need Python 3.11 with [uv](https://docs.astral.sh/uv/), Node 20, and optionally Tesseract for local OCR.
 
 ```bash
-# 1. Backend Setup
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+git clone https://github.com/heyitsgautham/meru-coders.git
+cd meru-coders
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys (Gemini, Supabase, etc.)
+# Backend: creates .venv from uv.lock, then serves http://localhost:5000
+uv sync
+cp backend/.env.example backend/.env    # optional, every variable has a default
+uv run python backend/run.py
 
-# 2. Frontend Setup
+# Frontend, in a second terminal: serves http://localhost:8080
 cd frontend
-npm install
-
-# 3. Start Development Servers
-# Terminal 1 - Backend
-cd backend && python run.py
-
-# Terminal 2 - Frontend  
-cd frontend && npm run dev
-
-# 4. Run Tests
-cd backend
-PYTHONPATH=. python tests/test_all_fixes.py           # Core tests
-python tests/test_csv_accuracy.py --all                # Dataset accuracy
-python tests/test_rag_chatbot.py                       # RAG tests
+npm ci
+npm run dev
 ```
+
+Without uv, `pip install -r backend/requirements.txt` installs the same pinned versions; that file is exported from `uv.lock`.
+
+Check that the API answers:
+
+```bash
+curl http://localhost:5000/health
+curl -X POST http://localhost:5000/api/identify/text \
+  -H 'Content-Type: application/json' \
+  -d '{"text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"}'
+```
+
+The second call returns `अनुष्टुभ् (पाद 1-2) (anuṣṭubh) [10.0] | अनुष्टुभ् (पाद 3-4) (anuṣṭubh) [10.0]` as the primary match.
+
+Meter identification, dataset browsing and verse search need no keys.
+The other features switch on as you add configuration.
+
+| Feature | What it needs |
+|---|---|
+| Chatbot and AI input validation | `GEMINI_API_KEY_1` (up to `_6`) |
+| Signup, community feed, contributions | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, and `VITE_SUPABASE_*` for Google sign-in |
+| Cloud Vision OCR and Google Cloud TTS | `GOOGLE_APPLICATION_CREDENTIALS`; Tesseract is the OCR fallback |
+| Retrieval-augmented chatbot answers | `uv sync --extra rag` and the index in `backend/data/chroma_db/` |
+| Voice input | `INDIC_ASR_URL` pointing at an IndicConformer service |
+| Admin login | `ADMIN_PASSWORD` |
+
+### Docker
+
+```bash
+docker compose up --build
+```
+
+This builds both images from the repository root and starts the backend on port 5000 and the nginx-served frontend on port 8080.
+The frontend waits for the backend's `/health` check.
+The backend reads `backend/.env` when it exists.
+
+## Running tests
+
+```bash
+uv run pytest                    # offline backend suite
+uv run pytest --cov              # same, with the coverage floor from pyproject.toml
+uv run ruff check .              # lint
+uv run ruff format --check .     # formatting
+
+cd frontend
+npm run lint
+npm run typecheck
+npm test                         # vitest
+npm run build
+```
+
+GitHub Actions runs all of these on every push and pull request, plus `pip-audit`, `npm audit` and a gitleaks secret scan.
+The suite in `backend/tests/` runs without network access or API keys.
+The corpus accuracy runs live in `backend/evaluation/` and print reports instead of asserting; see [Accuracy evaluation](#accuracy-evaluation).
+
+## Architecture
+
+```
+React SPA (frontend/)  ──HTTP /api/*, Socket.IO──▶  Flask app (backend/app.py)
+                                                      │
+        ┌──────────────────────┬──────────────────────┼────────────────────────┬─────────────────────┐
+        ▼                      ▼                      ▼                        ▼                     ▼
+  api/routes.py          api/chatbot.py         auth/, api/community.py   ocr/                  utils/
+  identify, datasets,    Gemini chat with       contributions/            Cloud Vision,         file extraction,
+  verse search, TTS      meter-analysis tools   (Supabase)                Tesseract             TTS, cleanup job
+        │                      │
+        ▼                      ▼
+  core/chanda.py  ◀── meter CSVs in backend/data/ (sama, ardhasama, viṣama, mātrā, jāti, Vedic)
+  syllabify → mark laghu/guru → match patterns → score confidence → pick Vedic or classical mode
+```
+
+`create_app()` builds one `Chanda` engine at startup and shares it across requests.
+The engine loads the meter definition CSVs once, splits each line into syllables, marks each syllable laghu or guru, and matches the pattern against every meter.
+Each match gets a confidence score, and `display_chanda_primary` lists the matches within 80% of the best score.
+For whole verses, a text classifier picks Vedic syllable-count rules or classical pattern rules.
+Gemini is optional and only screens input and powers the chatbot.
+
+### API endpoints
+
+All routes sit under `/api` except `/health`.
+
+| Area | Routes |
+|---|---|
+| Identification | `POST /identify/text`, `/identify/image`, `/identify/file`, `/identify/dandaka`, `/file/extract`, `/ocr/extract`; `GET /download/<filename>` |
+| Datasets and verse search | `GET /datasets`, `/datasets/<id>`, `/examples`, `/schemes`; `POST /sloka/search`, `/sloka/validate` |
+| Speech | `POST /tts/generate`, `/audio/transcribe`; `GET /tts/audio/<filename>` |
+| Chatbot | `POST /chatbot/chat`, `/chatbot/analyze-meter`; `GET /chatbot/history/<id>`, `/chatbot/conversations`, `/chatbot/personas`, `/chatbot/health`; `DELETE /chatbot/clear/<id>` |
+| Auth | `POST /auth/signup`, `/auth/login`, `/auth/logout`, `/auth/admin-login`, `/auth/oauth/start`, `/auth/oauth/exchange`; `GET /auth/profile` |
+| Contributions | `POST /contributions/submit`; `GET /contributions/my-contributions`, `/contributions/approved`, `/contributions/admin/pending`; `POST /contributions/admin/approve/<id>`, `/contributions/admin/reject/<id>` |
+| Community | 38 routes under `/community` for posts, comments, likes, bookmarks, follows, notifications, search, reports and image upload |
+| Service | `GET /health`, `/api/info` |
 
 ---
 
@@ -427,7 +408,7 @@ python tests/test_rag_chatbot.py                       # RAG tests
 
 **Gamified learning platform for mastering meters!**
 
-Located in `Chandas-game/` directory:
+The game lives in a separate repository and is not part of this one; `GAME_INTEGRATION_SUMMARY.md` describes how it was wired in during the hackathon.
 - Interactive lessons and quizzes
 - Progress tracking and achievements
 - Challenge modes
@@ -712,45 +693,30 @@ Concurrency:
 
 ---
 
-## 📊 Test Results & Validation
+## Accuracy evaluation
 
-### Core Test Suite (100% Pass Rate)
-
-```bash
-# Run: PYTHONPATH=. python tests/test_all_fixes.py
-
-Test Results:
-✅ test_gayatri (3×8 syllables)           PASS
-✅ test_anushtubh (4×8 syllables)         PASS  
-✅ test_trishtubh (4×11 syllables)        PASS
-✅ test_jagati (4×12 syllables)           PASS
-✅ test_vasantatilaka                     PASS
-✅ test_mandakranta                       PASS
-✅ test_matra_meters (9 meters)           PASS
-✅ test_jati_meters                       PASS
-
-Success Rate: 8/8 (100%) ✅
-```
-
-### Comprehensive CSV Accuracy Test
+The harnesses in `backend/evaluation/` run the engine over real corpora.
+These are the figures from running them on the current code.
 
 ```bash
-# Run: python tests/test_csv_accuracy.py --all
-
-Dataset: 147 real verses from classical texts
-
-First-Line Accuracy:    146/147  (99.3%) ✅
-All-Lines Accuracy:     134/147  (91.2%) ✅
-  └─ Individual lines:  484/499  (97.2%)
-Verse-Level Accuracy:   139/147  (94.6%) ✅
-
-Performance:
-├─ Average time: 45ms per verse
-├─ Peak time: 120ms (complex verses)
-└─ Total dataset: 6.6 seconds
+uv run python backend/evaluation/csv_accuracy.py --all
 ```
 
-### Meter Coverage
+| Measure on the 147-verse benchmark | Result |
+|---|---|
+| First line identified correctly | 146 of 147 (99.3%) |
+| Every line of the verse correct | 134 of 147 (91.2%) |
+| Individual lines | 485 of 499 (97.2%) |
+| Whole-verse identification | 139 of 147 (94.6%) |
+
+```bash
+uv run python backend/evaluation/all_fixes.py
+```
+
+This regression set passes 7 of 8 cases.
+The Jagatī case still fails.
+
+### Meter coverage
 
 ```
 Total Meters: 1,920+
@@ -762,60 +728,10 @@ By Category:
 ├─ Ardhasama:             Various
 ├─ Mātrā-based:               9 validated
 └─ Jāti-based:             Multiple
-
-Validated Against:
-✅ Rigveda verses (Vedic accuracy)
-✅ Yajurveda verses (Vedic accuracy)
-✅ Bhagavad Gita (Classical accuracy)
-✅ Ramayana (Classical accuracy)
-✅ Meghadutam (Classical kavya)
-✅ ShlokaYug dataset (147 verses)
-✅ Chand-Identifier dataset (comparison)
 ```
 
-### RAG System Validation
-
-```bash
-# Run: python tests/test_rag_chatbot.py
-
-Vector Database: 2,844 documents loaded ✅
-Embedding Model: paraphrase-multilingual-mpnet-base-v2 ✅
-
-Test Queries:
-✅ "What is Anushtubh meter?"
-   └─ Retrieved 5 relevant docs (avg score: 0.82)
-✅ "Explain Vedic prosody"
-   └─ Retrieved 5 relevant docs (avg score: 0.79)
-✅ "Give examples of Vasantatilaka"
-   └─ Retrieved 5 relevant docs (avg score: 0.85)
-
-Hallucination Reduction: 60-80% ✅
-Source Citation Rate: 95%+ ✅
-Average Retrieval Time: <100ms ✅
-```
-
-### API Integration Tests
-
-```bash
-# Run: python tests/test_copilot_api.py
-
-Endpoints Tested:
-✅ POST /api/identify/text              200 OK
-✅ POST /api/identify/image             200 OK
-✅ POST /api/identify/file              200 OK
-✅ POST /api/identify/dandaka           200 OK
-✅ POST /api/chatbot/chat               200 OK
-✅ POST /api/tts/generate               200 OK
-✅ POST /api/sloka/validate             200 OK
-✅ POST /api/community/posts            201 Created
-✅ POST /api/contributions/submit       201 Created
-✅ POST /api/auth/signup                201 Created
-
-Response Times:
-├─ Average: 85ms
-├─ P95: 250ms
-└─ P99: 500ms
-```
+The other harnesses cover the Rigveda, Rāmāyaṇa, WSC 2023 and Meghadūta sets, and compare the engine with the IITK, ChatGPT-generated and ICU-based implementations in `reference/`.
+`backend/evaluation/README.md` lists them.
 
 ---
 
@@ -925,9 +841,8 @@ Response Times:
 
 ### Additional Resources
 
-4. 📄 `Chandas-game/README.md`
-   - Gamified learning platform docs
-   - Setup & usage instructions
+4. 📄 `GAME_INTEGRATION_SUMMARY.md`
+   - How the separate Chandas game plugs into the dev scripts
 
 ---
 
@@ -936,7 +851,7 @@ Response Times:
 ### Evaluation Checklist
 
 #### ✅ Accuracy & Performance
-- [x] **100% accuracy** on core test suite (8/8 tests)
+- [x] **7 of 8** cases pass in the core regression set (`backend/evaluation/all_fixes.py`)
 - [x] **99.3% accuracy** on first-line identification (146/147 verses)
 - [x] **94.6% accuracy** on verse-level analysis (139/147 verses)
 - [x] **45ms average** identification speed
@@ -1077,362 +992,40 @@ Response Times:
 
 ---
 
-## 🔧 Configuration & Environment Variables
-
-### Backend Environment Variables
-
-Create `backend/.env` file:
-
-```bash
-# Flask Configuration
-SECRET_KEY=your-super-secret-key-here
-DEBUG=False
-FLASK_ENV=production
-API_PREFIX=/api
-
-# Supabase Configuration (for authentication & database)
-SUPABASE_URL=your-supabase-project-url
-SUPABASE_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_KEY=your-supabase-service-key
-
-# Google AI (Gemini) API Keys (for chatbot & AI validation)
-# Multiple keys for load balancing
-GEMINI_API_KEY_1=your-gemini-api-key-1
-GEMINI_API_KEY_2=your-gemini-api-key-2
-GEMINI_API_KEY_3=your-gemini-api-key-3
-GEMINI_API_KEY_4=your-gemini-api-key-4
-GEMINI_API_KEY_5=your-gemini-api-key-5
-GEMINI_API_KEY_6=your-gemini-api-key-6
-
-# Google Cloud Services (for OCR and STT)
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
-GOOGLE_CLOUD_PROJECT=your-gcp-project-id
-
-# Authentication
-AUTH_EMAIL_DOMAIN=erasesure.app
-FRONTEND_URL=http://localhost:5173
-
-# CORS
-CORS_ORIGINS=http://localhost:5173,http://localhost:8080
-
-# Rate Limiting
-RATELIMIT_ENABLED=True
-RATELIMIT_DEFAULT=100 per minute
-
-# File Upload Limits
-MAX_CONTENT_LENGTH=104857600  # 100MB
-```
-
-### Frontend Environment Variables
-
-Create `frontend/.env` file:
-
-```bash
-# API Configuration
-VITE_API_URL=http://localhost:5000
-VITE_API_PREFIX=/api
-VITE_WS_URL=ws://localhost:5000
-
-# Supabase (for client-side auth)
-VITE_SUPABASE_URL=your-supabase-project-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-
-# Feature Flags
-VITE_ENABLE_CHATBOT=true
-VITE_ENABLE_COMMUNITY=true
-VITE_ENABLE_GAME=true
-VITE_ENABLE_LGLAB=true
-```
-
-### API Key Setup Guide
-
-#### 1. Google Gemini API Keys
-```bash
-# Visit: https://aistudio.google.com/apikey
-# Create 6 API keys for load balancing
-# Add to .env as GEMINI_API_KEY_1 through GEMINI_API_KEY_6
-```
-
-#### 2. Supabase Setup
-```bash
-# Visit: https://supabase.com
-# Create new project
-# Get Project URL and Anon Key from Settings > API
-# Create tables using schema in docs/database_schema.sql
-```
-
-#### 3. Google Cloud Setup (Optional)
-```bash
-# For OCR and STT features
-# Visit: https://console.cloud.google.com
-# Enable Vision API and Speech-to-Text API
-# Create service account and download JSON key
-# Set GOOGLE_APPLICATION_CREDENTIALS path
-```
-
----
-
-## 📦 Installation & Deployment
-
-### Local Development Setup
-
-```bash
-# 1. Clone repository
-git clone https://github.com/Erase-Sure/erase-sure.git
-cd erase-sure
-
-# 2. Backend setup
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env with your API keys
-
-# 3. Build vector database (for RAG)
-python scripts/build_vector_db.py --rebuild
-
-# 4. Start backend
-python run.py
-# Server starts on http://localhost:5000
-
-# 5. Frontend setup (new terminal)
-cd ../frontend
-npm install
-cp .env.example .env
-# Edit .env with API URLs
-
-# 6. Start frontend
-npm run dev
-# App opens at http://localhost:5173
-```
-
-### Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Services:
-# - Backend: http://localhost:5000
-# - Frontend: http://localhost:5173
-# - Database: PostgreSQL on port 5432
-```
-
-### Production Deployment
-
-#### Backend (Google Cloud Run / AWS / Azure)
-
-```bash
-# 1. Build Docker image
-cd backend
-docker build -t chandas-backend .
-
-# 2. Push to registry
-docker tag chandas-backend gcr.io/your-project/chandas-backend
-docker push gcr.io/your-project/chandas-backend
-
-# 3. Deploy
-gcloud run deploy chandas-backend \
-  --image gcr.io/your-project/chandas-backend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
-```
-
-#### Frontend (Vercel / Netlify / Static Hosting)
-
-```bash
-# 1. Build for production
-cd frontend
-npm run build
-
-# 2. Deploy to Vercel
-vercel --prod
-
-# Or deploy to Netlify
-netlify deploy --prod --dir=dist
-```
-
-### Troubleshooting
-
-#### Backend Issues
-
-**Port Already in Use:**
-```bash
-# Find process using port 5000
-lsof -i :5000
-# Kill process
-kill -9 <PID>
-```
-
-**Missing Dependencies:**
-```bash
-# Reinstall all dependencies
-pip install -r requirements.txt --force-reinstall
-```
-
-**Database Connection Issues:**
-```bash
-# Check Supabase credentials
-python -c "from backend.config.settings import settings; print(settings.SUPABASE_URL)"
-```
-
-**RAG Not Working:**
-```bash
-# Rebuild vector database
-cd backend
-python scripts/build_vector_db.py --rebuild --force
-```
-
-#### Frontend Issues
-
-**API Connection Failed:**
-```bash
-# Check API URL in .env
-echo $VITE_API_URL
-# Should match backend URL
-```
-
-**Build Errors:**
-```bash
-# Clear cache and rebuild
-rm -rf node_modules package-lock.json
-npm install
-npm run build
-```
-
-**WebSocket Connection Failed:**
-```bash
-# Check WebSocket URL
-# Ensure backend is running
-# Check CORS settings
-```
-
----
-
-## 🧪 Testing Guide
-
-### Running All Tests
-
-```bash
-cd backend
-
-# Core functionality (8 tests - must pass 100%)
-PYTHONPATH=. python tests/test_all_fixes.py
-
-# CSV accuracy (147 verses)
-python tests/test_csv_accuracy.py --all
-
-# RAG system
-python tests/test_rag_chatbot.py
-
-# API endpoints
-python tests/test_copilot_api.py
-
-# Chatbot functionality
-python tests/test_chatbot_api.py
-
-# Run all tests at once
-for test in tests/test_*.py; do
-  echo "Running $test..."
-  PYTHONPATH=. python "$test"
-done
-```
-
-### Performance Benchmarking
-
-```bash
-# Benchmark identification speed
-python tests/compare_syllabification_methods.py
-
-# Benchmark RAG retrieval
-python tests/test_rag_chatbot.py --benchmark
-
-# Load testing
-# Install: pip install locust
-locust -f tests/load_test.py --host=http://localhost:5000
-```
-
-### Code Quality
-
-```bash
-# Type checking (if using mypy)
-mypy backend/
-
-# Linting
-flake8 backend/ --max-line-length=120
-
-# Format code
-black backend/
-
-# Check security issues
-bandit -r backend/
-```
-
----
-
-## 🤝 Contributing
-
-### For Team Members
-
-1. **Create Feature Branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make Changes**
-   - Write tests first (TDD approach)
-   - Follow code conventions
-   - Add docstrings
-
-3. **Test Changes**
-   ```bash
-   # Run affected tests
-   PYTHONPATH=. python tests/test_your_feature.py
-   
-   # Run core tests to ensure no regression
-   PYTHONPATH=. python tests/test_all_fixes.py
-   ```
-
-4. **Submit Pull Request**
-   - Clear description of changes
-   - Link to issue number
-   - Include test results
-
-### Code Conventions
-
-**Python (Backend):**
-- PEP 8 style guide
-- Type hints where applicable
-- Docstrings for all public functions
-- Max line length: 120 characters
-
-**TypeScript (Frontend):**
-- ESLint + Prettier
-- Functional components with hooks
-- Props interfaces for all components
-- Descriptive variable names
-
-### Commit Message Format
-
-```
-type(scope): subject
-
-body (optional)
-
-footer (optional)
-```
-
-**Types:** feat, fix, docs, style, refactor, test, chore
-
-**Examples:**
-```bash
-feat(chatbot): add voice message support
-fix(rag): improve retrieval accuracy
-docs(readme): update installation guide
-test(core): add Vedic meter test cases
-```
+## Configuration
+
+`backend/config/settings.py` reads every setting from the environment and loads `backend/.env` when it exists.
+`backend/.env.example` lists every variable the backend reads, and `frontend/.env.example` lists the three the frontend reads.
+Nothing is required to run meter identification.
+
+| Variable | Used for | Default |
+|---|---|---|
+| `SECRET_KEY` | signing local JWTs | a development-only value |
+| `DEBUG`, `LOG_LEVEL`, `PORT` | Flask runtime | `false`, `INFO`, `5000` |
+| `CORS_ORIGINS` | allowed origins for Socket.IO | `*` |
+| `REDIS_URL`, `RATELIMIT_DEFAULT` | Flask-Limiter storage and default limit | `memory://`, `100 per hour` |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` | auth, community and contributions | unset, features answer 503 |
+| `SUPABASE_DB_*`, `DB_PASSWORD` | direct Postgres access in `backend/scripts/` | unset |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | admin login | `admin-erase-sure`, login disabled |
+| `AUTH_EMAIL_DOMAIN`, `FRONTEND_URL` | synthetic emails and OAuth redirects | `merucoders.app`, `http://localhost:8080` |
+| `GEMINI_API_KEY_1` to `_6` | chatbot and AI validation, tried in order | unset, both disabled |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Cloud Vision OCR and Cloud TTS | `backend/secrets/gcp-credentials.json` |
+| `HF_TOKEN` | Sanskrit TTS model in API mode | unset |
+| `INDIC_ASR_URL` | voice transcription service | unset, voice input answers 503 |
+| `SYLLABIZATION_METHOD` | `auto`, `icu` or `sanskrit_text` | `auto` |
+| `CLEANUP_INTERVAL_MINUTES`, `FILE_MAX_AGE_MINUTES` | upload cleanup job | `60`, `60` |
+| `VITE_API_URL` | frontend API base | `http://localhost:5000/api` on localhost |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Google sign-in in the browser | unset, sign-in disabled |
+
+## Deployment
+
+`scripts/deploy.sh backend|frontend|both` builds both images with Cloud Build and deploys them to Cloud Run.
+It reads the project and region through `scripts/load_config.sh`, and writes `frontend/config.js` with the backend URL before the frontend build.
+The backend image carries `backend/.env` and `backend/secrets/` when they exist on the deploying machine, because the script sets only `DEBUG`, `LOG_LEVEL` and `CORS_ORIGINS` on the service.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, checks and commit format.
 
 ---
 
