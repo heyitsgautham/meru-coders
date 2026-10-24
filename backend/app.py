@@ -218,7 +218,12 @@ def create_app():
         app.scheduler = scheduler
 
         # Register shutdown handler
-        atexit.register(lambda: scheduler.shutdown(wait=False))
+        def _stop_scheduler():
+            # Tests and reloaders may already have stopped it.
+            if scheduler.running:
+                scheduler.shutdown(wait=False)
+
+        atexit.register(_stop_scheduler)
 
         app.logger.info(
             f"Upload cleanup scheduler started "
