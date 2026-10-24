@@ -1,43 +1,42 @@
-# Backend Dockerfile for Meru Coders - Sanskrit Meter Identification System
+# Backend image for Meru Coders, the Sanskrit meter identification API.
+# Build from the repository root: docker build -f backend/Dockerfile .
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies for Tesseract OCR and other requirements
-RUN apt-get update && apt-get install -y \
+# Tesseract OCR with Sanskrit, Hindi and English data, libmagic for file type
+# detection, and ffmpeg for converting browser voice recordings to WAV.
+RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-san \
     tesseract-ocr-hin \
     tesseract-ocr-eng \
+    libmagic1 \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# requirements.txt is exported from uv.lock, so versions match the lockfile.
 COPY backend/requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire backend directory
+# Code, datasets and, when present at deploy time, backend/secrets/.
 COPY backend/ /app/backend/
 
+RUN useradd --create-home --uid 10001 app \
+    && mkdir -p /app/backend/uploads/photos /app/backend/uploads/texts \
+       /app/backend/uploads/results /app/backend/uploads/audio \
+    && chown -R app:app /app/backend/uploads
 
-# Copy data files
-COPY backend/data/ /app/backend/data/
+USER app
 
-# Copy GCP credentials for Cloud Vision OCR
-COPY backend/secrets/ /app/backend/secrets/
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    PORT=5000
 
-# Create necessary directories
-RUN mkdir -p /app/backend/uploads/photos \
-    /app/backend/uploads/texts \
-    /app/backend/uploads/results
-
-# Set Python path
-ENV PYTHONPATH=/app
-
-# Expose port (Cloud Run will override this with PORT env var)
+# Cloud Run overrides PORT; run.py reads it.
 EXPOSE 5000
 
-# Run the application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\", \"5000\")}/health', timeout=4)"
+
 CMD ["python", "backend/run.py"]

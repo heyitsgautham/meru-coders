@@ -1,0 +1,36 @@
+# Local stack: Flask API on :5000 and the nginx-served React build on :8080.
+# Start with `docker compose up --build`. Both services read optional env files.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - path: backend/.env
+        required: false
+    environment:
+      PORT: "5000"
+      CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - uploads:/app/backend/uploads
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  uploads:

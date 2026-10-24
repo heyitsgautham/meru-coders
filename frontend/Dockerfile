@@ -18,6 +18,11 @@ COPY frontend/ ./
 # Build the app (outputs to /app/build)
 RUN npm run build
 
+# scripts/deploy.sh writes config.js with the production API URL before a
+# Cloud Run build. Without it, write an empty config so the app falls back
+# to http://localhost:5000/api.
+RUN test -f config.js || echo "window.CONFIG = window.CONFIG || {};" > config.js
+
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
@@ -27,9 +32,8 @@ COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built assets from builder stage
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Copy config.js if it exists (created by deploy script with backend URL)
-# This will be overwritten at deploy time with the correct backend URL
-COPY frontend/config.js /usr/share/nginx/html/config.js
+# Runtime config (see the builder stage)
+COPY --from=builder /app/config.js /usr/share/nginx/html/config.js
 
 # Expose port 8080 (Cloud Run expects this)
 EXPOSE 8080
