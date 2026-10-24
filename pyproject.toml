@@ -1,0 +1,86 @@
+[project]
+name = "meru-coders"
+version = "0.1.0"
+description = "Sanskrit meter (chandas) identification system: Flask API backend for the Meru Coders SIH 2025 project"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    # Web API
+    "flask>=2.2.2",
+    "flask-cors>=3.0.10",
+    "flask-limiter>=3.5.0",
+    "flask-socketio>=5.3.0",
+    "python-socketio>=5.10.0",
+    "werkzeug>=2.2.2",
+    "eventlet>=0.35.0",
+    "apscheduler>=3.10.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    # Auth and database
+    "supabase>=2.25.0",
+    "bcrypt>=4.0.1",
+    "pyjwt>=2.8.0",
+    # Sanskrit text processing
+    "indic-transliteration>=2.3.10",
+    "sanskrit-text>=0.2.1",
+    "python-levenshtein>=0.12.2",
+    # OCR and document processing
+    "pytesseract>=0.3.9",
+    "pillow>=9.0.0",
+    "google-cloud-vision>=3.0.0",
+    "google-cloud-speech>=2.0.0",
+    "pdfplumber>=0.10.0",
+    "pymupdf>=1.24.0",
+    "python-docx>=1.1.0",
+    "chardet>=5.2.0",
+    "python-magic>=0.4.27",
+    # Text to speech
+    "edge-tts>=7.2.3",
+    "gtts>=2.5.4",
+    "pyttsx3>=2.99",
+    "google-cloud-texttospeech>=2.14.0",
+    # Chatbot
+    "google-genai>=1.0.0",
+]
+
+[project.optional-dependencies]
+# Retrieval-augmented chatbot answers. The chatbot falls back to plain Gemini without these.
+rag = [
+    "langchain>=0.1.0",
+    "langchain-core>=0.1.0",
+    "langchain-google-genai>=0.0.5",
+    "langchain-community>=0.0.10",
+    "chromadb>=0.4.22",
+    "sentence-transformers>=2.2.2",
+    "tiktoken>=0.5.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "ruff>=0.7",
+    "pip-audit>=2.7",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = [".", "backend"]
+addopts = "-ra --strict-markers"
+markers = [
+    "integration: needs a running backend server, network access or API keys; deselected in CI",
+]
+
+[tool.coverage.run]
+source = ["backend"]
+omit = [
+    "backend/tests/*",
+    "backend/scripts/*",
+]
+
+[tool.coverage.report]
+show_missing = false
+skip_empty = true
