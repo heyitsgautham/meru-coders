@@ -29,8 +29,7 @@
   "include": ["src"],
   "exclude": [
     "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/components/assistant-ui/**"
+    "src/**/*.test.tsx"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
