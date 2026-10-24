@@ -32,10 +32,12 @@ c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
 # Results tracking
 test_results = []
 
+
 def get_syllable_count(text):
     """Get syllable count using the chanda system"""
     result = c.identify_line(text)
     return len(result.get('lg', []))
+
 
 def check_meter_identified(result, expected_names):
     """Check if expected meter is in the identified results"""
@@ -58,12 +60,13 @@ def check_meter_identified(result, expected_names):
 
     return False, identified_names[0] if identified_names else None
 
+
 def run_meter_test(meter_name, sanskrit_names, expected_syllables, test_verses):
     """Run test for a specific meter"""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"TESTING: {meter_name} ({expected_syllables} syllables)")
     print(f"Expected identification: {', '.join(sanskrit_names)}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     meter_passed = 0
     meter_total = len(test_verses)
@@ -100,7 +103,7 @@ def run_meter_test(meter_name, sanskrit_names, expected_syllables, test_verses):
 
         test_results.append((f"{meter_name} Test {idx}", test_pass, source))
 
-    print(f"\n  {'─'*40}")
+    print(f"\n  {'─' * 40}")
     print(f"  {meter_name} Results: {meter_passed}/{meter_total} PASS")
     return meter_passed, meter_total
 
@@ -115,7 +118,7 @@ def run_meter_test(meter_name, sanskrit_names, expected_syllables, test_verses):
 gayatri_verses = [
     {
         'text': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्',
-        'source': 'Rigveda 3.62.10 (Gayatri Mantra) - 24 syllables verified'
+        'source': 'Rigveda 3.62.10 (Gayatri Mantra) - 24 syllables verified',
     },
 ]
 
@@ -129,10 +132,7 @@ ushnik_verses = [
 # 3. ANUSHTUBH (32 syllables = 4×8)
 # Most common classical Sanskrit meter - Bhagavad Gita is in Anushtubh
 anushtubh_verses = [
-    {
-        'text': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय',
-        'source': 'Bhagavad Gita 1.1 - 32 syllables'
-    },
+    {'text': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय', 'source': 'Bhagavad Gita 1.1 - 32 syllables'},
 ]
 
 # 4. BRIHATI (36 syllables = 4×9)
@@ -153,7 +153,7 @@ pankti_verses = [
 trishtubh_verses = [
     {
         'text': 'इन्द्रं मित्रं वरुणमग्निमाहुरथो दिव्यः स सुपर्णो गरुत्मान् एकं सद्विप्रा बहुधा वदन्त्यग्निं यमं मातरिश्वानमाहुः',
-        'source': 'Rigveda 1.164.46 - 44 syllables verified'
+        'source': 'Rigveda 1.164.46 - 44 syllables verified',
     },
 ]
 
@@ -162,7 +162,7 @@ trishtubh_verses = [
 jagati_verses = [
     {
         'text': 'काश्चित्कान्ता समुपेत्य यस्तया सह मोदते विरहः स पुनर्मिलनं सः खलु नः पुनराप्तसंगमानां विरहजनितवेदनां न वेत्ति',
-        'source': 'Classical kavya - 49 syllables (~48 with Jagati identification)'
+        'source': 'Classical kavya - 49 syllables (~48 with Jagati identification)',
     },
 ]
 
@@ -170,6 +170,7 @@ jagati_verses = [
 ###############################################################################
 # RUN ALL 7 VEDIC METER TESTS
 ###############################################################################
+
 
 def test_syllable_count_based_identification():
     """
@@ -182,13 +183,13 @@ def test_syllable_count_based_identification():
 
     # The 7 Vedic meters are primarily identified by syllable count
     vedic_meter_syllables = {
-        'गायत्री': 24,     # Gayatri - 3×8
-        'उष्णिक्': 28,      # Ushnik - 4×7
-        'अनुष्टुभ्': 32,    # Anushtubh - 4×8
-        'बृहती': 36,       # Brihati - 4×9
-        'पङ्क्ति': 40,      # Pankti - 5×8
-        'त्रिष्टुभ्': 44,   # Trishtubh - 4×11
-        'जगती': 48         # Jagati - 4×12
+        'गायत्री': 24,  # Gayatri - 3×8
+        'उष्णिक्': 28,  # Ushnik - 4×7
+        'अनुष्टुभ्': 32,  # Anushtubh - 4×8
+        'बृहती': 36,  # Brihati - 4×9
+        'पङ्क्ति': 40,  # Pankti - 5×8
+        'त्रिष्टुभ्': 44,  # Trishtubh - 4×11
+        'जगती': 48,  # Jagati - 4×12
     }
 
     results = []
@@ -207,7 +208,7 @@ def test_syllable_count_based_identification():
         test_results.append((f"Syllable ID: {meter_name}", match, "Direct function test"))
 
     passed = sum(1 for _, m in results if m)
-    print(f"\n  {'─'*40}")
+    print(f"\n  {'─' * 40}")
     print(f"  Syllable-Count Identification: {passed}/{len(results)} PASS")
 
     return passed, len(results)
@@ -232,60 +233,31 @@ def main():
 
     # Test all 7 meters with authentic verses (where available)
     if gayatri_verses:
-        results['Gayatri'] = run_meter_test(
-            "Gayatri (गायत्री)",
-            ['गायत्री', 'Gayatri', 'gayatri'],
-            24,
-            gayatri_verses
-        )
+        results['Gayatri'] = run_meter_test("Gayatri (गायत्री)", ['गायत्री', 'Gayatri', 'gayatri'], 24, gayatri_verses)
 
     if ushnik_verses:
-        results['Ushnik'] = run_meter_test(
-            "Ushnik (उष्णिक्)",
-            ['उष्णिक्', 'Ushnik', 'ushnik', 'usnik'],
-            28,
-            ushnik_verses
-        )
+        results['Ushnik'] = run_meter_test("Ushnik (उष्णिक्)", ['उष्णिक्', 'Ushnik', 'ushnik', 'usnik'], 28, ushnik_verses)
 
     if anushtubh_verses:
         results['Anushtubh'] = run_meter_test(
-            "Anushtubh (अनुष्टुभ्)",
-            ['अनुष्टुभ्', 'Anushtubh', 'anushtubh', 'anustubh'],
-            32,
-            anushtubh_verses
+            "Anushtubh (अनुष्टुभ्)", ['अनुष्टुभ्', 'Anushtubh', 'anushtubh', 'anustubh'], 32, anushtubh_verses
         )
 
     if brihati_verses:
         results['Brihati'] = run_meter_test(
-            "Brihati (बृहती)",
-            ['बृहती', 'Brihati', 'brihati', 'brhati'],
-            36,
-            brihati_verses
+            "Brihati (बृहती)", ['बृहती', 'Brihati', 'brihati', 'brhati'], 36, brihati_verses
         )
 
     if pankti_verses:
-        results['Pankti'] = run_meter_test(
-            "Pankti (पङ्क्ति)",
-            ['पङ्क्ति', 'Pankti', 'pankti'],
-            40,
-            pankti_verses
-        )
+        results['Pankti'] = run_meter_test("Pankti (पङ्क्ति)", ['पङ्क्ति', 'Pankti', 'pankti'], 40, pankti_verses)
 
     if trishtubh_verses:
         results['Trishtubh'] = run_meter_test(
-            "Trishtubh (त्रिष्टुभ्)",
-            ['त्रिष्टुभ्', 'Trishtubh', 'trishtubh', 'tristubh'],
-            44,
-            trishtubh_verses
+            "Trishtubh (त्रिष्टुभ्)", ['त्रिष्टुभ्', 'Trishtubh', 'trishtubh', 'tristubh'], 44, trishtubh_verses
         )
 
     if jagati_verses:
-        results['Jagati'] = run_meter_test(
-            "Jagati (जगती)",
-            ['जगती', 'Jagati', 'jagati'],
-            48,
-            jagati_verses
-        )
+        results['Jagati'] = run_meter_test("Jagati (जगती)", ['जगती', 'Jagati', 'jagati'], 48, jagati_verses)
 
     # Final Summary
     print("\n" + "=" * 80)
@@ -328,6 +300,7 @@ def main():
     print("\n" + "=" * 80 + "\n")
 
     return total_passed, total_tests, overall_percentage
+
 
 if __name__ == "__main__":
     passed, total, percentage = main()

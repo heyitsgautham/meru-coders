@@ -74,6 +74,7 @@ class TestSlokaSearchAPI(unittest.TestCase):
     def setUpClass(cls):
         """Set up test client."""
         from backend.app import create_app
+
         cls.app = create_app()
         cls.client = cls.app.test_client()
 
@@ -98,11 +99,10 @@ class TestSlokaSearchAPI(unittest.TestCase):
 
     def test_search_finds_rigveda_verse(self):
         """Search returns the Rigveda 1.1.1 row with its Gayatri label."""
-        response = self.client.post('/api/sloka/search', json={
-            'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं',
-            'threshold': 0.9,
-            'limit': 5
-        })
+        response = self.client.post(
+            '/api/sloka/search',
+            json={'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं', 'threshold': 0.9, 'limit': 5},
+        )
 
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
@@ -114,15 +114,14 @@ class TestSlokaSearchAPI(unittest.TestCase):
 
     def test_validate_partial_verse(self):
         """Validating the first two padas finds the full Rigveda 1.1.1 verse."""
-        response = self.client.post('/api/sloka/validate', json={
-            'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं'
-        })
+        response = self.client.post('/api/sloka/validate', json={'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं'})
 
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertTrue(data['found'])
         self.assertEqual(data['chandas'], 'gāyatrī')
         self.assertEqual(data['difference_count'], 0)
+
 
 if __name__ == '__main__':
     # Run only the unit tests (not integration tests) by default

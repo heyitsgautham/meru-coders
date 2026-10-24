@@ -27,7 +27,7 @@ settings = Settings()
 def normalize_chandas_name(name):
     """
     Normalize chandas names to match our system's format.
-    
+
     Maps IAST transliteration to Devanagari and handles variations.
     Composite meters are mapped to their base forms.
     """
@@ -38,7 +38,6 @@ def normalize_chandas_name(name):
         'jagatī': 'जगती',
         'bhurik triṣṭubh': 'त्रिष्टुभ्',  # Map composite to base form
         'pathyāpaṅktiḥ': 'पङ्क्ति',  # Map to base form
-
         # Alternative spellings (if needed)
         'anushtubh': 'अनुष्टुभ्',
         'trishtubh': 'त्रिष्टुभ्',
@@ -56,13 +55,13 @@ def normalize_chandas_name(name):
 def test_verse_accuracy(chanda, verse, expected_chandas, verbose=False):
     """
     Test a single verse and return whether it matches.
-    
+
     Args:
         chanda: Chanda instance
         verse: Full verse text (may contain multiple lines)
         expected_chandas: Expected chandas name (normalized)
         verbose: Print details
-        
+
     Returns:
         dict with test results
     """
@@ -72,7 +71,7 @@ def test_verse_accuracy(chanda, verse, expected_chandas, verbose=False):
         'identified': None,
         'match': False,
         'confidence': 0.0,
-        'all_matches': []
+        'all_matches': [],
     }
 
     try:
@@ -140,12 +139,12 @@ def test_verse_accuracy(chanda, verse, expected_chandas, verbose=False):
 def run_dataset_test(csv_path, sample_size=None, verbose=False):
     """
     Test chanda.py against the matching_chandas.csv dataset.
-    
+
     Args:
         csv_path: Path to the CSV file
         sample_size: Number of verses to test (None = all)
         verbose: Print detailed results
-        
+
     Returns:
         dict with accuracy metrics
     """
@@ -175,12 +174,7 @@ def run_dataset_test(csv_path, sample_size=None, verbose=False):
         if (idx + 1) % 100 == 0:
             print(f"  Progress: {idx + 1}/{total} ({(idx + 1) / total * 100:.1f}%)")
 
-        result = test_verse_accuracy(
-            chanda,
-            row['full_verse'],
-            row['chandas_normalized'],
-            verbose=verbose
-        )
+        result = test_verse_accuracy(chanda, row['full_verse'], row['chandas_normalized'], verbose=verbose)
         results.append(result)
 
         if result['match']:
@@ -193,14 +187,13 @@ def run_dataset_test(csv_path, sample_size=None, verbose=False):
     chandas_accuracy = {}
     for chandas in df['chandas_normalized'].unique():
         chandas_verses = df[df['chandas_normalized'] == chandas]
-        chandas_results = [r for r, (_, row) in zip(results, df.iterrows())
-                          if row['chandas_normalized'] == chandas]
+        chandas_results = [r for r, (_, row) in zip(results, df.iterrows()) if row['chandas_normalized'] == chandas]
         chandas_matches = sum(1 for r in chandas_results if r['match'])
         chandas_total = len(chandas_results)
         chandas_accuracy[chandas] = {
             'correct': chandas_matches,
             'total': chandas_total,
-            'accuracy': (chandas_matches / chandas_total * 100) if chandas_total > 0 else 0
+            'accuracy': (chandas_matches / chandas_total * 100) if chandas_total > 0 else 0,
         }
 
     return {
@@ -208,7 +201,7 @@ def run_dataset_test(csv_path, sample_size=None, verbose=False):
         'matches': matches,
         'accuracy': accuracy,
         'chandas_accuracy': chandas_accuracy,
-        'results': results
+        'results': results,
     }
 
 
@@ -234,9 +227,9 @@ def main():
     metrics = run_dataset_test(csv_path, sample_size=sample_size, verbose=args.verbose)
 
     # Print results
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("MATCHING CHANDAS DATASET - TEST RESULTS")
-    print("="*70)
+    print("=" * 70)
     print("\nOverall Performance:")
     print(f"  Total Verses: {metrics['total']}")
     print(f"  Correct Matches: {metrics['matches']}")
@@ -244,19 +237,15 @@ def main():
 
     print("\nChandas-wise Accuracy:")
     print(f"  {'Chandas':<25} {'Correct':<10} {'Total':<10} {'Accuracy'}")
-    print(f"  {'-'*60}")
+    print(f"  {'-' * 60}")
 
     # Sort by total count (descending)
-    sorted_chandas = sorted(
-        metrics['chandas_accuracy'].items(),
-        key=lambda x: x[1]['total'],
-        reverse=True
-    )
+    sorted_chandas = sorted(metrics['chandas_accuracy'].items(), key=lambda x: x[1]['total'], reverse=True)
 
     for chandas, stats in sorted_chandas:
         print(f"  {chandas:<25} {stats['correct']:<10} {stats['total']:<10} {stats['accuracy']:.1f}%")
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
 
     # Success threshold
     if metrics['accuracy'] >= 90:
@@ -268,7 +257,7 @@ def main():
     else:
         print("❌ LOW ACCURACY - Major improvements needed")
 
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     return metrics
 

@@ -25,20 +25,17 @@ chanda = Chanda(DATA_PATH)
 
 def test_poetry_detection():
     """Test that known poetry is correctly identified as Padya"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 1: Poetry (Padya) Detection")
-    print("="*70)
+    print("=" * 70)
 
     poetry_samples = [
         # Anushtubh (32 syllables = 4×8) - EXACT pattern match expected
         ("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "Bhagavad Gita 1.1 - Anushtubh"),
-
         # Full Anushtubh shloka (2 lines = 32 syllables)
         ("कर्मण्येवाधिकारस्ते मा फलेषु कदाचन", "Bhagavad Gita 2.47 - Anushtubh"),
-
         # Another classic Anushtubh
         ("ततो युधिष्ठिरो राजा सहदेवं महारथम्", "Mahabharata - Anushtubh"),
-
         # Shloka with 16 syllables (half-shloka)
         ("नमामि शारदां देवीं काश्मीरपुरवासिनीम्", "Sarada stuti - half-shloka"),
     ]
@@ -68,15 +65,15 @@ def test_poetry_detection():
         print(f"  Meter Found: {found}")
         print(f"  Chanda: {display_chanda[:50]}..." if len(display_chanda) > 50 else f"  Chanda: {display_chanda}")
 
-    print(f"\n📊 Poetry Detection: {passed}/{passed+failed} passed")
+    print(f"\n📊 Poetry Detection: {passed}/{passed + failed} passed")
     return passed, failed
 
 
 def test_prose_detection():
     """Test that known prose is correctly identified as Gadya or uncertain"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 2: Prose (Gadya) Detection")
-    print("="*70)
+    print("=" * 70)
 
     # IMPORTANT NOTE: Short prose can accidentally match syllable counts of meters.
     # The goal is NOT to perfectly classify all prose, but to:
@@ -87,20 +84,19 @@ def test_prose_detection():
     prose_samples = [
         # Very short phrases - should be classified as uncertain/prose
         ("नमस्ते", "Greeting: Namaste (3 syllables)", False),
-
         # Short prose - might accidentally match pada lengths, but low confidence
         ("अहं पठामि", "I read (5 syllables)", False),
-
         # These may match meters by syllable count, but should show low confidence
         # We test that either: is_padya=False OR padya_confidence < 0.8
         ("एषः पुस्तकं पठति", "He reads a book - may match meter accidentally", None),  # Accept either
-
         # Sutra prose - often matches meter patterns accidentally
         ("अथ योगानुशासनम्", "Yoga Sutra 1.1 - may have accidental pattern", None),  # Accept either
-
         # Very long colophon - should ideally not match, but may have accidental matches
-        ("इति श्रीमद्भगवद्गीतासूपनिषत्सु ब्रह्मविद्यायां योगशास्त्रे",
-         "Colophon prose - long text", None),  # Accept either but check confidence
+        (
+            "इति श्रीमद्भगवद्गीतासूपनिषत्सु ब्रह्मविद्यायां योगशास्त्रे",
+            "Colophon prose - long text",
+            None,
+        ),  # Accept either but check confidence
     ]
 
     passed = 0
@@ -138,23 +134,21 @@ def test_prose_detection():
         if prose_message:
             print(f"  Message: {prose_message[:80]}...")
 
-    print(f"\n📊 Prose Detection: {passed}/{passed+failed} passed")
+    print(f"\n📊 Prose Detection: {passed}/{passed + failed} passed")
     return passed, failed
 
 
 def test_edge_cases():
     """Test edge cases and ambiguous inputs"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 3: Edge Cases")
-    print("="*70)
+    print("=" * 70)
 
     edge_cases = [
         # Very short input
         ("ॐ", "Om - single syllable", None),  # None means we accept either result
-
         # Single word
         ("संस्कृतम्", "Sanskrit - single word", None),
-
         # Numbers/mixed - should return empty result (graceful handling)
         ("१२३", "Numbers", "empty"),  # Expect empty/graceful handling
     ]
@@ -205,39 +199,35 @@ def test_edge_cases():
                 print(f"  Error: {str(e)}")
                 failed += 1
 
-    print(f"\n📊 Edge Cases: {passed}/{passed+failed} passed")
+    print(f"\n📊 Edge Cases: {passed}/{passed + failed} passed")
     return passed, failed
 
 
 def test_input_validation():
     """Test that invalid/non-Sanskrit input is properly rejected"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 5: Input Validation (Gibberish Detection)")
-    print("="*70)
+    print("=" * 70)
 
     invalid_inputs = [
         # Pure gibberish ASCII
         ("djajjkvdskldsjlsdfjkl", "Random ASCII letters", False),
         ("xyz123abc", "Mixed letters and numbers", False),
         ("qwerty", "Keyboard pattern", False),
-
         # Too short inputs
         ("a", "Single letter 'a'", False),
         ("ab", "Two letters 'ab'", False),
         ("अ", "Single Devanagari character", False),
-
         # English text - should be rejected
         ("hello hello fm hello hello fm", "Repeated English words", False),
         ("hello world", "Simple English greeting", False),
         ("the quick brown fox", "English phrase", False),
         ("test test test", "Repeated English word", False),
         ("the quick brown fox jumps over the lazy dog", "Pangram", False),
-
         # Special cases that should be valid
         ("om", "Om (special case)", True),
         ("aum", "Aum (special case)", True),
         ("ॐ", "Om symbol", True),
-
         # Should be valid (Sanskrit text)
         ("धर्मक्षेत्रे", "Devanagari word", True),
         ("dharmakṣetre", "IAST with diacritics", True),
@@ -280,23 +270,21 @@ def test_input_validation():
         if validation_error:
             print(f"  Validation Error: {validation_error[:60]}...")
 
-    print(f"\n📊 Input Validation: {passed}/{passed+failed} passed")
+    print(f"\n📊 Input Validation: {passed}/{passed + failed} passed")
     return passed, failed
 
 
 def test_confidence_levels():
     """Test that confidence levels are appropriate"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 4: Confidence Level Validation")
-    print("="*70)
+    print("=" * 70)
 
     test_cases = [
         # High confidence poetry (exact pattern match)
         ("ततो युधिष्ठिरो राजा सहदेवं महारथम्", "exact_match", 0.8),
-
         # Medium confidence (Vedic syllable count match)
         ("धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "vedic_match", 0.6),
-
         # Low confidence (likely prose)
         ("अहं पठामि", "prose", 0.0),  # Expect low confidence for poetry
     ]
@@ -331,16 +319,16 @@ def test_confidence_levels():
         print(f"  Is Padya: {is_padya}")
         print(f"  Confidence: {padya_confidence:.2f} (expected >= {min_confidence})")
 
-    print(f"\n📊 Confidence Validation: {passed}/{passed+failed} passed")
+    print(f"\n📊 Confidence Validation: {passed}/{passed + failed} passed")
     return passed, failed
 
 
 def main():
     """Run all prose detection tests"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("  PROSE DETECTION TEST SUITE (Gadya vs Padya)")
     print("  SIH 2025 - Chandas Identifier")
-    print("="*70)
+    print("=" * 70)
 
     total_passed = 0
     total_failed = 0
@@ -367,9 +355,9 @@ def main():
     total_failed += f
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("  FINAL SUMMARY")
-    print("="*70)
+    print("=" * 70)
     total = total_passed + total_failed
     percentage = (total_passed / total * 100) if total > 0 else 0
 

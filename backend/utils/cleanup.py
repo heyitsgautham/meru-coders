@@ -18,10 +18,10 @@ logger = logging.getLogger(__name__)
 def get_file_age_minutes(file_path: Path) -> float:
     """
     Get the age of a file in minutes.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         Age of the file in minutes
     """
@@ -36,10 +36,10 @@ def get_file_age_minutes(file_path: Path) -> float:
 def get_file_size_mb(file_path: Path) -> float:
     """
     Get the size of a file in megabytes.
-    
+
     Args:
         file_path: Path to the file
-        
+
     Returns:
         Size of the file in MB
     """
@@ -49,19 +49,15 @@ def get_file_size_mb(file_path: Path) -> float:
         return 0
 
 
-def cleanup_directory(
-    directory: Path,
-    max_age_minutes: float,
-    dry_run: bool = False
-) -> Tuple[int, float]:
+def cleanup_directory(directory: Path, max_age_minutes: float, dry_run: bool = False) -> Tuple[int, float]:
     """
     Clean up files older than max_age_minutes from a directory.
-    
+
     Args:
         directory: Path to the directory to clean
         max_age_minutes: Maximum age of files in minutes
         dry_run: If True, only log what would be deleted
-        
+
     Returns:
         Tuple of (files_deleted_count, total_size_freed_mb)
     """
@@ -85,18 +81,14 @@ def cleanup_directory(
 
                 if dry_run:
                     logger.info(
-                        f"[DRY RUN] Would delete: {file_path.name} "
-                        f"(age: {age_minutes:.1f}min, size: {file_size:.2f}MB)"
+                        f"[DRY RUN] Would delete: {file_path.name} (age: {age_minutes:.1f}min, size: {file_size:.2f}MB)"
                     )
                 else:
                     try:
                         file_path.unlink()
                         files_deleted += 1
                         size_freed_mb += file_size
-                        logger.debug(
-                            f"Deleted: {file_path.name} "
-                            f"(age: {age_minutes:.1f}min, size: {file_size:.2f}MB)"
-                        )
+                        logger.debug(f"Deleted: {file_path.name} (age: {age_minutes:.1f}min, size: {file_size:.2f}MB)")
                     except OSError as e:
                         logger.warning(f"Failed to delete {file_path}: {e}")
 
@@ -107,16 +99,11 @@ def cleanup_directory(
 
 
 def cleanup_uploads(
-    photos_dir: Path,
-    texts_dir: Path,
-    results_dir: Path,
-    audio_dir: Path,
-    max_age_minutes: float,
-    dry_run: bool = False
+    photos_dir: Path, texts_dir: Path, results_dir: Path, audio_dir: Path, max_age_minutes: float, dry_run: bool = False
 ) -> dict:
     """
     Clean up all upload directories.
-    
+
     Args:
         photos_dir: Path to photos upload directory
         texts_dir: Path to texts upload directory
@@ -124,14 +111,11 @@ def cleanup_uploads(
         audio_dir: Path to TTS audio files directory
         max_age_minutes: Maximum age of files in minutes
         dry_run: If True, only log what would be deleted
-        
+
     Returns:
         Dictionary with cleanup statistics
     """
-    logger.info(
-        f"{'[DRY RUN] ' if dry_run else ''}Starting upload cleanup "
-        f"(max age: {max_age_minutes}min)"
-    )
+    logger.info(f"{'[DRY RUN] ' if dry_run else ''}Starting upload cleanup (max age: {max_age_minutes}min)")
 
     total_files = 0
     total_size_mb = 0.0
@@ -146,20 +130,12 @@ def cleanup_uploads(
     stats = {}
 
     for name, directory in directories:
-        files_deleted, size_freed = cleanup_directory(
-            directory, max_age_minutes, dry_run
-        )
-        stats[name] = {
-            "files_deleted": files_deleted,
-            "size_freed_mb": size_freed
-        }
+        files_deleted, size_freed = cleanup_directory(directory, max_age_minutes, dry_run)
+        stats[name] = {"files_deleted": files_deleted, "size_freed_mb": size_freed}
         total_files += files_deleted
         total_size_mb += size_freed
 
-    stats["total"] = {
-        "files_deleted": total_files,
-        "size_freed_mb": total_size_mb
-    }
+    stats["total"] = {"files_deleted": total_files, "size_freed_mb": total_size_mb}
 
     if total_files > 0:
         logger.info(
@@ -175,7 +151,7 @@ def cleanup_uploads(
 def scheduled_cleanup_job(app):
     """
     Scheduled job function that runs within Flask app context.
-    
+
     Args:
         app: Flask application instance
     """
@@ -189,7 +165,7 @@ def scheduled_cleanup_job(app):
                 results_dir=settings.RESULTS_DIR,
                 audio_dir=settings.AUDIO_DIR,  # Added TTS audio cleanup
                 max_age_minutes=settings.FILE_MAX_AGE_MINUTES,
-                dry_run=False
+                dry_run=False,
             )
         except Exception as e:
             logger.error(f"Scheduled cleanup failed: {e}")

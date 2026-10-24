@@ -36,19 +36,16 @@ def test_english_detection():
         ("hello hello hello", True, "Repeated English word"),
         ("what is your name", True, "English question"),
         ("good morning everyone", True, "English greeting"),
-
         # Valid IAST transliteration - should be ACCEPTED
         ("dharma kṣetre kurukṣetre", False, "IAST with diacritics"),
         ("rāma rāma rāma", False, "IAST with macron (ā)"),
         ("śrī kṛṣṇa", False, "IAST with ś, ṛ, ṣ"),
         ("oṃ namaḥ śivāya", False, "IAST mantra"),
         ("bhūr bhuvaḥ svaḥ", False, "IAST Gayatri"),
-
         # Devanagari - should be ACCEPTED
         ("धर्मक्षेत्रे कुरुक्षेत्रे", False, "Devanagari script"),
         ("राम राम राम", False, "Devanagari repeated"),
         ("ॐ नमः शिवाय", False, "Devanagari mantra"),
-
         # Edge cases
         ("rama rama", False, "ASCII without diacritics - could be SLP1, accept"),
         ("krsna", True, "SLP1-like with low vowel ratio - reject as uncertain"),
@@ -67,7 +64,7 @@ def test_english_detection():
         validation_error = result.get('validation_error', '')
 
         # Check if test passed
-        test_passed = (is_rejected == should_reject)
+        test_passed = is_rejected == should_reject
 
         status = "✅ PASS" if test_passed else "❌ FAIL"
         if test_passed:
@@ -83,14 +80,16 @@ def test_english_detection():
         if is_rejected:
             print(f"  Validation Error: {validation_error}")
 
-        results.append({
-            'text': text,
-            'description': description,
-            'should_reject': should_reject,
-            'is_rejected': is_rejected,
-            'validation_error': validation_error,
-            'passed': test_passed
-        })
+        results.append(
+            {
+                'text': text,
+                'description': description,
+                'should_reject': should_reject,
+                'is_rejected': is_rejected,
+                'validation_error': validation_error,
+                'passed': test_passed,
+            }
+        )
 
     print("\n" + "=" * 80)
     print(f"RESULTS: {passed}/{len(test_cases)} tests passed")
@@ -105,6 +104,7 @@ def test_english_detection():
         print("\n🎉 ALL TESTS PASSED!")
 
     return failed == 0
+
 
 if __name__ == '__main__':
     success = test_english_detection()

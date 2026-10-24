@@ -26,12 +26,12 @@ import importlib.util
 from core.chanda import Chanda
 
 spec = importlib.util.spec_from_file_location(
-    "rigveda_authentic",
-    os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
+    "rigveda_authentic", os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
 )
 rigveda_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rigveda_module)
 RIGVEDA_VERSES = rigveda_module.RIGVEDA_AUTHENTIC
+
 
 def get_all_meters():
     """Get all unique meters in the dataset."""
@@ -109,12 +109,7 @@ def run_vedic_accuracy_test():
     chanda = Chanda(data_path)
 
     # Results tracking
-    results = {
-        'total': 0,
-        'correct': 0,
-        'by_meter': {},
-        'failures': []
-    }
+    results = {'total': 0, 'correct': 0, 'by_meter': {}, 'failures': []}
 
     # Test each verse
     print("\n" + "-" * 70)
@@ -150,14 +145,16 @@ def run_vedic_accuracy_test():
             status = "✓ PASS"
         else:
             status = "✗ FAIL"
-            results['failures'].append({
-                'source': source,
-                'text': text[:60] + '...' if len(text) > 60 else text,
-                'expected': f"{expected_meter} ({expected_iast})",
-                'predicted': predicted,
-                'expected_syllables': expected_syllables,
-                'actual_syllables': actual_syllables
-            })
+            results['failures'].append(
+                {
+                    'source': source,
+                    'text': text[:60] + '...' if len(text) > 60 else text,
+                    'expected': f"{expected_meter} ({expected_iast})",
+                    'predicted': predicted,
+                    'expected_syllables': expected_syllables,
+                    'actual_syllables': actual_syllables,
+                }
+            )
 
         print(f"\n  {status}: {source}")
         print(f"    Expected: {expected_meter} ({expected_syllables} syllables)")

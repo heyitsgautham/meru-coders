@@ -55,8 +55,7 @@ def test_vedic_verse():
             if 'matches' in result:
                 print("\n   All Matches:")
                 for match in result['matches'][:5]:  # Top 5
-                    print(f"     - {match.get('name', 'N/A')} "
-                          f"(confidence: {match.get('confidence', 0):.1f})")
+                    print(f"     - {match.get('name', 'N/A')} (confidence: {match.get('confidence', 0):.1f})")
 
             # Show fuzzy matches if any
             if result.get('fuzzy'):
@@ -86,6 +85,7 @@ def test_vedic_verse():
     print("\n" + "=" * 80)
     print("TEST COMPLETE")
     print("=" * 80)
+
 
 if __name__ == '__main__':
     test_vedic_verse()

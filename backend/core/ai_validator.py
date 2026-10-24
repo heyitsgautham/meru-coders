@@ -24,6 +24,7 @@ from typing import Any, Dict, Optional, Tuple
 try:
     from google import genai
     from google.genai import types
+
     GENAI_AVAILABLE = True
 except ImportError:
     GENAI_AVAILABLE = False
@@ -95,10 +96,10 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
     """
     Fallback rule-based validation when AI is unavailable.
     Uses the same logic as chanda.py's is_valid_sanskrit_input.
-    
+
     Args:
         text: Input text to validate
-        
+
     Returns:
         Validation result dictionary
     """
@@ -111,27 +112,103 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
             'text_type': 'gibberish',
             'reason': 'Empty input',
             'action': 'reject',
-            'ai_validated': False
+            'ai_validated': False,
         }
 
     text = text.strip()
 
     # Common English words to reject
     COMMON_ENGLISH_WORDS = {
-        'i', 'me', 'my', 'you', 'your', 'he', 'she', 'it', 'we', 'they', 'them',
-        'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'am',
-        'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should',
-        'hello', 'hi', 'hey', 'bye', 'goodbye', 'thanks', 'thank', 'please',
-        'yes', 'no', 'ok', 'okay', 'sorry', 'welcome', 'good', 'bad', 'new', 'old',
-        'test', 'testing', 'sample', 'example', 'demo', 'input', 'output',
-        'aditya', 'rahul', 'priya', 'kumar', 'sharma', 'singh',  # Common names
-        'pratap', 'vijay', 'ajay', 'sanjay', 'amit', 'sumit', 'rohit', 'mohit',  # More names
-        'ram', 'shyam', 'gopal', 'krishna', 'ganesh', 'shiva', 'vishnu',  # Religious names (without diacritics = English)
-        'name', 'word', 'text', 'data', 'file', 'code', 'type', 'value',  # Tech words
+        'i',
+        'me',
+        'my',
+        'you',
+        'your',
+        'he',
+        'she',
+        'it',
+        'we',
+        'they',
+        'them',
+        'a',
+        'an',
+        'the',
+        'is',
+        'are',
+        'was',
+        'were',
+        'be',
+        'been',
+        'being',
+        'am',
+        'have',
+        'has',
+        'had',
+        'do',
+        'does',
+        'did',
+        'will',
+        'would',
+        'could',
+        'should',
+        'hello',
+        'hi',
+        'hey',
+        'bye',
+        'goodbye',
+        'thanks',
+        'thank',
+        'please',
+        'yes',
+        'no',
+        'ok',
+        'okay',
+        'sorry',
+        'welcome',
+        'good',
+        'bad',
+        'new',
+        'old',
+        'test',
+        'testing',
+        'sample',
+        'example',
+        'demo',
+        'input',
+        'output',
+        'aditya',
+        'rahul',
+        'priya',
+        'kumar',
+        'sharma',
+        'singh',  # Common names
+        'pratap',
+        'vijay',
+        'ajay',
+        'sanjay',
+        'amit',
+        'sumit',
+        'rohit',
+        'mohit',  # More names
+        'ram',
+        'shyam',
+        'gopal',
+        'krishna',
+        'ganesh',
+        'shiva',
+        'vishnu',  # Religious names (without diacritics = English)
+        'name',
+        'word',
+        'text',
+        'data',
+        'file',
+        'code',
+        'type',
+        'value',  # Tech words
     }
 
     # Check for Devanagari characters
-    devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097F')
+    devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097f')
 
     # Check for IAST diacritics
     iast_diacritics = set('āīūṛṝḷḹṃḥñṅṭḍṇśṣĀĪŪṚṜḶḸṂḤÑṄṬḌṆŚṢ')
@@ -147,7 +224,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                 'text_type': 'verse',
                 'reason': 'Devanagari script detected',
                 'action': 'proceed',
-                'ai_validated': False
+                'ai_validated': False,
             }
 
     # Pure ASCII without IAST diacritics - likely English
@@ -166,7 +243,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                     'text_type': 'non_sanskrit',
                     'reason': f'English text detected (no IAST diacritics). Found: {", ".join(w for w in words if w in COMMON_ENGLISH_WORDS)[:3]}',
                     'action': 'reject',
-                    'ai_validated': False
+                    'ai_validated': False,
                 }
 
             # Check vowel ratio (Sanskrit has ~0.3-0.5)
@@ -182,7 +259,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                         'text_type': 'gibberish',
                         'reason': 'Invalid text - vowel ratio too low',
                         'action': 'reject',
-                        'ai_validated': False
+                        'ai_validated': False,
                     }
 
     # Has IAST diacritics - likely valid romanized Sanskrit
@@ -193,7 +270,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
             'text_type': 'verse',
             'reason': 'IAST transliteration detected',
             'action': 'proceed',
-            'ai_validated': False
+            'ai_validated': False,
         }
 
     # CRITICAL: If we reach here, text has:
@@ -216,7 +293,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
                 'text_type': 'non_sanskrit',
                 'reason': 'Plain ASCII text without Sanskrit script or IAST diacritics',
                 'action': 'reject',
-                'ai_validated': False
+                'ai_validated': False,
             }
 
     # Default: uncertain, but proceed with warning (shouldn't reach here often)
@@ -226,7 +303,7 @@ def _rule_based_validation(text: str) -> Dict[str, Any]:
         'text_type': 'unknown',
         'reason': 'Uncertain input - proceeding with caution',
         'action': 'warn',
-        'ai_validated': False
+        'ai_validated': False,
     }
 
 
@@ -239,7 +316,7 @@ class AIShlokaValidator:
     def __init__(self, enabled: bool = True):
         """
         Initialize the AI validator.
-        
+
         Args:
             enabled: Whether AI validation is enabled. If False, all inputs pass.
         """
@@ -267,10 +344,10 @@ class AIShlokaValidator:
     def validate_shloka(self, text: str) -> Dict[str, Any]:
         """
         Validate if the input text is a valid Sanskrit shloka.
-        
+
         Args:
             text: The input text to validate
-            
+
         Returns:
             Dictionary with validation results:
             {
@@ -282,6 +359,7 @@ class AIShlokaValidator:
                 'ai_validated': bool (True if AI was used, False if skipped)
             }
         """
+
         # Fallback result uses rule-based validation when AI is unavailable
         def get_fallback_result():
             return _rule_based_validation(text)
@@ -297,7 +375,7 @@ class AIShlokaValidator:
                 'text_type': 'gibberish',
                 'reason': 'Empty input',
                 'action': 'reject',
-                'ai_validated': True
+                'ai_validated': True,
             }
 
         # Skip AI for very long texts (batch mode efficiency)
@@ -323,11 +401,7 @@ class AIShlokaValidator:
             )
 
             # Call Gemini using new SDK
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config=config
-            )
+            response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt, config=config)
 
             # Handle response - check if text exists
             if not response or not response.text:
@@ -353,7 +427,7 @@ class AIShlokaValidator:
                 'text_type': result.get('text_type', 'unknown'),
                 'reason': result.get('reason', 'AI analysis complete'),
                 'action': result.get('suggested_action', 'proceed'),
-                'ai_validated': True
+                'ai_validated': True,
             }
 
         except json.JSONDecodeError as e:
@@ -370,10 +444,10 @@ class AIShlokaValidator:
     def should_proceed_with_identification(self, validation_result: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
         """
         Determine if meter identification should proceed based on validation result.
-        
+
         Args:
             validation_result: Result from validate_shloka()
-            
+
         Returns:
             Tuple of (should_proceed: bool, rejection_reason: Optional[str])
         """
@@ -399,10 +473,10 @@ _validator_instance: Optional[AIShlokaValidator] = None
 def get_validator(enabled: bool = True) -> AIShlokaValidator:
     """
     Get the global AI validator instance.
-    
+
     Args:
         enabled: Whether to enable AI validation
-        
+
     Returns:
         AIShlokaValidator instance
     """
@@ -417,11 +491,11 @@ def get_validator(enabled: bool = True) -> AIShlokaValidator:
 def validate_shloka_input(text: str, skip_ai: bool = False) -> Tuple[bool, Optional[str], Dict[str, Any]]:
     """
     Convenience function to validate shloka input.
-    
+
     Args:
         text: Input text to validate
         skip_ai: If True, skip AI validation (for batch mode)
-        
+
     Returns:
         Tuple of (should_proceed, rejection_reason, full_validation_result)
     """

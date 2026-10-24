@@ -41,7 +41,7 @@ class RamayanaValidator:
         "Kishkindha Kanda",
         "Sundara Kanda",
         "Yuddha Kanda",
-        "Uttara Kanda"
+        "Uttara Kanda",
     ]
 
     def __init__(self, data_path: str = None):
@@ -55,22 +55,19 @@ class RamayanaValidator:
             'successful': 0,
             'failed': 0,
             'meter_distribution': Counter(),
-            'kanda_stats': defaultdict(lambda: {
-                'total': 0,
-                'successful': 0,
-                'failed': 0,
-                'meters': Counter()
-            }),
+            'kanda_stats': defaultdict(lambda: {'total': 0, 'successful': 0, 'failed': 0, 'meters': Counter()}),
             'confidence_scores': [],
             'processing_times': [],
-            'failed_examples': []
+            'failed_examples': [],
         }
 
     def load_dataset(self, dataset_path: str = None) -> bool:
         """Load Valmiki Ramayana dataset."""
         if dataset_path is None:
             # Default path relative to backend
-            dataset_path = backend_path.parent / "repos" / "Valmiki_Ramayan_Dataset" / "data" / "Valmiki_Ramayan_Shlokas.json"
+            dataset_path = (
+                backend_path.parent / "repos" / "Valmiki_Ramayan_Dataset" / "data" / "Valmiki_Ramayan_Shlokas.json"
+            )
 
         try:
             print(f"Loading dataset from: {dataset_path}")
@@ -107,7 +104,7 @@ class RamayanaValidator:
             'processing_time': processing_time,
             'found': result['found'],
             'meter': result.get('display_chanda_primary', 'NOT_FOUND'),
-            'confidence': self._extract_confidence(result)
+            'confidence': self._extract_confidence(result),
         }
 
     def _extract_confidence(self, result: Dict) -> float:
@@ -149,7 +146,7 @@ class RamayanaValidator:
 
             # Progress indicator
             if tested % 100 == 0:
-                print(f"Progress: {tested}/{sample_size} ({tested/sample_size*100:.1f}%)")
+                print(f"Progress: {tested}/{sample_size} ({tested / sample_size * 100:.1f}%)")
 
         print(f"\n✅ Completed testing {tested} shlokas\n")
 
@@ -173,11 +170,13 @@ class RamayanaValidator:
                 elapsed = time.time() - start_time
                 rate = (i + 1) / elapsed
                 remaining = (len(self.dataset) - i - 1) / rate
-                print(f"Progress: {i+1}/{len(self.dataset)} ({(i+1)/len(self.dataset)*100:.1f}%) - "
-                      f"ETA: {remaining/60:.1f} min")
+                print(
+                    f"Progress: {i + 1}/{len(self.dataset)} ({(i + 1) / len(self.dataset) * 100:.1f}%) - "
+                    f"ETA: {remaining / 60:.1f} min"
+                )
 
         total_time = time.time() - start_time
-        print(f"\n✅ Completed testing {len(self.dataset)} shlokas in {total_time/60:.2f} minutes\n")
+        print(f"\n✅ Completed testing {len(self.dataset)} shlokas in {total_time / 60:.2f} minutes\n")
 
     def validate_kanda(self, kanda_name: str) -> None:
         """Validate specific Kanda."""
@@ -224,12 +223,16 @@ class RamayanaValidator:
 
             # Store failed examples (limit to 50)
             if len(self.results['failed_examples']) < 50:
-                self.results['failed_examples'].append({
-                    'kanda': kanda,
-                    'sarga': shloka['sarga'],
-                    'shloka': shloka['shloka'],
-                    'text': test_result['text'][:100] + '...' if len(test_result['text']) > 100 else test_result['text']
-                })
+                self.results['failed_examples'].append(
+                    {
+                        'kanda': kanda,
+                        'sarga': shloka['sarga'],
+                        'shloka': shloka['shloka'],
+                        'text': test_result['text'][:100] + '...'
+                        if len(test_result['text']) > 100
+                        else test_result['text'],
+                    }
+                )
 
     def print_summary(self) -> None:
         """Print comprehensive test summary."""
@@ -245,7 +248,7 @@ class RamayanaValidator:
         print("-" * 80)
         print(f"Total Shlokas Tested:    {r['total_tested']:,}")
         print(f"Successfully Identified: {r['successful']:,} ({success_rate:.2f}%)")
-        print(f"Failed to Identify:      {r['failed']:,} ({100-success_rate:.2f}%)")
+        print(f"Failed to Identify:      {r['failed']:,} ({100 - success_rate:.2f}%)")
 
         # Performance Metrics
         if r['processing_times']:
@@ -254,10 +257,10 @@ class RamayanaValidator:
             min_time = min(r['processing_times'])
             print("\n⚡ PERFORMANCE METRICS")
             print("-" * 80)
-            print(f"Average Processing Time: {avg_time*1000:.2f} ms/shloka")
-            print(f"Min Processing Time:     {min_time*1000:.2f} ms")
-            print(f"Max Processing Time:     {max_time*1000:.2f} ms")
-            print(f"Total Processing Time:   {sum(r['processing_times'])/60:.2f} minutes")
+            print(f"Average Processing Time: {avg_time * 1000:.2f} ms/shloka")
+            print(f"Min Processing Time:     {min_time * 1000:.2f} ms")
+            print(f"Max Processing Time:     {max_time * 1000:.2f} ms")
+            print(f"Total Processing Time:   {sum(r['processing_times']) / 60:.2f} minutes")
 
         # Confidence Scores
         if r['confidence_scores']:
@@ -265,8 +268,10 @@ class RamayanaValidator:
             print("\n🎯 CONFIDENCE ANALYSIS")
             print("-" * 80)
             print(f"Average Confidence:      {avg_conf:.2f}")
-            print(f"High Confidence (>9.0):  {sum(1 for c in r['confidence_scores'] if c > 9.0):,} "
-                  f"({sum(1 for c in r['confidence_scores'] if c > 9.0)/len(r['confidence_scores'])*100:.1f}%)")
+            print(
+                f"High Confidence (>9.0):  {sum(1 for c in r['confidence_scores'] if c > 9.0):,} "
+                f"({sum(1 for c in r['confidence_scores'] if c > 9.0) / len(r['confidence_scores']) * 100:.1f}%)"
+            )
 
         # Meter Distribution
         print("\n🕉️ METER DISTRIBUTION (Top 10)")
@@ -331,15 +336,20 @@ class RamayanaValidator:
                 'successful': self.results['successful'],
                 'failed': self.results['failed'],
                 'success_rate': (self.results['successful'] / self.results['total_tested'] * 100)
-                                if self.results['total_tested'] > 0 else 0,
-                'avg_processing_time_ms': sum(self.results['processing_times']) / len(self.results['processing_times']) * 1000
-                                         if self.results['processing_times'] else 0,
+                if self.results['total_tested'] > 0
+                else 0,
+                'avg_processing_time_ms': sum(self.results['processing_times'])
+                / len(self.results['processing_times'])
+                * 1000
+                if self.results['processing_times']
+                else 0,
                 'avg_confidence': sum(self.results['confidence_scores']) / len(self.results['confidence_scores'])
-                                 if self.results['confidence_scores'] else 0
+                if self.results['confidence_scores']
+                else 0,
             },
             'meter_distribution': dict(self.results['meter_distribution'].most_common()),
             'kanda_statistics': dict(self.results['kanda_stats']),
-            'failed_examples': self.results['failed_examples']
+            'failed_examples': self.results['failed_examples'],
         }
 
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -385,8 +395,11 @@ def main():
         validator.export_results(args.export)
 
     # Return exit code based on success rate
-    success_rate = (validator.results['successful'] / validator.results['total_tested'] * 100) \
-                   if validator.results['total_tested'] > 0 else 0
+    success_rate = (
+        (validator.results['successful'] / validator.results['total_tested'] * 100)
+        if validator.results['total_tested'] > 0
+        else 0
+    )
 
     if success_rate >= 95:
         sys.exit(0)  # Success

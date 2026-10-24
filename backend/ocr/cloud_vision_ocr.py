@@ -14,6 +14,7 @@ from typing import Optional, Union
 
 try:
     from google.cloud import vision
+
     CLOUD_VISION_AVAILABLE = True
 except ImportError:
     CLOUD_VISION_AVAILABLE = False
@@ -26,36 +27,31 @@ logger = logging.getLogger(__name__)
 class CloudVisionOCR:
     """
     Google Cloud Vision OCR for extracting Sanskrit text from images.
-    
+
     Uses the Google Cloud Vision API directly for text detection.
     Requires either:
     - GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to service account JSON
     - Or explicit credentials_path parameter
-    
+
     This is a more reliable and faster approach compared to the google-drive-ocr library.
     """
 
     def __init__(self, credentials_path: Optional[Union[str, Path]] = None):
         """
         Initialize Cloud Vision OCR.
-        
+
         Args:
             credentials_path: Path to service account JSON credentials file.
                             If None, uses GOOGLE_APPLICATION_CREDENTIALS env var.
         """
         if not CLOUD_VISION_AVAILABLE:
-            raise ImportError(
-                "Google Cloud Vision is not available. "
-                "Please install: pip install google-cloud-vision"
-            )
+            raise ImportError("Google Cloud Vision is not available. Please install: pip install google-cloud-vision")
 
         # Set credentials if path provided (otherwise uses env var)
         if credentials_path:
             credentials_path = Path(credentials_path)
             if not credentials_path.exists():
-                raise FileNotFoundError(
-                    f"Credentials file not found: {credentials_path}"
-                )
+                raise FileNotFoundError(f"Credentials file not found: {credentials_path}")
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(credentials_path)
             logger.info(f"Using credentials from: {credentials_path}")
         elif not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
@@ -74,13 +70,13 @@ class CloudVisionOCR:
     def extract_text(self, image_path: Union[str, Path]) -> str:
         """
         Extract text from an image file using Google Cloud Vision.
-        
+
         Args:
             image_path: Path to the image file
-            
+
         Returns:
             Extracted text as string
-            
+
         Raises:
             FileNotFoundError: If image file doesn't exist
             RuntimeError: If OCR extraction fails
@@ -124,10 +120,10 @@ class CloudVisionOCR:
     def extract_text_from_bytes(self, image_bytes: bytes) -> str:
         """
         Extract text from image bytes using Google Cloud Vision.
-        
+
         Args:
             image_bytes: Raw image bytes
-            
+
         Returns:
             Extracted text as string
         """
@@ -149,16 +145,15 @@ class CloudVisionOCR:
             logger.error(f"Failed to extract text from bytes: {e}")
             raise RuntimeError(f"Cloud Vision OCR extraction failed: {e}") from e
 
-    def save_text_to_file(self, image_path: Union[str, Path],
-                         output_path: Optional[Union[str, Path]] = None) -> Path:
+    def save_text_to_file(self, image_path: Union[str, Path], output_path: Optional[Union[str, Path]] = None) -> Path:
         """
         Extract text from image and save to a text file.
-        
+
         Args:
             image_path: Path to the image file
             output_path: Path for output text file (optional)
                         If None, creates a .txt file with same name as image
-            
+
         Returns:
             Path to the output text file
         """

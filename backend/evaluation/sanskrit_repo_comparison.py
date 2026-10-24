@@ -16,7 +16,9 @@ import sys
 
 # Add paths
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sanskrit_repo_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'repos/sanskrit')
+sanskrit_repo_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'repos/sanskrit'
+)
 sys.path.insert(0, sanskrit_repo_path)
 
 # Import our system
@@ -51,6 +53,7 @@ def to_slp1(text):
     try:
         # Try to detect and convert
         from indic_transliteration.detect import detect
+
         script = detect(text)
         if script:
             return transliterate(text, script, sanscript.SLP1)
@@ -67,6 +70,7 @@ def normalize_meter_name(name):
     # Convert to IAST if needed
     try:
         from indic_transliteration.detect import detect
+
         script = detect(name)
         if script == sanscript.DEVANAGARI:
             name = transliterate(name, sanscript.DEVANAGARI, sanscript.IAST)
@@ -94,7 +98,7 @@ def normalize_meter_name(name):
 def identify_with_sanskrit_repo(text, identifier):
     """
     Use sanskrit repo to identify meter from text.
-    
+
     Returns: (meter_name, confidence_type) or (None, None)
     """
     if not SANSKRIT_REPO_AVAILABLE or not identifier:
@@ -230,15 +234,21 @@ def test_csv_accuracy_comparison(verbose=False):
             elif our_match and not their_match:
                 our_only += 1
                 if verbose:
-                    mismatches.append(f"  ✓✗ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'")
+                    mismatches.append(
+                        f"  ✓✗ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'"
+                    )
             elif their_match and not our_match:
                 their_only += 1
                 if verbose:
-                    mismatches.append(f"  ✗✓ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'")
+                    mismatches.append(
+                        f"  ✗✓ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'"
+                    )
             else:
                 both_wrong += 1
                 if verbose:
-                    mismatches.append(f"  ✗✗ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'")
+                    mismatches.append(
+                        f"  ✗✗ Row {row_index}: Expected '{expected}' → Ours: '{our_pred}' | Theirs: '{their_pred}'"
+                    )
 
     # Print results
     print(f"\nTotal verses tested: {total}")
@@ -259,10 +269,10 @@ def test_csv_accuracy_comparison(verbose=False):
         print()
         print("Agreement Analysis:")
         print("-" * 75)
-        print(f"  Both correct:        {both_correct:>6} ({100*both_correct/total:.1f}%)")
-        print(f"  Only ours correct:   {our_only:>6} ({100*our_only/total:.1f}%)")
-        print(f"  Only theirs correct: {their_only:>6} ({100*their_only/total:.1f}%)")
-        print(f"  Both wrong:          {both_wrong:>6} ({100*both_wrong/total:.1f}%)")
+        print(f"  Both correct:        {both_correct:>6} ({100 * both_correct / total:.1f}%)")
+        print(f"  Only ours correct:   {our_only:>6} ({100 * our_only / total:.1f}%)")
+        print(f"  Only theirs correct: {their_only:>6} ({100 * their_only / total:.1f}%)")
+        print(f"  Both wrong:          {both_wrong:>6} ({100 * both_wrong / total:.1f}%)")
 
         if verbose and mismatches:
             print("\nSample disagreements (first 10):")
@@ -358,6 +368,7 @@ def test_rigveda_comparison(verbose=False, limit=100):
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description='Compare sanskrit repo algorithm with ours')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show detailed output')
     parser.add_argument('--csv-only', action='store_true', help='Test only CSV dataset')

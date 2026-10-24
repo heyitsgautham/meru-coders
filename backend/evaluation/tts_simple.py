@@ -3,6 +3,7 @@ Simple test for Sanskrit TTS without full dependencies
 Tests basic functionality with mock outputs
 """
 
+
 def test_basic_import():
     """Test if the module can be imported"""
     try:
@@ -53,9 +54,9 @@ def test_api_mode_check():
 
 def print_installation_guide():
     """Print installation instructions"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("INSTALLATION GUIDE FOR SANSKRIT TTS")
-    print("="*70)
+    print("=" * 70)
     print("\n1. Install basic dependencies:")
     print("   pip install requests numpy soundfile")
     print("\n2. Install parler-tts library:")
@@ -73,7 +74,7 @@ def print_installation_guide():
     print("   pip install -r requirements_tts.txt")
     print("\n7. Test with:")
     print('   python sanskrit_tts.py "ॐ नमः शिवाय"')
-    print("="*70)
+    print("=" * 70)
 
 
 if __name__ == "__main__":
@@ -84,9 +85,9 @@ if __name__ == "__main__":
     results.append(("Initialization Check", test_initialization()))
     results.append(("API Mode Check", test_api_mode_check()))
 
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("TEST RESULTS")
-    print("="*50)
+    print("=" * 50)
     for name, passed in results:
         status = "✓ PASS" if passed else "✗ FAIL"
         print(f"{status} - {name}")

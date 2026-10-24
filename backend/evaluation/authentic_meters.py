@@ -29,11 +29,13 @@ test_results = []
 total_tests = 0
 passed_tests = 0
 
+
 def verify_syllable_count(verse, expected):
     """Verify actual syllable count matches expected"""
     syllables = skt.get_syllables(verse)
     flat = [s for ln in syllables for w in ln for s in w]
     return len(flat), len(flat) == expected
+
 
 def test_meter(meter_name, verses, expected_syllables, expected_identification=None):
     """Test a specific meter with multiple authentic verses"""
@@ -87,11 +89,12 @@ def test_meter(meter_name, verses, expected_syllables, expected_identification=N
 
         test_results.append((f"{meter_name} Test {idx}", test_pass))
 
-    print(f"\n{'-'*80}")
+    print(f"\n{'-' * 80}")
     print(f"{meter_name} Results: {meter_passed}/{meter_total} PASS")
-    print(f"{'-'*80}\n")
+    print(f"{'-' * 80}\n")
 
     return meter_passed, meter_total
+
 
 ###############################################################################
 # TEST DATA: AUTHENTIC VERSES FROM CLASSICAL TEXTS
@@ -99,43 +102,29 @@ def test_meter(meter_name, verses, expected_syllables, expected_identification=N
 
 # GAYATRI (24 syllables = 3×8)
 gayatri_verses = [
-    {
-        'text': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्',
-        'source': 'Rigveda 3.62.10 (Gayatri Mantra)'
-    },
-    {
-        'text': 'अग्ने नय सुपथा राये अस्मान् विश्वानि देव वयुनानि विद्वान्',
-        'source': 'Yajurveda 40.16'
-    }
+    {'text': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्', 'source': 'Rigveda 3.62.10 (Gayatri Mantra)'},
+    {'text': 'अग्ने नय सुपथा राये अस्मान् विश्वानि देव वयुनानि विद्वान्', 'source': 'Yajurveda 40.16'},
 ]
 
 # ANUSHTUBH (32 syllables = 4×8)
 anushtubh_verses = [
-    {
-        'text': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय',
-        'source': 'Bhagavad Gita 1.1'
-    },
-    {
-        'text': 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्',
-        'source': 'Bhagavad Gita 4.7'
-    },
-    {
-        'text': 'परित्राणाय साधूनां विनाशाय च दुष्कृताम् धर्मसंस्थापनार्थाय संभवामि युगे युगे',
-        'source': 'Bhagavad Gita 4.8'
-    }
+    {'text': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय', 'source': 'Bhagavad Gita 1.1'},
+    {'text': 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्', 'source': 'Bhagavad Gita 4.7'},
+    {'text': 'परित्राणाय साधूनां विनाशाय च दुष्कृताम् धर्मसंस्थापनार्थाय संभवामि युगे युगे', 'source': 'Bhagavad Gita 4.8'},
 ]
 
 # JAGATI (48 syllables = 4×12) - Using verified classical verses
 jagati_verses = [
     {
         'text': 'काश्चित्कान्ता समुपेत्य यस्तया सह मोदते विरहः स पुनर्मिलनं सः खलु नः पुनराप्तसंगमानां विरहजनितवेदनां न वेत्ति',
-        'source': 'Classical kavya (adapted)'
+        'source': 'Classical kavya (adapted)',
     }
 ]
 
 ###############################################################################
 # RUN ALL TESTS
 ###############################################################################
+
 
 def run_all_tests():
     """Run comprehensive test suite for all major Vedic meters"""
@@ -175,10 +164,10 @@ def run_all_tests():
         status = "✅" if stats['passed'] == stats['total'] else "⚠️"
         print(f"{status} {meter:20} : {stats['passed']}/{stats['total']} PASS ({percentage:.0f}%)")
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     overall_percentage = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
     print(f"OVERALL: {passed_tests}/{total_tests} TESTS PASSED ({overall_percentage:.1f}%)")
-    print(f"{'='*80}\n")
+    print(f"{'=' * 80}\n")
 
     if passed_tests == total_tests:
         print("🎉 SUCCESS! All authentic verses correctly identified!")
@@ -187,6 +176,7 @@ def run_all_tests():
         print(f"⚠️  {total_tests - passed_tests} tests need attention")
 
     return passed_tests, total_tests
+
 
 if __name__ == "__main__":
     passed, total = run_all_tests()

@@ -99,10 +99,7 @@ def test_simple_chat():
     try:
         message = "What is Anushtubh meter?"
 
-        response = requests.post(f"{CHATBOT_API}/chat", json={
-            "message": message,
-            "persona": "default"
-        })
+        response = requests.post(f"{CHATBOT_API}/chat", json={"message": message, "persona": "default"})
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
@@ -134,11 +131,9 @@ def test_conversation_continuity(conversation_id):
     try:
         message = "Can you give me an example?"
 
-        response = requests.post(f"{CHATBOT_API}/chat", json={
-            "message": message,
-            "conversation_id": conversation_id,
-            "persona": "default"
-        })
+        response = requests.post(
+            f"{CHATBOT_API}/chat", json={"message": message, "conversation_id": conversation_id, "persona": "default"}
+        )
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
@@ -167,11 +162,9 @@ def test_persona_switching(conversation_id):
         message = "Tell me about the beauty of Sanskrit poetry"
 
         # Test with Krishna persona
-        response = requests.post(f"{CHATBOT_API}/chat", json={
-            "message": message,
-            "conversation_id": conversation_id,
-            "persona": "krishna"
-        })
+        response = requests.post(
+            f"{CHATBOT_API}/chat", json={"message": message, "conversation_id": conversation_id, "persona": "krishna"}
+        )
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
@@ -221,10 +214,7 @@ def test_meter_analysis():
     try:
         text = "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"
 
-        response = requests.post(f"{CHATBOT_API}/analyze-meter", json={
-            "text": text,
-            "persona": "default"
-        })
+        response = requests.post(f"{CHATBOT_API}/analyze-meter", json={"text": text, "persona": "default"})
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"

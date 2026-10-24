@@ -16,12 +16,7 @@ def test_environment():
     """Test environment variables."""
     print("🔍 Testing Environment Variables...")
 
-    required_vars = [
-        'SUPABASE_URL',
-        'SUPABASE_ANON_KEY',
-        'SUPABASE_SERVICE_KEY',
-        'SECRET_KEY'
-    ]
+    required_vars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_KEY', 'SECRET_KEY']
 
     missing = []
     for var in required_vars:
@@ -40,6 +35,7 @@ def test_environment():
     print("✅ All environment variables set\n")
     return True
 
+
 def test_supabase_connection():
     """Test Supabase connection."""
     print("🔍 Testing Supabase Connection...")
@@ -47,10 +43,7 @@ def test_supabase_connection():
     try:
         from supabase import create_client
 
-        supabase = create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_SERVICE_KEY
-        )
+        supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
 
         # Test query
         response = supabase.table('users').select('count', count='exact').execute()
@@ -64,6 +57,7 @@ def test_supabase_connection():
         print(f"  ❌ Connection failed: {str(e)}\n")
         return False
 
+
 def test_tables_exist():
     """Test that required tables exist."""
     print("🔍 Testing Database Tables...")
@@ -71,10 +65,7 @@ def test_tables_exist():
     try:
         from supabase import create_client
 
-        supabase = create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_SERVICE_KEY
-        )
+        supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
 
         required_tables = ['users', 'verses', 'meter_definitions', 'pending_contributions']
 
@@ -93,6 +84,7 @@ def test_tables_exist():
         print(f"  ❌ Table check failed: {str(e)}\n")
         return False
 
+
 def test_admin_user():
     """Test if admin user exists."""
     print("🔍 Testing Admin User...")
@@ -100,10 +92,7 @@ def test_admin_user():
     try:
         from supabase import create_client
 
-        supabase = create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_SERVICE_KEY
-        )
+        supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
 
         # Check for admin user
         response = supabase.table('users').select('*').eq('username', 'admin-erase-sure').execute()
@@ -126,6 +115,7 @@ def test_admin_user():
     except Exception as e:
         print(f"  ❌ Admin check failed: {str(e)}\n")
         return False
+
 
 def main():
     """Run all tests."""
@@ -166,6 +156,7 @@ def main():
 
     print()
     sys.exit(0 if all_passed else 1)
+
 
 if __name__ == '__main__':
     main()

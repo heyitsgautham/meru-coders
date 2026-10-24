@@ -24,50 +24,50 @@ SEVEN_VERSES = [
         'verse': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं',
         'expected': ['गायत्री'],
         'expected_syllables': 24,
-        'source': 'RV 1.1.1'
+        'source': 'RV 1.1.1',
     },
     {
         'name': 'Ushnik',
         'verse': 'अग्ने वाजस्य गोमत ईशानः सहसो यहो अस्मे धेहि जातवेदो महि श्रवः',
         'expected': ['उष्णिक्'],
         'expected_syllables': 28,
-        'source': 'RV 1.79.4'
+        'source': 'RV 1.79.4',
     },
     {
         'name': 'Anushtubh',
         'verse': 'सुविवृतं सुनिरजमिंद्र त्वादातमिद्यशः गवामप व्रजं वृधि कृणुष्व राधो अद्रिवः',
         'expected': ['अनुष्टुभ्'],
         'expected_syllables': 32,
-        'source': 'RV 1.10.7'
+        'source': 'RV 1.10.7',
     },
     {
         'name': 'Brihati',
         'verse': 'तं घेमित्था नमस्विन उप स्वराजमासते होत्राभिरग्निं मनुषः समिंधते तितिर्वांसो अति स्रिधः',
         'expected': ['बृहती'],
         'expected_syllables': 36,
-        'source': 'RV 1.36.7'
+        'source': 'RV 1.36.7',
     },
     {
         'name': 'Pankti',
         'verse': 'क्रत्वा महाँ अनुष्वधं भीम आ वावृधे शवः श्रिय ऋष्व उपाकयोर्नि शिप्री हरिवांदधे हस्तयोर्वज्रमायसं',
         'expected': ['पङ्क्ति'],
         'expected_syllables': 40,
-        'source': 'RV 1.81.4'
+        'source': 'RV 1.81.4',
     },
     {
         'name': 'Trishtubh',
         'verse': 'अमी य ऋक्षा निहितास उच्चा नक्तं ददृश्रे कुह चिद्दिवेयुः अदब्धानि वरुणस्य व्रतानि विचाकशच्चंद्रमा नक्तमेति',
         'expected': ['त्रिष्टुभ्'],
         'expected_syllables': 44,
-        'source': 'RV 1.24.10'
+        'source': 'RV 1.24.10',
     },
     {
         'name': 'Jagati',
         'verse': 'आ नासत्या त्रिभिरेकादशैरिह देवेभिर्यातं मधुपेयमश्विना प्रायुस्तारिष्टं नी रपांसि मृक्षतं सेधतं द्वेषो भवतं सचाभुवा',
         'expected': ['जगती'],
         'expected_syllables': 48,
-        'source': 'RV 1.34.11'
-    }
+        'source': 'RV 1.34.11',
+    },
 ]
 
 
@@ -103,7 +103,7 @@ def test_direct_api():
             match = any(exp in meter for exp in v['expected'])
 
             # Check exact syllable match
-            syl_exact = (syllables == v['expected_syllables'])
+            syl_exact = syllables == v['expected_syllables']
             if syl_exact:
                 exact_syl += 1
 

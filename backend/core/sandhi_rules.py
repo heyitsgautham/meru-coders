@@ -13,10 +13,10 @@ Key Features:
 
 Usage:
     from sandhi_rules import gen_candidates
-    
+
     line = "कर्मण्येवाधिकारस्ते"
     candidates = gen_candidates(line, k=5, lexicon_path="data/sandhi_lexicon.txt")
-    
+
     for cand in candidates:
         print(f"{cand['score']:.2f}: {cand['cand']}")
 
@@ -38,7 +38,7 @@ from typing import Dict, List, Tuple
 def normalize_sandhi_text(text: str) -> str:
     """
     Normalize text for sandhi processing.
-    
+
     - Unicode NFC normalize
     - Replace dandas (।, ॥) with spaces
     - Keep Devanagari combining marks and special signs
@@ -81,10 +81,43 @@ def load_lexicon(path: str = "data/sandhi_lexicon.txt") -> set:
 
 # Default small lexicon (high-frequency Sanskrit words)
 DEFAULT_LEXICON = {
-    'राम', 'रामः', 'रामो', 'सीता', 'सीतायै', 'सीताम्', 'कृष्ण', 'कृष्णः', 'गुरु',
-    'शिष्य', 'विद्या', 'धर्म', 'धर्मः', 'सत्यम्', 'अहम्', 'पाण्डव', 'हनुमान', 'लङ्का',
-    'अर्जुन', 'भीम', 'गद', 'वेद', 'ज्ञान', 'शिव', 'शिवः', 'लोका', 'सुख', 'बलवान्',
-    'अस्ति', 'गच्छति', 'व्रज', 'गगन', 'सागर', 'नमः', 'भगवान्', 'देव', 'देवी'
+    'राम',
+    'रामः',
+    'रामो',
+    'सीता',
+    'सीतायै',
+    'सीताम्',
+    'कृष्ण',
+    'कृष्णः',
+    'गुरु',
+    'शिष्य',
+    'विद्या',
+    'धर्म',
+    'धर्मः',
+    'सत्यम्',
+    'अहम्',
+    'पाण्डव',
+    'हनुमान',
+    'लङ्का',
+    'अर्जुन',
+    'भीम',
+    'गद',
+    'वेद',
+    'ज्ञान',
+    'शिव',
+    'शिवः',
+    'लोका',
+    'सुख',
+    'बलवान्',
+    'अस्ति',
+    'गच्छति',
+    'व्रज',
+    'गगन',
+    'सागर',
+    'नमः',
+    'भगवान्',
+    'देव',
+    'देवी',
 }
 
 
@@ -96,11 +129,9 @@ REVERSE_RULES = [
     (r'ो', r' ओ ', 'guṇa (o split)'),
     (r'ै', r' ऐ ', 'vṛddhi (ai split)'),
     (r'ौ', r' औ ', 'vṛddhi (au split)'),
-
     # Visarga and anusvara
     (r'ः', r' ः ', 'visarga-space'),
     (r'ं', r' ं ', 'anusvara-space'),
-
     # Avagraha (elision marker)
     (r'ऽ', r' ', 'avagraha-split'),
 ]
@@ -143,15 +174,15 @@ def reverse_anusvara_variants(text: str) -> List[Tuple[str, str]]:
 
             # Determine appropriate nasal based on following consonant
             if nxt in 'कखगघङ':
-                variants.append((text[:idx] + 'ङ्' + text[idx+1:], 'anusvara->ṅ'))
+                variants.append((text[:idx] + 'ङ्' + text[idx + 1 :], 'anusvara->ṅ'))
             elif nxt in 'चछजझञ':
-                variants.append((text[:idx] + 'ञ्' + text[idx+1:], 'anusvara->ñ'))
+                variants.append((text[:idx] + 'ञ्' + text[idx + 1 :], 'anusvara->ñ'))
             elif nxt in 'टठडढण':
-                variants.append((text[:idx] + 'ण्' + text[idx+1:], 'anusvara->ṇ'))
+                variants.append((text[:idx] + 'ण्' + text[idx + 1 :], 'anusvara->ṇ'))
             elif nxt in 'तथदधन':
-                variants.append((text[:idx] + 'न्' + text[idx+1:], 'anusvara->n'))
+                variants.append((text[:idx] + 'न्' + text[idx + 1 :], 'anusvara->n'))
             elif nxt in 'पफबभम':
-                variants.append((text[:idx] + 'म्' + text[idx+1:], 'anusvara->m'))
+                variants.append((text[:idx] + 'म्' + text[idx + 1 :], 'anusvara->m'))
 
     return variants
 
@@ -199,7 +230,7 @@ def _one_step_candidates(text: str, lexicon: set) -> List[Dict]:
 def _baseline_score(orig: str, cand: str, rule_name: str, lexicon: set) -> float:
     """
     Score candidate plausibility.
-    
+
     Scoring factors:
     - Lexicon overlap (strongly rewarded)
     - Edit distance (penalized)
@@ -209,8 +240,7 @@ def _baseline_score(orig: str, cand: str, rule_name: str, lexicon: set) -> float
     score = 1.0
 
     # Penalize isolated independent vowels
-    iso_vowels = len([t for t in re.split(r'\s+', cand)
-                      if len(t) == 1 and re.match(r'[\u0905-\u0914]', t)])
+    iso_vowels = len([t for t in re.split(r'\s+', cand) if len(t) == 1 and re.match(r'[\u0905-\u0914]', t)])
     score -= 0.25 * iso_vowels
 
     # Lexicon reward: fraction of tokens in lexicon
@@ -236,21 +266,20 @@ def _baseline_score(orig: str, cand: str, rule_name: str, lexicon: set) -> float
     return max(-2.0, min(2.0, score))
 
 
-def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
-                   allow_aggressive: bool = False) -> List[Dict]:
+def gen_candidates(line: str, k: int = 8, lexicon_path: str = None, allow_aggressive: bool = False) -> List[Dict]:
     """
     Generate up to k candidate reverse-sandhi decompositions for line.
-    
+
     Args:
         line: Input string (merged Sanskrit text)
         k: Maximum number of candidates to return (default: 8)
         lexicon_path: Optional path to lexicon file (default: None)
         allow_aggressive: If True, include more aggressive splits (default: False)
-    
+
     Returns:
         List of dicts: [{'cand': str, 'score': float, 'rules': [str]}, ...]
         Sorted by score descending (highest score first)
-    
+
     Example:
         >>> candidates = gen_candidates("कर्मण्येवाधिकारस्ते", k=3)
         >>> for c in candidates:
@@ -264,11 +293,7 @@ def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
         lexicon |= load_lexicon(lexicon_path)
 
     # Start with original as baseline
-    candidates = [{
-        'cand': line,
-        'score': _baseline_score(line, line, 'identity', lexicon),
-        'rules': ['identity']
-    }]
+    candidates = [{'cand': line, 'score': _baseline_score(line, line, 'identity', lexicon), 'rules': ['identity']}]
 
     # Generate one-step candidates
     one_step = _one_step_candidates(line, lexicon)
@@ -282,11 +307,7 @@ def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
             for s in sub_candidates[:2]:  # Only top 2 sub-candidates
                 combined_rules = item['rules'] + s['rules']
                 combined_score = (item['score'] + s['score']) / 2.0
-                expanded.append({
-                    'cand': s['cand'],
-                    'score': combined_score,
-                    'rules': combined_rules
-                })
+                expanded.append({'cand': s['cand'], 'score': combined_score, 'rules': combined_rules})
         candidates.extend(expanded)
 
     # Deduplicate by candidate text, keeping best score
@@ -304,13 +325,7 @@ def gen_candidates(line: str, k: int = 8, lexicon_path: str = None,
 # CLI test function
 def main():
     """Test sandhi resolution with example verses."""
-    examples = [
-        "रामोऽस्ति बलवान्",
-        "कर्मण्येवाधिकारस्ते",
-        "सर्वे भवन्तु सुखिनः",
-        "सह नाववतु",
-        "धर्मो रक्षति रक्षितः"
-    ]
+    examples = ["रामोऽस्ति बलवान्", "कर्मण्येवाधिकारस्ते", "सर्वे भवन्तु सुखिनः", "सह नाववतु", "धर्मो रक्षति रक्षितः"]
 
     print("Sanskrit Sandhi Resolution Test")
     print("=" * 80)

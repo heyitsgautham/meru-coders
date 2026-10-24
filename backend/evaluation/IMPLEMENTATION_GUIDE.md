@@ -64,12 +64,8 @@ def identify_from_text(self, text, verse=False, return_all=False):
     # Add at the start
     is_valid, error_msg, warnings = self.validate_input(text)
     if not is_valid:
-        return {
-            'success': False,
-            'error': error_msg,
-            'result': None
-        }
-    
+        return {'success': False, 'error': error_msg, 'result': None}
+
     # Continue with existing logic...
 ```
 
@@ -86,20 +82,20 @@ def normalize_vedic_characters(self, text):
     """Enhanced normalization with Unicode edge case handling"""
     if not text:
         return ""
-    
+
     # Remove invisible Unicode characters (NEW from chanda_gpt)
     text = re.sub(r"[\u200B-\u200F\uFEFF\u202A-\u202E]", "", text)
-    
+
     # Normalize whitespace (NEW)
     text = re.sub(r"\s+", " ", text).strip()
-    
+
     # Remove bracketed references (NEW)
     text = re.sub(r"\[.*?\]|\{.*?\}", "", text)
-    
+
     # Existing Vedic character normalization
-    text = text.replace('\u1CF5', '\u0902')  # Ardhavisarga → Anusvara
+    text = text.replace('\u1cf5', '\u0902')  # Ardhavisarga → Anusvara
     # ... rest of existing code
-    
+
     return text
 ```
 
@@ -206,21 +202,18 @@ Add class constants:
 ```python
 class Chanda:
     """Chanda Identifier"""
-    
+
     # ... existing constants
-    
+
     # Vowel classification for mātrā counting
     VOWEL_CLASSIFICATION = {
         'short': {'अ', 'इ', 'उ', 'ऋ'},
         'long': {'आ', 'ई', 'ऊ', 'ए', 'ओ', 'ऐ', 'औ', 'ॠ'},
-        'pluta': set()  # Extended vowels (3 mātrās) - rare
+        'pluta': set(),  # Extended vowels (3 mātrās) - rare
     }
-    
-    MATRA_CLASSIFICATION = {
-        'short': {'ि', 'ु', 'ृ'},
-        'long': {'ा', 'ी', 'ू', 'े', 'ै', 'ो', 'ौ', 'ॄ'}
-    }
-    
+
+    MATRA_CLASSIFICATION = {'short': {'ि', 'ु', 'ृ'}, 'long': {'ा', 'ी', 'ू', 'े', 'ै', 'ो', 'ौ', 'ॄ'}}
+
     # Consonant characteristics
     CONJUNCT_MARKERS = {'्'}  # Virama
     NASALS = {'ं', 'ः', 'ँ'}  # Anusvara, Visarga, Candrabindu

@@ -47,6 +47,7 @@ def load_dataset():
 
 def compare_syllables(expected, actual):
     """Compare syllable lists (allowing for slight variations in splitting)"""
+
     # Normalize by removing spaces and combining marks for comparison
     def normalize(sylls):
         return ''.join(sylls).replace(' ', '').replace('\u0951', '').replace('\u0952', '')
@@ -91,7 +92,7 @@ def test_single_verse(verse_data, verbose=False):
                 'status': 'FAIL',
                 'error': 'No result returned',
                 'syllables_match': False,
-                'lg_match': False
+                'lg_match': False,
             }
 
         # Get actual syllables and pattern
@@ -131,7 +132,11 @@ def test_single_verse(verse_data, verbose=False):
         test_result = {
             'id': verse_id,
             'text': text[:50] + '...' if len(text) > 50 else text,
-            'status': 'PASS' if (syllables_match and lg_match) else 'PARTIAL' if syllables_match or lg_match else 'FAIL',
+            'status': 'PASS'
+            if (syllables_match and lg_match)
+            else 'PARTIAL'
+            if syllables_match or lg_match
+            else 'FAIL',
             'syllables_match': syllables_match,
             'lg_match': lg_match,
             'lg_error': lg_error if not lg_match else '',
@@ -140,11 +145,11 @@ def test_single_verse(verse_data, verbose=False):
             'expected_pattern': ''.join(expected_labels),
             'actual_pattern': actual_pattern,
             'top_meter': top_meter['name'] if top_meter else 'None',
-            'confidence': top_meter['confidence'] if top_meter else 0.0
+            'confidence': top_meter['confidence'] if top_meter else 0.0,
         }
 
         if verbose and test_result['status'] != 'PASS':
-            print(f"\n{'='*80}")
+            print(f"\n{'=' * 80}")
             print(f"Verse {verse_id}: {text[:60]}...")
             print(f"Status: {test_result['status']}")
             print(f"Syllables: {test_result['expected_syllables']} expected, {test_result['actual_syllables']} actual")
@@ -163,15 +168,15 @@ def test_single_verse(verse_data, verbose=False):
             'status': 'ERROR',
             'error': str(e),
             'syllables_match': False,
-            'lg_match': False
+            'lg_match': False,
         }
 
 
 def run_tests(verbose=False, limit=None):
     """Run all tests"""
-    print("="*80)
+    print("=" * 80)
     print("Testing Chandojñānam against Chand-Identifier Dataset")
-    print("="*80)
+    print("=" * 80)
 
     verses = load_dataset()
 
@@ -201,31 +206,35 @@ def run_tests(verbose=False, limit=None):
     lg_correct = sum(1 for r in results if r.get('lg_match', False))
 
     # Print summary
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("RESULTS SUMMARY")
-    print("="*80)
+    print("=" * 80)
     print(f"Total verses tested: {len(results)}")
     print("\nOverall Status:")
-    print(f"  ✅ PASS (both syllables & L-G correct): {pass_count} ({pass_count/len(results)*100:.1f}%)")
-    print(f"  ⚠️  PARTIAL (one component correct): {partial_count} ({partial_count/len(results)*100:.1f}%)")
-    print(f"  ❌ FAIL (both incorrect): {fail_count} ({fail_count/len(results)*100:.1f}%)")
-    print(f"  🔥 ERROR (exception): {error_count} ({error_count/len(results)*100:.1f}%)")
+    print(f"  ✅ PASS (both syllables & L-G correct): {pass_count} ({pass_count / len(results) * 100:.1f}%)")
+    print(f"  ⚠️  PARTIAL (one component correct): {partial_count} ({partial_count / len(results) * 100:.1f}%)")
+    print(f"  ❌ FAIL (both incorrect): {fail_count} ({fail_count / len(results) * 100:.1f}%)")
+    print(f"  🔥 ERROR (exception): {error_count} ({error_count / len(results) * 100:.1f}%)")
 
     print("\nComponent Accuracy:")
-    print(f"  Syllabification: {syllables_correct}/{len(results)} ({syllables_correct/len(results)*100:.1f}%)")
-    print(f"  L-G Pattern:     {lg_correct}/{len(results)} ({lg_correct/len(results)*100:.1f}%)")
+    print(f"  Syllabification: {syllables_correct}/{len(results)} ({syllables_correct / len(results) * 100:.1f}%)")
+    print(f"  L-G Pattern:     {lg_correct}/{len(results)} ({lg_correct / len(results) * 100:.1f}%)")
 
     # Categorize by verse type
-    vedic_verses = [r for r in results if any(c in r['text'] for c in ['\u0951', '\u0952', '\u1CD0', '\u1CD1', '\u1CD2'])]
+    vedic_verses = [
+        r for r in results if any(c in r['text'] for c in ['\u0951', '\u0952', '\u1cd0', '\u1cd1', '\u1cd2'])
+    ]
     classical_verses = [r for r in results if r not in vedic_verses]
 
     if vedic_verses:
         vedic_pass = sum(1 for r in vedic_verses if r['status'] == 'PASS')
-        print(f"\nVedic verses: {vedic_pass}/{len(vedic_verses)} pass ({vedic_pass/len(vedic_verses)*100:.1f}%)")
+        print(f"\nVedic verses: {vedic_pass}/{len(vedic_verses)} pass ({vedic_pass / len(vedic_verses) * 100:.1f}%)")
 
     if classical_verses:
         classical_pass = sum(1 for r in classical_verses if r['status'] == 'PASS')
-        print(f"Classical verses: {classical_pass}/{len(classical_verses)} pass ({classical_pass/len(classical_verses)*100:.1f}%)")
+        print(
+            f"Classical verses: {classical_pass}/{len(classical_verses)} pass ({classical_pass / len(classical_verses) * 100:.1f}%)"
+        )
 
     # Show sample failures
     failures = [r for r in results if r['status'] in ['FAIL', 'ERROR']]
@@ -241,7 +250,7 @@ def run_tests(verbose=False, limit=None):
                 if r.get('lg_error'):
                     print(f"  Issue: {r['lg_error']}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
 
     # Return results for further analysis
     return results
@@ -255,9 +264,9 @@ def analyze_meter_detection(results):
             meter = r['top_meter']
             meter_counts[meter] = meter_counts.get(meter, 0) + 1
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("METER DETECTION ANALYSIS")
-    print("="*80)
+    print("=" * 80)
     print("Top 10 detected meters:")
     for meter, count in sorted(meter_counts.items(), key=lambda x: x[1], reverse=True)[:10]:
         print(f"  {meter}: {count} verses")

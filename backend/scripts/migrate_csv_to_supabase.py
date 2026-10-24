@@ -39,6 +39,7 @@ BATCH_SIZE = 100  # Insert records in batches for performance
 # MIGRATION FUNCTIONS
 # ================================================
 
+
 def migrate_rigveda():
     """Migrate rigveda-with-meters.csv to verses table"""
     csv_path = SOURCE_DIR / 'rigveda-with-meters.csv'
@@ -56,24 +57,26 @@ def migrate_rigveda():
                 'verse_text': row.get('verse_text', ''),
                 'meter': row.get('meter', ''),
                 'lg_pattern': row.get('lg_pattern'),
-                'syllable_count': int(row['syllable_count']) if row.get('syllable_count') and row['syllable_count'].isdigit() else None,
+                'syllable_count': int(row['syllable_count'])
+                if row.get('syllable_count') and row['syllable_count'].isdigit()
+                else None,
                 'source': 'rigveda',
                 'metadata': {
                     'mandala': row.get('mandala'),
                     'sukta': row.get('sukta'),
                     'rik': row.get('rik'),
                     'seer': row.get('seer'),
-                    'divinity': row.get('divinity')
+                    'divinity': row.get('divinity'),
                 },
                 'is_approved': True,
-                'contributed_by': None
+                'contributed_by': None,
             }
             verses.append(verse)
 
     # Insert in batches
     total = len(verses)
     for i in range(0, total, BATCH_SIZE):
-        batch = verses[i:i + BATCH_SIZE]
+        batch = verses[i : i + BATCH_SIZE]
         supabase.table('verses').insert(batch).execute()
         print(f"  ✓ Inserted {min(i + BATCH_SIZE, total)}/{total} verses")
 
@@ -107,7 +110,7 @@ def migrate_chandovallari():
                 'source': 'chandovallari',
                 'metadata': {k: v for k, v in row.items() if v},
                 'is_approved': True,
-                'contributed_by': None
+                'contributed_by': None,
             }
 
             if verse['verse_text']:  # Only add if has text
@@ -115,7 +118,7 @@ def migrate_chandovallari():
 
     total = len(verses)
     for i in range(0, total, BATCH_SIZE):
-        batch = verses[i:i + BATCH_SIZE]
+        batch = verses[i : i + BATCH_SIZE]
         supabase.table('verses').insert(batch).execute()
         print(f"  ✓ Inserted {min(i + BATCH_SIZE, total)}/{total} verses")
 
@@ -145,20 +148,19 @@ def migrate_chandas_vedanga():
                 'verse_text': examples.strip(),
                 'meter': row.get('chandas_name', ''),
                 'lg_pattern': None,
-                'syllable_count': int(row['syllables']) if row.get('syllables') and str(row['syllables']).isdigit() else None,
+                'syllable_count': int(row['syllables'])
+                if row.get('syllables') and str(row['syllables']).isdigit()
+                else None,
                 'source': 'vedanga',
-                'metadata': {
-                    'chandas_class': row.get('chandas_class'),
-                    's_no': row.get('S.No.')
-                },
+                'metadata': {'chandas_class': row.get('chandas_class'), 's_no': row.get('S.No.')},
                 'is_approved': True,
-                'contributed_by': None
+                'contributed_by': None,
             }
             verses.append(verse)
 
     total = len(verses)
     for i in range(0, total, BATCH_SIZE):
-        batch = verses[i:i + BATCH_SIZE]
+        batch = verses[i : i + BATCH_SIZE]
         supabase.table('verses').insert(batch).execute()
         print(f"  ✓ Inserted {min(i + BATCH_SIZE, total)}/{total} verses")
 
@@ -196,7 +198,7 @@ def migrate_meter_definitions(category: str, filename: str):
                 'gana': row.get('लक्षण'),  # Gana representation
                 'metadata': {k: v for k, v in row.items() if v},
                 'is_approved': True,
-                'contributed_by': None
+                'contributed_by': None,
             }
 
             # Extract syllable count
@@ -221,7 +223,7 @@ def migrate_meter_definitions(category: str, filename: str):
         return 0
 
     for i in range(0, total, BATCH_SIZE):
-        batch = meters[i:i + BATCH_SIZE]
+        batch = meters[i : i + BATCH_SIZE]
         supabase.table('meter_definitions').insert(batch).execute()
         print(f"  ✓ Inserted {min(i + BATCH_SIZE, total)}/{total} meters")
 
@@ -282,7 +284,7 @@ def main():
             ('vishama', 'chanda_vishama-iitk.csv'),
             ('ardhasama', 'chanda_ardhasama-iitk.csv'),
             ('matra', 'chanda_matra-iitk.csv'),
-            ('jaati', 'chanda_jaati-iitk.csv')
+            ('jaati', 'chanda_jaati-iitk.csv'),
         ]
 
         for category, filename in meter_files:
@@ -298,6 +300,7 @@ def main():
     except Exception as e:
         print(f"\n❌ ERROR during migration: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

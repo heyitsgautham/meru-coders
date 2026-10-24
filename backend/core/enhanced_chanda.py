@@ -61,7 +61,7 @@ class EnhancedChanda:
         B: f'{G}{L}{L}',  # bha-gaṇa: -uu
         J: f'{L}{G}{L}',  # ja-gaṇa: u-u
         S: f'{L}{L}{G}',  # sa-gaṇa: uu-
-        M: f'{G}{G}{G}'   # ma-gaṇa: ---
+        M: f'{G}{G}{G}',  # ma-gaṇa: ---
     }
 
     # Vedic Meters (from Chandovallari Section 6)
@@ -72,7 +72,7 @@ class EnhancedChanda:
         'Brihati': {'syllables': 36, 'padas': 4, 'per_pada': 9, 'description': '4×9'},
         'Pankti': {'syllables': 40, 'padas': 5, 'per_pada': 8, 'description': '5×8'},
         'Trishtubh': {'syllables': 44, 'padas': 4, 'per_pada': 11, 'description': '4×11'},
-        'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'}
+        'Jagati': {'syllables': 48, 'padas': 4, 'per_pada': 12, 'description': '4×12'},
     }
 
     # Extended Vedic Meters
@@ -83,18 +83,34 @@ class EnhancedChanda:
         'Ashti': {'syllables': 64, 'per_pada': 16},
         'Atyashti': {'syllables': 68, 'per_pada': 17},
         'Dhriti': {'syllables': 72, 'per_pada': 18},
-        'Atidhriti': {'syllables': 76, 'per_pada': 19}
+        'Atidhriti': {'syllables': 76, 'per_pada': 19},
     }
 
     # Vedic family names (used to prevent boosting over specific meters)
     VEDIC_FAMILY_NAMES = {
-        'त्रिष्टुभ्', 'Trishtubh', 'Triṣṭubh', 'त्रिष्टुप्',
-        'जगती', 'Jagati', 'Jagatī',
-        'गायत्री', 'Gayatri', 'Gāyatrī',
-        'अनुष्टुभ्', 'Anushtubh', 'Anuṣṭubh', 'Anuṣṭup',
-        'उष्णिक्', 'Ushnik', 'Uṣṇik',
-        'बृहती', 'Brihati', 'Bṛhatī',
-        'पङ्क्ति', 'Pankti', 'Paṅkti'
+        'त्रिष्टुभ्',
+        'Trishtubh',
+        'Triṣṭubh',
+        'त्रिष्टुप्',
+        'जगती',
+        'Jagati',
+        'Jagatī',
+        'गायत्री',
+        'Gayatri',
+        'Gāyatrī',
+        'अनुष्टुभ्',
+        'Anushtubh',
+        'Anuṣṭubh',
+        'Anuṣṭup',
+        'उष्णिक्',
+        'Ushnik',
+        'Uṣṇik',
+        'बृहती',
+        'Brihati',
+        'Bṛhatī',
+        'पङ्क्ति',
+        'Pankti',
+        'Paṅkti',
     }
 
     # Classical pada patterns (from Chandovallari Section 11)
@@ -107,7 +123,6 @@ class EnhancedChanda:
         'GLGLLLGLGLGL': ('रथोद्धता', 'Rathoddhata', 'र न र ल ग'),
         'GLGLLLGLLGG': ('स्वागता', 'Svāgatā', 'र न भ ग ग'),
         'GLLGLLGLLGG': ('दोधक', 'Dodhakam', 'भ भ भ ग ग'),
-
         # 12-syllable Jagatī class
         'LGLLGGLGGLGLG': ('वंशस्थ', 'Vaṁśasthavilam', 'ज त ज र'),
         'GGLGGLGGLGLG': ('इन्द्रवंशा', 'Indravaṁśā', 'त त ज र'),
@@ -115,24 +130,18 @@ class EnhancedChanda:
         'LLGLLGLLGLLG': ('तोटक', 'Toṭakam', 'स स स स'),
         'GLGGLGGLGGLG': ('स्रग्विणी', 'Sragviṇī', 'र र र र'),
         'LLLGLLGLLGLG': ('द्रुतविलम्बित', 'Drutavilambitam', 'न भ भ र'),
-
         # 13-syllable meters
         'GGGLLLLLGLGLGG': ('प्रहर्षिणी', 'Praharṣiṇī', 'म न ज र ग'),
         'LGLLGLLLLGLGLG': ('रुचिरा', 'Rucirā', 'ज भ स ज ग'),
-
         # 14-syllable Śakvarī class
         'GGLGLLLLGLLGG': ('वसन्ततिलका', 'Vasantatilakam', 'त भ ज ज ग ग'),
-
         # 15-syllable Atiśakvarī class
         'LLLLLLGGGLGGLGG': ('मालिनी', 'Mālinī', 'न न म य य'),
-
         # 17-syllable Atyaṣṭi class
         'LGGGGGLLLLLLGGLLLG': ('शिखरिणी', 'Śikhariṇī', 'य म न स भ ल ग'),
         'GGGGLLLLLLGGLGGLGG': ('मन्दाक्रान्ता', 'Mandākrāntā', 'म भ न त त ग ग'),
-
         # 19-syllable Atidhṛti class
         'GGGLLLGLLLLGGGLLGLG': ('शार्दूलविक्रीडित', 'Śārdūlavikrīḍitam', 'म स ज स त त ग'),
-
         # 21-syllable Prakṛti class
         'GGGGLLGLLLLLLGGLGGLGG': ('स्रग्धरा', 'Sragdharā', 'म र भ न य य य'),
     }
@@ -233,10 +242,7 @@ class EnhancedChanda:
                 continue
             # A syllable is laghu if it's naturally short AND
             # the next syllable doesn't start with conjunct (no halanta)
-            laghu = (
-                skt.is_laghu(syllable) and
-                (skt.HALANTA not in flat_syllables[idx + 1])
-            )
+            laghu = skt.is_laghu(syllable) and (skt.HALANTA not in flat_syllables[idx + 1])
             lg_marks.append(self.L if laghu else self.G)
 
         # Handle last syllable
@@ -245,9 +251,7 @@ class EnhancedChanda:
             lg_marks.append('')
         else:
             # End-of-Quarter rule: mark as actual weight
-            lg_marks.append(
-                self.L if skt.is_laghu(syllable) else self.G
-            )
+            lg_marks.append(self.L if skt.is_laghu(syllable) else self.G)
 
         return syllables, lg_marks
 
@@ -259,7 +263,7 @@ class EnhancedChanda:
         """Transform Laghu-Guru string into Gana string"""
         gana = []
         for i in range(0, len(lg_str), 3):
-            group = lg_str[i:i+3]
+            group = lg_str[i : i + 3]
             gana.append(self.gana_inv.get(group, group))
         return ''.join(gana)
 
@@ -301,7 +305,7 @@ class EnhancedChanda:
     def match_with_confidence(self, lg_pattern, fuzzy=False, max_fuzzy=10):
         """
         Enhanced multi-level matching with confidence scoring
-        
+
         Priority order (from Chandovallari principles):
         1. Exact full match (10.0)
         1.5. Pada-level exact match (9.5) - NEW: checks individual padas
@@ -384,7 +388,7 @@ class EnhancedChanda:
     def _match_pada_patterns(self, lg_pattern):
         """
         Match pada-level patterns from database (Key improvement)
-        
+
         This checks if individual padas match known patterns like:
         - Indravajrā (त त ज ग ग)
         - Vaṁśasthavila (ज त ज र)
@@ -436,7 +440,7 @@ class EnhancedChanda:
     def _detect_upajati(self, lg_pattern):
         """
         Detect 14 varieties of Upajāti
-        
+
         Upajāti combines Indravajrā and Upendravajrā padas
         """
         if len(lg_pattern) != 44:  # 4 × 11 syllables
@@ -486,7 +490,7 @@ class EnhancedChanda:
             8: [('गायत्री', 'Gayatri'), ('अनुष्टुभ्', 'Anushtubh')],
             9: ('बृहती', 'Brihati'),
             11: ('त्रिष्टुभ्', 'Trishtubh'),
-            12: ('जगती', 'Jagati')
+            12: ('जगती', 'Jagati'),
         }
 
         for num_padas in [4, 3, 2]:
@@ -517,15 +521,7 @@ class EnhancedChanda:
 
     def _identify_vedic_by_syllable(self, syllable_count):
         """Identify Vedic meter by total syllable count"""
-        vedic_mapping = {
-            24: 'गायत्री',
-            28: 'उष्णिक्',
-            32: 'अनुष्टुभ्',
-            36: 'बृहती',
-            40: 'पङ्क्ति',
-            44: 'त्रिष्टुभ्',
-            48: 'जगती'
-        }
+        vedic_mapping = {24: 'गायत्री', 28: 'उष्णिक्', 32: 'अनुष्टुभ्', 36: 'बृहती', 40: 'पङ्क्ति', 44: 'त्रिष्टुभ्', 48: 'जगती'}
 
         # Exact match
         if syllable_count in vedic_mapping:
@@ -606,7 +602,7 @@ class EnhancedChanda:
     def try_anta_guru_variants(self, lg_pattern):
         """
         Try matching with Anta-guru rule (End-of-Quarter rule)
-        
+
         From Chandovallari: At end of quarter, short can be long and vice versa
         """
         variants = [lg_pattern]
@@ -625,9 +621,9 @@ class EnhancedChanda:
                 pos = (i + 1) * pada_length - 1
                 if pos < len(lg_pattern):
                     if lg_pattern[pos] == self.L:
-                        variant = lg_pattern[:pos] + self.G + lg_pattern[pos+1:]
+                        variant = lg_pattern[:pos] + self.G + lg_pattern[pos + 1 :]
                     else:
-                        variant = lg_pattern[:pos] + self.L + lg_pattern[pos+1:]
+                        variant = lg_pattern[:pos] + self.L + lg_pattern[pos + 1 :]
                     if variant not in variants:
                         variants.append(variant)
 
@@ -716,9 +712,7 @@ class EnhancedChanda:
     def read_data(self):
         """Read all data files"""
         self.read_jaati(os.path.join(self.data_path, 'chanda_jaati.csv'))
-        definition_files = [
-            'chanda_sama.csv', 'chanda_ardhasama.csv', 'chanda_vishama.csv', 'chanda_vedic.csv'
-        ]
+        definition_files = ['chanda_sama.csv', 'chanda_ardhasama.csv', 'chanda_vishama.csv', 'chanda_vedic.csv']
         for chanda_file in definition_files:
             file_path = os.path.join(self.data_path, chanda_file)
             if os.path.exists(file_path):
@@ -793,7 +787,7 @@ class EnhancedChanda:
             'chanda': chanda,
             'jaati': jaati,
             'length': length,
-            'matra': matra
+            'matra': matra,
         }
         return match
 
@@ -848,11 +842,7 @@ class EnhancedChanda:
                 matra = multi_match.get('matra', matra)
 
             if is_regex_match:
-                chanda += [
-                    c for m in regex_matches
-                    for c in self.CHANDA.get(m, [])
-                    if c not in chanda
-                ]
+                chanda += [c for m in regex_matches for c in self.CHANDA.get(m, []) if c not in chanda]
 
         full_lg = [self.output_map.get(c, c) for c in direct_match['lg']]
         full_length = len(lg_str)
@@ -897,8 +887,7 @@ class EnhancedChanda:
 
         # Sort chanda by confidence
         chanda_with_confidence = [
-            (name, confidence_map.get(name[0] if isinstance(name, tuple) else name, (0, ''))[0])
-            for name in chanda
+            (name, confidence_map.get(name[0] if isinstance(name, tuple) else name, (0, ''))[0]) for name in chanda
         ]
         chanda_with_confidence.sort(key=lambda x: x[1], reverse=True)
         chanda = [item[0] for item in chanda_with_confidence]
@@ -916,9 +905,7 @@ class EnhancedChanda:
         display_gana = ' / '.join(gana).translate(self.ttable_out) if gana else full_gana
         display_length = ' / '.join(length) if length else str(full_length)
         display_matra = ' / '.join(matra) if matra else str(full_matra)
-        display_chanda = ' / '.join(
-            (c[0] if isinstance(c, tuple) else str(c)) for c in chanda[:5]
-        ) if chanda else ''
+        display_chanda = ' / '.join((c[0] if isinstance(c, tuple) else str(c)) for c in chanda[:5]) if chanda else ''
         display_jaati = ' / '.join(jaati if jaati else full_jaati)
 
         answer['found'] = found
@@ -948,22 +935,14 @@ class EnhancedChanda:
         if not found and fuzzy:
             fuzzy_results = self._fuzzy_match(lg_str, k)
             for name, conf, match_type in fuzzy_results:
-                answer['fuzzy'].append({
-                    'name': name,
-                    'confidence': conf,
-                    'match_type': match_type
-                })
+                answer['fuzzy'].append({'name': name, 'confidence': conf, 'match_type': match_type})
 
         # Build results list for API compatibility
         answer['results'] = []
         for c in chanda[:k]:
             meter_name = c[0] if isinstance(c, tuple) else c
             conf, match_type = confidence_map.get(meter_name, (0, 'unknown'))
-            answer['results'].append({
-                'name': meter_name,
-                'confidence': conf,
-                'match_type': match_type
-            })
+            answer['results'].append({'name': meter_name, 'confidence': conf, 'match_type': match_type})
 
         return answer
 
@@ -980,18 +959,10 @@ class EnhancedChanda:
             if not line:
                 continue
             original_line = transliterate(line, sanscript.DEVANAGARI, scheme)
-            line_results.append({
-                'line': line,
-                'result': self.identify_line(original_line, fuzzy=fuzzy)
-            })
+            line_results.append({'line': line, 'result': self.identify_line(original_line, fuzzy=fuzzy)})
 
         if verse:
-            verse_result = {
-                'chanda': None,
-                'scheme': scheme,
-                'scores': [],
-                'lines': []
-            }
+            verse_result = {'chanda': None, 'scheme': scheme, 'scores': [], 'lines': []}
 
             line_count = 0
             ongoing_score = Counter()
@@ -1014,12 +985,7 @@ class EnhancedChanda:
                         verse_result['scores'] = ongoing_score.most_common()
                     verse_results.append(verse_result)
 
-                    verse_result = {
-                        'chanda': None,
-                        'scheme': scheme,
-                        'scores': [],
-                        'lines': []
-                    }
+                    verse_result = {'chanda': None, 'scheme': scheme, 'scores': [], 'lines': []}
                     line_count = 0
                     ongoing_score = Counter()
 
@@ -1031,14 +997,11 @@ class EnhancedChanda:
                     verse_result['scores'] = ongoing_score.most_common()
                 verse_results.append(verse_result)
 
-        results = {
-            'line': line_results,
-            'verse': verse_results
-        }
+        results = {'line': line_results, 'verse': verse_results}
 
         return {
             'result': results,
-            'results': line_results  # For API compatibility
+            'results': line_results,  # For API compatibility
         }
 
     ###########################################################################

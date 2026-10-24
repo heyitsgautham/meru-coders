@@ -37,7 +37,7 @@ def demo():
         result = chanda.identify_line(text)
         is_valid = result.get('is_valid_input', True)
 
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"Input: {text}")
         print(f"Expected: {expected}")
         print("-" * 80)
@@ -51,6 +51,7 @@ def demo():
         else:
             print("❌ REJECTED")
             print(f"   Reason: {result.get('validation_error', 'Unknown')}")
+
 
 if __name__ == '__main__':
     demo()

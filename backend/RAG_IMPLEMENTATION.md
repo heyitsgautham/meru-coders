@@ -162,8 +162,8 @@ Edit `backend/api/chatbot.py` (lines 1095-1100):
 ```python
 retrieved_docs = rag_engine.retrieve(
     query=message,
-    k=5,              # Number of documents to retrieve
-    min_score=0.6     # Minimum relevance score (0.0-1.0)
+    k=5,  # Number of documents to retrieve
+    min_score=0.6,  # Minimum relevance score (0.0-1.0)
 )
 ```
 
@@ -179,7 +179,7 @@ retrieved_docs = rag_engine.retrieve(
 rag_context = rag_engine.format_context_for_prompt(
     documents=retrieved_docs,
     include_source=True,
-    max_length=3000    # Max characters (leave room for conversation)
+    max_length=3000,  # Max characters (leave room for conversation)
 )
 ```
 
@@ -256,7 +256,7 @@ doc_chunks = rag.retrieve_documentation("yati caesura", k=5)
 docs = rag.hybrid_retrieve(
     query="Vasantatilaka meter",
     k=5,
-    alpha=0.7  # Weight for semantic (1-alpha for keyword)
+    alpha=0.7,  # Weight for semantic (1-alpha for keyword)
 )
 ```
 
@@ -291,7 +291,7 @@ pip install -r requirements.txt
 retrieved_docs = rag_engine.retrieve(
     query=message,
     k=5,
-    min_score=0.4  # Lower threshold
+    min_score=0.4,  # Lower threshold
 )
 ```
 

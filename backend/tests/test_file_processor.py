@@ -177,9 +177,9 @@ def test_cid_encoding_detection():
 
 def run_all_tests():
     """Run all tests."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Running File Processor Tests")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
     tests = [
         test_file_processor_initialization,
@@ -203,9 +203,9 @@ def run_all_tests():
             print(f"✗ {test.__name__} FAILED: {e}")
             failed += 1
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(f"Results: {passed} passed, {failed} failed")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
     return failed == 0
 

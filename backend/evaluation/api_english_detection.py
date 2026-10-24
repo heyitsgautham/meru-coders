@@ -27,31 +27,15 @@ def test_api_english_detection():
 
     # Test cases
     test_cases = [
-        {
-            "input": "hello world",
-            "should_reject": True,
-            "description": "English greeting"
-        },
+        {"input": "hello world", "should_reject": True, "description": "English greeting"},
         {
             "input": "the quick brown fox jumps over the lazy dog",
             "should_reject": True,
-            "description": "English pangram"
+            "description": "English pangram",
         },
-        {
-            "input": "dharma kṣetre kurukṣetre",
-            "should_reject": False,
-            "description": "Valid IAST"
-        },
-        {
-            "input": "धर्मक्षेत्रे कुरुक्षेत्रे",
-            "should_reject": False,
-            "description": "Valid Devanagari"
-        },
-        {
-            "input": "rāma rāma rāma",
-            "should_reject": False,
-            "description": "IAST with macron"
-        }
+        {"input": "dharma kṣetre kurukṣetre", "should_reject": False, "description": "Valid IAST"},
+        {"input": "धर्मक्षेत्रे कुरुक्षेत्रे", "should_reject": False, "description": "Valid Devanagari"},
+        {"input": "rāma rāma rāma", "should_reject": False, "description": "IAST with macron"},
     ]
 
     passed = 0
@@ -59,9 +43,11 @@ def test_api_english_detection():
 
     for test in test_cases:
         # Test /api/identify/text endpoint
-        response = client.post('/api/identify/text',
-                              data=json.dumps({"text": test["input"], "text_mode": "line"}),
-                              content_type='application/json')
+        response = client.post(
+            '/api/identify/text',
+            data=json.dumps({"text": test["input"], "text_mode": "line"}),
+            content_type='application/json',
+        )
 
         data = json.loads(response.data)
 
@@ -76,7 +62,7 @@ def test_api_english_detection():
                     break
 
         # Determine if test passed
-        test_passed = (is_rejected == test["should_reject"])
+        test_passed = is_rejected == test["should_reject"]
 
         status = "✅ PASS" if test_passed else "❌ FAIL"
         if test_passed:
@@ -84,7 +70,9 @@ def test_api_english_detection():
         else:
             failed += 1
 
-        print(f"\n{status} | Expected: {'REJECT' if test['should_reject'] else 'ACCEPT'} | Got: {'REJECT' if is_rejected else 'ACCEPT'}")
+        print(
+            f"\n{status} | Expected: {'REJECT' if test['should_reject'] else 'ACCEPT'} | Got: {'REJECT' if is_rejected else 'ACCEPT'}"
+        )
         print(f"  Input: {test['input']}")
         print(f"  Description: {test['description']}")
         if is_rejected:
@@ -100,6 +88,7 @@ def test_api_english_detection():
         print("\n🎉 ALL API TESTS PASSED!")
 
     return failed == 0
+
 
 if __name__ == '__main__':
     success = test_api_english_detection()

@@ -49,7 +49,6 @@ METER_NORMALIZATION = {
     'jagatī': 'जगती',
     'jagati': 'जगती',
     'jagatiī': 'जगती',  # Typo in dataset
-
     # Extended Vedic meters
     'virāṭ': 'विराट्',
     'virat': 'विराट्',
@@ -76,12 +75,10 @@ METER_NORMALIZATION = {
     'kṛti': 'कृति',
     'ādhṛtiḥ': 'आधृति',
     'ādhṛti': 'आधृति',
-
     # Dvipadā variants
     'dvipadā virāṭ': 'द्विपदा विराट्',
     'dvipadā triṣṭup': 'द्विपदा त्रिष्टुभ्',
     'dvipadā': 'द्विपदा',
-
     # Other variants
     'prastārapaṅktiḥ': 'प्रस्तारपङ्क्ति',
     'abhisāriṇī': 'अभिसारिणी',
@@ -154,9 +151,27 @@ def normalize_meter_name(name):
         return METER_NORMALIZATION[name]
 
     # Try without diacritics variations
-    simple_name = name.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
+    simple_name = (
+        name.replace('ṭ', 't')
+        .replace('ṣ', 's')
+        .replace('ṇ', 'n')
+        .replace('ī', 'i')
+        .replace('ā', 'a')
+        .replace('ṛ', 'r')
+        .replace('ṅ', 'n')
+        .replace('ḥ', 'h')
+    )
     for key, value in METER_NORMALIZATION.items():
-        simple_key = key.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
+        simple_key = (
+            key.replace('ṭ', 't')
+            .replace('ṣ', 's')
+            .replace('ṇ', 'n')
+            .replace('ī', 'i')
+            .replace('ā', 'a')
+            .replace('ṛ', 'r')
+            .replace('ṅ', 'n')
+            .replace('ḥ', 'h')
+        )
         if simple_name == simple_key:
             return value
 
@@ -174,7 +189,7 @@ def get_meter_family(meter_name):
 def meters_match(expected, predicted):
     """
     Check if two meter names match (with fuzzy matching)
-    
+
     Returns:
         tuple: (exact_match: bool, family_match: bool)
     """
@@ -237,15 +252,17 @@ def load_rigveda_dataset(filepath):
                     errors.append(f"Row {row_num}: Unknown meter '{meter}'")
                     continue
 
-                data.append({
-                    'row_num': row_num,
-                    'ref': f"{mandala}.{sukta}.{rik}",
-                    'verse_text': verse_text,
-                    'expected_meter': normalized_meter,
-                    'original_meter': meter,
-                    'expected_lg': lg_pattern,
-                    'expected_syllables': syllable_count
-                })
+                data.append(
+                    {
+                        'row_num': row_num,
+                        'ref': f"{mandala}.{sukta}.{rik}",
+                        'verse_text': verse_text,
+                        'expected_meter': normalized_meter,
+                        'original_meter': meter,
+                        'expected_lg': lg_pattern,
+                        'expected_syllables': syllable_count,
+                    }
+                )
             except Exception as e:
                 errors.append(f"Row {row_num}: Parse error - {str(e)}")
 
@@ -255,11 +272,11 @@ def load_rigveda_dataset(filepath):
 def test_rigveda_accuracy(verbose=False, limit=None):
     """
     Test our rule-based model against the Rigveda dataset
-    
+
     Args:
         verbose: Print detailed results for each verse
         limit: Limit number of verses to test (None = all)
-    
+
     Returns:
         dict: Accuracy metrics
     """
@@ -296,7 +313,7 @@ def test_rigveda_accuracy(verbose=False, limit=None):
 
     for i, entry in enumerate(data):
         if i % 1000 == 0 and i > 0:
-            print(f"  Progress: {i}/{total} ({i*100//total}%)")
+            print(f"  Progress: {i}/{total} ({i * 100 // total}%)")
 
         verse_text = entry['verse_text']
         expected_meter = entry['expected_meter']
@@ -336,13 +353,15 @@ def test_rigveda_accuracy(verbose=False, limit=None):
         else:
             mismatches += 1
             meter_stats[expected_meter]['miss'] += 1
-            mismatch_details[expected_meter].append({
-                'ref': ref,
-                'expected': expected_meter,
-                'predicted': predicted,
-                'syllables': result.get('syllable_count'),
-                'text_preview': verse_text[:50] + '...' if len(verse_text) > 50 else verse_text
-            })
+            mismatch_details[expected_meter].append(
+                {
+                    'ref': ref,
+                    'expected': expected_meter,
+                    'predicted': predicted,
+                    'syllables': result.get('syllable_count'),
+                    'text_preview': verse_text[:50] + '...' if len(verse_text) > 50 else verse_text,
+                }
+            )
 
         if verbose and not exact:
             print(f"\n{'✓' if family else '✗'} {ref}: Expected '{expected_meter}', Got '{predicted}'")
@@ -361,8 +380,8 @@ def test_rigveda_accuracy(verbose=False, limit=None):
     print(f"Parse errors (skipped): {len(parse_errors)}")
     print()
     print(f"✅ Exact matches:  {exact_matches:>6} ({exact_accuracy:.2f}%)")
-    print(f"🔶 Family matches: {family_matches:>6} ({(family_matches/total*100):.2f}%)")
-    print(f"❌ Mismatches:     {mismatches:>6} ({(mismatches/total*100):.2f}%)")
+    print(f"🔶 Family matches: {family_matches:>6} ({(family_matches / total * 100):.2f}%)")
+    print(f"❌ Mismatches:     {mismatches:>6} ({(mismatches / total * 100):.2f}%)")
     print()
     print(f"📈 EXACT ACCURACY:  {exact_accuracy:.2f}%")
     print(f"📈 FAMILY ACCURACY: {family_accuracy:.2f}%")
@@ -377,7 +396,9 @@ def test_rigveda_accuracy(verbose=False, limit=None):
     for meter in sorted(meter_stats.keys(), key=lambda m: meter_stats[m]['total'], reverse=True):
         stats = meter_stats[meter]
         acc = (stats['exact'] / stats['total'] * 100) if stats['total'] > 0 else 0
-        print(f"{meter:<20} {stats['total']:>8} {stats['exact']:>8} {stats['family']:>8} {stats['miss']:>8} {acc:>7.1f}%")
+        print(
+            f"{meter:<20} {stats['total']:>8} {stats['exact']:>8} {stats['family']:>8} {stats['miss']:>8} {acc:>7.1f}%"
+        )
 
     # Print some mismatch examples
     if mismatch_details and verbose:
@@ -397,12 +418,13 @@ def test_rigveda_accuracy(verbose=False, limit=None):
         'exact_accuracy': exact_accuracy,
         'family_accuracy': family_accuracy,
         'meter_stats': dict(meter_stats),
-        'parse_errors': len(parse_errors)
+        'parse_errors': len(parse_errors),
     }
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description='Validate Rigveda dataset accuracy')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show detailed output')
     parser.add_argument('-n', '--limit', type=int, help='Limit number of verses to test')

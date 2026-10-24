@@ -50,9 +50,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.1.1 (The Very First Verse!)',
         'meaning': 'I praise Agni, the household priest, god of the sacrifice, the invoker, best bestower of treasure.',
         'expected_meters': ['गायत्री', 'Gayatri', 'gāyatrī'],
-        'expected_syllables': 24
+        'expected_syllables': 24,
     },
-
     # -------------------------------------------------------------------------
     # 2. USHNIK (उष्णिक्) - 28 syllables = 4×7 padas
     # Rigveda hymn to Agni (Fire God)
@@ -66,9 +65,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.79.4',
         'meaning': 'O Agni, lord of wealth with cattle, O mighty one, grant us great renown.',
         'expected_meters': ['उष्णिक्', 'Ushnik', 'uṣṇik'],
-        'expected_syllables': 28
+        'expected_syllables': 28,
     },
-
     # -------------------------------------------------------------------------
     # 3. ANUSHTUBH (अनुष्टुभ्) - 32 syllables = 4×8 padas
     # Rigveda hymn to Indra - EXACT 32 syllables
@@ -81,9 +79,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.10.7',
         'meaning': 'O Indra with the thunderbolt, open the cattle pen, increase our bounty, grant us wealth!',
         'expected_meters': ['अनुष्टुभ्', 'Anushtubh', 'anuṣṭup', 'anuṣṭubh'],
-        'expected_syllables': 32
+        'expected_syllables': 32,
     },
-
     # -------------------------------------------------------------------------
     # 4. BRIHATI (बृहती) - 36 syllables = 4×9 padas
     # Rigveda hymn to Agni - EXACT 36 syllables
@@ -96,9 +93,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.36.7',
         'meaning': 'To him, the self-ruling one, worshippers sit near; men kindle Agni with oblations, overcoming adversaries.',
         'expected_meters': ['बृहती', 'Brihati', 'bṛhatī'],
-        'expected_syllables': 36
+        'expected_syllables': 36,
     },
-
     # -------------------------------------------------------------------------
     # 5. PANKTI (पङ्क्ति) - 40 syllables = 5×8 padas
     # Rigveda hymn to Indra - EXACT 40 syllables
@@ -111,9 +107,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.81.4',
         'meaning': 'By his might, the great fearsome one increased his strength; the lofty one with golden mane holds the iron thunderbolt.',
         'expected_meters': ['पङ्क्ति', 'Pankti', 'paṅktiḥ', 'paṅkti'],
-        'expected_syllables': 40
+        'expected_syllables': 40,
     },
-
     # -------------------------------------------------------------------------
     # 6. TRISHTUBH (त्रिष्टुभ्) - 44 syllables = 4×11 padas
     # Most common Rigveda meter - EXACT 44 syllables
@@ -126,9 +121,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.24.10',
         'meaning': 'Those stars set on high are seen at night; where do they go by day? Varuna\'s laws are undeceivable; the moon shines forth at night.',
         'expected_meters': ['त्रिष्टुभ्', 'Trishtubh', 'triṣṭup', 'triṣṭubh'],
-        'expected_syllables': 44
+        'expected_syllables': 44,
     },
-
     # -------------------------------------------------------------------------
     # 7. JAGATI (जगती) - 48 syllables = 4×12 padas
     # Largest of the 7 major meters - EXACT 48 syllables
@@ -141,8 +135,8 @@ SEVEN_VEDIC_VERSES = [
         'source': 'Rigveda 1.34.11',
         'meaning': 'Come, Ashvins, with the gods for the sweet drink; extend our life, wipe away sins!',
         'expected_meters': ['जगती', 'Jagati', 'jagatī'],
-        'expected_syllables': 48
-    }
+        'expected_syllables': 48,
+    },
 ]
 
 

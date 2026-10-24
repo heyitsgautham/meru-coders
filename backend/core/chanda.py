@@ -21,6 +21,7 @@ from indic_transliteration.sanscript import transliterate
 try:
     import icu
     import regex
+
     ICU_AVAILABLE = True
 except ImportError:
     ICU_AVAILABLE = False
@@ -32,6 +33,7 @@ try:
     from .vedic_mappings import get_classical_equivalents
     from .vedic_mappings import meters_match as vedic_meters_match
     from .vedic_mappings import normalize_meter_name as normalize_vedic_meter
+
     VEDIC_MAPPINGS_AVAILABLE = True
 except ImportError:
     VEDIC_MAPPINGS_AVAILABLE = False
@@ -53,55 +55,56 @@ from .confidence_reasons import (  # noqa: E402
 ###############################################################################
 
 # Confidence thresholds for meter matching (0.0 - 10.0 scale)
-CONFIDENCE_EXACT_PATTERN = 10.0      # Exact L-G pattern match
-CONFIDENCE_EXACT_REGEX = 9.0         # Regex pattern match with wildcards
-CONFIDENCE_VEDIC_CLASSICAL_MAP = 9.8 # Vedic→Classical empirical mapping (SIH 2025)
-CONFIDENCE_VEDIC_PRIMARY = 11.0      # Vedic meter by syllable count (no classical match)
-CONFIDENCE_VEDIC_SECONDARY = 9.5     # Vedic meter as fallback (classical match exists)
-CONFIDENCE_PADA_EXACT = 9.0          # Exact pada-level pattern match (sama)
-CONFIDENCE_PADA_SIMILAR = 7.5        # Similar pada-level pattern (within tolerance)
-CONFIDENCE_PADA_VEDIC_SAMA = 8.0     # Vedic meter with sama pada structure
+CONFIDENCE_EXACT_PATTERN = 10.0  # Exact L-G pattern match
+CONFIDENCE_EXACT_REGEX = 9.0  # Regex pattern match with wildcards
+CONFIDENCE_VEDIC_CLASSICAL_MAP = 9.8  # Vedic→Classical empirical mapping (SIH 2025)
+CONFIDENCE_VEDIC_PRIMARY = 11.0  # Vedic meter by syllable count (no classical match)
+CONFIDENCE_VEDIC_SECONDARY = 9.5  # Vedic meter as fallback (classical match exists)
+CONFIDENCE_PADA_EXACT = 9.0  # Exact pada-level pattern match (sama)
+CONFIDENCE_PADA_SIMILAR = 7.5  # Similar pada-level pattern (within tolerance)
+CONFIDENCE_PADA_VEDIC_SAMA = 8.0  # Vedic meter with sama pada structure
 CONFIDENCE_PADA_VEDIC_SIMILAR = 6.5  # Vedic meter with similar pada structure
-CONFIDENCE_VEDIC_SYLLABLE = 6.0      # Vedic meter by syllable count alone
-CONFIDENCE_SYLLABLE_COUNT = 4.0      # Fallback match by syllable count only
-CONFIDENCE_FUZZY_MIN = 1.0           # Minimum fuzzy match confidence
-CONFIDENCE_FUZZY_MAX = 4.0           # Maximum fuzzy match confidence
+CONFIDENCE_VEDIC_SYLLABLE = 6.0  # Vedic meter by syllable count alone
+CONFIDENCE_SYLLABLE_COUNT = 4.0  # Fallback match by syllable count only
+CONFIDENCE_FUZZY_MIN = 1.0  # Minimum fuzzy match confidence
+CONFIDENCE_FUZZY_MAX = 4.0  # Maximum fuzzy match confidence
 
 # Prose/Poetry detection thresholds
-MIN_SYLLABLES_FOR_PADA = 6          # Minimum syllables for a valid pada
-MIN_SYLLABLES_FOR_VERSE = 16        # Minimum for a half-shloka (2 padas of 8)
-CONFIDENCE_THRESHOLD_HIGH = 9.0     # High confidence = exact pattern match
-CONFIDENCE_THRESHOLD_MEDIUM = 7.0   # Medium confidence = pada/structural match
+MIN_SYLLABLES_FOR_PADA = 6  # Minimum syllables for a valid pada
+MIN_SYLLABLES_FOR_VERSE = 16  # Minimum for a half-shloka (2 padas of 8)
+CONFIDENCE_THRESHOLD_HIGH = 9.0  # High confidence = exact pattern match
+CONFIDENCE_THRESHOLD_MEDIUM = 7.0  # Medium confidence = pada/structural match
 
 # Pattern validation thresholds
-PATTERN_MATCH_TOLERANCE = 90        # Minimum match percentage (90%) for valid pattern
-PATTERN_MISMATCH_MAX = 2            # Maximum L-G differences for pada matching
-SYLLABLE_TOLERANCE_VEDIC = 6        # ±6 syllables for Vedic meter detection
-SYLLABLE_TOLERANCE_PADA = 2         # ±2 syllables for pada-level matching
+PATTERN_MATCH_TOLERANCE = 90  # Minimum match percentage (90%) for valid pattern
+PATTERN_MISMATCH_MAX = 2  # Maximum L-G differences for pada matching
+SYLLABLE_TOLERANCE_VEDIC = 6  # ±6 syllables for Vedic meter detection
+SYLLABLE_TOLERANCE_PADA = 2  # ±2 syllables for pada-level matching
 
 # Display and result filtering
-CONFIDENCE_DISPLAY_PRIMARY = 0.8    # Show as primary if ≥80% of max confidence
+CONFIDENCE_DISPLAY_PRIMARY = 0.8  # Show as primary if ≥80% of max confidence
 CONFIDENCE_DISPLAY_ALTERNATE = 7.0  # Show as alternate if ≥7.0 confidence
-MAX_FUZZY_RESULTS = 10              # Maximum fuzzy matches to return
+MAX_FUZZY_RESULTS = 10  # Maximum fuzzy matches to return
 
 # Input validation (for English word detection)
-MIN_LENGTH_ASCII = 3                # Minimum length for romanized Sanskrit
-MIN_LENGTH_DEVANAGARI = 2           # Minimum length for Devanagari script
-VOWEL_RATIO_MIN = 0.15              # Minimum vowel ratio for valid Sanskrit
-VOWEL_RATIO_NORMAL = 0.25           # Normal vowel ratio for Sanskrit (0.3-0.5)
-ENGLISH_WORD_THRESHOLD = 0.2        # Max 20% English words allowed (no diacritics)
-ENGLISH_WORD_THRESHOLD_IAST = 0.6   # Max 60% English words allowed (with IAST diacritics)
+MIN_LENGTH_ASCII = 3  # Minimum length for romanized Sanskrit
+MIN_LENGTH_DEVANAGARI = 2  # Minimum length for Devanagari script
+VOWEL_RATIO_MIN = 0.15  # Minimum vowel ratio for valid Sanskrit
+VOWEL_RATIO_NORMAL = 0.25  # Normal vowel ratio for Sanskrit (0.3-0.5)
+ENGLISH_WORD_THRESHOLD = 0.2  # Max 20% English words allowed (no diacritics)
+ENGLISH_WORD_THRESHOLD_IAST = 0.6  # Max 60% English words allowed (with IAST diacritics)
 
 # Vedic meter detection
-VEDIC_SYLLABLE_TOLERANCE_MIN = 2    # Minimum tolerance for Vedic syllable matching
-VEDIC_SYLLABLE_TOLERANCE_MAX = 6    # Maximum tolerance for Vedic syllable matching
-PANKTI_SIGNAL_THRESHOLD = 3.0       # Minimum score for Paṅkti meter detection
+VEDIC_SYLLABLE_TOLERANCE_MIN = 2  # Minimum tolerance for Vedic syllable matching
+VEDIC_SYLLABLE_TOLERANCE_MAX = 6  # Maximum tolerance for Vedic syllable matching
+PANKTI_SIGNAL_THRESHOLD = 3.0  # Minimum score for Paṅkti meter detection
 
 ###############################################################################
 
 
 class Chanda:
     """Chanda Identifier"""
+
     Y = 'Y'
     R = 'R'
     T = 'T'
@@ -121,7 +124,7 @@ class Chanda:
         B: f'{G}{L}{L}',
         J: f'{L}{G}{L}',
         S: f'{L}{L}{G}',
-        M: f'{G}{G}{G}'
+        M: f'{G}{G}{G}',
     }
     VEDIC_METERS = {
         # Standard Vedic meters
@@ -227,26 +230,26 @@ class Chanda:
     #   - Brhati: peak at 35, range 30-45
     VEDIC_METER_RANGES = {
         # Dvipadā (half-verse) meters - get priority at low syllable counts
-        'द्विपदा विराट्': (17, 21),    # Peak 19-20, data: 18=6, 19=27, 20=29, 21=4
+        'द्विपदा विराट्': (17, 21),  # Peak 19-20, data: 18=6, 19=27, 20=29, 21=4
         'द्विपदा त्रिष्टुभ्': (20, 23),  # Peak 21-22
         # Standard meters
-        'विराट्': (18, 44),       # Virāṭ BIMODAL: 18-22 overlaps Dvipadā + 30-44 (extended)
-        'गायत्री': (19, 26),      # Peak 24, range 19-26 (data: 83% at 21 becomes Gāyatrī!)
-        'उष्णिक्': (25, 30),      # Peak 28, overlap with Gayatri at 25-26 handled by peak
-        'ककुभ्': (25, 29),        # Peak 26-28, 3-pada structure (8+8+12) distinguishes
-        'अनुष्टुभ्': (29, 34),    # Peak 31
-        'बृहती': (33, 41),        # Peak 35, expanded range from data (33-40 common)
-        'प्रगाथ': (33, 43),       # Composite meter
-        'पङ्क्ति': (36, 42),      # Peak 39, overlap with Trishtup at 40-41
-        'ज्योतिस्': (39, 45),     # Peak 42, refrain pattern distinguishes
-        'त्रिष्टुभ्': (40, 46),   # Peak 43, overlap with Pankti at 40-41, with Jagati at 45-46
-        'महापङ्क्ति': (44, 50),   # Peak 47 from data
-        'जगती': (45, 53),         # Peak 47, overlap with Trishtup at 45-46 handled by peak distance
+        'विराट्': (18, 44),  # Virāṭ BIMODAL: 18-22 overlaps Dvipadā + 30-44 (extended)
+        'गायत्री': (19, 26),  # Peak 24, range 19-26 (data: 83% at 21 becomes Gāyatrī!)
+        'उष्णिक्': (25, 30),  # Peak 28, overlap with Gayatri at 25-26 handled by peak
+        'ककुभ्': (25, 29),  # Peak 26-28, 3-pada structure (8+8+12) distinguishes
+        'अनुष्टुभ्': (29, 34),  # Peak 31
+        'बृहती': (33, 41),  # Peak 35, expanded range from data (33-40 common)
+        'प्रगाथ': (33, 43),  # Composite meter
+        'पङ्क्ति': (36, 42),  # Peak 39, overlap with Trishtup at 40-41
+        'ज्योतिस्': (39, 45),  # Peak 42, refrain pattern distinguishes
+        'त्रिष्टुभ्': (40, 46),  # Peak 43, overlap with Pankti at 40-41, with Jagati at 45-46
+        'महापङ्क्ति': (44, 50),  # Peak 47 from data
+        'जगती': (45, 53),  # Peak 47, overlap with Trishtup at 45-46 handled by peak distance
         'अतिजगती': (50, 55),
-        'शक्वरी': (51, 59),       # Peak 53 from data
-        'अतिशक्वरी': (57, 63),    # Peak 58 from data
-        'अत्यष्टि': (61, 69),     # Peak 66, range 61-68 from data (with +1)
-        'अष्टि': (61, 66),        # Peak 62 from data
+        'शक्वरी': (51, 59),  # Peak 53 from data
+        'अतिशक्वरी': (57, 63),  # Peak 58 from data
+        'अत्यष्टि': (61, 69),  # Peak 66, range 61-68 from data (with +1)
+        'अष्टि': (61, 66),  # Peak 62 from data
         'धृति': (64, 72),
         'अतिधृति': (70, 75),
         'कृति': (74, 79),
@@ -260,23 +263,23 @@ class Chanda:
         'द्विपदा विराट्': 20,  # Data: 19=27, 20=29 - using 20 as peak (more common)
         'द्विपदा त्रिष्टुभ्': 21,  # Data: 21=4, 22=3
         # Standard meters
-        'विराट्': 20,      # Virāṭ is BIMODAL at 19-20 (Dvipadā-like) + 30-44 (extended)
-        'गायत्री': 24,     # 48% at 24, 32% at 23
-        'उष्णिक्': 28,     # 37% at 28, 35% at 27
-        'ककुभ्': 26,       # Data: 26=4, 28=3 - 8+8+12 structure (unequal padas)
-        'अनुष्टुभ्': 31,   # 36% at 31, 32% at 32 (note: theoretical is 32!)
-        'बृहती': 35,       # Peak at 35 from data (64 verses)
-        'प्रगाथ': 39,      # Composite, peaks at 39 (90 verses)
-        'पङ्क्ति': 39,     # Peak at 39 based on data
-        'ज्योतिस्': 42,    # Peak at 41-42, has refrain
+        'विराट्': 20,  # Virāṭ is BIMODAL at 19-20 (Dvipadā-like) + 30-44 (extended)
+        'गायत्री': 24,  # 48% at 24, 32% at 23
+        'उष्णिक्': 28,  # 37% at 28, 35% at 27
+        'ककुभ्': 26,  # Data: 26=4, 28=3 - 8+8+12 structure (unequal padas)
+        'अनुष्टुभ्': 31,  # 36% at 31, 32% at 32 (note: theoretical is 32!)
+        'बृहती': 35,  # Peak at 35 from data (64 verses)
+        'प्रगाथ': 39,  # Composite, peaks at 39 (90 verses)
+        'पङ्क्ति': 39,  # Peak at 39 based on data
+        'ज्योतिस्': 42,  # Peak at 41-42, has refrain
         'त्रिष्टुभ्': 43,  # 31% at 43, 28% at 44
         'महापङ्क्ति': 47,  # Peak at 47 from data (17 verses)
-        'जगती': 47,        # 32% at 47, 25% at 48
+        'जगती': 47,  # 32% at 47, 25% at 48
         'अतिजगती': 52,
-        'शक्वरी': 53,      # Peak at 53 from data
-        'अतिशक्वरी': 58,   # Peak at 58 from data
-        'अत्यष्टि': 66,    # Peak at 66 from data (22 verses) - UPDATED!
-        'अष्टि': 62,       # Peak at 62 from data
+        'शक्वरी': 53,  # Peak at 53 from data
+        'अतिशक्वरी': 58,  # Peak at 58 from data
+        'अत्यष्टि': 66,  # Peak at 66 from data (22 verses) - UPDATED!
+        'अष्टि': 62,  # Peak at 62 from data
         'धृति': 68,
         'अतिधृति': 72,
         'कृति': 76,
@@ -288,7 +291,7 @@ class Chanda:
     def __init__(self, data_path, symbols='यरतनभजसमलग', syllabization_method='sanskrit_text'):
         """
         Initialize Chanda identifier
-        
+
         Args:
             data_path: Path to data directory
             symbols: Gana symbols for input/output
@@ -302,9 +305,7 @@ class Chanda:
         self.ttable_in = str.maketrans(self.input_map)
         self.ttable_out = str.maketrans(self.output_map)
         self.gana = self.GANA.copy()
-        self.gana_inv = {
-            v: k for k, v in self.gana.items()
-        }
+        self.gana_inv = {v: k for k, v in self.gana.items()}
 
         # Data Path
         self.data_path = data_path
@@ -314,14 +315,16 @@ class Chanda:
             self.syllabization_method = 'icu' if ICU_AVAILABLE else 'sanskrit_text'
         elif syllabization_method == 'icu':
             if not ICU_AVAILABLE:
-                raise ImportError("ICU syllabization requested but PyICU/regex not installed. "
-                                "Install with: pip install PyICU regex")
+                raise ImportError(
+                    "ICU syllabization requested but PyICU/regex not installed. Install with: pip install PyICU regex"
+                )
             self.syllabization_method = 'icu'
         elif syllabization_method == 'sanskrit_text':
             self.syllabization_method = 'sanskrit_text'
         else:
-            raise ValueError(f"Invalid syllabization_method: {syllabization_method}. "
-                           "Must be 'auto', 'icu', or 'sanskrit_text'")
+            raise ValueError(
+                f"Invalid syllabization_method: {syllabization_method}. Must be 'auto', 'icu', or 'sanskrit_text'"
+            )
 
         # Definitions
         self.CHANDA = defaultdict(list)
@@ -359,7 +362,7 @@ class Chanda:
 
         @return:
             Returns a flattened list of Laghu-Guru marks.
-        
+
         Note: LRU cache removed - returns unhashable types (nested lists).
         Consider implementing custom caching if performance is critical.
         """
@@ -404,10 +407,7 @@ class Chanda:
             if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
                 lg_marks.append('')
                 continue
-            laghu = (
-                skt.is_laghu(syllable) and
-                (skt.HALANTA not in flat_syllables[idx+1])
-            )
+            laghu = skt.is_laghu(syllable) and (skt.HALANTA not in flat_syllables[idx + 1])
             lg_marks.append(self.L if laghu else self.G)
 
         # handle the last syllable
@@ -415,9 +415,7 @@ class Chanda:
         if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
             lg_marks.append('')
         else:
-            lg_marks.append(
-                self.L if skt.is_laghu(syllable) else self.G
-            )
+            lg_marks.append(self.L if skt.is_laghu(syllable) else self.G)
 
         return syllables, lg_marks
 
@@ -428,7 +426,7 @@ class Chanda:
     def get_syllables_icu(self, in_string):
         """
         Split devanagari string into syllables using ICU logic (ENHANCED)
-        
+
         ENHANCEMENT: Preserves word boundaries during processing to prevent
         visarga+consonant merging across words (e.g., "नः प्र" → "नःप्र")
         This fixes critical syllabization accuracy issues.
@@ -449,35 +447,44 @@ class Chanda:
             cleaned_phrase = regex.sub("[%s]" % dev_scheme.PATTERN_OM, "ओम्", cleaned_phrase)
 
             # Remove non-letter characters (but keep spaces between words)
-            cleaned_phrase = regex.sub(r"([^%s%s%s%s%s%s])" % (
-                dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-                dev_scheme.PATTERN_VYANJANA,
-                dev_scheme.PATTERN_DEPENDENT_VOWEL,
-                dev_scheme.PATTERN_YOGAVAAHA,
-                dev_scheme.PATTERN_ACCENT,
-                dev_scheme.PATTERN_CONSONANT_MODIFIER
-            ), "", cleaned_phrase, flags=regex.UNICODE)
+            cleaned_phrase = regex.sub(
+                r"([^%s%s%s%s%s%s])"
+                % (
+                    dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                    dev_scheme.PATTERN_VYANJANA,
+                    dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                    dev_scheme.PATTERN_YOGAVAAHA,
+                    dev_scheme.PATTERN_ACCENT,
+                    dev_scheme.PATTERN_CONSONANT_MODIFIER,
+                ),
+                "",
+                cleaned_phrase,
+                flags=regex.UNICODE,
+            )
 
             # Join vyanjana + independent vowel
             cleaned_phrase = regex.sub(
                 r"(%s)([%s])" % (dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL, dev_scheme.PATTERN_INDEPENDENT_VOWEL),
                 lambda x: sanscript.SCHEMES[sanscript.DEVANAGARI].do_vyanjana_svara_join(x.group(1), x.group(2)),
-                cleaned_phrase
+                cleaned_phrase,
             )
 
             # Extract syllables from this word
             while len(cleaned_phrase) > 0:
                 match = regex.match(
-                    (r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*" % (
-                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
-                        dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-                        dev_scheme.PATTERN_VYANJANA,
-                        dev_scheme.PATTERN_DEPENDENT_VOWEL,
-                        dev_scheme.PATTERN_YOGAVAAHA,
-                        dev_scheme.PATTERN_ACCENT,
-                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
-                    )),
-                    cleaned_phrase
+                    (
+                        r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*"
+                        % (
+                            dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+                            dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                            dev_scheme.PATTERN_VYANJANA,
+                            dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                            dev_scheme.PATTERN_YOGAVAAHA,
+                            dev_scheme.PATTERN_ACCENT,
+                            dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+                        )
+                    ),
+                    cleaned_phrase,
                 )
                 if match is None:
                     break
@@ -496,22 +503,30 @@ class Chanda:
         dev_scheme = sanscript.SCHEMES[sanscript.DEVANAGARI]
 
         # Check for guru vowels
-        if regex.findall(r"[%s%s%s]" % (
-            dev_scheme.PATTERN_GURU_INDEPENDENT_VOWEL,
-            dev_scheme.PATTERN_GURU_DEPENDENT_VOWEL,
-            dev_scheme.PATTERN_GURU_YOGAVAAHA
-        ), syllable):
+        if regex.findall(
+            r"[%s%s%s]"
+            % (
+                dev_scheme.PATTERN_GURU_INDEPENDENT_VOWEL,
+                dev_scheme.PATTERN_GURU_DEPENDENT_VOWEL,
+                dev_scheme.PATTERN_GURU_YOGAVAAHA,
+            ),
+            syllable,
+        ):
             return self.G
 
         # Check for conjunct consonants (makes it guru)
-        elif regex.findall(r"[%s%s]़?[%s]*[%s]*[%s]*(%s)+" % (
-            dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-            dev_scheme.PATTERN_VYANJANA,
-            dev_scheme.PATTERN_DEPENDENT_VOWEL,
-            dev_scheme.PATTERN_YOGAVAAHA,
-            dev_scheme.PATTERN_ACCENT,
-            dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
-        ), syllable):
+        elif regex.findall(
+            r"[%s%s]़?[%s]*[%s]*[%s]*(%s)+"
+            % (
+                dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                dev_scheme.PATTERN_VYANJANA,
+                dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                dev_scheme.PATTERN_YOGAVAAHA,
+                dev_scheme.PATTERN_ACCENT,
+                dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+            ),
+            syllable,
+        ):
             return self.G
         else:
             return self.L
@@ -522,7 +537,7 @@ class Chanda:
         """Transform Laghu-Guru string into Gana string"""
         gana = []
         for i in range(0, len(lg_str), 3):
-            group = lg_str[i:i+3]
+            group = lg_str[i : i + 3]
             gana.append(self.gana_inv.get(group, group))
         gana_str = ''.join(gana)
 
@@ -546,14 +561,14 @@ class Chanda:
     def is_valid_sanskrit_input(self, text):
         """
         Check if the input text contains valid Sanskrit/Indic script characters.
-        
+
         This method validates that the input is actually Sanskrit text (in any
         supported script like Devanagari, IAST, SLP1, etc.) and not random
         ASCII characters, English text, or gibberish.
-        
+
         Args:
             text: Input text string
-        
+
         Returns:
             tuple: (is_valid: bool, reason: str)
         """
@@ -571,82 +586,404 @@ class Chanda:
         # Including common words, greetings, and patterns
         COMMON_ENGLISH_WORDS = {
             # Basic pronouns and articles
-            'i', 'me', 'my', 'you', 'your', 'he', 'she', 'it', 'we', 'they', 'them',
-            'a', 'an', 'the',
+            'i',
+            'me',
+            'my',
+            'you',
+            'your',
+            'he',
+            'she',
+            'it',
+            'we',
+            'they',
+            'them',
+            'a',
+            'an',
+            'the',
             # Common verbs
-            'is', 'are', 'was', 'were', 'be', 'been', 'being', 'am',
-            'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing',
-            'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'shall',
-            'go', 'goes', 'went', 'going', 'come', 'comes', 'came', 'coming',
-            'get', 'gets', 'got', 'getting', 'make', 'makes', 'made', 'making',
-            'see', 'saw', 'seen', 'look', 'looked', 'looking',
-            'know', 'knows', 'knew', 'think', 'thinks', 'thought',
-            'want', 'wants', 'wanted', 'need', 'needs', 'needed',
-            'say', 'says', 'said', 'tell', 'tells', 'told',
-            'give', 'gives', 'gave', 'take', 'takes', 'took',
+            'is',
+            'are',
+            'was',
+            'were',
+            'be',
+            'been',
+            'being',
+            'am',
+            'have',
+            'has',
+            'had',
+            'having',
+            'do',
+            'does',
+            'did',
+            'doing',
+            'will',
+            'would',
+            'could',
+            'should',
+            'may',
+            'might',
+            'must',
+            'can',
+            'shall',
+            'go',
+            'goes',
+            'went',
+            'going',
+            'come',
+            'comes',
+            'came',
+            'coming',
+            'get',
+            'gets',
+            'got',
+            'getting',
+            'make',
+            'makes',
+            'made',
+            'making',
+            'see',
+            'saw',
+            'seen',
+            'look',
+            'looked',
+            'looking',
+            'know',
+            'knows',
+            'knew',
+            'think',
+            'thinks',
+            'thought',
+            'want',
+            'wants',
+            'wanted',
+            'need',
+            'needs',
+            'needed',
+            'say',
+            'says',
+            'said',
+            'tell',
+            'tells',
+            'told',
+            'give',
+            'gives',
+            'gave',
+            'take',
+            'takes',
+            'took',
             # Greetings and common phrases
-            'hello', 'hi', 'hey', 'bye', 'goodbye', 'thanks', 'thank', 'please',
-            'yes', 'no', 'ok', 'okay', 'sorry', 'welcome',
+            'hello',
+            'hi',
+            'hey',
+            'bye',
+            'goodbye',
+            'thanks',
+            'thank',
+            'please',
+            'yes',
+            'no',
+            'ok',
+            'okay',
+            'sorry',
+            'welcome',
             # Common nouns
-            'man', 'men', 'woman', 'women', 'child', 'children', 'people', 'person',
-            'day', 'days', 'time', 'times', 'year', 'years', 'way', 'ways',
-            'world', 'life', 'hand', 'part', 'place', 'case', 'week', 'work',
-            'thing', 'things', 'word', 'words', 'text', 'name', 'number',
-            'home', 'house', 'room', 'car', 'water', 'money', 'point',
+            'man',
+            'men',
+            'woman',
+            'women',
+            'child',
+            'children',
+            'people',
+            'person',
+            'day',
+            'days',
+            'time',
+            'times',
+            'year',
+            'years',
+            'way',
+            'ways',
+            'world',
+            'life',
+            'hand',
+            'part',
+            'place',
+            'case',
+            'week',
+            'work',
+            'thing',
+            'things',
+            'word',
+            'words',
+            'text',
+            'name',
+            'number',
+            'home',
+            'house',
+            'room',
+            'car',
+            'water',
+            'money',
+            'point',
             # Common adjectives
-            'good', 'bad', 'new', 'old', 'big', 'small', 'great', 'little',
-            'long', 'short', 'high', 'low', 'right', 'wrong', 'first', 'last',
-            'own', 'same', 'different', 'large', 'early', 'young',
-            'important', 'few', 'public', 'able', 'quick', 'brown', 'lazy', 'red',
-            'blue', 'green', 'black', 'white', 'fast', 'slow',
+            'good',
+            'bad',
+            'new',
+            'old',
+            'big',
+            'small',
+            'great',
+            'little',
+            'long',
+            'short',
+            'high',
+            'low',
+            'right',
+            'wrong',
+            'first',
+            'last',
+            'own',
+            'same',
+            'different',
+            'large',
+            'early',
+            'young',
+            'important',
+            'few',
+            'public',
+            'able',
+            'quick',
+            'brown',
+            'lazy',
+            'red',
+            'blue',
+            'green',
+            'black',
+            'white',
+            'fast',
+            'slow',
             # Question words and conjunctions
-            'what', 'which', 'who', 'whom', 'whose', 'where', 'when', 'why', 'how',
-            'this', 'that', 'these', 'those', 'here', 'there',
-            'all', 'each', 'every', 'both', 'more', 'most', 'other', 'some', 'such',
-            'not', 'only', 'so', 'than', 'too', 'very', 'just', 'also', 'now',
-            'but', 'and', 'or', 'if', 'because', 'as', 'until', 'while', 'although',
+            'what',
+            'which',
+            'who',
+            'whom',
+            'whose',
+            'where',
+            'when',
+            'why',
+            'how',
+            'this',
+            'that',
+            'these',
+            'those',
+            'here',
+            'there',
+            'all',
+            'each',
+            'every',
+            'both',
+            'more',
+            'most',
+            'other',
+            'some',
+            'such',
+            'not',
+            'only',
+            'so',
+            'than',
+            'too',
+            'very',
+            'just',
+            'also',
+            'now',
+            'but',
+            'and',
+            'or',
+            'if',
+            'because',
+            'as',
+            'until',
+            'while',
+            'although',
             # Prepositions
-            'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
-            'into', 'through', 'during', 'before', 'after', 'above', 'below',
-            'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under',
-            'again', 'further', 'then', 'once',
+            'of',
+            'at',
+            'by',
+            'for',
+            'with',
+            'about',
+            'against',
+            'between',
+            'into',
+            'through',
+            'during',
+            'before',
+            'after',
+            'above',
+            'below',
+            'to',
+            'from',
+            'up',
+            'down',
+            'in',
+            'out',
+            'on',
+            'off',
+            'over',
+            'under',
+            'again',
+            'further',
+            'then',
+            'once',
             # Common animals (for pangram detection)
-            'dog', 'dogs', 'cat', 'cats', 'fox', 'bird', 'fish',
+            'dog',
+            'dogs',
+            'cat',
+            'cats',
+            'fox',
+            'bird',
+            'fish',
             # Tech/test words and programming terms
-            'test', 'testing', 'sample', 'example', 'demo', 'input', 'output',
-            'result', 'results', 'check', 'data', 'file', 'code', 'error',
-            'help', 'info', 'user', 'system', 'type', 'like', 'use', 'used',
-            'python', 'java', 'javascript', 'run', 'running', 'script',
-            'traceback', 'exception', 'module', 'function', 'class', 'method',
-            'line', 'debug', 'print', 'return', 'import', 'def',
-            'try', 'except', 'finally', 'raise', 'assert', 'pass', 'break',
-            'continue', 'elif', 'else', 'lambda', 'global', 'local',
-            'none', 'true', 'false', 'null', 'undefined', 'var', 'let', 'const',
-            'string', 'int', 'float', 'bool', 'list', 'dict', 'array', 'object',
-            'api', 'url', 'http', 'https', 'server', 'client', 'request', 'response',
-            'json', 'xml', 'html', 'css', 'sql', 'database', 'query',
-            'path', 'directory', 'folder', 'config', 'settings', 'log', 'logs',
+            'test',
+            'testing',
+            'sample',
+            'example',
+            'demo',
+            'input',
+            'output',
+            'result',
+            'results',
+            'check',
+            'data',
+            'file',
+            'code',
+            'error',
+            'help',
+            'info',
+            'user',
+            'system',
+            'type',
+            'like',
+            'use',
+            'used',
+            'python',
+            'java',
+            'javascript',
+            'run',
+            'running',
+            'script',
+            'traceback',
+            'exception',
+            'module',
+            'function',
+            'class',
+            'method',
+            'line',
+            'debug',
+            'print',
+            'return',
+            'import',
+            'def',
+            'try',
+            'except',
+            'finally',
+            'raise',
+            'assert',
+            'pass',
+            'break',
+            'continue',
+            'elif',
+            'else',
+            'lambda',
+            'global',
+            'local',
+            'none',
+            'true',
+            'false',
+            'null',
+            'undefined',
+            'var',
+            'let',
+            'const',
+            'string',
+            'int',
+            'float',
+            'bool',
+            'list',
+            'dict',
+            'array',
+            'object',
+            'api',
+            'url',
+            'http',
+            'https',
+            'server',
+            'client',
+            'request',
+            'response',
+            'json',
+            'xml',
+            'html',
+            'css',
+            'sql',
+            'database',
+            'query',
+            'path',
+            'directory',
+            'folder',
+            'config',
+            'settings',
+            'log',
+            'logs',
             # Misc common words
-            'fm', 'pm', 'vs', 'etc', 'ie', 'eg', 'abc', 'xyz', 'qwerty',
-            'one', 'two', 'three', 'four', 'five', 'many', 'much', 'well',
-            'even', 'back', 'any', 'our', 'still', 'find', 'since',
-            'jumps', 'jumped', 'around'
+            'fm',
+            'pm',
+            'vs',
+            'etc',
+            'ie',
+            'eg',
+            'abc',
+            'xyz',
+            'qwerty',
+            'one',
+            'two',
+            'three',
+            'four',
+            'five',
+            'many',
+            'much',
+            'well',
+            'even',
+            'back',
+            'any',
+            'our',
+            'still',
+            'find',
+            'since',
+            'jumps',
+            'jumped',
+            'around',
         }
 
         # Check for Devanagari characters (U+0900 to U+097F)
-        devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097F')
+        devanagari_chars = sum(1 for c in text if '\u0900' <= c <= '\u097f')
 
         # Check for other Indic scripts (Bengali, Telugu, Tamil, etc.)
-        other_indic_chars = sum(1 for c in text if (
-            '\u0980' <= c <= '\u09FF' or  # Bengali
-            '\u0A00' <= c <= '\u0A7F' or  # Gurmukhi
-            '\u0A80' <= c <= '\u0AFF' or  # Gujarati
-            '\u0B00' <= c <= '\u0B7F' or  # Oriya
-            '\u0B80' <= c <= '\u0BFF' or  # Tamil
-            '\u0C00' <= c <= '\u0C7F' or  # Telugu
-            '\u0C80' <= c <= '\u0CFF' or  # Kannada
-            '\u0D00' <= c <= '\u0D7F'     # Malayalam
-        ))
+        other_indic_chars = sum(
+            1
+            for c in text
+            if (
+                '\u0980' <= c <= '\u09ff'  # Bengali
+                or '\u0a00' <= c <= '\u0a7f'  # Gurmukhi
+                or '\u0a80' <= c <= '\u0aff'  # Gujarati
+                or '\u0b00' <= c <= '\u0b7f'  # Oriya
+                or '\u0b80' <= c <= '\u0bff'  # Tamil
+                or '\u0c00' <= c <= '\u0c7f'  # Telugu
+                or '\u0c80' <= c <= '\u0cff'  # Kannada
+                or '\u0d00' <= c <= '\u0d7f'  # Malayalam
+            )
+        )
 
         # Check for IAST/romanized Sanskrit characters
         # IAST uses Latin letters with diacritics: ā ī ū ṛ ṝ ḷ ḹ ṃ ḥ ñ ṅ ṭ ḍ ṇ ś ṣ
@@ -659,7 +996,7 @@ class Chanda:
         latin_vowel_count = sum(1 for c in text if c in latin_vowels)
 
         # Total meaningful characters (excluding spaces, punctuation, numbers)
-        total_alpha = sum(1 for c in text if c.isalpha() or '\u0900' <= c <= '\u0D7F')
+        total_alpha = sum(1 for c in text if c.isalpha() or '\u0900' <= c <= '\u0d7f')
 
         if total_alpha == 0:
             return False, "कोई वर्ण नहीं मिला (No alphabetic characters found)"
@@ -672,7 +1009,10 @@ class Chanda:
         if devanagari_chars > 0 or other_indic_chars > 0:
             # Indic script
             if len(text) < MIN_LENGTH_DEVANAGARI:
-                return False, f"पाठ बहुत छोटा है (Text too short - minimum {MIN_LENGTH_DEVANAGARI} characters for Indic script)"
+                return (
+                    False,
+                    f"पाठ बहुत छोटा है (Text too short - minimum {MIN_LENGTH_DEVANAGARI} characters for Indic script)",
+                )
         else:
             # ASCII/romanized
             if len(text) < MIN_LENGTH_ASCII:
@@ -696,7 +1036,10 @@ class Chanda:
                 # Stricter thresholds when NO diacritics present
                 # If even ONE common English word exists, reject (since no diacritics = not IAST)
                 if english_word_count >= 1:
-                    return False, "अंग्रेजी पाठ प्रतीत होता है - संस्कृत के लिए IAST लिप्यन्तरण में diakritik चिह्न आवश्यक हैं (Appears to be English text - Sanskrit IAST requires diacritical marks)"
+                    return (
+                        False,
+                        "अंग्रेजी पाठ प्रतीत होता है - संस्कृत के लिए IAST लिप्यन्तरण में diakritik चिह्न आवश्यक हैं (Appears to be English text - Sanskrit IAST requires diacritical marks)",
+                    )
 
                 # If more than 20% of words are common English words, reject
                 if total_words > 0 and english_word_count / total_words > 0.2:
@@ -776,46 +1119,46 @@ class Chanda:
     def normalize_vedic_characters(self, text):
         """
         Normalize Vedic-specific Unicode characters to standard Devanagari.
-        
+
         Vedic texts use special Unicode characters that should be normalized
         for proper syllable counting and pattern matching.
-        
+
         Reference: Sanskrit repo (repos/sanskrit/transliteration/transliterate.py)
         Based on Unicode Vedic Extensions (U+1CD0 to U+1CFF)
         """
         # Vedic signs that function as visarga variants
         # U+1CF2: VEDIC SIGN ARDHAVISARGA - half visarga, normalize to ः
-        text = text.replace('\u1CF2', 'ः')
+        text = text.replace('\u1cf2', 'ः')
 
         # U+1CF3: VEDIC SIGN ROTATED ARDHAVISARGA - normalize to ः
-        text = text.replace('\u1CF3', 'ः')
+        text = text.replace('\u1cf3', 'ः')
 
         # U+1CF4: VEDIC TONE CANDRA ABOVE - tone marker, can be removed
-        text = text.replace('\u1CF4', '')
+        text = text.replace('\u1cf4', '')
 
         # Vedic signs for jihvāmūlīya (क् before) and upadhmanīya (प् before)
         # These are allophonic variants of visarga before k/p
         # U+1CF5: VEDIC SIGN JIHVAMULIYA (visarga before क, ख, etc.)
-        text = text.replace('\u1CF5', 'ः')
+        text = text.replace('\u1cf5', 'ः')
 
         # U+1CF6: VEDIC SIGN UPADHMANIYA (visarga before प, फ, etc.)
-        text = text.replace('\u1CF6', 'ः')
+        text = text.replace('\u1cf6', 'ः')
 
         # U+1CFA: VEDIC SIGN DOUBLE ANUSVARA ANTARGOMUKHA - normalize to ं
-        text = text.replace('\u1CFA', 'ं')
+        text = text.replace('\u1cfa', 'ं')
 
         # Vedic anusvara variants
         # U+1CE1: VEDIC TONE ATHARVAVEDIC INDEPENDENT SVARITA - remove tone
-        text = text.replace('\u1CE1', '')
+        text = text.replace('\u1ce1', '')
 
         # Vedic accent/tone marks that don't affect syllable weight
         # U+1CD0-U+1CD2: Various tone marks
-        text = text.replace('\u1CD0', '')  # VEDIC TONE KARSHANA
-        text = text.replace('\u1CD1', '')  # VEDIC TONE SHARA
-        text = text.replace('\u1CD2', '')  # VEDIC TONE PRENKHA
+        text = text.replace('\u1cd0', '')  # VEDIC TONE KARSHANA
+        text = text.replace('\u1cd1', '')  # VEDIC TONE SHARA
+        text = text.replace('\u1cd2', '')  # VEDIC TONE PRENKHA
 
         # U+1CD3: VEDIC SIGN NIHSHVASA (breath mark) - remove
-        text = text.replace('\u1CD3', '')
+        text = text.replace('\u1cd3', '')
 
         return text
 
@@ -874,11 +1217,18 @@ class Chanda:
         """Load meter name synonyms for flexible matching"""
         # Core synonyms for common meters - expanded for test dataset variants
         self.METER_SYNONYMS = {
-            'शार्दूलविक्रीडित': ['शार्दूलविक्रीडितम्', 'Shardulavikridita', 'Sārdūlavikrīḍita',
-                              'Sardula-vikridita', 'śārdūlavikrīḍitam', 'śārdūlavikrīditam',
-                              'särdülavikrīḍitam', 'śārdülavkrīḍita', 'मेघविस्फूर्जिता'],
-            'मन्दाक्रान्ता': ['मन्दाक्रान्त', 'Mandakranta', 'Mandākrāntā', 'मन्दाक्रान्ता',
-                           'mandākrāntā', 'mandäkräntä'],
+            'शार्दूलविक्रीडित': [
+                'शार्दूलविक्रीडितम्',
+                'Shardulavikridita',
+                'Sārdūlavikrīḍita',
+                'Sardula-vikridita',
+                'śārdūlavikrīḍitam',
+                'śārdūlavikrīditam',
+                'särdülavikrīḍitam',
+                'śārdülavkrīḍita',
+                'मेघविस्फूर्जिता',
+            ],
+            'मन्दाक्रान्ता': ['मन्दाक्रान्त', 'Mandakranta', 'Mandākrāntā', 'मन्दाक्रान्ता', 'mandākrāntā', 'mandäkräntä'],
             'इन्द्रवज्रा': ['इन्द्रवज्र', 'Indravajra', 'Indravajrā', 'upajātiḥ', 'उपजाति', 'Upajati', 'upajati'],
             'उपेन्द्रवज्रा': ['उपेन्द्रवज्र', 'Upendravajra', 'Upendravajrā', 'upajātiḥ', 'उपजाति', 'Upajati', 'upajati'],
             'अनुष्टुभ्': ['अनुस्टुभ्', 'Anushtubh', 'Anustubh', 'Anuṣṭubh', 'Anuṣṭup', 'anuṣṭup', 'anustup'],
@@ -887,7 +1237,16 @@ class Chanda:
             'त्रिष्टुभ्': ['Trishtubh', 'Triṣṭubh', 'Tristubh'],
             'जगती': ['Jagati', 'Jagatī'],
             'पृथ्वी': ['pṛthvī', 'pythvī', 'prthvi', 'prithvi', 'Prithvi', 'pṛthi'],
-            'उपजाति': ['upajātiḥ', 'upajāti', 'Upajati', 'upajati', 'इन्द्रवज्रा', 'उपेन्द्रवज्रा', 'indravajra', 'upendravajra'],
+            'उपजाति': [
+                'upajātiḥ',
+                'upajāti',
+                'Upajati',
+                'upajati',
+                'इन्द्रवज्रा',
+                'उपेन्द्रवज्रा',
+                'indravajra',
+                'upendravajra',
+            ],
             'स्रग्धरा': ['sragdharā', 'sragdhara', 'Sragdhara'],
             'भुजङ्गप्रयात': ['bhujangaprayāta', 'bhujangaprayātam', 'Bhujangaprayata'],
             'पञ्चचामर': ['pañcacāmaram', 'pañcacāmara', 'pancacamaram', 'рañcacāmaram'],
@@ -927,8 +1286,9 @@ class Chanda:
         # Check synonyms
         for canonical, variants in self.METER_SYNONYMS.items():
             all_forms = [canonical.lower()] + [v.lower() for v in variants]
-            if (norm1 in all_forms or name1.lower() in all_forms) and \
-               (norm2 in all_forms or name2.lower() in all_forms):
+            if (norm1 in all_forms or name1.lower() in all_forms) and (
+                norm2 in all_forms or name2.lower() in all_forms
+            ):
                 return True
 
         # Partial substring match (last resort)
@@ -942,12 +1302,12 @@ class Chanda:
 
     def identify_vedic_meter(self, syllable_count, lg_pattern=None, allow_ambiguous=False):
         """Identify Vedic meter by syllable count with ±1 tolerance and pattern matching
-        
+
         Supports standard Vedic meters and their variants:
         - Nicṛt (निचृत्): Shortened form (-1 syllable per pada)
         - Bhurik (भुरिक्): Extended form (+1 syllable per pada)
         - Virāṭ (विराट्): Further extended form
-        
+
         Args:
             syllable_count: Number of syllables
             lg_pattern: L-G pattern string (optional)
@@ -960,20 +1320,20 @@ class Chanda:
         vedic_mapping = {
             # Gāyatrī family (3 padas) - ONLY if allow_ambiguous is True
             # 21: 'निचृद्गायत्री',   # Conflicts with Sragdharā pada (21 per pada)
-            24: 'गायत्री',        # Standard Gayatri - 3×8
+            24: 'गायत्री',  # Standard Gayatri - 3×8
             # 27: 'भुरिग्गायत्री',   # Conflicts with some classical meters
             # Uṣṇik family (4 padas)
-            28: 'उष्णिक्',         # Ushnik - 4×7
+            28: 'उष्णिक्',  # Ushnik - 4×7
             # Anuṣṭubh family (4 padas)
-            32: 'अनुष्टुभ्',       # Anushtubh - 4×8
+            32: 'अनुष्टुभ्',  # Anushtubh - 4×8
             # Bṛhatī family (4 padas)
-            36: 'बृहती',          # Brihati - 4×9
+            36: 'बृहती',  # Brihati - 4×9
             # Paṅkti family (5 padas)
-            40: 'पङ्क्ति',         # Pankti - 5×8
+            40: 'पङ्क्ति',  # Pankti - 5×8
             # Triṣṭubh family (4 padas)
-            44: 'त्रिष्टुभ्',      # Trishtubh - 4×11
+            44: 'त्रिष्टुभ्',  # Trishtubh - 4×11
             # Jagatī family (4 padas)
-            48: 'जगती',           # Jagati - 4×12
+            48: 'जगती',  # Jagati - 4×12
         }
 
         # Add ambiguous syllable counts only when explicitly allowed
@@ -984,25 +1344,25 @@ class Chanda:
 
         # For pada-level identification (single pada, not full verse)
         pada_mapping = {
-            7: 'उष्णिक्',          # Ushnik pada OR Nicrt Gayatri pada
-            8: 'गायत्री',         # Gayatri/Anushtubh pada
-            9: 'बृहती',           # Brihati pada OR Bhurik Gayatri pada
-            11: 'त्रिष्टुभ्',     # Trishtubh pada
-            12: 'जगती'           # Jagati pada
+            7: 'उष्णिक्',  # Ushnik pada OR Nicrt Gayatri pada
+            8: 'गायत्री',  # Gayatri/Anushtubh pada
+            9: 'बृहती',  # Brihati pada OR Bhurik Gayatri pada
+            11: 'त्रिष्टुभ्',  # Trishtubh pada
+            12: 'जगती',  # Jagati pada
         }
 
         # Helper function to get English meter name for VEDIC_METERS lookup
         def get_english_name(sanskrit_name):
             name_map = {
                 'गायत्री': 'Gayatri',
-                'निचृद्गायत्री': 'Nicrt_Gayatri',      # 3×7 = 21 syllables
-                'भुरिग्गायत्री': 'Bhurik_Gayatri',     # 3×9 = 27 syllables
+                'निचृद्गायत्री': 'Nicrt_Gayatri',  # 3×7 = 21 syllables
+                'भुरिग्गायत्री': 'Bhurik_Gayatri',  # 3×9 = 27 syllables
                 'त्रिष्टुभ्': 'Trishtubh',
                 'जगती': 'Jagati',
                 'उष्णिक्': 'Ushnik',
                 'अनुष्टुभ्': 'Anushtubh',
                 'बृहती': 'Brihati',
-                'पङ्क्ति': 'Pankti'
+                'पङ्क्ति': 'Pankti',
             }
             return name_map.get(sanskrit_name, sanskrit_name)
 
@@ -1034,8 +1394,9 @@ class Chanda:
             difference = abs(syllable_count - expected_count)
             if difference <= 2:
                 # Prefer match with smaller difference, or larger expected count if equal
-                if (difference < best_difference or
-                    (difference == best_difference and expected_count > best_expected_count)):
+                if difference < best_difference or (
+                    difference == best_difference and expected_count > best_expected_count
+                ):
                     best_difference = difference
                     best_match = meter_name
                     best_expected_count = expected_count
@@ -1069,13 +1430,13 @@ class Chanda:
     def detect_verse_structure(self, verse_lines):
         """
         Detect the structural properties of a verse for Vedic meter identification.
-        
+
         This method analyzes the verse to determine if it matches expected Vedic
         meter structures (4×11 for Triṣṭubh, 4×12 for Jagatī, etc.).
-        
+
         Args:
             verse_lines: List of verse lines (padas)
-        
+
         Returns:
             dict with:
                 - syllables_per_pada: list of syllable counts per pada
@@ -1123,10 +1484,7 @@ class Chanda:
                 # Check pada count
                 if num_padas == structure['padas']:
                     # Check per-pada syllable count (allow ±1 tolerance per pada)
-                    pada_matches = sum(
-                        1 for s in syllables_per_pada
-                        if abs(s - structure['per_pada']) <= 1
-                    )
+                    pada_matches = sum(1 for s in syllables_per_pada if abs(s - structure['per_pada']) <= 1)
                     # Require at least 3/4 padas to match (majority rule)
                     if pada_matches >= (num_padas * 0.75):
                         expected_vedic_meter = meter_name
@@ -1148,7 +1506,7 @@ class Chanda:
                 comparisons = 0
 
                 for i, p1 in enumerate(matching_padas):
-                    for p2 in matching_padas[i+1:]:
+                    for p2 in matching_padas[i + 1 :]:
                         # Levenshtein distance normalized by length
                         dist = Lev.distance(p1, p2)
                         max_len = max(len(p1), len(p2))
@@ -1162,10 +1520,7 @@ class Chanda:
             # Count padas matching the first pada pattern (within tolerance)
             if matching_padas:
                 reference_pada = matching_padas[0]
-                majority_match_count = sum(
-                    1 for p in matching_padas
-                    if Lev.distance(p, reference_pada) <= 2
-                )
+                majority_match_count = sum(1 for p in matching_padas if Lev.distance(p, reference_pada) <= 2)
 
         return {
             'syllables_per_pada': syllables_per_pada,
@@ -1176,20 +1531,20 @@ class Chanda:
             'pada_similarity_score': pada_similarity_score,
             'majority_match_count': majority_match_count,
             'num_padas': num_padas,
-            'pada_patterns': pada_patterns
+            'pada_patterns': pada_patterns,
         }
 
     def is_pada_level_meter(self, meter_name):
         """
         Check if a meter is a pada-level (single-pada) meter.
-        
+
         Pada-level meters should NOT override verse-level Vedic meters.
         A meter is considered pada-level if it appears only in SINGLE_CHANDA
         but never in MULTI_CHANDA.
-        
+
         Args:
             meter_name: Name of the meter (string or tuple)
-        
+
         Returns:
             bool: True if this is a pada-level only meter
         """
@@ -1204,8 +1559,7 @@ class Chanda:
 
         # Check if meter exists in MULTI_CHANDA
         in_multi = any(
-            meter_name in [m[0] if isinstance(m, tuple) else m for m in meters]
-            for meters in self.MULTI_CHANDA.values()
+            meter_name in [m[0] if isinstance(m, tuple) else m for m in meters] for meters in self.MULTI_CHANDA.values()
         )
 
         # Pada-level if in single but not in multi
@@ -1222,8 +1576,8 @@ class Chanda:
                 'Vedic meter recognition',
                 'Fuzzy matching',
                 'Sandhi resolution',
-                'Prose detection (Gadya vs Padya)'
-            ]
+                'Prose detection (Gadya vs Padya)',
+            ],
         }
 
     ###########################################################################
@@ -1233,25 +1587,25 @@ class Chanda:
     def is_padya(self, lg_pattern, syllable_count, confidence_scores=None):
         """
         Determine if the input text is likely poetry (Padya) or prose (Gadya).
-        
+
         Sanskrit literature has two forms:
         - Padya (पद्य): Poetry with metrical structure following Chandas
         - Gadya (गद्य): Prose without any metrical constraints
-        
+
         This method uses multiple heuristics to determine if a given text
         follows a recognizable metrical pattern.
-        
+
         IMPORTANT: The challenge is that short prose can accidentally match
         metrical patterns. We use STRICT criteria to avoid false positives:
         - Only exact pattern matches are considered "definite poetry"
         - Syllable-count-only matches are treated as "uncertain"
         - Very short texts (< minimum verse length) are marked as uncertain
-        
+
         Args:
             lg_pattern: L-G pattern string
             syllable_count: Number of syllables in the text
             confidence_scores: Dict of meter_name -> (confidence, match_type)
-        
+
         Returns:
             tuple: (is_poetry: bool, reason: str, confidence: float)
                 - is_poetry: True if text appears to be Padya
@@ -1262,7 +1616,11 @@ class Chanda:
 
         # Criterion 1: Too few syllables - not enough for any valid meter
         if syllable_count < MIN_SYLLABLES_FOR_PADA:
-            return False, f"टिप्पणी: केवल {syllable_count} अक्षर - किसी भी छन्द के लिए अपर्याप्त (Too few syllables for any valid meter)", 0.9
+            return (
+                False,
+                f"टिप्पणी: केवल {syllable_count} अक्षर - किसी भी छन्द के लिए अपर्याप्त (Too few syllables for any valid meter)",
+                0.9,
+            )
 
         # Criterion 2: Check confidence scores for EXACT pattern matches
         if confidence_scores:
@@ -1298,14 +1656,22 @@ class Chanda:
             if max_confidence >= 5.0 and max_confidence < CONFIDENCE_THRESHOLD_MEDIUM:
                 # Be skeptical of syllable-count-only matches, especially for short texts
                 if syllable_count < MIN_SYLLABLES_FOR_VERSE:
-                    return False, f"टिप्पणी: केवल अक्षर संख्या से मेल ({syllable_count}) - छोटा पाठ, सम्भवतः गद्य (Only syllable count match - short text, likely prose)", 0.6
+                    return (
+                        False,
+                        f"टिप्पणी: केवल अक्षर संख्या से मेल ({syllable_count}) - छोटा पाठ, सम्भवतः गद्य (Only syllable count match - short text, likely prose)",
+                        0.6,
+                    )
                 else:
                     # Longer text with syllable match - uncertain
                     return True, "अक्षर संख्या से संभावित छन्द (Possible meter by syllable count - uncertain)", 0.5
 
             # VERY LOW CONFIDENCE: Likely prose
             if max_confidence > 0 and max_confidence < 5.0:
-                return False, f"टिप्पणी: न्यून विश्वास ({max_confidence:.1f}) - सम्भवतः गद्य (Low confidence - likely prose)", 0.7
+                return (
+                    False,
+                    f"टिप्पणी: न्यून विश्वास ({max_confidence:.1f}) - सम्भवतः गद्य (Low confidence - likely prose)",
+                    0.7,
+                )
 
         # No confidence scores available - use structural heuristics
 
@@ -1327,7 +1693,11 @@ class Chanda:
 
         # Criterion 6: Very long text without any match - likely prose
         if syllable_count > 30 and not confidence_scores:
-            return False, "टिप्पणी: लम्बा पाठ, कोई छन्द प्रतिरूप नहीं - सम्भवतः गद्य (Long text with no meter pattern - likely prose)", 0.7
+            return (
+                False,
+                "टिप्पणी: लम्बा पाठ, कोई छन्द प्रतिरूप नहीं - सम्भवतः गद्य (Long text with no meter pattern - likely prose)",
+                0.7,
+            )
 
         # Default: Uncertain - mark as uncertain prose
         return False, "टिप्पणी: कोई निश्चित छन्द प्रतिरूप नहीं मिला (No definite meter pattern matched)", 0.5
@@ -1339,11 +1709,11 @@ class Chanda:
     def split_into_padas(self, lg_pattern, num_padas=4):
         """
         Split L-G pattern into equal padas (quarters)
-        
+
         Args:
             lg_pattern: Full L-G pattern string
             num_padas: Number of padas to split into (default 4)
-        
+
         Returns:
             List of pada patterns, or None if not evenly divisible
         """
@@ -1363,10 +1733,10 @@ class Chanda:
     def get_meter_info(self, meter_name):
         """
         Get comprehensive meter information for display and validation.
-        
+
         Args:
             meter_name: Name of the meter (Devanagari or IAST)
-        
+
         Returns:
             Dictionary with meter details or None if not found:
             {
@@ -1404,17 +1774,17 @@ class Chanda:
     def validate_pattern(self, actual_lg, meter_name):
         """
         Validate if actual L-G pattern matches expected pattern for a meter.
-        
+
         Handles:
         - Single pada patterns (8 syllables for Anuṣṭubh)
         - Multi-pada patterns (16, 32 syllables)
         - Wildcard patterns (- means any syllable)
         - Pada-specific patterns for vishama meters
-        
+
         Args:
             actual_lg: Actual L-G pattern from the verse
             meter_name: Name of the identified meter
-        
+
         Returns:
             Dictionary with validation results:
             {
@@ -1433,7 +1803,7 @@ class Chanda:
                 'expected_pattern': None,
                 'actual_pattern': actual_lg,
                 'match_percentage': None,
-                'mismatches': []
+                'mismatches': [],
             }
 
         # Get base pattern
@@ -1508,6 +1878,7 @@ class Chanda:
             regex_pattern = expected.replace('-', '[LG]')
             try:
                 import re
+
                 pattern_re = re.compile(f'^{regex_pattern}$', re.IGNORECASE)
                 is_match = bool(pattern_re.match(actual_lg))
 
@@ -1528,7 +1899,7 @@ class Chanda:
                     'expected_pattern': expected,
                     'actual_pattern': actual_lg,
                     'match_percentage': round(match_pct, 1),
-                    'mismatches': [] if is_match else [('pattern_mismatch', expected, actual_lg)]
+                    'mismatches': [] if is_match else [('pattern_mismatch', expected, actual_lg)],
                 }
             except Exception:
                 pass
@@ -1537,6 +1908,7 @@ class Chanda:
         if '[' in expected or '?' in expected or '*' in expected:
             try:
                 import re
+
                 pattern_re = re.compile(f'^{expected}$', re.IGNORECASE)
                 is_match = bool(pattern_re.match(actual_lg))
                 return {
@@ -1544,7 +1916,7 @@ class Chanda:
                     'expected_pattern': expected,
                     'actual_pattern': actual_lg,
                     'match_percentage': 100 if is_match else 0,
-                    'mismatches': [] if is_match else [('pattern', expected, actual_lg)]
+                    'mismatches': [] if is_match else [('pattern', expected, actual_lg)],
                 }
             except Exception:
                 pass
@@ -1573,41 +1945,41 @@ class Chanda:
             'expected_pattern': expected,
             'actual_pattern': actual_lg,
             'match_percentage': round(match_pct, 1),
-            'mismatches': mismatches
+            'mismatches': mismatches,
         }
 
     def match_with_confidence(self, lg_pattern, fuzzy=False, max_fuzzy=10):
         """
         Multi-level matching with confidence scoring
-        
+
         IMPROVED: More conservative pada-level matching - requires pattern similarity,
         not just syllable count. This prevents false positives like matching
         any 16-syllable pattern to anuṣṭubh.
-        
+
         CONFIDENCE SCORING SYSTEM (0.0 - 10.0 scale):
         ================================================
         Level 1: Exact Matches (Highest Priority)
         - 10.0: Exact L-G pattern match (CONFIDENCE_EXACT_PATTERN)
         - 9.0:  Regex pattern match with wildcards (CONFIDENCE_EXACT_REGEX)
-        
+
         Level 2: Structural Matches (High Priority)
         - 9.0:  Exact pada-level sama pattern (CONFIDENCE_PADA_EXACT)
         - 8.0:  Vedic meter with sama pada structure (CONFIDENCE_PADA_VEDIC_SAMA)
         - 7.5:  Similar pada-level pattern (CONFIDENCE_PADA_SIMILAR)
         - 6.5:  Vedic meter with similar pada structure (CONFIDENCE_PADA_VEDIC_SIMILAR)
-        
+
         Level 3: Syllable Count Matches (Medium Priority)
         - 6.0:  Vedic meter by syllable count (CONFIDENCE_VEDIC_SYLLABLE)
         - 4.0:  Generic syllable count match (CONFIDENCE_SYLLABLE_COUNT)
-        
+
         Level 4: Fuzzy Matches (Low Priority - optional)
         - 1.0-4.0: Levenshtein distance-based match (CONFIDENCE_FUZZY_MIN to CONFIDENCE_FUZZY_MAX)
-        
+
         Args:
             lg_pattern (str): L-G pattern to match
             fuzzy (bool): Enable fuzzy matching (default: False)
             max_fuzzy (int): Maximum fuzzy results to return (default: 10)
-        
+
         Returns:
             List of tuples: [(meter_names, confidence_score, match_type), ...]
             Sorted by confidence (descending)
@@ -1637,10 +2009,7 @@ class Chanda:
 
                     # Check if padas are similar (allow 1-2 differences per pada)
                     # This is more lenient than exact sama but still structural
-                    similar_padas = all(
-                        Lev.distance(pada, first_pada) <= PATTERN_MISMATCH_MAX
-                        for pada in padas
-                    )
+                    similar_padas = all(Lev.distance(pada, first_pada) <= PATTERN_MISMATCH_MAX for pada in padas)
 
                     # Only proceed with pada matching if we have structural similarity
                     if all_sama or similar_padas:
@@ -1655,9 +2024,9 @@ class Chanda:
 
                         # Also check for Vedic meters by pada structure
                         vedic_pada_meters = {
-                            8: ('अनुष्टुभ्', 32),   # Anushtubh: 4×8
+                            8: ('अनुष्टुभ्', 32),  # Anushtubh: 4×8
                             11: ('त्रिष्टुभ्', 44),  # Trishtubh: 4×11
-                            12: ('जगती', 48),       # Jagati: 4×12
+                            12: ('जगती', 48),  # Jagati: 4×12
                         }
 
                         if pada_syllables in vedic_pada_meters:
@@ -1730,7 +2099,7 @@ class Chanda:
             - Second column contains name(s) of Jaati
         """
         jaati = defaultdict(list)
-        with open(file, 'r',encoding='utf-8') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -1754,7 +2123,7 @@ class Chanda:
             - Third column (optional) contains synonyms
         """
         matra_meters = defaultdict(list)
-        with open(file, 'r',encoding='utf-8') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -1778,7 +2147,7 @@ class Chanda:
                 while i < len(matra_sequence):
                     if i + 1 < len(matra_sequence):
                         # Try two-digit number
-                        two_digit = matra_sequence[i:i+2]
+                        two_digit = matra_sequence[i : i + 2]
                         if two_digit.isdigit() and 10 <= int(two_digit) <= 30:
                             pada_matras.append(int(two_digit))
                             i += 2
@@ -1826,7 +2195,7 @@ class Chanda:
         # Check if this is vedic CSV to extract pada patterns
         is_vedic_file = 'vedic' in chanda_file.lower()
 
-        with open(chanda_file, 'r',encoding='utf-8') as f:
+        with open(chanda_file, 'r', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = True
             for row in reader:
@@ -1845,9 +2214,7 @@ class Chanda:
                 gana_notation = ''.join(row[2].split()) if len(row) > 2 else ''
                 lakshana = gana_notation.translate(self.ttable_in)
                 lakshana = self.gana_to_lg(lakshana)
-                lakshana = lakshana.replace(
-                    '-', f"[{self.L}{self.G}]"
-                )
+                lakshana = lakshana.replace('-', f"[{self.L}{self.G}]")
 
                 # Extract raw L-G pattern and syllable/matra counts from CSV
                 raw_lg_pattern = row[3].strip() if len(row) > 3 else ''
@@ -1856,7 +2223,15 @@ class Chanda:
                 yati = row[6].strip() if len(row) > 6 else ''
 
                 # Store comprehensive meter info for pattern validation display
-                meter_type = 'vedic' if is_vedic_file else 'sama' if 'sama' in chanda_file.lower() else 'vishama' if 'vishama' in chanda_file.lower() else 'ardhasama'
+                meter_type = (
+                    'vedic'
+                    if is_vedic_file
+                    else 'sama'
+                    if 'sama' in chanda_file.lower()
+                    else 'vishama'
+                    if 'vishama' in chanda_file.lower()
+                    else 'ardhasama'
+                )
                 for name in names:
                     if name not in self.METER_INFO:
                         self.METER_INFO[name] = {
@@ -1867,7 +2242,7 @@ class Chanda:
                             'gana': gana_notation,
                             'type': meter_type,
                             'yati': yati,
-                            'padas': {}
+                            'padas': {},
                         }
                     # Store pada-specific pattern if pada number specified
                     if pada:
@@ -1875,7 +2250,7 @@ class Chanda:
                             'pattern': raw_lg_pattern or lakshana,
                             'syllables': syllable_count,
                             'matras': matra_count,
-                            'gana': gana_notation
+                            'gana': gana_notation,
                         }
 
                 # Store Vedic pada patterns for enhanced matching
@@ -1901,9 +2276,7 @@ class Chanda:
                 multi_lakshana.append(_lakshana)
 
                 if len(multi_pada) == 2:
-                    names = tuple(
-                        (_name, tuple(multi_pada)) for _name in _chanda_names
-                    )
+                    names = tuple((_name, tuple(multi_pada)) for _name in _chanda_names)
                     multi_chanda[''.join(multi_lakshana)].extend(names)
                     splits[''.join(multi_lakshana)].append(multi_lakshana)
 
@@ -1957,13 +2330,9 @@ class Chanda:
     def read_data(self):
         self.read_jaati(os.path.join(self.data_path, 'chanda_jaati.csv'))
         self.read_matra(os.path.join(self.data_path, 'chanda_matra.csv'))
-        definition_files = [
-            'chanda_sama.csv', 'chanda_ardhasama.csv', 'chanda_vishama.csv', 'chanda_vedic.csv'
-        ]
+        definition_files = ['chanda_sama.csv', 'chanda_ardhasama.csv', 'chanda_vishama.csv', 'chanda_vedic.csv']
         for chanda_file in definition_files:
-            self.read_chanda_definitions(
-                os.path.join(self.data_path, chanda_file)
-            )
+            self.read_chanda_definitions(os.path.join(self.data_path, chanda_file))
 
     # ----------------------------------------------------------------------- #
 
@@ -1999,15 +2368,12 @@ class Chanda:
 
     ###########################################################################
 
-    def transform(
-        self, source_line, signature,
-        replace_cost=1, delete_cost=1, insert_cost=1, max_diff=3
-    ):
+    def transform(self, source_line, signature, replace_cost=1, delete_cost=1, insert_cost=1, max_diff=3):
         """
         Find possible transformations of source string to fit the signature
-        
+
         Note: LRU cache removed - returns unhashable types (nested lists).
-        This method is called during fuzzy matching which is opt-in, 
+        This method is called during fuzzy matching which is opt-in,
         so performance impact is acceptable.
         """
         syllables, lg_marks = self.mark_lg(source_line)
@@ -2024,11 +2390,7 @@ class Chanda:
         distance = len(ops)
 
         # weights can be decided by an external agent
-        op_cost = {
-            'replace': replace_cost,
-            'delete': delete_cost,
-            'insert': insert_cost
-        }
+        op_cost = {'replace': replace_cost, 'delete': delete_cost, 'insert': insert_cost}
 
         cost = sum([op_cost[op[0]] for op in ops])
 
@@ -2074,9 +2436,7 @@ class Chanda:
                                         output_syllable += f'[{substitute}]'
                                         laghu = skt.is_laghu(syllable)
                                         if not laghu == (substitute == self.L):
-                                            tm = skt.toggle_matra(
-                                                syllable
-                                            )
+                                            tm = skt.toggle_matra(syllable)
                                             if tm:
                                                 # toggle was successful
                                                 output_syllable += f'{{{tm}}}'
@@ -2152,24 +2512,14 @@ class Chanda:
                 splits_data = self.SPLITS.get(lg_str, [])
                 if splits_data:
                     jaati = [
-                        "(" + ', '.join(
-                            ' / '.join(self.JAATI.get(len(split), self.JAATI[-1]))
-                            for split in splits
-                        ) + ")"
+                        "("
+                        + ', '.join(' / '.join(self.JAATI.get(len(split), self.JAATI[-1])) for split in splits)
+                        + ")"
                         for splits in splits_data
                     ]
-                    gana = [
-                        f"({', '.join(self.lg_to_gana(s) for s in splits)})"
-                        for splits in splits_data
-                    ]
-                    length = [
-                        f"({' + '.join(str(len(s)) for s in splits)})"
-                        for splits in splits_data
-                    ]
-                    matra = [
-                        f"({' + '.join(str(self.count_matra(s)) for s in splits)})"
-                        for splits in splits_data
-                    ]
+                    gana = [f"({', '.join(self.lg_to_gana(s) for s in splits)})" for splits in splits_data]
+                    length = [f"({' + '.join(str(len(s)) for s in splits)})" for splits in splits_data]
+                    matra = [f"({' + '.join(str(self.count_matra(s)) for s in splits)})" for splits in splits_data]
                 else:
                     jaati = []
                     gana = []
@@ -2191,7 +2541,7 @@ class Chanda:
             'is_fallback': bool(syllable_count_matches and not exact_chanda),
             'jaati': jaati,
             'length': length,
-            'matra': matra
+            'matra': matra,
         }
         return match
 
@@ -2201,7 +2551,7 @@ class Chanda:
         """
         Identify verse as a complete unit (Bug #2 fix)
         Aggregates multiple lines and processes them together.
-        
+
         ENHANCED: Now includes structure detection to properly prioritize
         Vedic meters over pada-level exact matches.
         """
@@ -2228,7 +2578,7 @@ class Chanda:
             'meter': meter_name,
             'total_syllables': total_syllables,
             'lg_str': lg_str,
-            'structure': structure  # Include structure for use in aggregation
+            'structure': structure,  # Include structure for use in aggregation
         }
 
         if meter_name:
@@ -2240,16 +2590,10 @@ class Chanda:
         """
         Identify Vedic meter by syllable count (Modal Logic).
         Uses empirical peak syllable counts from Rigveda data analysis.
-        
+
         Enhanced with composite meter detection for Pragātha, Virāṭ, etc.
         """
-        result = {
-            'mode': 'vedic',
-            'meter': None,
-            'confidence': 0.0,
-            'syllable_count': 0,
-            'debug': {}
-        }
+        result = {'mode': 'vedic', 'meter': None, 'confidence': 0.0, 'syllable_count': 0, 'debug': {}}
 
         # Clean and split text into lines
         lines = [ln.strip() for ln in text.replace('॥', '।').split('।') if ln.strip()]
@@ -2380,14 +2724,16 @@ class Chanda:
 
                         priority = METER_PRIORITY.get(meter_name, 10)
 
-                        candidates.append({
-                            'meter': meter_name,
-                            'meter_en': meter_info['name_en'],
-                            'diff': diff,
-                            'confidence': confidence,
-                            'peak': peak,
-                            'priority': priority
-                        })
+                        candidates.append(
+                            {
+                                'meter': meter_name,
+                                'meter_en': meter_info['name_en'],
+                                'diff': diff,
+                                'confidence': confidence,
+                                'peak': peak,
+                                'priority': priority,
+                            }
+                        )
 
         # PADA-FIRST APPROACH: Use pada structure as the PRIMARY discriminator
         # This is critical for disambiguating Trishtubh/Pankti/Jagati which overlap in syllable count
@@ -2395,13 +2741,13 @@ class Chanda:
 
         # Expected pada structures for major meters (padas, avg_syllables_per_pada, allowed_range)
         PADA_EXPECTED = {
-            'गायत्री': (3, 8, (7.5, 8.5)),    # 3 padas of 8 syllables
-            'उष्णिक्': (3, 9.3, (8.5, 10)),   # 3 padas, ~9.3 avg (28/3)
+            'गायत्री': (3, 8, (7.5, 8.5)),  # 3 padas of 8 syllables
+            'उष्णिक्': (3, 9.3, (8.5, 10)),  # 3 padas, ~9.3 avg (28/3)
             'अनुष्टुभ्': (4, 8, (7.5, 8.5)),  # 4 padas of 8 syllables
-            'बृहती': (4, 9, (8.5, 9.5)),      # 4 padas, ~9 avg (36/4)
-            'पङ्क्ति': (5, 8, (7.5, 8.5)),    # 5 padas of 8 syllables - KEY: 5 padas!
-            'त्रिष्टुभ्': (4, 11, (9.5, 11.5)), # 4 padas of 11 syllables - KEY: avg 10-11
-            'जगती': (4, 12, (11.5, 13)),      # 4 padas of 12 syllables - KEY: avg 12+
+            'बृहती': (4, 9, (8.5, 9.5)),  # 4 padas, ~9 avg (36/4)
+            'पङ्क्ति': (5, 8, (7.5, 8.5)),  # 5 padas of 8 syllables - KEY: 5 padas!
+            'त्रिष्टुभ्': (4, 11, (9.5, 11.5)),  # 4 padas of 11 syllables - KEY: avg 10-11
+            'जगती': (4, 12, (11.5, 13)),  # 4 padas of 12 syllables - KEY: avg 12+
         }
 
         padas = self._split_into_padas(text)
@@ -2419,7 +2765,7 @@ class Chanda:
                 # Dvipadā Virāṭ + Virāṭ zone (18-20 syllables)
                 # 19: Dvipadā Virāṭ 47% + Virāṭ 46% = 93% Virāṭ-family, 7% Gāyatrī
                 # 20: Virāṭ 48% + Dvipadā Virāṭ 35% = 83% Virāṭ-family, 12% Gāyatrī
-                18: {'द्विपदा विराट्': 70},   # 100% Dvipadā Virāṭ
+                18: {'द्विपदा विराट्': 70},  # 100% Dvipadā Virāṭ
                 19: {'द्विपदा विराट्': 40, 'विराट्': 35},  # Both Virāṭ types dominate
                 20: {'विराट्': 40, 'द्विपदा विराट्': 35},  # Virāṭ 48%, Dvipadā 35%
                 # Transition zone - Gāyatrī takes over at 21+
@@ -2427,41 +2773,41 @@ class Chanda:
                 22: {'गायत्री': 65, 'द्विपदा त्रिष्टुभ्': 10},  # Gāyatrī 97%
                 # Gayatri vs Usnik overlap (23-26)
                 # Key: Gayatri peak=24, Usnik peak=28
-                23: {'गायत्री': 65},       # Gāyatrī 99%
-                24: {'गायत्री': 65},       # Gayatri peak at 24 (strong)
+                23: {'गायत्री': 65},  # Gāyatrī 99%
+                24: {'गायत्री': 65},  # Gayatri peak at 24 (strong)
                 25: {'गायत्री': 10, 'उष्णिक्': 25},  # Usnik 50% vs Gayatri 20% but Gayatri has MORE verses
                 26: {'उष्णिक्': 35, 'ककुभ्': 20},  # Usnik 63%, Kakubh starts
                 # Usnik vs Anushtubh overlap (27-30)
-                27: {'उष्णिक्': 50},       # Usnik 73%
-                28: {'उष्णिक्': 45},       # Usnik 69%
-                29: {'अनुष्टुभ्': 35},     # Anushtubh 64% (critical - winning over Usnik!)
-                30: {'अनुष्टुभ्': 50},     # Anushtubh 75%
-                31: {'अनुष्टुभ्': 55},     # Anushtubh 80% (PEAK)
-                32: {'अनुष्टुभ्': 50},     # Anushtubh 76%
+                27: {'उष्णिक्': 50},  # Usnik 73%
+                28: {'उष्णिक्': 45},  # Usnik 69%
+                29: {'अनुष्टुभ्': 35},  # Anushtubh 64% (critical - winning over Usnik!)
+                30: {'अनुष्टुभ्': 50},  # Anushtubh 75%
+                31: {'अनुष्टुभ्': 55},  # Anushtubh 80% (PEAK)
+                32: {'अनुष्टुभ्': 50},  # Anushtubh 76%
                 # Brhati zone (33-36 syllables) - complex overlap
                 # At 33: Anuṣṭubh 40%, Virāṭ 22%, Bṛhatī 19%, Pragātha 16%
                 # At 34: Bṛhatī 48%, Pragātha 44% - Bṛhatī dominates
                 33: {'अनुष्टुभ्': 30, 'विराट्': 20, 'बृहती': 15, 'प्रगाथ': 12},  # Anuṣṭubh leads at 33!
-                34: {'बृहती': 25, 'प्रगाथ': 20},                 # Brhati 48%, Pragatha 40%
-                35: {'बृहती': 25, 'प्रगाथ': 22},                 # Brhati 47%, Pragatha 42% (PEAK)
-                36: {'बृहती': 20, 'प्रगाथ': 15},                 # Brhati 47%, Pragatha 33%
+                34: {'बृहती': 25, 'प्रगाथ': 20},  # Brhati 48%, Pragatha 40%
+                35: {'बृहती': 25, 'प्रगाथ': 22},  # Brhati 47%, Pragatha 42% (PEAK)
+                36: {'बृहती': 20, 'प्रगाथ': 15},  # Brhati 47%, Pragatha 33%
                 37: {'पङ्क्ति': 30, 'प्रगाथ': 30, 'बृहती': -10},  # Pankti=Pragatha 34%, Brhati 10% (penalize)
                 # Pankti/Pragatha/Trishtubh overlap zone (38-41 syllables)
                 # Based on analysis of OUR syllable counting
                 38: {'पङ्क्ति': 30, 'प्रगाथ': 20, 'बृहती': 5},  # Pankti 35%, Pragatha 21%, Brhati 13%
                 39: {'प्रगाथ': 30, 'त्रिष्टुभ्': 20, 'पङ्क्ति': 20},  # Pragatha 33%, Trishtubh 24%, Pankti 22%
-                40: {'त्रिष्टुभ्': 40, 'पङ्क्ति': 8},           # Trishtubh 55%, Pankti/Pragatha ~12% each
-                41: {'त्रिष्टुभ्': 50},     # Trishtubh 95%
+                40: {'त्रिष्टुभ्': 40, 'पङ्क्ति': 8},  # Trishtubh 55%, Pankti/Pragatha ~12% each
+                41: {'त्रिष्टुभ्': 50},  # Trishtubh 95%
                 # Trishtubh vs Jagati overlap (using OUR computed syllables)
                 # At 42-44: Triṣṭubh dominates (97-99%), at 45: still leads (67%)
-                42: {'त्रिष्टुभ्': 50},     # 99.7% Trishtubh
-                43: {'त्रिष्टुभ्': 50},     # 99.0% Trishtubh
-                44: {'त्रिष्टुभ्': 40},     # 97.4% Trishtubh
+                42: {'त्रिष्टुभ्': 50},  # 99.7% Trishtubh
+                43: {'त्रिष्टुभ्': 50},  # 99.0% Trishtubh
+                44: {'त्रिष्टुभ्': 40},  # 97.4% Trishtubh
                 45: {'त्रिष्टुभ्': 20, 'महापङ्क्ति': 15},  # 66.7% Trishtubh, 32.1% Jagati, Mahapankti starts
                 46: {'जगती': 30, 'महापङ्क्ति': 35},  # Mahapankti peak=47 but range starts
                 47: {'जगती': 40, 'महापङ्क्ति': 40},  # Both peak here
-                48: {'जगती': 60},          # 100% Jagati
-                49: {'जगती': 60},          # 100% Jagati
+                48: {'जगती': 60},  # 100% Jagati
+                49: {'जगती': 60},  # 100% Jagati
             }
 
             # Apply likelihood bonus
@@ -2506,10 +2852,12 @@ class Chanda:
             # Sort by: 1) combined score (higher better), 2) distance from peak (lower better)
             # Combined score = pada_score * 2 - diff * 10 + priority + likelihood_bonus
             for cand in candidates:
-                cand['combined_score'] = (cand.get('pada_score', 0) * 2
-                                         - cand['diff'] * 10
-                                         + cand['priority']
-                                         + cand.get('likelihood_bonus', 0))
+                cand['combined_score'] = (
+                    cand.get('pada_score', 0) * 2
+                    - cand['diff'] * 10
+                    + cand['priority']
+                    + cand.get('likelihood_bonus', 0)
+                )
 
             candidates.sort(key=lambda x: (-x['combined_score'], x['diff']))
             best = candidates[0]
@@ -2548,9 +2896,9 @@ class Chanda:
     def _split_into_padas(self, text):
         """
         Split Vedic verse text into padas (metrical feet).
-        
+
         Returns a list of (pada_text, syllable_count) tuples.
-        
+
         Splitting strategy:
         1. Use explicit pada markers (।, ॥)
         2. If no markers, use line breaks
@@ -2577,9 +2925,9 @@ class Chanda:
     def _split_into_vedic_padas(self, verse_text):
         """
         Split a Vedic verse into 2 pādas (not 4 like classical Sanskrit).
-        
+
         Vedic verses typically have 2 pādas per ṛk (verse unit).
-        
+
         Returns: list of (pada_text, syllable_count) tuples
         """
         # Clean the verse
@@ -2639,7 +2987,7 @@ class Chanda:
     def _split_into_verses(self, text):
         """
         Split text into individual verses (ṛks) using double danda or newlines.
-        
+
         Returns: list of verse strings
         """
         # First try double danda (॥)
@@ -2662,18 +3010,18 @@ class Chanda:
     def _detect_pragatha(self, verses):
         """
         Detect Pragātha meter from a list of verses.
-        
+
         Pragātha is a 2-verse compound structure where each verse has:
         - 1st pāda: Triṣṭubh (11 syllables)
         - 2nd pāda: Jagatī (12 syllables)
-        
+
         Pattern: [11, 12] + [11, 12] across 2 consecutive verses
-        
+
         Parameters:
         -----------
         verses : list
             List of verse strings (at least 2 for Pragātha detection)
-            
+
         Returns:
         --------
         tuple: (is_pragatha: bool, pattern_info: dict or None)
@@ -2695,13 +3043,15 @@ class Chanda:
             # Get syllable counts for first 2 padas
             syllables = [p[1] for p in padas[:2]]
             patterns.append(syllables)
-            verse_details.append({
-                'verse_num': i + 1,
-                'padas': padas,
-                'syllables': syllables,
-                'pada1_meter': 'Triṣṭubh' if 10 <= syllables[0] <= 12 else 'Unknown',
-                'pada2_meter': 'Jagatī' if 11 <= syllables[1] <= 13 else 'Unknown',
-            })
+            verse_details.append(
+                {
+                    'verse_num': i + 1,
+                    'padas': padas,
+                    'syllables': syllables,
+                    'pada1_meter': 'Triṣṭubh' if 10 <= syllables[0] <= 12 else 'Unknown',
+                    'pada2_meter': 'Jagatī' if 11 <= syllables[1] <= 13 else 'Unknown',
+                }
+            )
 
         # Check for Pragātha pattern: [11, 12] + [11, 12]
         # Allow variance: 10-12 for Triṣṭubh, 11-13 for Jagatī
@@ -2755,10 +3105,10 @@ class Chanda:
     def _detect_pragatha_single_verse(self, text):
         """
         Detect if a single verse matches Pragātha pada structure (11+12).
-        
+
         This is used when we only have one verse but want to check if it
         follows the Triṣṭubh + Jagatī pattern.
-        
+
         Returns: (is_match: bool, confidence: float, details: dict)
         """
         padas = self._split_into_vedic_padas(text)
@@ -2780,20 +3130,24 @@ class Chanda:
             if p1_syls == 11 and p2_syls == 12:
                 confidence = 1.0
 
-            return True, confidence, {
-                'pada1': {'syllables': p1_syls, 'meter': 'त्रिष्टुभ्'},
-                'pada2': {'syllables': p2_syls, 'meter': 'जगती'},
-                'total': p1_syls + p2_syls,
-            }
+            return (
+                True,
+                confidence,
+                {
+                    'pada1': {'syllables': p1_syls, 'meter': 'त्रिष्टुभ्'},
+                    'pada2': {'syllables': p2_syls, 'meter': 'जगती'},
+                    'total': p1_syls + p2_syls,
+                },
+            )
 
         return False, 0.0, {}
 
     def _detect_composite_meter(self, text, total_syllables):
         """
         Detect composite meters (Pragātha, Virāṭ, etc.) based on structural analysis.
-        
+
         These meters require pada-level structure analysis, not just total syllable count.
-        
+
         Returns: (meter_name, confidence) or (None, 0.0)
         """
         padas = self._split_into_padas(text)
@@ -2844,10 +3198,10 @@ class Chanda:
             if num_padas == 4:
                 p1, p2, p3, p4 = pada_syllables[:4]
                 # Bṛhatī: First two short (8), third long (12), fourth short (8)
-                if (6 <= p1 <= 10 and 6 <= p2 <= 10 and 10 <= p3 <= 14 and 6 <= p4 <= 10):
+                if 6 <= p1 <= 10 and 6 <= p2 <= 10 and 10 <= p3 <= 14 and 6 <= p4 <= 10:
                     return 'बृहती', 0.8
                 # Satobṛhatī: First long (12), second short (8), third long (12), fourth short (8)
-                if (10 <= p1 <= 14 and 6 <= p2 <= 10 and 10 <= p3 <= 14 and 6 <= p4 <= 10):
+                if 10 <= p1 <= 14 and 6 <= p2 <= 10 and 10 <= p3 <= 14 and 6 <= p4 <= 10:
                     return 'बृहती', 0.75  # Satobṛhatī is in Bṛhatī family
 
         # Check for refrain patterns (Jyotis, Mahāpaṅkti)
@@ -2859,54 +3213,54 @@ class Chanda:
 
     # Paṅkti-EXCLUSIVE endings (appear in Paṅkti, ZERO in Pragātha - from Rigveda analysis)
     PANKTI_EXCLUSIVE_ENDINGS = [
-        'उत्तरः',        # 23 in Paṅkti, 0 in Pragātha
-        'स्वराज्यं',     # 19 in Paṅkti, 0 in Pragātha
-        'स्रव',          # 19 in Paṅkti, 0 in Pragātha
-        'विवक्षसे',     # 17 in Paṅkti, 0 in Pragātha
-        'अश्वसूनृते',   # 10 in Paṅkti, 0 in Pragātha
-        'तुवीमघ',       # 7 in Paṅkti, 0 in Pragātha
-        'हरी',          # 5 in Paṅkti, 0 in Pragātha (as final word)
-        'चनाममत्',     # 3 in Paṅkti, 0 in Pragātha
+        'उत्तरः',  # 23 in Paṅkti, 0 in Pragātha
+        'स्वराज्यं',  # 19 in Paṅkti, 0 in Pragātha
+        'स्रव',  # 19 in Paṅkti, 0 in Pragātha
+        'विवक्षसे',  # 17 in Paṅkti, 0 in Pragātha
+        'अश्वसूनृते',  # 10 in Paṅkti, 0 in Pragātha
+        'तुवीमघ',  # 7 in Paṅkti, 0 in Pragātha
+        'हरी',  # 5 in Paṅkti, 0 in Pragātha (as final word)
+        'चनाममत्',  # 3 in Paṅkti, 0 in Pragātha
     ]
 
     # Paṅkti-exclusive word sequences (100% precision)
     PANKTI_EXCLUSIVE_SEQUENCES = [
-        'परि स्रव',             # 19 in Paṅkti
-        'इंद्र उत्तरः',          # 16+ in Paṅkti
-        'विश्वस्मादिंद्र उत्तरः',# Complete phrase
-        'अस्य रोदसी',           # 10 in Paṅkti
-        'सुजाते अश्वसूनृते',    # 10 in Paṅkti
-        'श्रुतं हवं',            # 9 in Paṅkti
-        'सहस्रेषु तुवीमघ',     # 7 in Paṅkti
-        'ते हरी',               # 5 in Paṅkti
-        'नो वृधे',              # 4 in Paṅkti
-        'वस्वीरनु स्वराज्यं',   # 3 in Paṅkti
-        'किं चनाममत्',         # 3 in Paṅkti
-        'अधि धन्वसु',          # 3 in Paṅkti
-        'इंद्रस्य रातयः',       # 3 in Paṅkti
+        'परि स्रव',  # 19 in Paṅkti
+        'इंद्र उत्तरः',  # 16+ in Paṅkti
+        'विश्वस्मादिंद्र उत्तरः',  # Complete phrase
+        'अस्य रोदसी',  # 10 in Paṅkti
+        'सुजाते अश्वसूनृते',  # 10 in Paṅkti
+        'श्रुतं हवं',  # 9 in Paṅkti
+        'सहस्रेषु तुवीमघ',  # 7 in Paṅkti
+        'ते हरी',  # 5 in Paṅkti
+        'नो वृधे',  # 4 in Paṅkti
+        'वस्वीरनु स्वराज्यं',  # 3 in Paṅkti
+        'किं चनाममत्',  # 3 in Paṅkti
+        'अधि धन्वसु',  # 3 in Paṅkti
+        'इंद्रस्य रातयः',  # 3 in Paṅkti
     ]
 
     # Traditional Paṅkti refrains (from Rigveda analysis)
     PANKTI_REFRAINS = [
-        'आ तू न इंद्र शंसय',   # Very long refrain
-        'स्तोतृभ्य आ भर',      #
-        'माध्वी मम श्रुतं हवं', #
-        'भद्रा इंद्रस्य रातयः', #
-        'ज्याका अधि धन्वसु',   #
-        'मे अस्य रोदसी',       #
+        'आ तू न इंद्र शंसय',  # Very long refrain
+        'स्तोतृभ्य आ भर',  #
+        'माध्वी मम श्रुतं हवं',  #
+        'भद्रा इंद्रस्य रातयः',  #
+        'ज्याका अधि धन्वसु',  #
+        'मे अस्य रोदसी',  #
         'अर्चन्ननु स्वराज्यं',  # Common refrain
-        'वस्वीरनु स्वराज्यं',   # Variant
+        'वस्वीरनु स्वराज्यं',  # Variant
     ]
 
     def _detect_pankti_signals(self, text, syllable_count):
         """
         Detect Paṅkti-specific signals in verse text.
-        
+
         Based on empirical analysis of Rigveda:
         - Paṅkti has exclusive word endings (100% precision)
         - Paṅkti has characteristic refrain patterns
         - These signals are ABSENT in Pragātha
-        
+
         Returns a score: higher = more likely Paṅkti
         """
         score = 0.0
@@ -2943,7 +3297,7 @@ class Chanda:
     def _detect_refrain_pattern(self, text):
         """
         Detect meters that have characteristic refrain patterns.
-        
+
         Jyotis often ends with 'सजोषसा' or 'उषसा सूर्येण च'
         Mahāpaṅkti may have 'नभंतामन्यके समे'
         """
@@ -2970,13 +3324,15 @@ class Chanda:
                 if expected:
                     diff = abs(syllable_count - expected)
                     confidence = max(0.5, 1.0 - (diff * 0.05))
-                    candidates.append({
-                        'name': meter_name,
-                        'name_en': name_en,
-                        'expected': expected,
-                        'diff': diff,
-                        'confidence': confidence
-                    })
+                    candidates.append(
+                        {
+                            'name': meter_name,
+                            'name_en': name_en,
+                            'expected': expected,
+                            'diff': diff,
+                            'confidence': confidence,
+                        }
+                    )
 
         if candidates:
             candidates.sort(key=lambda x: (-x['expected'], x['diff']))
@@ -2992,9 +3348,9 @@ class Chanda:
         If `verse` is True, treat the input as collection of verses.
         NOTE: Currently assumes 4 lines per verse.
         TODO: Add support for 2 lines per verse too. (i.e. 2 pada in same line)
-        
+
         Bug #2 Fix: Implements verse-level holistic processing
-        
+
         Parameters
         ----------
         use_sandhi : bool, optional
@@ -3046,9 +3402,7 @@ class Chanda:
                 # 40 (Paṅkti), 44 (Triṣṭubh), 48 (Jagatī)
                 vedic_syllable_counts = {24, 32, 36, 40, 44, 48}
                 # Also allow ±3 tolerance (Vedic verses can have slight variations)
-                is_vedic_count = any(
-                    abs(total_syllables - vc) <= 3 for vc in vedic_syllable_counts
-                )
+                is_vedic_count = any(abs(total_syllables - vc) <= 3 for vc in vedic_syllable_counts)
 
                 if is_vedic_count:
                     # Replace single dandas with spaces to prevent splitting
@@ -3091,16 +3445,12 @@ class Chanda:
                 'display_chanda_hidden_count': 0,
                 'display_jaati': '',
                 'fuzzy': [],
-                'confidence_scores': {}
+                'confidence_scores': {},
             }
             # Return a structure that matches expected output format
             return {
-                'result': {
-                    'line': [{'line': text, 'result': invalid_result}],
-                    'verse': [],
-                    'pragatha': None
-                },
-                'path': None
+                'result': {'line': [{'line': text, 'result': invalid_result}], 'verse': [], 'pragatha': None},
+                'path': None,
             }
         # =====================================================================
 
@@ -3127,14 +3477,10 @@ class Chanda:
             # First, get holistic verse-level analysis
             verse_aggregates = []
             for i in range(0, len(lines), 4):
-                verse_lines = lines[i:i+4]
+                verse_lines = lines[i : i + 4]
                 if verse_lines:
                     holistic_result = self.identify_verse_holistically(verse_lines)
-                    verse_aggregates.append({
-                        'lines': verse_lines,
-                        'holistic': holistic_result,
-                        'start_idx': i
-                    })
+                    verse_aggregates.append({'lines': verse_lines, 'holistic': holistic_result, 'start_idx': i})
 
         for line in lines:
             if not line:
@@ -3147,18 +3493,10 @@ class Chanda:
             else:
                 line_result = self.identify_line(original_line, fuzzy=fuzzy)
 
-            line_results.append({
-                'line': line,
-                'result': line_result
-            })
+            line_results.append({'line': line, 'result': line_result})
 
         if verse:
-            verse_result = {
-                'chanda': None,
-                'scheme': scheme,
-                'scores': [],
-                'lines': []
-            }
+            verse_result = {'chanda': None, 'scheme': scheme, 'scores': [], 'lines': []}
 
             line_count = 0
             ongoing_score = Counter()
@@ -3302,7 +3640,7 @@ class Chanda:
                                             if current_conf < CONFIDENCE_VEDIC_CLASSICAL_MAP:
                                                 confidence_scores[meter_name] = (
                                                     CONFIDENCE_VEDIC_CLASSICAL_MAP,
-                                                    f'vedic_classical_map_{current_type}'
+                                                    f'vedic_classical_map_{current_type}',
                                                 )
                     # =====================================================================
 
@@ -3330,10 +3668,7 @@ class Chanda:
                     verse_scores = ongoing_score.most_common()
                     if verse_scores:
                         best_score = verse_scores[0][1]
-                        tied_meters = [
-                            _c
-                            for _c, _score in verse_scores if _score == best_score
-                        ]
+                        tied_meters = [_c for _c, _score in verse_scores if _score == best_score]
 
                         # Tiebreaker: prefer specific classical meters over generic Vedic ones
                         # Vedic category meters (generic): त्रिष्टुभ्, जगती, गायत्री, अनुष्टुभ्, etc.
@@ -3357,23 +3692,13 @@ class Chanda:
                         priority_fuzzy = []
                         existing_fuzzy = line_result['result']['fuzzy']
                         for idx, fuzzy_match in enumerate(existing_fuzzy):
-                            if any([
-                                (x in best_matches[0])
-                                for x in [c[0] for c in fuzzy_match['chanda']]
-                            ]):
+                            if any([(x in best_matches[0]) for x in [c[0] for c in fuzzy_match['chanda']]]):
                                 priority_fuzzy.append(existing_fuzzy.pop(idx))
-                        line_result['result']['fuzzy'] = (
-                            priority_fuzzy + existing_fuzzy
-                        )
+                        line_result['result']['fuzzy'] = priority_fuzzy + existing_fuzzy
 
                     verse_results.append(verse_result)
                     # reset
-                    verse_result = {
-                        'chanda': None,
-                        'scheme': scheme,
-                        'scores': [],
-                        'lines': []
-                    }
+                    verse_result = {'chanda': None, 'scheme': scheme, 'scores': [], 'lines': []}
                     ongoing_score = Counter()
 
         # =====================================================================
@@ -3387,6 +3712,7 @@ class Chanda:
         if mode == 'auto' and verse:
             try:
                 from core.text_classifier import classify_text
+
                 text_class, classifier_confidence = classify_text(text)
                 # Use classifier result if confidence is high enough
                 if classifier_confidence >= 0.6:
@@ -3448,12 +3774,14 @@ class Chanda:
                 vm_score = 10.0 * vedic_mode_result['confidence']
 
                 # Override verse results - collapse into single verse result
-                verse_results = [{
-                    'chanda': ([vm_name], vm_score),
-                    'scheme': scheme,
-                    'scores': [(vm_name, vm_score)],
-                    'lines': list(range(len(line_results)))
-                }]
+                verse_results = [
+                    {
+                        'chanda': ([vm_name], vm_score),
+                        'scheme': scheme,
+                        'scores': [(vm_name, vm_score)],
+                        'lines': list(range(len(line_results))),
+                    }
+                ]
 
                 # Update line results to reflect the Vedic meter
                 for lr in line_results:
@@ -3474,7 +3802,9 @@ class Chanda:
 
                     # Update display_chanda_primary
                     if 'display_chanda_primary' in lr['result'] and lr['result']['display_chanda_primary']:
-                        lr['result']['display_chanda_primary'] = f"{formatted_vm} | {lr['result']['display_chanda_primary']}"
+                        lr['result']['display_chanda_primary'] = (
+                            f"{formatted_vm} | {lr['result']['display_chanda_primary']}"
+                        )
                     else:
                         lr['result']['display_chanda_primary'] = formatted_vm
 
@@ -3492,8 +3822,22 @@ class Chanda:
             if verse_results and verse_results[0].get('chanda'):
                 verse_meter = verse_results[0]['chanda'][0][0] if verse_results[0]['chanda'][0] else ''
                 # Check if the detected meter is Vedic
-                vedic_meter_names = ['गायत्री', 'त्रिष्टुभ्', 'जगती', 'अनुष्टुभ्', 'पंक्ति', 'उष्णिह्', 'बृहती',
-                                     'Gāyatrī', 'Triṣṭubh', 'Jagatī', 'Anuṣṭubh', 'Paṅkti', 'Uṣṇih', 'Bṛhatī']
+                vedic_meter_names = [
+                    'गायत्री',
+                    'त्रिष्टुभ्',
+                    'जगती',
+                    'अनुष्टुभ्',
+                    'पंक्ति',
+                    'उष्णिह्',
+                    'बृहती',
+                    'Gāyatrī',
+                    'Triṣṭubh',
+                    'Jagatī',
+                    'Anuṣṭubh',
+                    'Paṅkti',
+                    'Uṣṇih',
+                    'Bṛhatī',
+                ]
                 if any(vm.lower() in verse_meter.lower() for vm in vedic_meter_names):
                     effective_mode_used = 'vedic'
                 else:
@@ -3503,7 +3847,7 @@ class Chanda:
             'line': line_results,
             'verse': verse_results,
             'pragatha': pragatha_detected,  # Pragātha detection info if detected
-            'effective_mode': effective_mode_used  # The actual mode used for identification
+            'effective_mode': effective_mode_used,  # The actual mode used for identification
         }
 
         simple_result = []
@@ -3515,15 +3859,11 @@ class Chanda:
                 simple_result.append("")
                 for line_id in verse_result['lines']:
                     line_result = line_results[line_id]
-                    simple_result.append(
-                        self.format_line_result(line_result['result'])
-                    )
+                    simple_result.append(self.format_line_result(line_result['result']))
                 simple_result.append("")
         else:
             for line_result in line_results:
-                simple_result.append(
-                    self.format_line_result(line_result['result'])
-                )
+                simple_result.append(self.format_line_result(line_result['result']))
                 simple_result.append("")
 
         if save_path is not None:
@@ -3546,14 +3886,8 @@ class Chanda:
             json_filename = None
             txt_filename = None
 
-        paths = {
-            'json': json_filename,
-            'txt': txt_filename
-        }
-        return {
-            'result': results,
-            'path': paths
-        }
+        paths = {'json': json_filename, 'txt': txt_filename}
+        return {'result': results, 'path': paths}
 
     # ----------------------------------------------------------------------- #
 
@@ -3601,7 +3935,7 @@ class Chanda:
                 'display_chanda_hidden_count': 0,
                 'display_jaati': '',
                 'fuzzy': [],
-                'confidence_scores': {}
+                'confidence_scores': {},
             }
         # =====================================================================
 
@@ -3661,13 +3995,13 @@ class Chanda:
         syllable_count = len(lg_str)
         vedic_syllable_counts = {
             # Only meters where syllable count = single pada OR full verse with 4 padas
-            24: 'गायत्री',        # Standard Gāyatrī - 3×8 (also valid as single input)
-            28: 'उष्णिक्',         # Uṣṇik - 4×7
-            32: 'अनुष्टुभ्',       # Anuṣṭubh - 4×8
-            36: 'बृहती',          # Bṛhatī - 4×9
-            40: 'पङ्क्ति',         # Paṅkti - 5×8
-            44: 'त्रिष्टुभ्',      # Triṣṭubh - 4×11
-            48: 'जगती'           # Jagatī - 4×12
+            24: 'गायत्री',  # Standard Gāyatrī - 3×8 (also valid as single input)
+            28: 'उष्णिक्',  # Uṣṇik - 4×7
+            32: 'अनुष्टुभ्',  # Anuṣṭubh - 4×8
+            36: 'बृहती',  # Bṛhatī - 4×9
+            40: 'पङ्क्ति',  # Paṅkti - 5×8
+            44: 'त्रिष्टुभ्',  # Triṣṭubh - 4×11
+            48: 'जगती',  # Jagatī - 4×12
             # NOT included: 21 (Nicṛt Gāyatrī) - conflicts with Sragdharā pada
             # NOT included: 27 (Bhurik Gāyatrī) - needs 3-pada verse structure
         }
@@ -3682,8 +4016,7 @@ class Chanda:
 
         # Use pre-compiled regex patterns for massive performance boost
         # Previously: ~40ms per verse, Now: ~0.2ms per verse
-        regex_matches = [k for k, compiled_re in self._compiled_patterns.items()
-                        if compiled_re.match(lg_str)]
+        regex_matches = [k for k, compiled_re in self._compiled_patterns.items() if compiled_re.match(lg_str)]
 
         if regex_matches:
             found = True
@@ -3709,12 +4042,7 @@ class Chanda:
                 matra += multi_match['matra']
 
             if is_regex_match:
-                chanda += [
-                    c
-                    for m in regex_matches
-                    for c in self.CHANDA.get(m)
-                    if c not in chanda
-                ]
+                chanda += [c for m in regex_matches for c in self.CHANDA.get(m) if c not in chanda]
 
         full_lg = [self.output_map.get(c, c) for c in direct_match['lg']]
         full_length = len(lg_str)
@@ -3769,7 +4097,9 @@ class Chanda:
         # This ensures Indravajra (exact pattern) beats Trishtubh (syllable count)
         # but Anushtubh still works when there's no other pattern match.
         # =====================================================================
-        has_non_vedic_exact_match = bool(true_exact_matches - {vedic_priority_meter}) if vedic_priority_meter else bool(true_exact_matches)
+        has_non_vedic_exact_match = (
+            bool(true_exact_matches - {vedic_priority_meter}) if vedic_priority_meter else bool(true_exact_matches)
+        )
 
         if vedic_priority_meter:
             if has_non_vedic_exact_match:
@@ -3792,16 +4122,22 @@ class Chanda:
         # CRITICAL: If we have TRUE exact pattern matches, use ONLY those
         # Plus include Vedic meter as secondary option
         if true_exact_matches:
-            chanda = [c for c in chanda
-                     if (c[0] if isinstance(c, tuple) else c) in true_exact_matches
-                     or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter]
+            chanda = [
+                c
+                for c in chanda
+                if (c[0] if isinstance(c, tuple) else c) in true_exact_matches
+                or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter
+            ]
             found = True
         elif regex_pattern_matches:
             # Fall back to regex matches
             # BUT also include Vedic priority meter if present
-            chanda = [c for c in chanda
-                     if (c[0] if isinstance(c, tuple) else c) in regex_pattern_matches
-                     or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter]
+            chanda = [
+                c
+                for c in chanda
+                if (c[0] if isinstance(c, tuple) else c) in regex_pattern_matches
+                or (c[0] if isinstance(c, tuple) else c) == vedic_priority_meter
+            ]
             # Ensure Vedic priority meter is in the list
             if vedic_priority_meter:
                 vedic_tuple = (vedic_priority_meter, ('',))
@@ -3881,7 +4217,7 @@ class Chanda:
                                 if current_conf < CONFIDENCE_VEDIC_CLASSICAL_MAP:
                                     confidence_map[meter_name] = (
                                         CONFIDENCE_VEDIC_CLASSICAL_MAP,
-                                        f'vedic_classical_map_{current_type}'
+                                        f'vedic_classical_map_{current_type}',
                                     )
             # =====================================================================
 
@@ -3900,15 +4236,37 @@ class Chanda:
 
                 # List of Vedic meter names (which should use Vedic range fallback instead)
                 vedic_meter_names = {
-                    'गायत्री', 'gāyatrī', 'gayatri', 'Gāyatrī',
-                    'त्रिष्टुभ्', 'triṣṭubh', 'tristubh', 'Triṣṭubh',
-                    'जगती', 'jagatī', 'jagati', 'Jagatī',
-                    'अनुष्टुभ्', 'anuṣṭubh', 'anustubh', 'Anuṣṭubh',
-                    'उष्णिक्', 'uṣṇik', 'usnik',
-                    'बृहती', 'bṛhatī', 'brhati',
-                    'पङ्क्ति', 'paṅkti', 'pankti',
-                    'प्रगाथ', 'pragātha', 'pragatha',
-                    'विराट्', 'virāṭ', 'virat',
+                    'गायत्री',
+                    'gāyatrī',
+                    'gayatri',
+                    'Gāyatrī',
+                    'त्रिष्टुभ्',
+                    'triṣṭubh',
+                    'tristubh',
+                    'Triṣṭubh',
+                    'जगती',
+                    'jagatī',
+                    'jagati',
+                    'Jagatī',
+                    'अनुष्टुभ्',
+                    'anuṣṭubh',
+                    'anustubh',
+                    'Anuṣṭubh',
+                    'उष्णिक्',
+                    'uṣṇik',
+                    'usnik',
+                    'बृहती',
+                    'bṛhatī',
+                    'brhati',
+                    'पङ्क्ति',
+                    'paṅkti',
+                    'pankti',
+                    'प्रगाथ',
+                    'pragātha',
+                    'pragatha',
+                    'विराट्',
+                    'virāṭ',
+                    'virat',
                 }
 
                 for meter_tuple, confidence, match_type in fuzzy_matches:
@@ -3948,19 +4306,19 @@ class Chanda:
             if needs_vedic_fallback:
                 # Priority weights for major vs rare meters (higher = more common)
                 METER_FREQUENCY_WEIGHT = {
-                    'त्रिष्टुभ्': 100,    # 3727 verses in Rigveda
-                    'गायत्री': 100,       # 2171 verses
-                    'जगती': 100,          # 1070 verses
-                    'अनुष्टुभ्': 100,     # 656 verses
-                    'उष्णिक्': 80,        # 448 verses
-                    'बृहती': 70,          # 269 verses
-                    'पङ्क्ति': 70,        # 204 verses
+                    'त्रिष्टुभ्': 100,  # 3727 verses in Rigveda
+                    'गायत्री': 100,  # 2171 verses
+                    'जगती': 100,  # 1070 verses
+                    'अनुष्टुभ्': 100,  # 656 verses
+                    'उष्णिक्': 80,  # 448 verses
+                    'बृहती': 70,  # 269 verses
+                    'पङ्क्ति': 70,  # 204 verses
                     # Rare/composite meters - lower priority
-                    'प्रगाथ': 50,         # Composite
-                    'विराट्': 30,         # Rare
-                    'ज्योतिस्': 20,       # Rare, requires refrain
-                    'महापङ्क्ति': 20,     # Rare, requires refrain
-                    'ककुभ्': 30,          # 3-pada structure
+                    'प्रगाथ': 50,  # Composite
+                    'विराट्': 30,  # Rare
+                    'ज्योतिस्': 20,  # Rare, requires refrain
+                    'महापङ्क्ति': 20,  # Rare, requires refrain
+                    'ककुभ्': 30,  # 3-pada structure
                     'द्विपदा त्रिष्टुभ्': 30,
                 }
 
@@ -4037,11 +4395,7 @@ class Chanda:
         display_line = line
         display_syllables = direct_match['syllables']
         display_lg = full_lg
-        display_gana = (
-            ' / '.join(gana).translate(self.ttable_out)
-            if gana else
-            full_gana
-        )
+        display_gana = ' / '.join(gana).translate(self.ttable_out) if gana else full_gana
         display_length = ' / '.join(length) if length else full_length
         display_matra = ' / '.join(matra) if matra else full_matra
 
@@ -4100,11 +4454,11 @@ class Chanda:
         display_chanda_primary = ' | '.join(display_chanda_primary_parts)
         display_chanda_alternate = ' / '.join(display_chanda_alternate_parts)
         display_chanda_alternate_count = len(display_chanda_alternate_parts)
-        display_chanda_hidden_count = len(display_chanda_parts) - len(display_chanda_primary_parts) - len(display_chanda_alternate_parts)
-
-        display_jaati = ' / '.join(
-            jaati if jaati else full_jaati
+        display_chanda_hidden_count = (
+            len(display_chanda_parts) - len(display_chanda_primary_parts) - len(display_chanda_alternate_parts)
         )
+
+        display_jaati = ' / '.join(jaati if jaati else full_jaati)
 
         answer['found'] = found
         answer['syllables'] = direct_match['syllables']
@@ -4122,9 +4476,7 @@ class Chanda:
         # This helps users understand when input doesn't match any known meter
         # =====================================================================
         is_poetry, padya_reason, padya_confidence = self.is_padya(
-            lg_str,
-            len(lg_str),
-            confidence_map if confidence_map else None
+            lg_str, len(lg_str), confidence_map if confidence_map else None
         )
 
         answer['is_padya'] = is_poetry
@@ -4141,8 +4493,7 @@ class Chanda:
         elif not is_poetry and found:
             # Low confidence match - might be prose with accidental pattern
             answer['prose_message'] = (
-                f"टिप्पणी: {padya_reason} "
-                "(Note: Low confidence - text may be prose with accidental pattern match.)"
+                f"टिप्पणी: {padya_reason} (Note: Low confidence - text may be prose with accidental pattern match.)"
             )
         else:
             answer['prose_message'] = None
@@ -4168,12 +4519,10 @@ class Chanda:
             for chanda_lg, chanda_names in self.CHANDA.items():
                 chanda_gana = self.lg_to_gana(chanda_lg)
                 cost, suggestion = self.transform(line, chanda_lg)
-                similarity = (1 - cost / len(chanda_lg))
+                similarity = 1 - cost / len(chanda_lg)
                 # Fixed: Always add suggestions even if transformation is None (Bug #4)
                 output = suggestion if suggestion else []
-                _display_chanda = ' / '.join(
-                    self.format_chanda_pada(c, p) for c, p in chanda_names
-                )
+                _display_chanda = ' / '.join(self.format_chanda_pada(c, p) for c, p in chanda_names)
                 answer['fuzzy'].append(
                     {
                         "chanda": chanda_names,
@@ -4181,14 +4530,10 @@ class Chanda:
                         "suggestion": output,
                         "cost": cost,
                         "similarity": similarity,
-                        "display_chanda": _display_chanda
+                        "display_chanda": _display_chanda,
                     }
                 )
-            answer['fuzzy'] = sorted(
-                answer['fuzzy'],
-                key=lambda x: x["similarity"],
-                reverse=True
-            )[:k]
+            answer['fuzzy'] = sorted(answer['fuzzy'], key=lambda x: x["similarity"], reverse=True)[:k]
 
         # =====================================================================
         # PATTERN VALIDATION INFO (for frontend display)
@@ -4208,16 +4553,20 @@ class Chanda:
             meter_info = self.get_meter_info(primary_meter_name)
             pattern_validation = self.validate_pattern(lg_str, primary_meter_name)
 
-            answer['meter_info'] = {
-                'name': primary_meter_name,
-                'expected_pattern': meter_info.get('pattern') if meter_info else None,
-                'expected_syllables': meter_info.get('syllables') if meter_info else None,
-                'expected_matras': meter_info.get('matras') if meter_info else None,
-                'gana_notation': meter_info.get('gana') if meter_info else None,
-                'meter_type': meter_info.get('type') if meter_info else None,
-                'yati': meter_info.get('yati') if meter_info else None,
-                'padas': meter_info.get('padas') if meter_info else None,
-            } if meter_info else None
+            answer['meter_info'] = (
+                {
+                    'name': primary_meter_name,
+                    'expected_pattern': meter_info.get('pattern') if meter_info else None,
+                    'expected_syllables': meter_info.get('syllables') if meter_info else None,
+                    'expected_matras': meter_info.get('matras') if meter_info else None,
+                    'gana_notation': meter_info.get('gana') if meter_info else None,
+                    'meter_type': meter_info.get('type') if meter_info else None,
+                    'yati': meter_info.get('yati') if meter_info else None,
+                    'padas': meter_info.get('padas') if meter_info else None,
+                }
+                if meter_info
+                else None
+            )
 
             answer['pattern_validation'] = {
                 'is_valid': pattern_validation.get('is_valid'),
@@ -4235,29 +4584,28 @@ class Chanda:
 
     ###########################################################################
 
-    def identify_with_sandhi(self, line, k_candidates=5, k_meters=10,
-                             fuzzy=False, lexicon_path=None):
+    def identify_with_sandhi(self, line, k_candidates=5, k_meters=10, fuzzy=False, lexicon_path=None):
         """
         Identify chandas with automatic sandhi resolution.
-        
+
         This method generates multiple sandhi-split candidates and identifies
         the chandas for each, returning the best match based on a combined
         score of sandhi plausibility and meter confidence.
-        
+
         Args:
             line (str): Sanskrit text (may contain merged sandhi)
             k_candidates (int): Number of sandhi candidates to try (default: 5)
             k_meters (int): Number of meter matches per candidate (default: 10)
             fuzzy (bool): Enable fuzzy matching for identification (default: False)
             lexicon_path (str): Path to lexicon file for sandhi scoring (default: None)
-        
+
         Returns:
             dict: Identification result with additional sandhi information:
                 - All standard identify_line() keys
                 - 'sandhi_candidates': list of tried candidates with scores
                 - 'sandhi_best': the selected candidate info
                 - 'sandhi_original': original input line
-        
+
         Example:
             >>> chanda = Chanda('data/')
             >>> result = chanda.identify_with_sandhi("कर्मण्येवाधिकारस्ते")
@@ -4279,9 +4627,7 @@ class Chanda:
 
         # Generate sandhi candidates
         candidates = gen_candidates(
-            line,
-            k=k_candidates,
-            lexicon_path=lexicon_path if os.path.exists(lexicon_path) else None
+            line, k=k_candidates, lexicon_path=lexicon_path if os.path.exists(lexicon_path) else None
         )
 
         # Try identification on each candidate
@@ -4297,10 +4643,7 @@ class Chanda:
             # Use highest meter confidence if found, otherwise use fuzzy similarity
             if id_result['found'] and id_result.get('confidence_scores'):
                 # Get highest confidence from exact matches
-                meter_conf = max(
-                    (conf for conf, _ in id_result['confidence_scores'].values()),
-                    default=0.0
-                )
+                meter_conf = max((conf for conf, _ in id_result['confidence_scores'].values()), default=0.0)
             elif id_result.get('fuzzy') and len(id_result['fuzzy']) > 0:
                 # Use top fuzzy match similarity
                 meter_conf = id_result['fuzzy'][0]['similarity'] * 10.0  # Scale to ~10
@@ -4313,14 +4656,16 @@ class Chanda:
             normalized_sandhi = ((sandhi_score + 2.0) / 4.0) * 10.0
             combined_score = (0.3 * normalized_sandhi) + (0.7 * meter_conf)
 
-            candidate_results.append({
-                'candidate': cand_text,
-                'sandhi_score': sandhi_score,
-                'sandhi_rules': cand_info['rules'],
-                'meter_confidence': meter_conf,
-                'combined_score': combined_score,
-                'identification': id_result
-            })
+            candidate_results.append(
+                {
+                    'candidate': cand_text,
+                    'sandhi_score': sandhi_score,
+                    'sandhi_rules': cand_info['rules'],
+                    'meter_confidence': meter_conf,
+                    'combined_score': combined_score,
+                    'identification': id_result,
+                }
+            )
 
         # Sort by combined score and select best
         candidate_results.sort(key=lambda x: x['combined_score'], reverse=True)
@@ -4338,14 +4683,14 @@ class Chanda:
                 'sandhi_score': best['sandhi_score'],
                 'rules': best['sandhi_rules'],
                 'meter_confidence': best['meter_confidence'],
-                'combined_score': best['combined_score']
+                'combined_score': best['combined_score'],
             }
             result['sandhi_candidates'] = [
                 {
                     'candidate': c['candidate'],
                     'sandhi_score': c['sandhi_score'],
                     'rules': c['sandhi_rules'],
-                    'combined_score': c['combined_score']
+                    'combined_score': c['combined_score'],
                 }
                 for c in candidate_results
             ]
@@ -4404,7 +4749,7 @@ class Chanda:
                 'fuzzy': fuzzy_line_statistics,
                 'match': match_line_statistics,
             },
-            'count': counts
+            'count': counts,
         }
 
     # def analyse_file(self, file, fuzzy=True, remove_chars=''):
@@ -4489,11 +4834,11 @@ class Chanda:
     @staticmethod
     def format_chanda_pada(chanda: str, pada: tuple) -> str:
         """Format chanda name with pada information.
-        
+
         Args:
             chanda: Meter name
             pada: Tuple containing pada number(s), e.g., ('1',), ('1', '2'), or ('',)
-        
+
         Returns:
             Formatted string with pada info, or just chanda name if no pada
         """
@@ -4513,10 +4858,9 @@ class Chanda:
             f"\tSyllables: {line_result['display_syllables']}",
             f"\tLG: {line_result['display_lg']}",
             f"\tGana: {line_result['display_gana']}",
-            (f"\tCounts: {line_result['display_length']} letters, "
-                f"{line_result['display_matra']} morae"),
+            (f"\tCounts: {line_result['display_length']} letters, {line_result['display_matra']} morae"),
             f"\tChanda: {line_result['display_chanda']}",
-            f"\tJaati: {line_result['display_jaati']} "
+            f"\tJaati: {line_result['display_jaati']} ",
         ]
 
         # Add prose detection information if available
@@ -4528,38 +4872,29 @@ class Chanda:
 
         if line_result['fuzzy']:
             best_match = line_result['fuzzy'][0]
-            output_lines.extend([
-                (f"\tFuzzy: {best_match['display_chanda']} "
-                 f"({best_match['similarity']})"),
-                f"\t\t{best_match['suggestion']}"
-            ])
+            output_lines.extend(
+                [
+                    (f"\tFuzzy: {best_match['display_chanda']} ({best_match['similarity']})"),
+                    f"\t\t{best_match['suggestion']}",
+                ]
+            )
         return "\n".join(output_lines)
 
     @staticmethod
     def format_summary(result_summary) -> str:
         output = []
         if result_summary["verse"]:
-            output.extend([
-                "Verse Statistics",
-                "----------------"
-            ])
-            for idx, (chanda_name, chanda_count) in enumerate(
-                result_summary["verse"]["chanda"].most_common(),
-                start=1
-            ):
+            output.extend(["Verse Statistics", "----------------"])
+            for idx, (chanda_name, chanda_count) in enumerate(result_summary["verse"]["chanda"].most_common(), start=1):
                 output.append(f"{idx:>4}. {chanda_name}: {chanda_count}")
             output.append("")
 
-        output.extend([
-            "Line Statistics",
-            "---------------"
-        ])
+        output.extend(["Line Statistics", "---------------"])
 
         if result_summary["line"]["match"]:
             output.append("-- Exact Match")
             for idx, (chanda_name, chanda_count) in enumerate(
-                result_summary["line"]["match"]["chanda"].most_common(),
-                start=1
+                result_summary["line"]["match"]["chanda"].most_common(), start=1
             ):
                 output.append(f"{idx:>4}. {chanda_name}: {chanda_count}")
             output.append("")
@@ -4567,27 +4902,29 @@ class Chanda:
         if result_summary["line"]["fuzzy"]:
             output.append("-- Fuzzy Match")
             for idx, (chanda_name, chanda_count) in enumerate(
-                result_summary["line"]["fuzzy"]["chanda"].most_common(),
-                start=1
+                result_summary["line"]["fuzzy"]["chanda"].most_common(), start=1
             ):
                 output.append(f"{idx:>4}. {chanda_name}: {chanda_count}")
             output.append("")
 
         counts = result_summary["count"]
-        output.extend([
-            "Counts",
-            "------",
-            f"* Total Lines: {counts['line']}",
-            f"  - Exact Match: {counts['match_line']}",
-            f"  - Fuzzy Match: {counts['fuzzy_line']}",
-            f"* Total Verses: {counts['verse']}",
-            f"  - Exact Match: {counts['match_verse']}",
-            f"  - Fuzzy Match: {counts['fuzzy_verse']}",
-            f"* Total Syllables Mismatched: {counts['mismatch_syllable']}",
-        ])
+        output.extend(
+            [
+                "Counts",
+                "------",
+                f"* Total Lines: {counts['line']}",
+                f"  - Exact Match: {counts['match_line']}",
+                f"  - Fuzzy Match: {counts['fuzzy_line']}",
+                f"* Total Verses: {counts['verse']}",
+                f"  - Exact Match: {counts['match_verse']}",
+                f"  - Fuzzy Match: {counts['fuzzy_verse']}",
+                f"* Total Syllables Mismatched: {counts['mismatch_syllable']}",
+            ]
+        )
 
         return "\n".join(output)
 
     ###########################################################################
+
 
 ###############################################################################

@@ -47,59 +47,45 @@ METER_ALIASES = {
     'shloka': 'anushtubh',
     'pathyavaktra': 'anushtubh',
     'pathya': 'anushtubh',
-
     # Vasantatilaka variants
     'vasantatilaka': 'vasantatilaka',
     'vasanthatilaka': 'vasantatilaka',
     'vasantatilakam': 'vasantatilaka',
-
     # Indravajra variants
     'indravajra': 'indravajra',
-
     # Upendravajra variants
     'upendravajra': 'upendravajra',
-
     # Upajati variants - map to generic upajati
     'upajati': 'upajati',
     'upajatih': 'upajati',
-
     # Shardulavikridita variants - IMPORTANT: handle the 'vk' vs 'vik' spelling
     'sardulavikridita': 'shardulavikridita',
     'sardulavikriditam': 'shardulavikridita',
     'shardulavikriditam': 'shardulavikridita',
     'shardulavkridita': 'shardulavikridita',  # Missing 'i' variant
     'shardulavikridita': 'shardulavikridita',
-
     # Mandakranta variants
     'mandakranta': 'mandakranta',
     'mandaakraantaa': 'mandakranta',
-
     # Sragdhara variants
     'sragdhara': 'sragdhara',
-
     # Prithvi variants
     'prithvi': 'prithvi',
     'prthvi': 'prithvi',
-
     # Shikharini variants
     'sikharini': 'shikharini',
     'shikharini': 'shikharini',
-
     # Shalini variants
     'salini': 'shalini',
     'shalini': 'shalini',
-
     # Rathoddhataa variants
     'rathoddhata': 'rathoddhata',
-
     # Harini variants
     'harini': 'harini',
-
     # Pushpitagra variants
     'pushpitagra': 'pushpitagra',
     'puspita': 'pushpitagra',
     'pushpita': 'pushpitagra',
-
     # Vamshastha variants - normalized form
     'vamshastha': 'vamshastha',
     'vamshastham': 'vamshastha',
@@ -107,25 +93,20 @@ METER_ALIASES = {
     'vamshasthavila': 'vamshastha',
     'vashasthavilam': 'vamshastha',  # ṁ → sh variant
     'vashastha': 'vamshastha',
-
     # Totaka variants
     'totaka': 'totaka',
     'totakam': 'totaka',
-
     # Udgata variants
     'udgata': 'udgata',
     'udgatam': 'udgata',
-
     # Others
     'drutavilambita': 'drutavilambita',
     'drutavilambitam': 'drutavilambita',
     'bhujangaprayata': 'bhujangaprayata',
     'bhujangaprayatam': 'bhujangaprayata',
-
     # Tunaka variants
     'tunaka': 'tunaka',
     'tunakam': 'tunaka',
-
     # Pancacamara variants
     'pancacamara': 'pancacamara',
     'pancacamaram': 'pancacamara',
@@ -140,7 +121,7 @@ def normalize_meter_name(name):
         return ''
 
     # If Devanagari, transliterate to IAST first
-    if any('\u0900' <= c <= '\u097F' for c in str(name)):
+    if any('\u0900' <= c <= '\u097f' for c in str(name)):
         name = transliterate(str(name), sanscript.DEVANAGARI, sanscript.IAST)
 
     # Convert to lowercase and remove diacritics
@@ -148,13 +129,24 @@ def normalize_meter_name(name):
 
     # Remove diacritics
     diacritic_map = {
-        'ā': 'a', 'ī': 'i', 'ū': 'u',
-        'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l',
-        'ṅ': 'n', 'ñ': 'n', 'ṇ': 'n',
-        'ṭ': 't', 'ḍ': 'd',
-        'ś': 'sh', 'ṣ': 'sh',
-        'ḥ': 'h', 'ṃ': 'm',
-        'ä': 'a', 'ü': 'u', 'ö': 'o',  # German-style umlauts
+        'ā': 'a',
+        'ī': 'i',
+        'ū': 'u',
+        'ṛ': 'r',
+        'ṝ': 'r',
+        'ḷ': 'l',
+        'ṅ': 'n',
+        'ñ': 'n',
+        'ṇ': 'n',
+        'ṭ': 't',
+        'ḍ': 'd',
+        'ś': 'sh',
+        'ṣ': 'sh',
+        'ḥ': 'h',
+        'ṃ': 'm',
+        'ä': 'a',
+        'ü': 'u',
+        'ö': 'o',  # German-style umlauts
     }
     for src, dst in diacritic_map.items():
         name = name.replace(src, dst)
@@ -204,6 +196,7 @@ def meters_match(expected, predicted, allow_family=False):
 # Data Loaders
 # ============================================================================
 
+
 def load_our_dataset():
     """Load our dataset (page 1-47 chanda list - Sheet1.csv)"""
     csv_path = BACKEND_PATH / 'data' / 'page 1-47 chanda list - Sheet1.csv'
@@ -229,10 +222,7 @@ def load_our_dataset():
                 if meter.lower() in ['chanda', 'shloka']:  # Skip header-like values
                     continue
 
-                data.append({
-                    'verse': verse,
-                    'expected_meter': meter
-                })
+                data.append({'verse': verse, 'expected_meter': meter})
 
     return data
 
@@ -268,12 +258,14 @@ def load_original_repo_corpora():
         for i, (answer, verse) in enumerate(zip(answers, verses)):
             # Handle multiple expected meters (e.g., "उपेन्द्रवज्रा + इन्द्रवज्रा")
             expected = answer.split(' + ')
-            corpus_data.append({
-                'verse': verse,
-                'expected_meter': expected[0],  # Primary expected meter
-                'all_expected': expected,
-                'corpus': corpus
-            })
+            corpus_data.append(
+                {
+                    'verse': verse,
+                    'expected_meter': expected[0],  # Primary expected meter
+                    'all_expected': expected,
+                    'corpus': corpus,
+                }
+            )
 
         all_data.extend(corpus_data)
         corpus_stats[corpus] = len(corpus_data)
@@ -285,6 +277,7 @@ def load_original_repo_corpora():
 # ============================================================================
 # Model Evaluators
 # ============================================================================
+
 
 def evaluate_with_chanda_iitk(data, data_path, label=""):
     """Evaluate using chanda_iitk.py with a specified meter database"""
@@ -324,21 +317,11 @@ def evaluate_with_chanda_iitk(data, data_path, label=""):
                 correct += 1
 
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': predicted,
-                'correct': is_correct
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': predicted, 'correct': is_correct})
 
         except Exception as e:
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': f'ERROR: {e}',
-                'correct': False
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': f'ERROR: {e}', 'correct': False})
 
     return correct, total, results
 
@@ -381,21 +364,11 @@ def evaluate_with_enhanced_chanda(data, data_path):
                 correct += 1
 
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': predicted,
-                'correct': is_correct
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': predicted, 'correct': is_correct})
 
         except Exception as e:
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': f'ERROR: {e}',
-                'correct': False
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': f'ERROR: {e}', 'correct': False})
 
     return correct, total, results
 
@@ -438,21 +411,11 @@ def evaluate_with_our_chanda(data, data_path):
                 correct += 1
 
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': predicted,
-                'correct': is_correct
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': predicted, 'correct': is_correct})
 
         except Exception as e:
             total += 1
-            results.append({
-                'verse': verse[:50],
-                'expected': expected,
-                'predicted': f'ERROR: {e}',
-                'correct': False
-            })
+            results.append({'verse': verse[:50], 'expected': expected, 'predicted': f'ERROR: {e}', 'correct': False})
 
     return correct, total, results
 
@@ -460,6 +423,7 @@ def evaluate_with_our_chanda(data, data_path):
 # ============================================================================
 # Main Comparison
 # ============================================================================
+
 
 def main():
     print("=" * 80)
@@ -506,7 +470,9 @@ NOTE: chanda_iitk.py + OUR large dataset is too slow due to regex matching.
 
     print(f"Our curated dataset:    {our_meter_count:5d} meter patterns")
     print(f"Original IITK dataset:  {iitk_meter_count:5d} meter patterns")
-    print(f"Improvement: {our_meter_count - iitk_meter_count:+d} patterns ({(our_meter_count/iitk_meter_count - 1)*100:.1f}% more)")
+    print(
+        f"Improvement: {our_meter_count - iitk_meter_count:+d} patterns ({(our_meter_count / iitk_meter_count - 1) * 100:.1f}% more)"
+    )
 
     # ========================================================================
     # Run evaluations

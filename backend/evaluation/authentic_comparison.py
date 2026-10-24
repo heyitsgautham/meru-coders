@@ -17,7 +17,9 @@ import time
 # Add paths
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
+)
 
 from chanda_iitk import Chanda as IITKChanda
 from core.chanda import Chanda as OurChanda
@@ -29,80 +31,60 @@ AUTHENTIC_VERSES = [
         'name': 'Anushtubh (BG 1.1) - Pada 1',
         'expected': 'अनुष्टुभ्',
         'verse': 'धर्मक्षेत्रे कुरुक्षेत्रे',
-        'source': 'Bhagavad Gita 1.1'
+        'source': 'Bhagavad Gita 1.1',
     },
     {
         'name': 'Anushtubh (BG 1.1) - Pada 2',
         'expected': 'अनुष्टुभ्',
         'verse': 'समवेता युयुत्सवः',
-        'source': 'Bhagavad Gita 1.1'
+        'source': 'Bhagavad Gita 1.1',
     },
     {
         'name': 'Anushtubh (BG 2.47) - Pada 1',
         'expected': 'अनुष्टुभ्',
         'verse': 'कर्मण्येवाधिकारस्ते',
-        'source': 'Bhagavad Gita 2.47'
+        'source': 'Bhagavad Gita 2.47',
     },
     {
         'name': 'Anushtubh (BG 2.47) - Pada 2',
         'expected': 'अनुष्टुभ्',
         'verse': 'मा फलेषु कदाचन',
-        'source': 'Bhagavad Gita 2.47'
+        'source': 'Bhagavad Gita 2.47',
     },
     {
         'name': 'Anushtubh (BG 4.7) - Pada 1',
         'expected': 'अनुष्टुभ्',
         'verse': 'यदा यदा हि धर्मस्य',
-        'source': 'Bhagavad Gita 4.7'
+        'source': 'Bhagavad Gita 4.7',
     },
     {
         'name': 'Anushtubh (BG 4.7) - Pada 2',
         'expected': 'अनुष्टुभ्',
         'verse': 'ग्लानिर्भवति भारत',
-        'source': 'Bhagavad Gita 4.7'
+        'source': 'Bhagavad Gita 4.7',
     },
     {
         'name': 'Gayatri (RV 3.62.10)',
         'expected': 'गायत्री',
         'verse': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्',
-        'source': 'Rigveda 3.62.10'
+        'source': 'Rigveda 3.62.10',
     },
-    {
-        'name': 'Ganesh Prayer - Pada 1',
-        'expected': 'अनुष्टुभ्',
-        'verse': 'वक्रतुण्ड महाकाय',
-        'source': 'Traditional'
-    },
-    {
-        'name': 'Ganesh Prayer - Pada 2',
-        'expected': 'अनुष्टुभ्',
-        'verse': 'सूर्यकोटिसमप्रभ',
-        'source': 'Traditional'
-    },
-    {
-        'name': 'Guru Stuti - Pada 1',
-        'expected': 'अनुष्टुभ्',
-        'verse': 'गुरुर्ब्रह्मा गुरुर्विष्णुः',
-        'source': 'Traditional'
-    },
-    {
-        'name': 'Guru Stuti - Pada 2',
-        'expected': 'अनुष्टुभ्',
-        'verse': 'गुरुर्देवो महेश्वरः',
-        'source': 'Traditional'
-    },
+    {'name': 'Ganesh Prayer - Pada 1', 'expected': 'अनुष्टुभ्', 'verse': 'वक्रतुण्ड महाकाय', 'source': 'Traditional'},
+    {'name': 'Ganesh Prayer - Pada 2', 'expected': 'अनुष्टुभ्', 'verse': 'सूर्यकोटिसमप्रभ', 'source': 'Traditional'},
+    {'name': 'Guru Stuti - Pada 1', 'expected': 'अनुष्टुभ्', 'verse': 'गुरुर्ब्रह्मा गुरुर्विष्णुः', 'source': 'Traditional'},
+    {'name': 'Guru Stuti - Pada 2', 'expected': 'अनुष्टुभ्', 'verse': 'गुरुर्देवो महेश्वरः', 'source': 'Traditional'},
     # Full shloka tests (our model handles these, IITK may not)
     {
         'name': 'Full Shloka (BG 1.1)',
         'expected': 'अनुष्टुभ्',
         'verse': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय',
-        'source': 'Bhagavad Gita 1.1 (Full)'
+        'source': 'Bhagavad Gita 1.1 (Full)',
     },
     {
         'name': 'Full Shloka (BG 4.7-8)',
         'expected': 'अनुष्टुभ्',
         'verse': 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्',
-        'source': 'Bhagavad Gita 4.7 (Full)'
+        'source': 'Bhagavad Gita 4.7 (Full)',
     },
 ]
 
@@ -237,11 +219,11 @@ def run_authentic_comparison():
     if speed_ratio > 1:
         print(f"  ⚡ Our model is {speed_ratio:.1f}x faster")
     elif speed_ratio < 1:
-        print(f"  🐢 IITK model is {1/speed_ratio:.1f}x faster")
+        print(f"  🐢 IITK model is {1 / speed_ratio:.1f}x faster")
     else:
         print("  🤝 Both models have same speed")
 
-    print(f"  📊 Our database is {2055/398:.1f}x larger")
+    print(f"  📊 Our database is {2055 / 398:.1f}x larger")
     print()
 
     print("=" * 90)

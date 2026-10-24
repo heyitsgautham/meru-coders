@@ -3,7 +3,6 @@
 Quick test to verify chatbot formatting changes are live
 """
 
-
 import requests
 
 API_URL = "http://localhost:5000/api/chatbot/chat"
@@ -13,10 +12,7 @@ print("=" * 70)
 print("TEST 1: Ask for chanda name only")
 print("=" * 70)
 
-payload1 = {
-    "message": "What is the chanda name of धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
-    "persona": "default"
-}
+payload1 = {"message": "What is the chanda name of धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "persona": "default"}
 
 response1 = requests.post(API_URL, json=payload1)
 if response1.status_code == 200:
@@ -34,10 +30,7 @@ print("\n" + "=" * 70)
 print("TEST 2: Ask for LG pattern")
 print("=" * 70)
 
-payload2 = {
-    "message": "Show me the LG pattern of धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
-    "persona": "default"
-}
+payload2 = {"message": "Show me the LG pattern of धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "persona": "default"}
 
 response2 = requests.post(API_URL, json=payload2)
 if response2.status_code == 200:
@@ -55,10 +48,7 @@ print("\n" + "=" * 70)
 print("TEST 3: Full analysis")
 print("=" * 70)
 
-payload3 = {
-    "message": "Analyze धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
-    "persona": "default"
-}
+payload3 = {"message": "Analyze धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "persona": "default"}
 
 response3 = requests.post(API_URL, json=payload3)
 if response3.status_code == 200:
@@ -78,7 +68,7 @@ if response3.status_code == 200:
         "✓ Pada-split LG pattern": "by Pada" in response_text or "|" in response_text,
         "✓ Shows tip at end": "Use the **Analyse Chanda** page" in response_text,
         "✓ No 'Metrical Analysis' header": "Metrical Analysis" not in response_text,
-        "✓ Clean meter display": "Chanda:" in response_text
+        "✓ Clean meter display": "Chanda:" in response_text,
     }
 
     for check, passed in checks.items():

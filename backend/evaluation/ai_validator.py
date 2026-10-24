@@ -17,8 +17,7 @@ sys.path.insert(0, PROJECT_ROOT)
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "ai_validator",
-    os.path.join(PROJECT_ROOT, "backend", "core", "ai_validator.py")
+    "ai_validator", os.path.join(PROJECT_ROOT, "backend", "core", "ai_validator.py")
 )
 ai_validator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ai_validator_module)

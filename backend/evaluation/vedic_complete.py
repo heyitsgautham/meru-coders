@@ -16,8 +16,7 @@ from core.chanda_modal import ChandaModal
 
 # Direct import to avoid ultralytics conflict
 spec = importlib.util.spec_from_file_location(
-    "rigveda_complete",
-    os.path.join(backend_dir, "tests", "data", "rigveda_complete.py")
+    "rigveda_complete", os.path.join(backend_dir, "tests", "data", "rigveda_complete.py")
 )
 rigveda_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rigveda_module)
@@ -33,16 +32,31 @@ def normalize_meter(name):
     # Remove parenthetical prefixes like "(1-7)"
     if name.startswith('('):
         import re
+
         name = re.sub(r'^\([^)]+\)', '', name).strip()
 
     mapping = {
-        'gāyatrī': 'gāyatrī', 'gayatri': 'gāyatrī', 'गायत्री': 'gāyatrī',
-        'triṣṭup': 'triṣṭup', 'trishtup': 'triṣṭup', 'त्रिष्टुभ्': 'triṣṭup',
-        'jagatī': 'jagatī', 'jagati': 'jagatī', 'जगती': 'jagatī',
-        'anuṣṭup': 'anuṣṭup', 'anushtup': 'anuṣṭup', 'अनुष्टुभ्': 'anuṣṭup',
-        'bṛhatī': 'bṛhatī', 'brhati': 'bṛhatī', 'बृहती': 'bṛhatī',
-        'uṣṇik': 'uṣṇik', 'ushnik': 'uṣṇik', 'उष्णिक्': 'uṣṇik',
-        'paṅkti': 'paṅkti', 'pankti': 'paṅkti', 'पङ्क्ति': 'paṅkti',
+        'gāyatrī': 'gāyatrī',
+        'gayatri': 'gāyatrī',
+        'गायत्री': 'gāyatrī',
+        'triṣṭup': 'triṣṭup',
+        'trishtup': 'triṣṭup',
+        'त्रिष्टुभ्': 'triṣṭup',
+        'jagatī': 'jagatī',
+        'jagati': 'jagatī',
+        'जगती': 'jagatī',
+        'anuṣṭup': 'anuṣṭup',
+        'anushtup': 'anuṣṭup',
+        'अनुष्टुभ्': 'anuṣṭup',
+        'bṛhatī': 'bṛhatī',
+        'brhati': 'bṛhatī',
+        'बृहती': 'bṛhatī',
+        'uṣṇik': 'uṣṇik',
+        'ushnik': 'uṣṇik',
+        'उष्णिक्': 'uṣṇik',
+        'paṅkti': 'paṅkti',
+        'pankti': 'paṅkti',
+        'पङ्क्ति': 'paṅkti',
     }
     return mapping.get(name, name)
 
@@ -72,7 +86,7 @@ def main():
 
         # Skip non-standard meters
         if expected not in standard_meters:
-            print(f"SKIP [{i+1:3d}] Non-standard meter: {expected_raw}")
+            print(f"SKIP [{i + 1:3d}] Non-standard meter: {expected_raw}")
             continue
 
         text = verse['text']
@@ -92,7 +106,7 @@ def main():
             by_meter[expected] = {'correct': 0, 'total': 0}
         by_meter[expected]['total'] += 1
 
-        is_correct = (predicted == expected)
+        is_correct = predicted == expected
         if is_correct:
             correct += 1
             by_meter[expected]['correct'] += 1
@@ -101,11 +115,13 @@ def main():
             status = '✗'
 
         # Print all results for this small dataset
-        print(f'{status} [{i+1:3d}] {verse["ref"]:10s} Expected: {expected:10s} | Got: {predicted:10s} (syl: {syl_count}, exp: {expected_syl}, conf: {confidence:.2f})')
+        print(
+            f'{status} [{i + 1:3d}] {verse["ref"]:10s} Expected: {expected:10s} | Got: {predicted:10s} (syl: {syl_count}, exp: {expected_syl}, conf: {confidence:.2f})'
+        )
 
     print()
     print('=' * 70)
-    print(f'   OVERALL ACCURACY (VEDIC MODE, COMPLETE VERSES): {correct}/{total} ({100*correct/total:.1f}%)')
+    print(f'   OVERALL ACCURACY (VEDIC MODE, COMPLETE VERSES): {correct}/{total} ({100 * correct / total:.1f}%)')
     print('=' * 70)
     print()
     print('BY METER:')

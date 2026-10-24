@@ -103,8 +103,12 @@ def clean_sanskrit_text(text):
         '\u0952',  # Devanagari stress sign anudatta
         '\u0953',  # Devanagari grave accent
         '\u0954',  # Devanagari acute accent
-        '\u1CD0', '\u1CD1', '\u1CD2',  # Vedic tone marks
-        '॒', '॑', '᳚',  # Common accent representations
+        '\u1cd0',
+        '\u1cd1',
+        '\u1cd2',  # Vedic tone marks
+        '॒',
+        '॑',
+        '᳚',  # Common accent representations
     ]
 
     for char in accent_chars:
@@ -140,13 +144,15 @@ def load_rigveda_verses():
         # Prefer verses with more content
         if len(sanskrit) > 20:  # Minimum length filter
             seen.add(key)
-            unique_verses.append({
-                'mandala': v.get('mandala'),
-                'hymn': v.get('hymn'),
-                'verse': v.get('verse'),
-                'sanskrit': clean_sanskrit_text(sanskrit),
-                'translation': v.get('translation', ''),
-            })
+            unique_verses.append(
+                {
+                    'mandala': v.get('mandala'),
+                    'hymn': v.get('hymn'),
+                    'verse': v.get('verse'),
+                    'sanskrit': clean_sanskrit_text(sanskrit),
+                    'translation': v.get('translation', ''),
+                }
+            )
 
     return unique_verses
 
@@ -192,17 +198,19 @@ def build_dataset():
             # Unknown meter - skip for now
             continue
 
-        merged.append({
-            'mandala': v['mandala'],
-            'hymn': v['hymn'],
-            'verse': v['verse'],
-            'text': v['sanskrit'],
-            'meter': meter_info['devanagari'],
-            'meter_iast': meter_iast,
-            'syllables': meter_info['syllables'],
-            'padas': meter_info['padas'],
-            'source': f"RV {v['mandala']}.{v['hymn']}.{v['verse']} (Rigveda_api + WSC2023)"
-        })
+        merged.append(
+            {
+                'mandala': v['mandala'],
+                'hymn': v['hymn'],
+                'verse': v['verse'],
+                'text': v['sanskrit'],
+                'meter': meter_info['devanagari'],
+                'meter_iast': meter_iast,
+                'syllables': meter_info['syllables'],
+                'padas': meter_info['padas'],
+                'source': f"RV {v['mandala']}.{v['hymn']}.{v['verse']} (Rigveda_api + WSC2023)",
+            }
+        )
 
         meter_counts[meter_iast] += 1
 

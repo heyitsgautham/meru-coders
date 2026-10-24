@@ -31,8 +31,7 @@ for expected_count, meter_name in vedic_mapping.items():
     difference = abs(syllable_count - expected_count)
     if difference <= 2:
         # Prefer match with smaller difference, or larger expected count if equal
-        if (difference < best_difference or 
-            (difference == best_difference and expected_count > best_expected_count)):
+        if difference < best_difference or (difference == best_difference and expected_count > best_expected_count):
             best_difference = difference
             best_match = meter_name
             best_expected_count = expected_count

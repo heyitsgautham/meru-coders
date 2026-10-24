@@ -13,6 +13,7 @@ from typing import Optional, Union
 try:
     import pytesseract
     from PIL import Image
+
     TESSERACT_AVAILABLE = True
 except ImportError:
     TESSERACT_AVAILABLE = False
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 class TesseractOCR:
     """
     Tesseract OCR wrapper for extracting Sanskrit text from images.
-    
+
     Supports multiple Indian languages including Sanskrit, Hindi, Marathi,
     Bengali, Telugu, Gujarati, Tamil, Malayalam, and Kannada.
     """
@@ -34,19 +35,15 @@ class TesseractOCR:
     def __init__(self, languages=None):
         """
         Initialize Tesseract OCR.
-        
+
         Args:
             languages: List of language codes (e.g., ['san', 'hin', 'mar'])
                       If None, uses default set of Indian languages
         """
         if not TESSERACT_AVAILABLE:
-            raise ImportError(
-                "Tesseract OCR is not available. "
-                "Please install: pip install pytesseract pillow"
-            )
+            raise ImportError("Tesseract OCR is not available. Please install: pip install pytesseract pillow")
 
-        self.languages = languages or ['san', 'mar', 'hin', 'ben', 'tel',
-                                      'guj', 'tam', 'mal', 'kan']
+        self.languages = languages or ['san', 'mar', 'hin', 'ben', 'tel', 'guj', 'tam', 'mal', 'kan']
         self.config = self._build_config()
 
         # Test Tesseract availability
@@ -68,13 +65,13 @@ class TesseractOCR:
     def extract_text(self, image_path: Union[str, Path]) -> str:
         """
         Extract text from an image file.
-        
+
         Args:
             image_path: Path to the image file
-            
+
         Returns:
             Extracted text as string
-            
+
         Raises:
             FileNotFoundError: If image file doesn't exist
             RuntimeError: If OCR extraction fails
@@ -99,10 +96,10 @@ class TesseractOCR:
     def extract_text_with_confidence(self, image_path: Union[str, Path]) -> dict:
         """
         Extract text with confidence scores.
-        
+
         Args:
             image_path: Path to the image file
-            
+
         Returns:
             Dictionary with 'text' and 'confidence' information
         """
@@ -129,26 +126,21 @@ class TesseractOCR:
             text = ' '.join(text_parts).strip()
             avg_confidence = sum(confidences) / len(confidences) if confidences else 0
 
-            return {
-                'text': text,
-                'confidence': avg_confidence,
-                'word_count': len(text_parts)
-            }
+            return {'text': text, 'confidence': avg_confidence, 'word_count': len(text_parts)}
 
         except Exception as e:
             logger.error(f"Failed to extract text with confidence from {image_path}: {e}")
             raise RuntimeError(f"OCR extraction failed: {e}") from e
 
-    def save_text_to_file(self, image_path: Union[str, Path],
-                         output_path: Optional[Union[str, Path]] = None) -> Path:
+    def save_text_to_file(self, image_path: Union[str, Path], output_path: Optional[Union[str, Path]] = None) -> Path:
         """
         Extract text from image and save to a text file.
-        
+
         Args:
             image_path: Path to the image file
             output_path: Path for output text file (optional)
                         If None, creates a .txt file with same name as image
-            
+
         Returns:
             Path to the output text file
         """

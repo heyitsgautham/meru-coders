@@ -54,7 +54,7 @@ def to_iast(text):
 def normalize_chanda(name):
     """
     Normalize chanda/chandas name for comparison.
-    
+
     Handles:
     - Devanagari → IAST conversion
     - Unicode normalization (NFD)
@@ -79,51 +79,39 @@ METER_FAMILIES = {
     # ========================================================================
     # The dataset uses Vedic descriptive names with structural prefixes.
     # We map them to their classical prosodic equivalents.
-
     # चतुष्पदा भुरिग्जगती / चतुष्पदा भुरिक्जगती → Jagati/Gayatri
     # (4-footed Bhurik Jagati - but often appears as Gayatri in classical analysis)
     'catuspada bhurigjagati': 'gayatri',  # 24 syllables
     'catuspada bhurikjagati': 'gayatri',
-
     # चतुष्पदा भुरिक्पङ्क्तिः → Pankti/Gayatri
     'catuspada bhurikpanktih': 'gayatri',  # Often 24 syllables
     'catuspada bhurikpanktih': 'pankti',
-
     # चतुष्पदा भुरिगुष्णिक् → Ushnik
     'catuspada bhurigusnik': 'usnik',
-
     # चतुष्पदा शक्वरी → Shakvari
     'catuspada sakvari': 'sakvari',
-
     # अनुष्टुप् variants
     'anustup': 'anustubh',
     'anustubh': 'anustubh',
-
     # ऋषभगजविलसित is a classical Anushtubh pattern variant
     'rsabhagajavilasita': 'anustubh',
     'rsabhagajavilasitam': 'anustubh',
-
     # द्विपदा विराट् is 2-footed Virat (another Anushtubh variant)
     'dvipada virat': 'anustubh',
     'dvipada virat': 'anustubh',
-
     # Additional classical Anushtubh variants that our model predicts
     'pratīharah': 'anustubh',
     'pratiharah': 'anustubh',
     'dhīravarttah2': 'anustubh',
     'dhiravarttah2': 'anustubh',
-
     # अपराजिता can be mapped to Ushnik variants and sometimes Atyashti
     'aparajita': 'usnik',
     'aparajita': 'atyasti',  # Sometimes Atyashti for longer meters
-
     # अतिरेखा → Map to Atijagatī or Ushnik depending on context
     'atirekha': 'atijagati',
     'atirekha': 'usnik',
-
     # प्राजापत्या अनुष्टुप् → Anushtubh
     'prajapatya anustup': 'anustubh',
-
     # भुरिक् अनुष्टुप् → Anushtubh (47 verses - 2nd most common Vedic variant)
     'bhurik anustup': 'anustubh',
     'bhurik anustubh': 'anustubh',
@@ -131,140 +119,104 @@ METER_FAMILIES = {
     'bhurig anustubh': 'anustubh',
     'bhuriganustup': 'anustubh',
     'bhuriganustubh': 'anustubh',
-
     # निचृत् अनुष्टुप् → Anushtubh
     'nicrt anustup': 'anustubh',
     'nicrt anustubh': 'anustubh',
-
     # विराट् अनुष्टुप् → Anushtubh
     'virat anustup': 'anustubh',
     'virat anustubh': 'anustubh',
-
     # याजुषी अनुष्टुप् → Anushtubh
     'yajusi anustup': 'anustubh',
-
     # आर्षी अनुष्टुप् → Anushtubh
     'arsi anustup': 'anustubh',
-
     # अतिजगती → Atijagatī
     'atijagati': 'atijagati',
-
     # भुरिक् अनुष्टुप् → Anushtubh
     'bhurik anustup': 'anustubh',
-
     # गायत्री → Gayatri (92 verses - most common!)
     'gayatri': 'gayatri',
-
     # आर्षी गायत्री → Gayatri (14 verses)
     'arsi gayatri': 'gayatri',
-
     # विराड्गायत्री → Gayatri (7 verses)
     'viradgayatri': 'gayatri',
     'virad gayatri': 'gayatri',
-
     # भुरिग्गायत्री → Gayatri (4 verses)
     'bhurignayatri': 'gayatri',
     'bhurig gayatri': 'gayatri',
-
     # भुरिक् आर्षी गायत्री → Gayatri (4 verses)
     'bhurik arsi gayatri': 'gayatri',
-
     # चतुष्पदा भुरिग्जगती → Gayatri (Vedic 4-footed, but 24 syllables)
     'catuspada bhurigjagati': 'gayatri',
     'catuspada bhurikjagati': 'gayatri',
-
     # प्रस्तारपङ्क्तिः → Pankti OR Gayatri (66 verses - 2nd most common!)
     # Many Prastara Pankti verses are 24 syllables, so Gayatri is also valid
     'prastarapanktih': 'pankti',
     'prastarapanktih': 'gayatri',  # Also accept Gayatri (very common prediction)
-
     # पङ्क्तिः → Pankti (14 verses)
     'panktih': 'pankti',
     'pankti': 'pankti',
-
     # Classical variants that can map to Pankti
     'asokalokah': 'pankti',  # Often appears in Prastara Pankti verses
-
     # पथ्यापङ्क्तिः → Pankti (6 verses)
     'pathyapanktih': 'pankti',
     'pathyapanktih': 'pankti',
-
     # आर्षी पङ्क्तिः → Pankti (4 verses)
     'arsi panktih': 'pankti',
-
     # विराडास्तारपङ्क्तिः → Pankti (4 verses)
     'viradastarapanktih': 'pankti',
-
     # चतुष्पदा भुरिक्पङ्क्तिः → Pankti/Gayatri (often 24 syllables)
     'catuspada bhurikpanktih': 'gayatri',
     'catuspada bhurikpanktih': 'pankti',
-
     # पथ्याबृहती → Brhati (18 verses - 4th most common)
     'pathyabrhati': 'brhati',
     'pathyabrhati': 'brhati',
-
     # बृहती → Brhati (16 verses)
     'brhati': 'brhati',
     'brhati': 'brhati',
-
     # भुरिग्बृहती → Brhati (16 verses - 5th most common)
     'bhurigbrhati': 'brhati',
     'bhurig brhati': 'brhati',
     'bhurik samni brhati': 'brhati',
     'bhurik samni brhati': 'brhati',
-
     # विराट् पथ्याबृहती → Brhati (6 verses)
     'virat pathyabrhati': 'brhati',
     'virat pathyabrhati': 'brhati',
-
     # विराड् जगती → Jagati (15 verses - 7th most common)
     'virad jagati': 'jagati',
     'virat jagati': 'jagati',
     'virāj jagati': 'jagati',
-
     # भुरिक् जगती → Jagati (3 verses)
     'bhurik jagati': 'jagati',
     'bhurig jagati': 'jagati',
-
     # आर्षी जगती → Jagati (3 verses)
     'arsi jagati': 'jagati',
-
     # अतिजगती → Atijagatī (9 verses - 10th most common)
     'atijagati': 'atijagati',
     'atijagati': 'atijagati',
-
     # साम्नी त्रिष्टुप् → Trishtubh (6 verses)
     'samni tristup': 'tristubh',
     'samni tristubh': 'tristubh',
-
     # विराट् त्रिष्टुप् → Trishtubh (5 verses)
     'virat tristup': 'tristubh',
     'virat tristubh': 'tristubh',
-
     # अत्यष्टिः → Atyashti (3 verses)
     'atyastih': 'atyasti',
     'atyasti': 'atyasti',
-
     # शक्वरी → Shakvari
     'sakvari': 'sakvari',
     'sakvari': 'sakvari',
     'sakvarī': 'sakvari',
-
     # अतिशक्वरी → Atishakvari
     'atisakvari': 'atisakvari',
     'atisakvari': 'atisakvari',
-
     # पङ्क्तिः → Pankti
     'panktih': 'pankti',
-
     # आर्षी गायत्री → Gayatri
     'arsi gayatri': 'gayatri',
-
     # More Vedic variations
     'bhurik': 'anustubh',  # Bhurik alone often indicates modified Anushtubh
     'bhurigastih': 'asti',
     'bhurig-atyastih': 'atyasti',
-
     # ========================================================================
     # CLASSICAL EQUIVALENCES (original mappings)
     # ========================================================================
@@ -277,7 +229,7 @@ METER_FAMILIES = {
     'bhurik anustubh': 'bhurik anustubh',
     'bhurig + anustubh': 'bhurik anustubh',
     'bhurig anustubh': 'bhurik anustubh',
-    'bhurik' : 'bhurik',
+    'bhurik': 'bhurik',
     'bhurij anustubh': 'bhurik anustubh',
     'bhurig anustup': 'bhurik anustubh',
     'prajāpatya anustubh': 'anustubh',
@@ -287,7 +239,6 @@ METER_FAMILIES = {
     'yajusi anustubh': 'anustubh',
     'arsi anustubh': 'anustubh',
     'arsi anustubh': 'anustubh',
-
     # Gāyatrī family (24 syllables = 3×8)
     'gayatri': 'gayatri',
     'gayatri': 'gayatri',
@@ -295,7 +246,6 @@ METER_FAMILIES = {
     'arsi gayatri': 'gayatri',
     'arsi gayatri': 'gayatri',
     'bhurik arsi gayatri': 'gayatri',
-
     # Jagatī family (48 syllables = 4×12)
     'jagati': 'jagati',
     'jagati': 'jagati',
@@ -306,7 +256,6 @@ METER_FAMILIES = {
     'virad jagati': 'jagati',
     'virāt jagati': 'jagati',
     'virāj jagati': 'jagati',
-
     # Triṣṭubh family (44 syllables = 4×11)
     'tristubh': 'tristubh',
     'tristubh': 'tristubh',
@@ -315,7 +264,6 @@ METER_FAMILIES = {
     'bhurig tristubh': 'tristubh',
     'virad tristubh': 'tristubh',
     'virat tristubh': 'tristubh',
-
     # Bṛhatī family (36 syllables = 4×9)
     'brhati': 'brhati',
     'brhati': 'brhati',
@@ -326,7 +274,6 @@ METER_FAMILIES = {
     'bhurik samni brhati': 'brhati',
     'bhurik samni brhati': 'brhati',
     'pathya brhati': 'brhati',
-
     # Paṅkti family (40 syllables = 4×10)
     'panktih': 'pankti',
     'panktih': 'pankti',
@@ -342,7 +289,6 @@ METER_FAMILIES = {
     'caduspada bhurik panktih': 'pankti',
     'catuspada bhurik panktih': 'pankti',
     'catuspada bhurigjanktih': 'pankti',
-
     # Uṣṇik family (28 syllables = 4×7)
     'usnik': 'usnik',
     'usnik': 'usnik',
@@ -350,84 +296,69 @@ METER_FAMILIES = {
     'bhurig usnik': 'usnik',
     'caduspada bhurigusnik': 'usnik',
     'catuspada bhurigusnik': 'usnik',
-
     # Atijagatī (52 syllables = 4×13)
     'atijagati': 'atijagati',
     'atijagati': 'atijagati',
     'atijagatī': 'atijagati',
-
     # Śakvarī (56 syllables = 4×14)
     'sakvari': 'sakvari',
     'sakvari': 'sakvari',
     'sakvarī': 'sakvari',
     'caduspada sakvari': 'sakvari',
     'catuspada sakvari': 'sakvari',
-
     # Atiśakvarī (60 syllables = 4×15)
     'atisakvari': 'atisakvari',
     'atisakvari': 'atisakvari',
     'atisakvarī': 'atisakvari',
-
     # Atyaṣṭi (68 syllables = 4×17)
     'atyastih': 'atyasti',
     'atyastih': 'atyasti',
     'atyasti': 'atyasti',
     'bhurig-atyastih': 'atyasti',
     'bhurig atyastih': 'atyasti',
-
     # Aṣṭi (64 syllables = 4×16)
     'astih': 'asti',
     'astih': 'asti',
     'asti': 'asti',
     'bhurgastih': 'asti',
     'bhurigastih': 'asti',
-
     # Dhruti (72 syllables = 4×18)
     'dhrtih': 'dhrti',
     'dhrtih': 'dhrti',
     'dhrti': 'dhrti',
     'dhruti': 'dhrti',
-
     # Atidhrti (76 syllables = 4×19)
     'atidhrtih': 'atidhrti',
     'atidhrtih': 'atidhrti',
     'atidhrti': 'atidhrti',
-
     # Krti (80 syllables = 4×20)
     'krtih': 'krti',
     'krtih': 'krti',
     'krti': 'krti',
-
     # Prakrti (84 syllables = 4×21)
     'prakrtih': 'prakrti',
     'prakrtih': 'prakrti',
     'prakrti': 'prakrti',
-
     # Ākrti (88 syllables = 4×22)
     'akrtih': 'akrti',
     'akrtih': 'akrti',
     'akrti': 'akrti',
-
     # Vikrti (92 syllables = 4×23)
     'vikrtih': 'vikrti',
     'vikrtih': 'vikrti',
     'vikrti': 'vikrti',
-
     # Saṃkrti (96 syllables = 4×24)
     'samkrtih': 'samkrti',
     'samkrtih': 'samkrti',
     'samkrti': 'samkrti',
-
     # Abhikrti (100 syllables = 4×25)
     'abhikrtih': 'abhikrti',
     'abhikrtih': 'abhikrti',
     'abhikrti': 'abhikrti',
-
     # Utkrti (104 syllables = 4×26)
     'utkrtih': 'utkrti',
     'utkrtih': 'utkrti',
     'utkrti': 'utkrti',
-
     # Atyasti variants
     'atyastih': 'atyasti',
     'atyasti': 'atyasti',
@@ -528,12 +459,14 @@ def test_first_line_accuracy(chanda, csv_path, verbose=False):
             if predicted and meters_match(expected_chanda, predicted):
                 correct += 1
             else:
-                mismatches.append({
-                    'verse_num': total,
-                    'expected': expected_chanda,
-                    'predicted': predicted or '(none)',
-                    'verse': verse[:100] + '...' if len(verse) > 100 else verse
-                })
+                mismatches.append(
+                    {
+                        'verse_num': total,
+                        'expected': expected_chanda,
+                        'predicted': predicted or '(none)',
+                        'verse': verse[:100] + '...' if len(verse) > 100 else verse,
+                    }
+                )
 
     accuracy = (correct / total * 100) if total > 0 else 0
 
@@ -588,13 +521,15 @@ def test_all_lines_accuracy(chanda, csv_path, verbose=False):
             predictions = extract_all_lines_predictions(result)
 
             if not predictions:
-                mismatches.append({
-                    'verse_num': total_verses,
-                    'expected': expected_chanda,
-                    'predicted': '(none)',
-                    'verse': verse[:100] + '...' if len(verse) > 100 else verse,
-                    'line_details': 'No predictions'
-                })
+                mismatches.append(
+                    {
+                        'verse_num': total_verses,
+                        'expected': expected_chanda,
+                        'predicted': '(none)',
+                        'verse': verse[:100] + '...' if len(verse) > 100 else verse,
+                        'line_details': 'No predictions',
+                    }
+                )
                 continue
 
             # Check if ALL lines match
@@ -612,13 +547,15 @@ def test_all_lines_accuracy(chanda, csv_path, verbose=False):
             if verse_correct:
                 correct_verses += 1
             else:
-                mismatches.append({
-                    'verse_num': total_verses,
-                    'expected': expected_chanda,
-                    'predicted': predictions[0][1] if predictions else '(none)',
-                    'verse': verse[:100] + '...' if len(verse) > 100 else verse,
-                    'line_details': '\n    '.join(line_details)
-                })
+                mismatches.append(
+                    {
+                        'verse_num': total_verses,
+                        'expected': expected_chanda,
+                        'predicted': predictions[0][1] if predictions else '(none)',
+                        'verse': verse[:100] + '...' if len(verse) > 100 else verse,
+                        'line_details': '\n    '.join(line_details),
+                    }
+                )
 
     verse_accuracy = (correct_verses / total_verses * 100) if total_verses > 0 else 0
     line_accuracy = (correct_lines / total_lines * 100) if total_lines > 0 else 0
@@ -676,12 +613,14 @@ def test_verse_level_accuracy(chanda, csv_path, verbose=False):
             if predicted and meters_match(expected_chanda, predicted):
                 correct += 1
             else:
-                mismatches.append({
-                    'verse_num': total,
-                    'expected': expected_chanda,
-                    'predicted': predicted or '(none)',
-                    'verse': verse[:100] + '...' if len(verse) > 100 else verse
-                })
+                mismatches.append(
+                    {
+                        'verse_num': total,
+                        'expected': expected_chanda,
+                        'predicted': predicted or '(none)',
+                        'verse': verse[:100] + '...' if len(verse) > 100 else verse,
+                    }
+                )
 
     accuracy = (correct / total * 100) if total > 0 else 0
 
@@ -704,15 +643,10 @@ def test_verse_level_accuracy(chanda, csv_path, verbose=False):
 
 def main():
     """Main test execution"""
-    parser = argparse.ArgumentParser(
-        description='Test Chanda identifier against match_chandas.csv dataset'
-    )
-    parser.add_argument('-v', '--verbose', action='store_true',
-                       help='Show detailed mismatch information')
-    parser.add_argument('--all', action='store_true',
-                       help='Run all three accuracy tests')
-    parser.add_argument('--verse', action='store_true',
-                       help='Run verse-level accuracy test only')
+    parser = argparse.ArgumentParser(description='Test Chanda identifier against match_chandas.csv dataset')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show detailed mismatch information')
+    parser.add_argument('--all', action='store_true', help='Run all three accuracy tests')
+    parser.add_argument('--verse', action='store_true', help='Run verse-level accuracy test only')
     args = parser.parse_args()
 
     # Initialize Chanda engine

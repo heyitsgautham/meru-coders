@@ -34,11 +34,12 @@ def check_dependencies():
 
     return missing
 
+
 def show_installation_guide():
     """Show quick installation guide"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("QUICK INSTALLATION")
-    print("="*70)
+    print("=" * 70)
     print("\nRun these commands to install dependencies:\n")
     print("# Option 1: Use the installation script")
     print("bash install_tts.sh\n")
@@ -46,15 +47,16 @@ def show_installation_guide():
     print("pip install torch torchvision torchaudio")
     print("pip install transformers accelerate soundfile")
     print("pip install git+https://github.com/huggingface/parler-tts.git\n")
-    print("="*70)
+    print("=" * 70)
+
 
 def generate_test_samples():
     """Generate test audio samples to evaluate voice quality"""
     from sanskrit_tts import SanskritTTS
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("GENERATING SANSKRIT TTS TEST SAMPLES")
-    print("="*70)
+    print("=" * 70)
     print("\nModel: ai4bharat/indic-parler-tts")
     print("Speaker: Aryan (optimized for Sanskrit)")
     print("Expected quality: 99.79% accuracy\n")
@@ -68,28 +70,24 @@ def generate_test_samples():
         {
             "name": "Basic Mantra",
             "text": "ॐ नमः शिवाय",
-            "description": "Short sacred mantra - tests clarity and pronunciation"
+            "description": "Short sacred mantra - tests clarity and pronunciation",
         },
         {
             "name": "Gayatri Mantra (excerpt)",
             "text": "ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यम्",
-            "description": "Vedic mantra - tests prosody and rhythm"
+            "description": "Vedic mantra - tests prosody and rhythm",
         },
         {
             "name": "Bhagavad Gita Verse",
             "text": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
-            "description": "Classical shloka - tests longer phrases"
+            "description": "Classical shloka - tests longer phrases",
         },
         {
             "name": "Simple Sentence",
             "text": "संस्कृतम् एकः प्राचीनः भाषा अस्ति",
-            "description": "Prose sentence - tests natural speech"
+            "description": "Prose sentence - tests natural speech",
         },
-        {
-            "name": "Greeting",
-            "text": "नमस्ते भारत",
-            "description": "Simple greeting - tests basic clarity"
-        }
+        {"name": "Greeting", "text": "नमस्ते भारत", "description": "Simple greeting - tests basic clarity"},
     ]
 
     results = []
@@ -107,36 +105,34 @@ def generate_test_samples():
             result = tts.synthesize(
                 sample['text'],
                 output_filename=f"test_{i}_{sample['name'].lower().replace(' ', '_')}",
-                generate_spectrogram=True
+                generate_spectrogram=True,
             )
-            results.append({
-                "name": sample['name'],
-                "text": sample['text'],
-                "audio": result['audio'],
-                "spectrogram": result['spectrogram'],
-                "success": True
-            })
+            results.append(
+                {
+                    "name": sample['name'],
+                    "text": sample['text'],
+                    "audio": result['audio'],
+                    "spectrogram": result['spectrogram'],
+                    "success": True,
+                }
+            )
             print(f"   ✓ Generated: {result['audio'].name}")
             if result['spectrogram']:
                 print(f"   ✓ Spectrogram: {result['spectrogram'].name}")
         except Exception as e:
             print(f"   ✗ Failed: {e}")
-            results.append({
-                "name": sample['name'],
-                "text": sample['text'],
-                "success": False,
-                "error": str(e)
-            })
+            results.append({"name": sample['name'], "text": sample['text'], "success": False, "error": str(e)})
 
         print()
 
     return results
 
+
 def print_results(results):
     """Print summary of generated samples"""
-    print("="*70)
+    print("=" * 70)
     print("TEST RESULTS")
-    print("="*70)
+    print("=" * 70)
 
     successful = [r for r in results if r.get('success')]
     failed = [r for r in results if not r.get('success')]
@@ -159,9 +155,9 @@ def print_results(results):
         for result in failed:
             print(f"\n{result['name']}: {result.get('error', 'Unknown error')}")
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("HOW TO LISTEN")
-    print("="*70)
+    print("=" * 70)
     print("\n1. Find the audio files in the ./outputs/ directory")
     print("2. Play them with any audio player:")
     print("   - macOS: open outputs/test_*.wav")
@@ -173,12 +169,13 @@ def print_results(results):
     print("   - Accuracy of Sanskrit sounds")
     print("   - Overall naturalness")
     print("\n4. View spectrograms to see acoustic patterns")
-    print("="*70)
+    print("=" * 70)
+
 
 def main():
     """Main function"""
     print("Sanskrit TTS Voice Quality Test")
-    print("="*70)
+    print("=" * 70)
 
     # Check dependencies
     print("\nChecking dependencies...")
@@ -190,16 +187,16 @@ def main():
 
         response = input("\nWould you like to see sample info without generating? [y/N]: ")
         if response.lower() == 'y':
-            print("\n" + "="*70)
+            print("\n" + "=" * 70)
             print("MODEL INFORMATION")
-            print("="*70)
+            print("=" * 70)
             print("\nModel: ai4bharat/indic-parler-tts")
             print("Accuracy for Sanskrit: 99.79% (native speaker evaluation)")
             print("Speaker: Aryan (recommended for Sanskrit)")
             print("Sample Rate: 24kHz")
             print("Quality: High-fidelity, studio quality")
             print("\nTo hear actual samples, install dependencies and run again.")
-            print("="*70)
+            print("=" * 70)
 
         return 1
 
@@ -216,6 +213,7 @@ def main():
             response = input("\nWould you like to play the first sample now? [y/N]: ")
             if response.lower() == 'y':
                 import subprocess
+
                 audio_file = successful[0]['audio']
                 subprocess.run(['open', str(audio_file)])
                 print(f"Playing: {audio_file}")
@@ -225,8 +223,10 @@ def main():
     except Exception as e:
         print(f"\n✗ Error: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
+
 
 if __name__ == "__main__":
     exit(main())

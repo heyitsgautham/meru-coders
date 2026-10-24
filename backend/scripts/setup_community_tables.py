@@ -19,6 +19,7 @@ if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
 
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
+
 def test_connection():
     """Test the Supabase connection"""
     try:
@@ -154,6 +155,7 @@ END $$;
 
 SELECT 'Community tables created successfully!' as status;
 """)
+
 
 if __name__ == "__main__":
     main()

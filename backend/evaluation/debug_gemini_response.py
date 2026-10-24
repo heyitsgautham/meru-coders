@@ -69,9 +69,9 @@ Mark is_valid_shloka=false for:
 
 Return ONLY the JSON object, no markdown formatting or explanation."""
 
-print("\n" + "="*60)
+print("\n" + "=" * 60)
 print("Sending request to Gemini...")
-print("="*60)
+print("=" * 60)
 
 try:
     config = types.GenerateContentConfig(
@@ -80,11 +80,7 @@ try:
         max_output_tokens=1024,  # Increased from 500!
     )
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=PROMPT,
-        config=config
-    )
+    response = client.models.generate_content(model="gemini-2.5-flash", contents=PROMPT, config=config)
 
     print("\n--- RAW RESPONSE ---")
     print(f"response.text exists: {hasattr(response, 'text')}")
@@ -109,7 +105,7 @@ try:
         except json.JSONDecodeError as e:
             print(f"\n✗ JSON parse error: {e}")
             print(f"Error position: char {e.pos}")
-            print(f"Around error: ...{response_text[max(0,e.pos-20):e.pos+20]}...")
+            print(f"Around error: ...{response_text[max(0, e.pos - 20) : e.pos + 20]}...")
     else:
         print("Response was empty or None!")
         print(f"Full response object: {response}")

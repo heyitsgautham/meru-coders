@@ -21,8 +21,11 @@ def normalize_meter(name):
     name = name.lower().strip()
     # Common normalizations
     replacements = {
-        'ä': 'a', 'ü': 'u', 'ö': 'o',
-        'anushtup': 'anustubh', 'anustup': 'anustubh',
+        'ä': 'a',
+        'ü': 'u',
+        'ö': 'o',
+        'anushtup': 'anustubh',
+        'anustup': 'anustubh',
         'anushtubh': 'anustubh',
     }
     for old, new in replacements.items():
@@ -82,11 +85,7 @@ def test_method(method_name, data_path, rows):
 
         total += 1
 
-    return {
-        'correct': correct,
-        'total': total,
-        'accuracy': (correct / total * 100) if total > 0 else 0
-    }
+    return {'correct': correct, 'total': total, 'accuracy': (correct / total * 100) if total > 0 else 0}
 
 
 def main():

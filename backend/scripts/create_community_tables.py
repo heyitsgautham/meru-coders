@@ -122,6 +122,7 @@ BEGIN
 END $$;
 """
 
+
 def main():
     print("=" * 60)
     print("Community Tables Creation - Direct PostgreSQL Connection")
@@ -137,12 +138,7 @@ def main():
         print()
 
         conn = psycopg2.connect(
-            host=DB_HOST,
-            port=DB_PORT,
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            sslmode='require'
+            host=DB_HOST, port=DB_PORT, dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, sslmode='require'
         )
         conn.autocommit = True
         cursor = conn.cursor()
@@ -206,6 +202,7 @@ def main():
         print("2. Enable database access in Supabase dashboard")
         print("3. Or run the SQL manually in Supabase SQL Editor")
         raise
+
 
 if __name__ == "__main__":
     main()

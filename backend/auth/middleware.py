@@ -40,7 +40,7 @@ def get_current_user():
             'user_metadata': {
                 'username': payload.get('username'),
                 'is_admin': payload.get('is_admin'),
-            }
+            },
         }
     except Exception as e:
         current_app.logger.error(f"Local token verification failed: {e}")
@@ -52,16 +52,19 @@ def require_auth(f):
     Decorator to require authentication for a route.
     Verifies Supabase JWT token and attaches user to request.
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = get_current_user()
 
         if not user:
-            return jsonify({
-                'success': False,
-                'error': 'Authentication required',
-                'message': 'Please log in to access this resource'
-            }), 401
+            return jsonify(
+                {
+                    'success': False,
+                    'error': 'Authentication required',
+                    'message': 'Please log in to access this resource',
+                }
+            ), 401
 
         # Attach user to request for use in route
         request.current_user = user
@@ -75,16 +78,19 @@ def require_admin(f):
     Decorator to require admin authentication for a route.
     Checks if user has admin privileges (username = admin-erase-sure).
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user = get_current_user()
 
         if not user:
-            return jsonify({
-                'success': False,
-                'error': 'Authentication required',
-                'message': 'Please log in to access this resource'
-            }), 401
+            return jsonify(
+                {
+                    'success': False,
+                    'error': 'Authentication required',
+                    'message': 'Please log in to access this resource',
+                }
+            ), 401
 
         # If token came from local admin login, trust is_admin flag in metadata
         meta_admin = None
@@ -103,11 +109,13 @@ def require_admin(f):
         try:
             result = supabase.table('users').select('is_admin, username').eq('id', user.id).single().execute()
             if not result.data or not result.data.get('is_admin'):
-                return jsonify({
-                    'success': False,
-                    'error': 'Admin access required',
-                    'message': 'You do not have permission to access this resource'
-                }), 403
+                return jsonify(
+                    {
+                        'success': False,
+                        'error': 'Admin access required',
+                        'message': 'You do not have permission to access this resource',
+                    }
+                ), 403
 
             request.current_user = user
             request.admin_data = result.data
@@ -115,10 +123,8 @@ def require_admin(f):
 
         except Exception as e:
             current_app.logger.error(f"Admin verification failed: {e}")
-            return jsonify({
-                'success': False,
-                'error': 'Authorization failed',
-                'message': 'Could not verify admin status'
-            }), 500
+            return jsonify(
+                {'success': False, 'error': 'Authorization failed', 'message': 'Could not verify admin status'}
+            ), 500
 
     return decorated_function

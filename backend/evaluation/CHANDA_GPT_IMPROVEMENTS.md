@@ -18,18 +18,17 @@
 def validate_input(text: str) -> tuple[bool, str]:
     """Validate input for security issues"""
     # Detect prompt injection patterns
-    if re.search(r"\{.*\}|pretend|ignore all|override|respond in json|system:|assistant:", 
-                 text, re.IGNORECASE):
+    if re.search(r"\{.*\}|pretend|ignore all|override|respond in json|system:|assistant:", text, re.IGNORECASE):
         return False, "Input contains suspicious patterns"
-    
+
     # Detect excessive length (DoS prevention)
     if len(text) > 10000:
         return False, "Input too long (max 10000 characters)"
-    
+
     # Detect binary/encoded content
     if re.search(r"[\x00-\x08\x0B\x0C\x0E-\x1F]", text):
         return False, "Input contains invalid characters"
-    
+
     return True, ""
 ```
 
@@ -91,8 +90,8 @@ result = {
         'Detected Devanagari script',
         'Syllabified into 16 syllables',
         'Exact match found with confidence 10.0',
-        'L-G pattern: GLGLGLGLGLGLGLGL'
-    ]
+        'L-G pattern: GLGLGLGLGLGLGLGL',
+    ],
 }
 ```
 
@@ -141,13 +140,10 @@ def extract_devanagari(text: str) -> str:
 VOWEL_CLASSIFICATION = {
     'short': set(["अ", "इ", "उ", "ऋ"]),  # Note: ऋ sometimes short
     'long': set(["आ", "ई", "ऊ", "ए", "ओ", "ऐ", "औ", "ॠ"]),
-    'pluta': set([])  # Extended vowels (3 mātrās)
+    'pluta': set([]),  # Extended vowels (3 mātrās)
 }
 
-MATRA_CLASSIFICATION = {
-    'short': set(["ि", "ु", "ृ"]),
-    'long': set(["ा", "ी", "ू", "े", "ै", "ो", "ौ", "ॄ"])
-}
+MATRA_CLASSIFICATION = {'short': set(["ि", "ु", "ृ"]), 'long': set(["ा", "ी", "ू", "े", "ै", "ो", "ौ", "ॄ"])}
 ```
 
 **Where to add:** As class constants in `Chanda`

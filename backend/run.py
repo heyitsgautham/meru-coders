@@ -46,7 +46,7 @@ def main():
             port=port,
             debug=app.config['DEBUG'],
             allow_unsafe_werkzeug=True,  # Required for threading mode
-            use_reloader=False  # Disable reloader to preserve Python path for RAG
+            use_reloader=False,  # Disable reloader to preserve Python path for RAG
         )
     else:
         print("⚠️ WebSocket not available, running standard Flask server")
@@ -55,7 +55,7 @@ def main():
             port=port,
             debug=app.config['DEBUG'],
             threaded=True,
-            use_reloader=False  # Disable reloader to preserve Python path for RAG
+            use_reloader=False,  # Disable reloader to preserve Python path for RAG
         )
 
 

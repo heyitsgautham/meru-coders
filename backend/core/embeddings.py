@@ -19,23 +19,21 @@ EMBEDDING_MODELS = {
     "default": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "large": "intfloat/multilingual-e5-large",
     "small": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "indic": "l3cube-pune/indic-sentence-bert-nli"
+    "indic": "l3cube-pune/indic-sentence-bert-nli",
 }
 
 
 def get_embedding_model(
-    model_name: str = "default",
-    device: str = "cpu",
-    normalize: bool = True
+    model_name: str = "default", device: str = "cpu", normalize: bool = True
 ) -> HuggingFaceEmbeddings:
     """
     Get an embedding model instance
-    
+
     Args:
         model_name: Model identifier (default, large, small, indic) or full HF model path
         device: Device to run on ('cpu' or 'cuda')
         normalize: Whether to normalize embeddings
-    
+
     Returns:
         HuggingFaceEmbeddings instance
     """
@@ -48,9 +46,7 @@ def get_embedding_model(
     logger.info(f"📦 Loading embedding model: {full_model_name}")
 
     embeddings = HuggingFaceEmbeddings(
-        model_name=full_model_name,
-        model_kwargs={'device': device},
-        encode_kwargs={'normalize_embeddings': normalize}
+        model_name=full_model_name, model_kwargs={'device': device}, encode_kwargs={'normalize_embeddings': normalize}
     )
 
     return embeddings
@@ -59,38 +55,35 @@ def get_embedding_model(
 def get_embedding_dimensions(model_name: str = "default") -> int:
     """
     Get the embedding dimensions for a model
-    
+
     Args:
         model_name: Model identifier
-    
+
     Returns:
         Number of dimensions in embeddings
     """
     dimensions = {
         "default": 768,  # mpnet-base
-        "large": 1024,   # e5-large
-        "small": 384,    # MiniLM
-        "indic": 768     # indic-bert
+        "large": 1024,  # e5-large
+        "small": 384,  # MiniLM
+        "indic": 768,  # indic-bert
     }
 
     return dimensions.get(model_name, 768)
 
 
 def batch_embed_texts(
-    texts: List[str],
-    model_name: str = "default",
-    batch_size: int = 32,
-    device: str = "cpu"
+    texts: List[str], model_name: str = "default", batch_size: int = 32, device: str = "cpu"
 ) -> List[List[float]]:
     """
     Embed a batch of texts
-    
+
     Args:
         texts: List of texts to embed
         model_name: Embedding model to use
         batch_size: Batch size for processing
         device: Device to run on
-    
+
     Returns:
         List of embedding vectors
     """
@@ -99,7 +92,7 @@ def batch_embed_texts(
     # Embed in batches
     all_embeddings = []
     for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
+        batch = texts[i : i + batch_size]
         batch_embeddings = embeddings_model.embed_documents(batch)
         all_embeddings.extend(batch_embeddings)
 
@@ -109,21 +102,16 @@ def batch_embed_texts(
     return all_embeddings
 
 
-def compute_similarity(
-    text1: str,
-    text2: str,
-    model_name: str = "default",
-    device: str = "cpu"
-) -> float:
+def compute_similarity(text1: str, text2: str, model_name: str = "default", device: str = "cpu") -> float:
     """
     Compute cosine similarity between two texts
-    
+
     Args:
         text1: First text
         text2: Second text
         model_name: Embedding model to use
         device: Device to run on
-    
+
     Returns:
         Cosine similarity score (0.0 to 1.0)
     """
@@ -144,10 +132,10 @@ def compute_similarity(
 def preprocess_text_for_embedding(text: str) -> str:
     """
     Preprocess text before embedding
-    
+
     Args:
         text: Raw text
-    
+
     Returns:
         Preprocessed text
     """
@@ -171,7 +159,7 @@ def test_embeddings():
     test_texts = [
         "अनुष्टुभ् छन्द में प्रत्येक पाद में आठ अक्षर होते हैं",
         "Anushtubh meter has 8 syllables per pada",
-        "गायत्री वैदिक छन्द है जिसमें तीन पाद होते हैं"
+        "गायत्री वैदिक छन्द है जिसमें तीन पाद होते हैं",
     ]
 
     # Get embedding model

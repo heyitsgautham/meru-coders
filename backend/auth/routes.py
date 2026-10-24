@@ -32,6 +32,7 @@ def _get_frontend_origin() -> str:
     if referer:
         # Extract origin from referer (protocol + host)
         from urllib.parse import urlparse
+
         parsed = urlparse(referer)
         if parsed.scheme and parsed.netloc:
             return f"{parsed.scheme}://{parsed.netloc}"
@@ -69,51 +70,51 @@ def signup():
         password = data.get('password', '')
 
         if not username or not password:
-            return jsonify({
-                'success': False,
-                'error': 'Missing credentials',
-                'message': 'Username and password are required'
-            }), 400
+            return jsonify(
+                {'success': False, 'error': 'Missing credentials', 'message': 'Username and password are required'}
+            ), 400
 
         # Validate username
         if len(username) < 3:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid username',
-                'message': 'Username must be at least 3 characters long'
-            }), 400
+            return jsonify(
+                {
+                    'success': False,
+                    'error': 'Invalid username',
+                    'message': 'Username must be at least 3 characters long',
+                }
+            ), 400
 
         if len(password) < 6:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid password',
-                'message': 'Password must be at least 6 characters long'
-            }), 400
+            return jsonify(
+                {
+                    'success': False,
+                    'error': 'Invalid password',
+                    'message': 'Password must be at least 6 characters long',
+                }
+            ), 400
 
         # Check if admin username (reserved)
         if username == ADMIN_USERNAME:
-            return jsonify({
-                'success': False,
-                'error': 'Username reserved',
-                'message': 'This username is reserved for admin use'
-            }), 400
+            return jsonify(
+                {'success': False, 'error': 'Username reserved', 'message': 'This username is reserved for admin use'}
+            ), 400
 
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         if supabase is None:
-            return jsonify({
-                'success': False,
-                'error': 'Signup unavailable',
-                'message': 'Account storage is not configured on this server'
-            }), 503
+            return jsonify(
+                {
+                    'success': False,
+                    'error': 'Signup unavailable',
+                    'message': 'Account storage is not configured on this server',
+                }
+            ), 503
 
         # Check if username already exists
         existing = supabase.table('users').select('id').eq('username', username).execute()
         if existing.data:
-            return jsonify({
-                'success': False,
-                'error': 'Username taken',
-                'message': 'This username is already registered'
-            }), 409
+            return jsonify(
+                {'success': False, 'error': 'Username taken', 'message': 'This username is already registered'}
+            ), 409
 
         # Hash password with bcrypt
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -126,17 +127,15 @@ def signup():
             'username': username,
             'password_hash': password_hash,
             'is_admin': False,
-            'created_at': 'now()'
+            'created_at': 'now()',
         }
 
         result = supabase.table('users').insert(user_data).execute()
 
         if not result.data:
-            return jsonify({
-                'success': False,
-                'error': 'Signup failed',
-                'message': 'Could not create user account'
-            }), 500
+            return jsonify(
+                {'success': False, 'error': 'Signup failed', 'message': 'Could not create user account'}
+            ), 500
 
         # Generate JWT token
         from backend.config import settings
@@ -146,30 +145,22 @@ def signup():
             'username': username,
             'is_admin': False,
             'iat': int(time.time()),
-            'exp': int(time.time()) + 3600 * 24  # 24 hours
+            'exp': int(time.time()) + 3600 * 24,  # 24 hours
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 
-        return jsonify({
-            'success': True,
-            'message': 'Account created successfully',
-            'user': {
-                'id': user_id,
-                'username': username
-            },
-            'session': {
-                'access_token': token,
-                'refresh_token': None
+        return jsonify(
+            {
+                'success': True,
+                'message': 'Account created successfully',
+                'user': {'id': user_id, 'username': username},
+                'session': {'access_token': token, 'refresh_token': None},
             }
-        }), 201
+        ), 201
 
     except Exception as e:
         current_app.logger.error(f"Signup error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'Signup failed',
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': 'Signup failed', 'message': str(e)}), 500
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -184,11 +175,9 @@ def login():
         password = data.get('password', '')
 
         if not username or not password:
-            return jsonify({
-                'success': False,
-                'error': 'Missing credentials',
-                'message': 'Username and password are required'
-            }), 400
+            return jsonify(
+                {'success': False, 'error': 'Missing credentials', 'message': 'Username and password are required'}
+            ), 400
 
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
 
@@ -200,42 +189,29 @@ def login():
                 'username': username,
                 'is_admin': False,
                 'iat': int(time.time()),
-                'exp': int(time.time()) + 3600 * 24
+                'exp': int(time.time()) + 3600 * 24,
             }
             token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
-            return jsonify({
-                'success': True,
-                'message': 'Login successful (local dev fallback)',
-                'user': {
-                    'id': user_id,
-                    'username': username,
-                    'is_admin': False
-                },
-                'session': {
-                    'access_token': token,
-                    'refresh_token': None
+            return jsonify(
+                {
+                    'success': True,
+                    'message': 'Login successful (local dev fallback)',
+                    'user': {'id': user_id, 'username': username, 'is_admin': False},
+                    'session': {'access_token': token, 'refresh_token': None},
                 }
-            }), 200
+            ), 200
 
         # Look up user by username
         result = supabase.table('users').select('*').eq('username', username).execute()
 
         if not result.data or len(result.data) == 0:
-            return jsonify({
-                'success': False,
-                'error': 'Login failed',
-                'message': 'Invalid username or password'
-            }), 401
+            return jsonify({'success': False, 'error': 'Login failed', 'message': 'Invalid username or password'}), 401
 
         user = result.data[0]
 
         # Verify password with bcrypt
         if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
-            return jsonify({
-                'success': False,
-                'error': 'Login failed',
-                'message': 'Invalid username or password'
-            }), 401
+            return jsonify({'success': False, 'error': 'Login failed', 'message': 'Invalid username or password'}), 401
 
         # Generate JWT token
         from backend.config import settings
@@ -245,31 +221,22 @@ def login():
             'username': user['username'],
             'is_admin': user.get('is_admin', False),
             'iat': int(time.time()),
-            'exp': int(time.time()) + 3600 * 24  # 24 hours
+            'exp': int(time.time()) + 3600 * 24,  # 24 hours
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 
-        return jsonify({
-            'success': True,
-            'message': 'Login successful',
-            'user': {
-                'id': user['id'],
-                'username': user['username'],
-                'is_admin': user.get('is_admin', False)
-            },
-            'session': {
-                'access_token': token,
-                'refresh_token': None
+        return jsonify(
+            {
+                'success': True,
+                'message': 'Login successful',
+                'user': {'id': user['id'], 'username': user['username'], 'is_admin': user.get('is_admin', False)},
+                'session': {'access_token': token, 'refresh_token': None},
             }
-        }), 200
+        ), 200
 
     except Exception as e:
         current_app.logger.error(f"Login error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'Login failed',
-            'message': 'Invalid username or password'
-        }), 401
+        return jsonify({'success': False, 'error': 'Login failed', 'message': 'Invalid username or password'}), 401
 
 
 @auth_bp.route('/admin-login', methods=['POST'])
@@ -285,11 +252,9 @@ def admin_login():
 
         # Verify admin credentials
         if not check_admin_credentials(username, password):
-            return jsonify({
-                'success': False,
-                'error': 'Invalid credentials',
-                'message': 'Invalid admin username or password'
-            }), 401
+            return jsonify(
+                {'success': False, 'error': 'Invalid credentials', 'message': 'Invalid admin username or password'}
+            ), 401
 
         # Issue a local JWT to bypass Supabase email constraints
         # Use a fixed UUID-like subject so downstream Supabase UUID columns accept it
@@ -298,31 +263,22 @@ def admin_login():
             'username': ADMIN_USERNAME,
             'is_admin': True,
             'iat': int(time.time()),
-            'exp': int(time.time()) + 3600 * 24  # 24 hours
+            'exp': int(time.time()) + 3600 * 24,  # 24 hours
         }
         token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
 
-        return jsonify({
-            'success': True,
-            'message': 'Admin login successful',
-            'user': {
-                'id': ADMIN_USERNAME,
-                'username': ADMIN_USERNAME,
-                'is_admin': True
-            },
-            'session': {
-                'access_token': token,
-                'refresh_token': None
+        return jsonify(
+            {
+                'success': True,
+                'message': 'Admin login successful',
+                'user': {'id': ADMIN_USERNAME, 'username': ADMIN_USERNAME, 'is_admin': True},
+                'session': {'access_token': token, 'refresh_token': None},
             }
-        }), 200
+        ), 200
 
     except Exception as e:
         current_app.logger.error(f"Admin login error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'Admin login failed',
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': 'Admin login failed', 'message': str(e)}), 500
 
 
 @auth_bp.route('/oauth/start', methods=['POST'])
@@ -341,45 +297,29 @@ def oauth_start():
             provider,
             redirect_to,
             bool(supabase),
-            request.headers.get('Origin')
+            request.headers.get('Origin'),
         )
 
-        oauth_response = supabase.auth.sign_in_with_oauth({
-            'provider': provider,
-            'options': {
-                'redirect_to': redirect_to
-            }
-        })
+        oauth_response = supabase.auth.sign_in_with_oauth(
+            {'provider': provider, 'options': {'redirect_to': redirect_to}}
+        )
 
         url = getattr(oauth_response, 'url', None)
         if url is None and isinstance(oauth_response, dict):
             url = oauth_response.get('url')
 
-        current_app.logger.info(
-            "OAuth start response: url=%s response_type=%s",
-            url,
-            type(oauth_response).__name__
-        )
+        current_app.logger.info("OAuth start response: url=%s response_type=%s", url, type(oauth_response).__name__)
 
         if not url:
-            return jsonify({
-                'success': False,
-                'error': 'OAuth start failed',
-                'message': 'Provider did not return a redirect URL'
-            }), 500
+            return jsonify(
+                {'success': False, 'error': 'OAuth start failed', 'message': 'Provider did not return a redirect URL'}
+            ), 500
 
-        return jsonify({
-            'success': True,
-            'url': url
-        }), 200
+        return jsonify({'success': True, 'url': url}), 200
 
     except Exception as e:
         current_app.logger.error(f"OAuth start error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'OAuth start failed',
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': 'OAuth start failed', 'message': str(e)}), 500
 
 
 @auth_bp.route('/oauth/exchange', methods=['POST'])
@@ -394,15 +334,11 @@ def oauth_exchange():
             "OAuth exchange request: access=%s refresh=%s origin=%s",
             _redact(access_token),
             _redact(refresh_token),
-            request.headers.get('Origin')
+            request.headers.get('Origin'),
         )
 
         if not access_token:
-            return jsonify({
-                'success': False,
-                'error': 'Missing token',
-                'message': 'Access token is required'
-            }), 400
+            return jsonify({'success': False, 'error': 'Missing token', 'message': 'Access token is required'}), 400
 
         supabase: Client = current_app.config.get('SUPABASE_CLIENT') or current_app.supabase
         user_response = supabase.auth.get_user(access_token)
@@ -411,65 +347,47 @@ def oauth_exchange():
         current_app.logger.info(
             "OAuth exchange Supabase response: has_user=%s response_type=%s",
             bool(supabase_user),
-            type(user_response).__name__
+            type(user_response).__name__,
         )
 
         if not supabase_user:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid token',
-                'message': 'Could not validate OAuth session'
-            }), 401
+            return jsonify(
+                {'success': False, 'error': 'Invalid token', 'message': 'Could not validate OAuth session'}
+            ), 401
 
         email = supabase_user.email
         username = supabase_user.user_metadata.get('preferred_username') if supabase_user.user_metadata else None
         if not username:
             username = supabase_user.user_metadata.get('user_name') if supabase_user.user_metadata else None
         if not username:
-            username = (email.split('@')[0] if email and '@' in email else supabase_user.id)
+            username = email.split('@')[0] if email and '@' in email else supabase_user.id
 
         profile = get_user_profile(supabase_user.id)
-        current_app.logger.info(
-            "OAuth exchange profile lookup: user_id=%s found=%s",
-            supabase_user.id,
-            bool(profile)
-        )
+        current_app.logger.info("OAuth exchange profile lookup: user_id=%s found=%s", supabase_user.id, bool(profile))
         if not profile:
-            create_user_profile(
-                user_id=supabase_user.id,
-                username=username,
-                email=email,
-                is_admin=False
-            )
+            create_user_profile(user_id=supabase_user.id, username=username, email=email, is_admin=False)
             profile = get_user_profile(supabase_user.id)
             current_app.logger.info(
-                "OAuth exchange profile created: user_id=%s success=%s",
-                supabase_user.id,
-                bool(profile)
+                "OAuth exchange profile created: user_id=%s success=%s", supabase_user.id, bool(profile)
             )
 
-        return jsonify({
-            'success': True,
-            'message': 'OAuth login successful',
-            'user': {
-                'id': supabase_user.id,
-                'username': profile.get('username') if profile else username,
-                'email': profile.get('email') if profile else email,
-                'is_admin': profile.get('is_admin', False) if profile else False
-            },
-            'session': {
-                'access_token': access_token,
-                'refresh_token': refresh_token
+        return jsonify(
+            {
+                'success': True,
+                'message': 'OAuth login successful',
+                'user': {
+                    'id': supabase_user.id,
+                    'username': profile.get('username') if profile else username,
+                    'email': profile.get('email') if profile else email,
+                    'is_admin': profile.get('is_admin', False) if profile else False,
+                },
+                'session': {'access_token': access_token, 'refresh_token': refresh_token},
             }
-        }), 200
+        ), 200
 
     except Exception as e:
         current_app.logger.error(f"OAuth exchange error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'OAuth exchange failed',
-            'message': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': 'OAuth exchange failed', 'message': str(e)}), 500
 
 
 @auth_bp.route('/profile', methods=['GET'])
@@ -481,25 +399,18 @@ def get_profile():
     user = get_current_user()
 
     if not user:
-        return jsonify({
-            'success': False,
-            'error': 'Not authenticated',
-            'message': 'Please log in to view profile'
-        }), 401
+        return jsonify(
+            {'success': False, 'error': 'Not authenticated', 'message': 'Please log in to view profile'}
+        ), 401
 
     profile = get_user_profile(user.id)
 
     if not profile:
-        return jsonify({
-            'success': False,
-            'error': 'Profile not found',
-            'message': 'User profile could not be retrieved'
-        }), 404
+        return jsonify(
+            {'success': False, 'error': 'Profile not found', 'message': 'User profile could not be retrieved'}
+        ), 404
 
-    return jsonify({
-        'success': True,
-        'user': profile
-    }), 200
+    return jsonify({'success': True, 'user': profile}), 200
 
 
 @auth_bp.route('/logout', methods=['POST'])
@@ -517,7 +428,4 @@ def logout():
         except Exception as e:
             current_app.logger.error(f"Logout error: {e}")
 
-    return jsonify({
-        'success': True,
-        'message': 'Logged out successfully'
-    }), 200
+    return jsonify({'success': True, 'message': 'Logged out successfully'}), 200

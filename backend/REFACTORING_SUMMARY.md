@@ -81,9 +81,9 @@ Test Suite: 7/8 PASS (87.5%)
 **Constants Section** (49 new lines):
 ```python
 # CONFIGURATION CONSTANTS
-CONFIDENCE_EXACT_PATTERN = 10.0      # Exact L-G pattern match
-CONFIDENCE_EXACT_REGEX = 9.0         # Regex pattern match
-CONFIDENCE_PADA_EXACT = 9.0          # Exact pada-level match
+CONFIDENCE_EXACT_PATTERN = 10.0  # Exact L-G pattern match
+CONFIDENCE_EXACT_REGEX = 9.0  # Regex pattern match
+CONFIDENCE_PADA_EXACT = 9.0  # Exact pada-level match
 # ... 22 more constants with documentation
 ```
 

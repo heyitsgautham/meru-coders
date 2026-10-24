@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """List available Hindi/Sanskrit voices in edge-tts"""
+
 import asyncio
 
 import edge_tts
@@ -20,13 +21,18 @@ async def list_hindi_voices():
 
     if not hindi_voices:
         print("No hi-IN voices found. Checking all Asian voices...")
-        hindi_voices = [v for v in voices if any(x in v.get('Locale', '') for x in ['hi-', 'mr-', 'ta-', 'te-', 'kn-', 'gu-', 'bn-', 'pa-'])]
+        hindi_voices = [
+            v
+            for v in voices
+            if any(x in v.get('Locale', '') for x in ['hi-', 'mr-', 'ta-', 'te-', 'kn-', 'gu-', 'bn-', 'pa-'])
+        ]
 
     for voice in hindi_voices:
         print(f"Name: {voice.get('ShortName', 'N/A')}")
         print(f"  Locale: {voice.get('Locale', 'N/A')}")
         print(f"  Gender: {voice.get('Gender', 'N/A')}")
         print()
+
 
 if __name__ == "__main__":
     asyncio.run(list_hindi_voices())

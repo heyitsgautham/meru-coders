@@ -34,7 +34,7 @@ def test_data_files():
         'chanda_vishama.csv',
         'chanda_matra.csv',
         'chanda_jaati.csv',
-        'examples.json'
+        'examples.json',
     ]
 
     all_present = True
@@ -68,29 +68,21 @@ def test_meter_identification(chanda):
     print_section("Testing Meter Identification")
 
     test_cases = [
-        {
-            'name': 'Simple Line',
-            'text': 'श्रीरामचन्द्रचरणौ मनसा स्मरामि',
-            'mode': 'line'
-        },
+        {'name': 'Simple Line', 'text': 'श्रीरामचन्द्रचरणौ मनसा स्मरामि', 'mode': 'line'},
         {
             'name': 'Complete Verse',
             'text': '''श्रीरामचन्द्रचरणौ मनसा स्मरामि
 श्रीरामचन्द्रचरणौ वचसा गृणामि
 श्रीरामचन्द्रचरणौ शिरसा नमामि
 श्रीरामचन्द्रचरणौ शरणं प्रपद्ये''',
-            'mode': 'verse'
-        }
+            'mode': 'verse',
+        },
     ]
 
     all_passed = True
     for test in test_cases:
         try:
-            result = chanda.identify_from_text(
-                test['text'],
-                verse=(test['mode'] == 'verse'),
-                fuzzy=True
-            )
+            result = chanda.identify_from_text(test['text'], verse=(test['mode'] == 'verse'), fuzzy=True)
 
             if result and 'result' in result:
                 print(f"✓ {test['name']} - Success")
@@ -136,11 +128,9 @@ def test_flask_app():
                 return False
 
             # Test text identification endpoint
-            response = client.post('/api/identify/text',
-                                  json={
-                                      'text': 'श्रीरामचन्द्रचरणौ मनसा स्मरामि',
-                                      'text_mode': 'line'
-                                  })
+            response = client.post(
+                '/api/identify/text', json={'text': 'श्रीरामचन्द्रचरणौ मनसा स्मरामि', 'text_mode': 'line'}
+            )
             if response.status_code == 200:
                 data = response.get_json()
                 if data.get('success'):
@@ -174,6 +164,7 @@ def test_flask_app():
     except Exception as e:
         print(f"✗ Flask app creation failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -185,6 +176,7 @@ def test_ocr_availability():
     # Test Tesseract
     try:
         from backend.ocr import TesseractOCR
+
         tesseract = TesseractOCR(languages=settings.TESSERACT_LANGUAGES)
         print("✓ Tesseract OCR available")
     except Exception as e:
@@ -193,6 +185,7 @@ def test_ocr_availability():
     # Test Google OCR
     try:
         from backend.ocr import GoogleOCR
+
         if settings.CLIENT_SECRET:
             google_ocr = GoogleOCR(credentials_path=settings.CLIENT_SECRET)
             print("✓ Google OCR available")
@@ -210,10 +203,7 @@ def test_frontend_files():
 
     frontend_dir = Path(__file__).resolve().parent.parent.parent / 'frontend'
 
-    required_files = [
-        'index.html',
-        'src/app.js'
-    ]
+    required_files = ['index.html', 'src/app.js']
 
     all_present = True
     for filepath in required_files:

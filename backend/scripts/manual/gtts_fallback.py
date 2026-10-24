@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test gTTS as a fallback"""
+
 import os
 
 from gtts import gTTS
@@ -26,8 +27,10 @@ def test_gtts():
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 if __name__ == "__main__":
     test_gtts()

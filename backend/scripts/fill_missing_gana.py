@@ -95,7 +95,7 @@ def is_valid_gana(gana_val) -> bool:
 def fill_missing_gana(input_csv: str, output_csv: str = None, verbose: bool = True):
     """
     Fill missing Gana patterns in the CSV dataset.
-    
+
     Args:
         input_csv: Path to input CSV file
         output_csv: Path to output CSV file (default: overwrites input)
@@ -114,11 +114,7 @@ def fill_missing_gana(input_csv: str, output_csv: str = None, verbose: bool = Tr
         print(f"Total rows: {len(df)}")
 
     # Count rows that need Gana filled
-    needs_gana_mask = (
-        df['L/G'].notna() &
-        df['Shloka'].notna() &
-        ~df['Gana'].apply(is_valid_gana)
-    )
+    needs_gana_mask = df['L/G'].notna() & df['Shloka'].notna() & ~df['Gana'].apply(is_valid_gana)
     needs_gana_count = needs_gana_mask.sum()
 
     if verbose:
@@ -163,15 +159,14 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description='Fill missing Gana patterns in ML dataset')
-    parser.add_argument('--input', '-i',
-                        default='data/without gana rig - ML_base_dataset_COMPLETE_with_rigveda.csv',
-                        help='Input CSV file path')
-    parser.add_argument('--output', '-o',
-                        default=None,
-                        help='Output CSV file path (default: overwrites input)')
-    parser.add_argument('--quiet', '-q',
-                        action='store_true',
-                        help='Suppress progress output')
+    parser.add_argument(
+        '--input',
+        '-i',
+        default='data/without gana rig - ML_base_dataset_COMPLETE_with_rigveda.csv',
+        help='Input CSV file path',
+    )
+    parser.add_argument('--output', '-o', default=None, help='Output CSV file path (default: overwrites input)')
+    parser.add_argument('--quiet', '-q', action='store_true', help='Suppress progress output')
 
     args = parser.parse_args()
 
@@ -180,11 +175,7 @@ def main():
     input_path = backend_dir / args.input
     output_path = backend_dir / args.output if args.output else None
 
-    fill_missing_gana(
-        str(input_path),
-        str(output_path) if output_path else None,
-        verbose=not args.quiet
-    )
+    fill_missing_gana(str(input_path), str(output_path) if output_path else None, verbose=not args.quiet)
 
 
 if __name__ == '__main__':

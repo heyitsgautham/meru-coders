@@ -28,7 +28,7 @@ Uttiṣṭhatē hyātmamupāśritānāṃ
 Saṅgaḥ khalu śrēyasi paṇḍitānām ॥""",
             'expected': 'Indravajrā',
             'syllables': 11,
-            'pattern': '——U ——U U—U——'
+            'pattern': '——U ——U U—U——',
         },
         {
             'verse': """Asti praśastā janalōcanānām
@@ -36,9 +36,8 @@ Saṅgaḥ khalu śrēyasi paṇḍitānām ॥""",
 Ājñāsamutsāritadānavānāṃ
 Rājñāmayōdhyēti purī raghūṇām ॥""",
             'expected': 'Indravajrā',
-            'syllables': 11
+            'syllables': 11,
         },
-
         # PPT 6: Upendravajrā (11 syllables: ja-ta-ja ga ga)
         {
             'verse': """Tadēvamēvāsya janādhipasya
@@ -47,7 +46,7 @@ Na vēttumārhati sa ēva bhēdam
 Saṃsargatō hi prabhavanti dōṣāḥ ॥""",
             'expected': 'Upendravajrā',
             'syllables': 11,
-            'pattern': 'U—U ——U U—U——'
+            'pattern': 'U—U ——U U—U——',
         },
         {
             'verse': """Mukunda mūrdhnā praṇipatya yācē
@@ -55,9 +54,8 @@ Bhavantamēkāntamiyantamartham ।
 Avismṛtistvaccharaṇāravindē
 Bhavē bhavē mē'stu bhavatprasādāt ॥""",
             'expected': 'Upendravajrā',
-            'syllables': 11
+            'syllables': 11,
         },
-
         # PPT 7: Upajāti (mix of Indravajrā and Upendravajrā)
         {
             'verse': """Karāravindēna padāravindam
@@ -65,9 +63,8 @@ Mukhāravindē vinivēśayantam ।
 Vaṭasya patrasya puṭē śayānam
 Bālaṃ mukundaṃ manasā smarāmi ॥""",
             'expected': 'Upajāti',
-            'syllables': 11
+            'syllables': 11,
         },
-
         # PPT 8: Rathoddhatā (11 syllables: ra-na-ra la ga)
         {
             'verse': """Nūnamatra vasatē mahēśvarī
@@ -76,7 +73,7 @@ Adyatāvadavēhi rāghavam
 Nirmalā śrutiriva prajānanam ॥""",
             'expected': 'Rathoddhatā',
             'syllables': 11,
-            'pattern': '—U— UUU —U— U—'
+            'pattern': '—U— UUU —U— U—',
         },
         {
             'verse': """Cintayāmi harimēva santataṃ
@@ -84,9 +81,8 @@ Mandamandahasitānanāmbujam ।
 Nandagōpatanayaṃ parātparaṃ
 Nāradādimunivṛndavanditam ॥""",
             'expected': 'Rathoddhatā',
-            'syllables': 11
+            'syllables': 11,
         },
-
         # PPT 9: Śālinī (11 syllables: ma-ta-ta ga ga, yati 4+7)
         {
             'verse': """Mahēśō vā dēvō vā śivō vā
@@ -95,9 +91,8 @@ Sumitraṃ vā bhūpatīrvā yatīrvā ।
 Ākāśē vā rāśisvāvāśisvāvāśē ॥""",
             'expected': 'Śālinī',
             'syllables': 11,
-            'pattern': '——— ——U ——U——'
+            'pattern': '——— ——U ——U——',
         },
-
         # PPT 10: Vaṃśastha (12 syllables: ja-ta-ja-ra)
         {
             'verse': """Niyōjayā'māsa sa sūnusūnum
@@ -106,7 +101,7 @@ Tadārabhatyēva sa kālakēlīm
 Vinītamānō'vaśamātmanō'pi ॥""",
             'expected': 'Vaṃśastha',
             'syllables': 12,
-            'pattern': 'U—U ——U U—U —U—'
+            'pattern': 'U—U ——U U—U —U—',
         },
         {
             'verse': """Asaṃśayaṃ kṣatraparigrahakṣamā
@@ -114,9 +109,8 @@ Yadāryamasyāmabhilāṣi mē manaḥ ।
 Satāṃ hi sandēhapadēṣu vastuṣu
 Pramāṇamantaḥkaraṇapravṛttayaḥ ॥""",
             'expected': 'Vaṃśastha',
-            'syllables': 12
+            'syllables': 12,
         },
-
         # PPT 11: Bhujangaprayātam (12 syllables: ya-ya-ya-ya)
         {
             'verse': """Jalē candrabimbaṃ bhramannēva bhāti
@@ -125,7 +119,7 @@ Na cā'nēna dṛṣṭiḥ śubhā saṃsthitēna
 Bhramannapi māyāsamā dṛśyatē hi ॥""",
             'expected': 'Bhujangaprayātam',
             'syllables': 12,
-            'pattern': 'U—— U—— U—— U——'
+            'pattern': 'U—— U—— U—— U——',
         },
         {
             'verse': """Vinā vēṅkaṭēśaṃ na nāthō na nāthaḥ
@@ -133,9 +127,8 @@ Sadā vēṅkaṭēśaṃ smarāmi smarāmi ।
 Harē vēṅkaṭēśa prasīda prasīda
 Priyam vēṅkaṭēśa prayaccha prayaccha ॥""",
             'expected': 'Bhujangaprayātam',
-            'syllables': 12
+            'syllables': 12,
         },
-
         # PPT 12: Toṭakam (12 syllables: sa-sa-sa-sa)
         {
             'verse': """Jayatīndumukundamurāntakam
@@ -144,7 +137,7 @@ Smarataḥ śravaṇādhvajāyutaiḥ
 Janamōhitakēlimanōharaiḥ ॥""",
             'expected': 'Toṭakam',
             'syllables': 12,
-            'pattern': 'UU— UU— UU— UU—'
+            'pattern': 'UU— UU— UU— UU—',
         },
         {
             'verse': """Adharaṃ madhuraṃ vadanaṃ madhuraṃ
@@ -152,9 +145,8 @@ Nayanaṃ madhuraṃ hasitaṃ madhuram ।
 Hṛdayaṃ madhuraṃ gamanaṃ madhuraṃ
 Madhurādhipatērakhilaṃ madhuram ॥""",
             'expected': 'Toṭakam',
-            'syllables': 12
+            'syllables': 12,
         },
-
         # PPT 13: Vasantatilakā (14 syllables: ta-bha-ja-ja ga ga)
         {
             'verse': """Prārabhyatē na khalu vighna­bhayēna nīcaiḥ
@@ -163,9 +155,8 @@ Vighnaiḥ punaḥ punarapi pratihanyamānāḥ
 Prārabdhamuttamajanā na parityajanti ॥""",
             'expected': 'Vasantatilakā',
             'syllables': 14,
-            'pattern': '——U —UU U—U U—U——'
+            'pattern': '——U —UU U—U U—U——',
         },
-
         # PPT 14: Mālinī (15 syllables: na-na-ma-ya-ya, yati 8+7)
         {
             'verse': """Sirasi mama sumūrdhni sthāna dēhi kṣamaṇva
@@ -174,7 +165,7 @@ Jayati vimaladhīrō vītarāgō viraktaḥ
 Mama ca sukhaśāntiṃ sarvakālaṃ prayaccha ॥""",
             'expected': 'Mālinī',
             'syllables': 15,
-            'pattern': 'UUU UUU ——— U—— U——'
+            'pattern': 'UUU UUU ——— U—— U——',
         },
         {
             'verse': """Sarasijamanuviddhaṃ śaivalēnāpi ramyaṃ
@@ -182,9 +173,8 @@ Malinamapi himāṃśōrlakṣma lakṣmīṃ tanōti ।
 Iyamadhikamanōjñā valkalēnāpi tanvī
 Kimiva hi madhurāṇāṃ maṇḍanaṃ nākṛtīnām ॥""",
             'expected': 'Mālinī',
-            'syllables': 15
+            'syllables': 15,
         },
-
         # PPT 15: Pañcacāmara (16 syllables: ja-ra-ja-ra-ja ga)
         {
             'verse': """Śivāya maṅgalaṃ śivāya maṅgalaṃ śivāya maṅgalam
@@ -193,9 +183,8 @@ Kimiva hi madhurāṇāṃ maṇḍanaṃ nākṛtīnām ॥""",
 Śivāya maṅgalaṃ śivāya maṅgalaṃ śivāya maṅgalam ॥""",
             'expected': 'Pañcacāmara',
             'syllables': 16,
-            'pattern': 'U—U —U— U—U —U— U—U—'
+            'pattern': 'U—U —U— U—U —U— U—U—',
         },
-
         # PPT 16: Śikhariṇī (17 syllables: ya-ma-na-sa-bha la ga, yati 6+11)
         {
             'verse': """Girāmāhurṇ devīṃ drūhiṇagṛhiṇīmāgamasun
@@ -204,9 +193,8 @@ daramvādāṃ rāmaṃ viracitapurāvartanaśivam ।
 bhajanti prāṇaṃ vai śrutisadanatīrthāśramamathā ॥""",
             'expected': 'Śikhariṇī',
             'syllables': 17,
-            'pattern': 'U—— ——— UUU UU— —UU U—'
+            'pattern': 'U—— ——— UUU UU— —UU U—',
         },
-
         # PPT 17: Mandākrāntā (17 syllables: ma-bha-na-ta-ta ga ga, yati 4+6+7)
         {
             'verse': """Kascitkāntāvirahaguruṇā svādhikārātpramattaḥ
@@ -215,7 +203,7 @@ Yakṣaścakrē janakatanayāsnānapuṇyōdakēṣu
 Snigdhacchāyātaruṣu vasatiṃ rāmagiryāśramēṣu ॥""",
             'expected': 'Mandākrāntā',
             'syllables': 17,
-            'pattern': '——— —UU UUU ——U ——U——'
+            'pattern': '——— —UU UUU ——U ——U——',
         },
         {
             'verse': """Prahlādasya vyasanamamitaṃ daityavargasya dambhaṃ
@@ -223,9 +211,8 @@ Stambhaṃ vakṣaḥsthalamapi ripōr yaugapadyēna bhēttum ।
 Baddhaśraddhaṃ puruṣavapuṣā miśritē viśvadṛṣṭē
 Daṃṣṭrārōciḥ viśadabhuvane raṃhasā siṃhavēṣē ॥""",
             'expected': 'Mandākrāntā',
-            'syllables': 17
+            'syllables': 17,
         },
-
         # PPT 18: Śārdūlavikrīḍitam (19 syllables: ma-sa-ja-sa-ta-ta ga, yati 12+7)
         {
             'verse': """Janmādyasya yatō'nvayāditarataścārthēṣvabhijñaḥ svarāṭ
@@ -234,7 +221,7 @@ Tējōvārimṛdāṃ yathā vinimayō yatra trisargō'mṛṣā
 Dhāmnā svēna sadā nirastakuhakaṃ satyaṃ paraṃ dhīmahi ॥""",
             'expected': 'Śārdūlavikrīḍitam',
             'syllables': 19,
-            'pattern': '——— UU— U—U UU— ——U ——U—'
+            'pattern': '——— UU— U—U UU— ——U ——U—',
         },
         {
             'verse': """Vidyā nāma narasya rūpamadhikaṃ pracchannaguptaṃ dhanam
@@ -242,9 +229,8 @@ Vidyā bhōgakarī yaśaḥ sukhakarī vidyā gurūṇāṃ guruḥ ।
 Vidyā bandhujano vidēśagamanē vidyā parā dēvatā
 Vidyā rājasu pūjyatē na hi dhanaṃ vidyāvihīnaḥ paśuḥ ॥""",
             'expected': 'Śārdūlavikrīḍitam',
-            'syllables': 19
+            'syllables': 19,
         },
-
         # PPT 19: Sragdharā (21 syllables: ma-ra-bha-na-ya-ya-ya, yati 7+7+7)
         {
             'verse': """Vidhvaṃsatkṣatravaṃśō mahitagurupadāmbhōruhadvaṇdvadāsaḥ
@@ -253,9 +239,8 @@ Bhrājiṣṇuṃ bhaktavargapraṇayajanaśubhābhīṣṭadātāradēvaṃ
 Rājantaṃ Rāmabhadrākhyamakala­guṇaśāliṃ namāmi dvijēndram ॥""",
             'expected': 'Sragdharā',
             'syllables': 21,
-            'pattern': '——— —U— —UU UUU U—— U—— U——'
+            'pattern': '——— —U— —UU UUU U—— U—— U——',
         },
-
         # PPT 20: Anuṣṭup (8 syllables per pada, special rules for 5th-6th-7th positions)
         {
             'verse': """Mā niṣāda pratiṣṭhāṃ tvam
@@ -264,7 +249,7 @@ Yat krauñcamithunādēkam
 Avadhīḥ kāmamōhitam ॥""",
             'expected': 'Anuṣṭup',
             'syllables': 8,
-            'note': 'First verse ever composed (Vālmīki Rāmāyaṇa)'
+            'note': 'First verse ever composed (Vālmīki Rāmāyaṇa)',
         },
         {
             'verse': """Dharmakṣētrē kurukṣētrē
@@ -273,7 +258,7 @@ Māmakāḥ pāṇḍavāścaiva
 Kimakurvata sañjaya ॥""",
             'expected': 'Anuṣṭup',
             'syllables': 8,
-            'note': 'First verse of Bhagavad Gītā'
+            'note': 'First verse of Bhagavad Gītā',
         },
     ]
 
@@ -289,11 +274,11 @@ Kimakurvata sañjaya ॥""",
         expected = test['expected']
         expected_syllables = test['syllables']
 
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"Test {i}: {expected} ({expected_syllables} syllables)")
         if 'note' in test:
             print(f"Note: {test['note']}")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
 
         # Show first line of verse
         first_line = verse.strip().split('\n')[0]
@@ -350,13 +335,13 @@ Kimakurvata sañjaya ॥""",
             failed += 1
 
     # Summary
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print(f"Total tests: {len(test_cases)}")
-    print(f"Passed: {passed} ({100*passed//len(test_cases)}%)")
+    print(f"Passed: {passed} ({100 * passed // len(test_cases)}%)")
     print(f"Failed: {failed}")
-    print(f"{'='*80}\n")
+    print(f"{'=' * 80}\n")
 
     return passed == len(test_cases)
 

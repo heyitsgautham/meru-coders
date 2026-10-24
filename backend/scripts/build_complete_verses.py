@@ -77,14 +77,9 @@ def main():
             meter = meter_map.get(hymn_key)
 
             if meter:
-                complete_verses.append({
-                    'ref': ref,
-                    'text': text,
-                    'meter': meter,
-                    'mandala': mandala,
-                    'hymn': hymn,
-                    'verse': verse
-                })
+                complete_verses.append(
+                    {'ref': ref, 'text': text, 'meter': meter, 'mandala': mandala, 'hymn': hymn, 'verse': verse}
+                )
 
     print(f"Found {len(complete_verses)} complete verses with meter annotations")
 

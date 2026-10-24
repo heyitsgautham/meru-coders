@@ -32,7 +32,7 @@ from collections import OrderedDict
 def parse_matra_pattern(pattern_str):
     """
     Parse a mātrā pattern string into total mātrā count.
-    
+
     Pattern notation from ganesh.json:
     - "22" means: two 2-mātrā groups = 2+2 = 4 mātrās
     - "4" means: one 4-mātrā group = 4 mātrās
@@ -70,10 +70,11 @@ def parse_matra_pattern(pattern_str):
 
     return total
 
+
 def parse_matra_meter(meter_data):
     """
     Parse a meter entry and extract mātrā information.
-    
+
     Returns:
     - name: Meter name
     - matra_sequence: String of mātrā counts per pada (e.g., "12181215")
@@ -116,6 +117,7 @@ def parse_matra_meter(meter_data):
     if 'pādas have' in comment or 'padas have' in comment:
         # Extract numbers from comment
         import re
+
         numbers = re.findall(r'\d+', comment)
         if numbers:
             pada_matras = [int(n) for n in numbers]
@@ -144,8 +146,9 @@ def parse_matra_meter(meter_data):
         'regex_patterns': regex_patterns if isinstance(regex_patterns, list) else [regex_patterns],
         'comment': comment,
         'examples': meter_info.get('examples', []),
-        'video': meter_info.get('video', '')
+        'video': meter_info.get('video', ''),
     }
+
 
 def load_existing_matra_meters(csv_file):
     """Load existing mātrā meters from CSV."""
@@ -162,6 +165,7 @@ def load_existing_matra_meters(csv_file):
     except FileNotFoundError:
         pass
     return existing
+
 
 def main():
     # Load ganesh.json
@@ -188,7 +192,7 @@ def main():
             other_info[result['name']] = {
                 'comment': result['comment'],
                 'examples': result['examples'],
-                'video': result['video']
+                'video': result['video'],
             }
 
     print(f"\nFound {len(matra_meters)} mātrā meters")
@@ -230,6 +234,7 @@ def main():
     backup_file = csv_file + '.backup'
     import os
     import shutil
+
     if os.path.exists(csv_file):
         shutil.copy(csv_file, backup_file)
         print(f"\nBackup created: {backup_file}")
@@ -257,7 +262,7 @@ def main():
             examples[name] = {
                 'description': info['comment'],
                 'examples': info['examples'],
-                'video': info['video'] if info['video'] else None
+                'video': info['video'] if info['video'] else None,
             }
             updated_examples = True
             print(f"  Added examples for: {name}")
@@ -272,6 +277,7 @@ def main():
     print(f"  - Total mātrā meters: {len(merged)}")
     print(f"  - New meters added: {new_count}")
     print(f"  - Examples added: {sum(1 for i in other_info.values() if i['examples'])}")
+
 
 if __name__ == '__main__':
     main()

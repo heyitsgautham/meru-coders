@@ -24,6 +24,7 @@ from core.chanda import Chanda
 # Try to import IITK reference
 try:
     from chanda_iitk import Chanda as ChandaIITK
+
     IITK_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: IITK reference not available: {e}")
@@ -44,7 +45,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GL',
         'category': 'simple',
-        'notes': 'Simple 2-syllable word'
+        'notes': 'Simple 2-syllable word',
     },
     {
         'id': 'Simple-2',
@@ -52,7 +53,7 @@ TEST_VERSES = [
         'expected_syllables': 3,
         'expected_lg': 'LGG',
         'category': 'simple',
-        'notes': 'Common greeting'
+        'notes': 'Common greeting',
     },
     {
         'id': 'Simple-3',
@@ -60,7 +61,7 @@ TEST_VERSES = [
         'expected_syllables': 3,
         'expected_lg': 'LLG',
         'category': 'simple',
-        'notes': 'Word ending in halanta'
+        'notes': 'Word ending in halanta',
     },
     {
         'id': 'Simple-4',
@@ -68,9 +69,8 @@ TEST_VERSES = [
         'expected_syllables': 1,
         'expected_lg': 'G',
         'category': 'simple',
-        'notes': 'Single long syllable with anusvara'
+        'notes': 'Single long syllable with anusvara',
     },
-
     # =========================================================================
     # GAYATRI (24 syllables = 3×8)
     # =========================================================================
@@ -80,7 +80,7 @@ TEST_VERSES = [
         'expected_syllables': 24,
         'expected_lg': 'GGLLGLGGGGLGGLGLLGLGLGG',  # May need verification
         'category': 'gayatri',
-        'notes': 'Famous Gayatri Mantra'
+        'notes': 'Famous Gayatri Mantra',
     },
     {
         'id': 'Gayatri-2',
@@ -88,9 +88,8 @@ TEST_VERSES = [
         'expected_syllables': 24,
         'expected_lg': None,  # Need to verify
         'category': 'gayatri',
-        'notes': 'RV 1.1.1'
+        'notes': 'RV 1.1.1',
     },
-
     # =========================================================================
     # ANUSHTUBH (32 syllables = 4×8)
     # =========================================================================
@@ -100,7 +99,7 @@ TEST_VERSES = [
         'expected_syllables': 16,
         'expected_lg': 'GLGGLGGLLLGGLLLL',
         'category': 'anushtubh',
-        'notes': 'BG 1.1 first half'
+        'notes': 'BG 1.1 first half',
     },
     {
         'id': 'Anushtubh-2',
@@ -108,9 +107,8 @@ TEST_VERSES = [
         'expected_syllables': 16,
         'expected_lg': 'LLGGGLLGLLGGLLLG',
         'category': 'anushtubh',
-        'notes': 'Purusha Sukta first half'
+        'notes': 'Purusha Sukta first half',
     },
-
     # =========================================================================
     # TRISHTUBH (44 syllables = 4×11) - MOST PROBLEMATIC
     # =========================================================================
@@ -120,7 +118,7 @@ TEST_VERSES = [
         'expected_syllables': 22,
         'expected_lg': 'GGLLLGGLLLGGGLLGLGLGG',
         'category': 'trishtubh',
-        'notes': 'RV 1.32.1 first half (pada 1-2)'
+        'notes': 'RV 1.32.1 first half (pada 1-2)',
     },
     {
         'id': 'Trishtubh-2',
@@ -128,7 +126,7 @@ TEST_VERSES = [
         'expected_syllables': 22,
         'expected_lg': 'LGLLGLGLGLGGLGLLGLGGG',
         'category': 'trishtubh',
-        'notes': 'RV 1.32.1 second half (pada 3-4)'
+        'notes': 'RV 1.32.1 second half (pada 3-4)',
     },
     {
         'id': 'Trishtubh-3',
@@ -136,9 +134,8 @@ TEST_VERSES = [
         'expected_syllables': 22,
         'expected_lg': None,
         'category': 'trishtubh',
-        'notes': 'Nasadiya Sukta first half'
+        'notes': 'Nasadiya Sukta first half',
     },
-
     # =========================================================================
     # JAGATI (48 syllables = 4×12) - SEVERELY UNDERCOUNTED
     # =========================================================================
@@ -148,7 +145,7 @@ TEST_VERSES = [
         'expected_syllables': 24,
         'expected_lg': None,
         'category': 'jagati',
-        'notes': 'RV 1.164.46 first half (pada 1-2)'
+        'notes': 'RV 1.164.46 first half (pada 1-2)',
     },
     {
         'id': 'Jagati-2',
@@ -156,7 +153,7 @@ TEST_VERSES = [
         'expected_syllables': 24,
         'expected_lg': None,
         'category': 'jagati',
-        'notes': 'RV 1.164.46 second half (pada 3-4)'
+        'notes': 'RV 1.164.46 second half (pada 3-4)',
     },
     {
         'id': 'Jagati-3',
@@ -164,9 +161,8 @@ TEST_VERSES = [
         'expected_syllables': 24,
         'expected_lg': None,
         'category': 'jagati',
-        'notes': 'RV 1.164.20 first half'
+        'notes': 'RV 1.164.20 first half',
     },
-
     # =========================================================================
     # COMPLEX CONJUNCTS - Testing specific problematic patterns
     # =========================================================================
@@ -176,7 +172,7 @@ TEST_VERSES = [
         'expected_syllables': 3,
         'expected_lg': 'GLG',
         'category': 'conjunct',
-        'notes': 'क्ष conjunct'
+        'notes': 'क्ष conjunct',
     },
     {
         'id': 'Conjunct-2',
@@ -184,7 +180,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GG',
         'category': 'conjunct',
-        'notes': 'ज्ञ conjunct'
+        'notes': 'ज्ञ conjunct',
     },
     {
         'id': 'Conjunct-3',
@@ -192,7 +188,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GG',
         'category': 'conjunct',
-        'notes': 'स्व conjunct with visarga'
+        'notes': 'स्व conjunct with visarga',
     },
     {
         'id': 'Conjunct-4',
@@ -200,7 +196,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GG',
         'category': 'conjunct',
-        'notes': 'Double conjunct प्र + ज्ञ'
+        'notes': 'Double conjunct प्र + ज्ञ',
     },
     {
         'id': 'Conjunct-5',
@@ -208,9 +204,8 @@ TEST_VERSES = [
         'expected_syllables': 3,
         'expected_lg': 'GGG',
         'category': 'conjunct',
-        'notes': 'त्र्य complex conjunct'
+        'notes': 'त्र्य complex conjunct',
     },
-
     # =========================================================================
     # VEDIC SPECIFIC - Special characters
     # =========================================================================
@@ -220,7 +215,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GG',
         'category': 'vedic',
-        'notes': 'Visarga ending'
+        'notes': 'Visarga ending',
     },
     {
         'id': 'Vedic-2',
@@ -228,7 +223,7 @@ TEST_VERSES = [
         'expected_syllables': 2,
         'expected_lg': 'GG',
         'category': 'vedic',
-        'notes': 'Long vowel + visarga'
+        'notes': 'Long vowel + visarga',
     },
 ]
 
@@ -267,7 +262,7 @@ def analyze_with_our_sanskrit_text(text, data_path):
         'syllable_count': len(flat_syl),
         'lg_marks': lg_marks,
         'lg_count': count_valid_lg(lg_marks),
-        'lg_string': normalize_lg(lg_marks)
+        'lg_string': normalize_lg(lg_marks),
     }
 
 
@@ -289,7 +284,7 @@ def analyze_with_our_icu(text, data_path):
             'syllable_count': len(flat_syl),
             'lg_marks': lg_marks,
             'lg_count': count_valid_lg(lg_marks),
-            'lg_string': normalize_lg(lg_marks)
+            'lg_string': normalize_lg(lg_marks),
         }
     except Exception as e:
         return {
@@ -299,7 +294,7 @@ def analyze_with_our_icu(text, data_path):
             'syllable_count': 0,
             'lg_marks': [],
             'lg_count': 0,
-            'lg_string': ''
+            'lg_string': '',
         }
 
 
@@ -313,7 +308,7 @@ def analyze_with_iitk(text, data_path):
             'syllable_count': 0,
             'lg_marks': [],
             'lg_count': 0,
-            'lg_string': ''
+            'lg_string': '',
         }
 
     try:
@@ -329,7 +324,7 @@ def analyze_with_iitk(text, data_path):
             'syllable_count': len(flat_syl),
             'lg_marks': lg_marks,
             'lg_count': count_valid_lg(lg_marks),
-            'lg_string': normalize_lg(lg_marks)
+            'lg_string': normalize_lg(lg_marks),
         }
     except Exception as e:
         return {
@@ -339,7 +334,7 @@ def analyze_with_iitk(text, data_path):
             'syllable_count': 0,
             'lg_marks': [],
             'lg_count': 0,
-            'lg_string': ''
+            'lg_string': '',
         }
 
 
@@ -362,17 +357,14 @@ def analyze_with_raw_sanskrit_text(text):
                 'syllable_count': 0,
                 'lg_marks': [],
                 'lg_count': 0,
-                'lg_string': ''
+                'lg_string': '',
             }
 
         for idx, syllable in enumerate(flat_syl[:-1]):
             if syllable[-1] == skt.HALANTA or syllable in skip_syllables:
                 lg_marks.append('')
                 continue
-            laghu = (
-                skt.is_laghu(syllable) and
-                (skt.HALANTA not in flat_syl[idx+1])
-            )
+            laghu = skt.is_laghu(syllable) and (skt.HALANTA not in flat_syl[idx + 1])
             lg_marks.append('L' if laghu else 'G')
 
         # Last syllable
@@ -388,7 +380,7 @@ def analyze_with_raw_sanskrit_text(text):
             'syllable_count': len(flat_syl),
             'lg_marks': lg_marks,
             'lg_count': count_valid_lg(lg_marks),
-            'lg_string': normalize_lg(lg_marks)
+            'lg_string': normalize_lg(lg_marks),
         }
     except Exception as e:
         return {
@@ -398,7 +390,7 @@ def analyze_with_raw_sanskrit_text(text):
             'syllable_count': 0,
             'lg_marks': [],
             'lg_count': 0,
-            'lg_string': ''
+            'lg_string': '',
         }
 
 
@@ -433,9 +425,9 @@ def run_analysis():
         category = verse['category']
         stats[category]['total'] += 1
 
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"[{verse['id']}] {verse['category'].upper()} - {verse['notes']}")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
         print(f"Text: {verse['text']}")
         print(f"Expected syllables: {verse['expected_syllables']}")
         if verse['expected_lg']:
@@ -518,13 +510,13 @@ def run_analysis():
     print("=" * 80)
 
     # Compare methods
-    methods_sorted = sorted(method_totals.items(),
-                           key=lambda x: (x[1]['correct'], -x[1]['diff_sum']),
-                           reverse=True)
+    methods_sorted = sorted(method_totals.items(), key=lambda x: (x[1]['correct'], -x[1]['diff_sum']), reverse=True)
 
     print(f"\n  BEST METHOD: {methods_sorted[0][0]}")
     print(f"    - {methods_sorted[0][1]['correct']}/{methods_sorted[0][1]['total']} exact matches")
-    print(f"    - {methods_sorted[0][1]['diff_sum'] / max(1, methods_sorted[0][1]['total']):.2f} avg syllable difference")
+    print(
+        f"    - {methods_sorted[0][1]['diff_sum'] / max(1, methods_sorted[0][1]['total']):.2f} avg syllable difference"
+    )
 
 
 def detailed_syllable_breakdown():

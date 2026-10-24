@@ -28,7 +28,7 @@ if syllables:
     print("\nDetailed syllable breakdown:")
     for i, syl in enumerate(flat_syls):
         mark = lg_marks[i] if i < len(lg_marks) else '?'
-        print(f"  {i+1}. '{syl}' -> {mark}")
+        print(f"  {i + 1}. '{syl}' -> {mark}")
 
 print("\n" + "=" * 60)
 print("Testing full first line of Bhagavad Gita")
@@ -45,7 +45,7 @@ if syllables:
     print("\nDetailed syllable breakdown:")
     for i, syl in enumerate(flat_syls):
         mark = lg_marks[i] if i < len(lg_marks) else '?'
-        print(f"  {i+1}. '{syl}' -> {mark} ({'Laghu' if mark == 'L' else 'Guru'})")
+        print(f"  {i + 1}. '{syl}' -> {mark} ({'Laghu' if mark == 'L' else 'Guru'})")
 
 print("\n" + "=" * 60)
 print("Expected: यु = L (short vowel उ), यु = L (short vowel उ)")

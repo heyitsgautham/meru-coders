@@ -25,7 +25,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.1.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.1.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -36,7 +36,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.1.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.1.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -47,7 +47,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.2.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.2.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -58,7 +58,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.1.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.1.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -69,7 +69,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.2.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.2.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -80,7 +80,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.2.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.2.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -91,7 +91,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.2.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.2.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -102,7 +102,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -113,7 +113,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -124,7 +124,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -135,7 +135,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -146,7 +146,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -157,7 +157,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.8 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.8 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -168,7 +168,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -179,7 +179,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -190,7 +190,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.11 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.11 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -201,7 +201,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.12 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.12 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -212,7 +212,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.4.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.4.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -223,7 +223,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.4.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.4.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -234,7 +234,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.4.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.4.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -245,7 +245,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.12.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.12.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -256,7 +256,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.12.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.12.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -267,7 +267,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.4.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.4.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -278,7 +278,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.55.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.55.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -289,7 +289,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.22.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.22.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -300,7 +300,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.46.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.46.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -311,7 +311,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.37.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.37.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -322,7 +322,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.87.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.87.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -333,7 +333,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.15.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.15.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -344,7 +344,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 1.152.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.152.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -355,7 +355,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.43.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.43.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -366,7 +366,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.43.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.43.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -377,7 +377,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.35.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.35.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -388,7 +388,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.35.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.35.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -399,7 +399,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.22.17 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.22.17 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -410,7 +410,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.22.18 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.22.18 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -421,7 +421,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'bṛhatī',
         'syllables': 36,
         'padas': '4×9',
-        'source': 'RV 1.48.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.48.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -432,7 +432,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 1.49.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.49.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -443,7 +443,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.7.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.7.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -454,7 +454,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.46.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.46.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -465,7 +465,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.23.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.23.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -476,7 +476,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.85.12 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.85.12 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -487,7 +487,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.114.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.114.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -498,7 +498,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.3.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.3.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -509,7 +509,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 1.20.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.20.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -520,7 +520,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'bṛhatī',
         'syllables': 36,
         'padas': '4×9',
-        'source': 'RV 1.40.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.40.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -531,7 +531,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'bṛhatī',
         'syllables': 36,
         'padas': '4×9',
-        'source': 'RV 1.40.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.40.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -542,7 +542,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.159.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.159.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 1,
@@ -553,7 +553,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 1.159.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 1.159.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -564,7 +564,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.1.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.1.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -575,7 +575,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.1.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.1.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -586,7 +586,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.1.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.1.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -597,7 +597,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.1.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.1.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -608,7 +608,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.2.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.2.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -619,7 +619,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.2.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.2.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -630,7 +630,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.2.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.2.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -641,7 +641,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.3.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.3.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -652,7 +652,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.3.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.3.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -663,7 +663,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.4.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.4.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -674,7 +674,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.4.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.4.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -685,7 +685,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.4.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.4.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -696,7 +696,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.23.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.23.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -707,7 +707,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.27.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.27.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -718,7 +718,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.27.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.27.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -729,7 +729,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.27.14 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.27.14 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -740,7 +740,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.33.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.33.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -751,7 +751,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.33.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.33.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -762,7 +762,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.33.15 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.33.15 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -773,7 +773,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.35.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.35.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -784,7 +784,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.35.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.35.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -795,7 +795,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 2.35.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.35.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -806,7 +806,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.32.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.32.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -817,7 +817,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.32.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.32.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -828,7 +828,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.32.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.32.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 2,
@@ -839,7 +839,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 2.36.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 2.36.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -850,7 +850,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.1.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.1.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -861,7 +861,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.1.15 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.1.15 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -872,7 +872,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.30.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.30.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -883,7 +883,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.30.17 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.30.17 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -894,7 +894,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.30.22 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.30.22 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -905,7 +905,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.31.21 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.31.21 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -916,7 +916,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.59.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.59.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -927,7 +927,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.59.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.59.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -938,7 +938,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.61.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.61.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -949,7 +949,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.61.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.61.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -960,7 +960,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.62.14 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.62.14 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -971,7 +971,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.62.15 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.62.15 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 3,
@@ -982,7 +982,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 3.62.16 (Rigveda_api + WSC2023)'
+        'source': 'RV 3.62.16 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -993,7 +993,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.18.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.18.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1004,7 +1004,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.18.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.18.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1015,7 +1015,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.27.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.27.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1026,7 +1026,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.27.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.27.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1037,7 +1037,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.27.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.27.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1048,7 +1048,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.38.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.38.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1059,7 +1059,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.38.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.38.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1070,7 +1070,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.38.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.38.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1081,7 +1081,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.50.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.50.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1092,7 +1092,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.50.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.50.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1103,7 +1103,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.50.11 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.50.11 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1114,7 +1114,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.51.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.51.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 4,
@@ -1125,7 +1125,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 4.51.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 4.51.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1136,7 +1136,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'uṣṇik',
         'syllables': 28,
         'padas': '4×7',
-        'source': 'RV 5.40.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.40.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1147,7 +1147,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'uṣṇik',
         'syllables': 28,
         'padas': '4×7',
-        'source': 'RV 5.40.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.40.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1158,7 +1158,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'uṣṇik',
         'syllables': 28,
         'padas': '4×7',
-        'source': 'RV 5.40.8 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.40.8 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1169,7 +1169,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 5.83.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.83.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1180,7 +1180,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 5.83.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.83.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1191,7 +1191,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.82.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.82.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1202,7 +1202,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.82.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.82.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1213,7 +1213,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.82.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.82.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1224,7 +1224,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.84.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.84.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1235,7 +1235,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.84.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.84.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 5,
@@ -1246,7 +1246,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 5.84.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 5.84.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1257,7 +1257,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 6.53.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.53.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1268,7 +1268,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 6.53.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.53.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1279,7 +1279,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 6.53.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.53.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1290,7 +1290,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 6.74.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.74.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1301,7 +1301,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 6.74.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.74.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 6,
@@ -1312,7 +1312,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 6.74.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 6.74.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1323,7 +1323,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.2.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.2.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1334,7 +1334,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 7.50.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.50.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1345,7 +1345,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 7.50.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.50.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1356,7 +1356,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 7.50.4 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.50.4 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1367,7 +1367,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.99.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.99.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1378,7 +1378,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.99.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.99.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1389,7 +1389,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.99.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.99.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1400,7 +1400,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.100.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.100.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 7,
@@ -1411,7 +1411,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 7.100.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 7.100.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 8,
@@ -1422,7 +1422,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 8.6.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 8.6.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 9,
@@ -1433,7 +1433,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 9.1.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 9.1.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 9,
@@ -1444,7 +1444,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 9.1.10 (Rigveda_api + WSC2023)'
+        'source': 'RV 9.1.10 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 9,
@@ -1455,7 +1455,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 9.11.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 9.11.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 9,
@@ -1466,7 +1466,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 9.11.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 9.11.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 9,
@@ -1477,7 +1477,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 9.11.9 (Rigveda_api + WSC2023)'
+        'source': 'RV 9.11.9 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1488,7 +1488,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.10.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.10.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1499,7 +1499,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.10.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.10.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1510,7 +1510,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.10.14 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.10.14 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1521,7 +1521,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.13.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.13.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1532,7 +1532,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.17.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.17.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1543,7 +1543,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.17.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.17.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1554,7 +1554,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'anuṣṭup',
         'syllables': 32,
         'padas': '4×8',
-        'source': 'RV 10.58.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.58.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1565,7 +1565,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.59.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.59.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1576,7 +1576,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.59.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.59.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1587,7 +1587,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.81.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.81.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1598,7 +1598,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.81.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.81.5 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1609,7 +1609,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.81.6 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.81.6 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1620,7 +1620,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 10.186.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.186.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1631,7 +1631,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 10.186.2 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.186.2 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1642,7 +1642,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'gāyatrī',
         'syllables': 24,
         'padas': '3×8',
-        'source': 'RV 10.186.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.186.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1653,7 +1653,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'jagatī',
         'syllables': 48,
         'padas': '4×12',
-        'source': 'RV 10.177.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.177.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1664,7 +1664,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.129.1 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.129.1 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1675,7 +1675,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.129.3 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.129.3 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1686,7 +1686,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.129.7 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.129.7 (Rigveda_api + WSC2023)',
     },
     {
         'mandala': 10,
@@ -1697,7 +1697,7 @@ RIGVEDA_AUTHENTIC = [
         'meter_iast': 'triṣṭup',
         'syllables': 44,
         'padas': '4×11',
-        'source': 'RV 10.129.5 (Rigveda_api + WSC2023)'
+        'source': 'RV 10.129.5 (Rigveda_api + WSC2023)',
     },
 ]
 
@@ -1705,19 +1705,25 @@ RIGVEDA_AUTHENTIC = [
 # HELPER FUNCTIONS
 # ============================================================================
 
+
 def get_by_meter(meter_name):
     """Get verses by meter name."""
-    return [v for v in RIGVEDA_AUTHENTIC
-            if meter_name.lower() in v['meter'].lower()
-            or meter_name.lower() in v['meter_iast'].lower()]
+    return [
+        v
+        for v in RIGVEDA_AUTHENTIC
+        if meter_name.lower() in v['meter'].lower() or meter_name.lower() in v['meter_iast'].lower()
+    ]
+
 
 def get_by_mandala(mandala):
     """Get verses by mandala number."""
     return [v for v in RIGVEDA_AUTHENTIC if v['mandala'] == mandala]
 
+
 def summary():
     """Print dataset summary."""
     from collections import Counter
+
     meters = Counter(v['meter_iast'] for v in RIGVEDA_AUTHENTIC)
 
     print(f"\nTotal verses: {len(RIGVEDA_AUTHENTIC)}")

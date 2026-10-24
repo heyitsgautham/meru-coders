@@ -7,7 +7,7 @@ Tests the accuracy of mode='auto' against the SAME datasets used by:
 1. test_rigveda_validation.py - Rigveda dataset (10,000+ Vedic verses)
 2. test_csv_accuracy.py - Classical poetry dataset (147 verses)
 
-This compares auto-detect performance against explicit mode='vedic' and 
+This compares auto-detect performance against explicit mode='vedic' and
 mode='classical' to measure any accuracy loss from automatic mode selection.
 
 Key Metrics:
@@ -41,6 +41,7 @@ from core.chanda import Chanda
 try:
     from indic_transliteration import sanscript
     from indic_transliteration.sanscript import transliterate
+
     HAS_TRANSLITERATION = True
 except ImportError:
     HAS_TRANSLITERATION = False
@@ -52,18 +53,33 @@ except ImportError:
 
 METER_NORMALIZATION = {
     # Standard Vedic meters (7 major)
-    'gāyatrī': 'गायत्री', 'gayatri': 'गायत्री',
-    'uṣṇik': 'उष्णिक्', 'uṣnik': 'उष्णिक्', 'usnik': 'उष्णिक्',
-    'anuṣṭup': 'अनुष्टुभ्', 'anuṣṭubh': 'अनुष्टुभ्', 'anustup': 'अनुष्टुभ्',
-    'bṛhatī': 'बृहती', 'brhati': 'बृहती',
-    'paṅktiḥ': 'पङ्क्ति', 'paṅkti': 'पङ्क्ति', 'pankti': 'पङ्क्ति',
-    'triṣṭup': 'त्रिष्टुभ्', 'triṣṭubh': 'त्रिष्टुभ्', 'tristup': 'त्रिष्टुभ्',
-    'jagatī': 'जगती', 'jagati': 'जगती',
+    'gāyatrī': 'गायत्री',
+    'gayatri': 'गायत्री',
+    'uṣṇik': 'उष्णिक्',
+    'uṣnik': 'उष्णिक्',
+    'usnik': 'उष्णिक्',
+    'anuṣṭup': 'अनुष्टुभ्',
+    'anuṣṭubh': 'अनुष्टुभ्',
+    'anustup': 'अनुष्टुभ्',
+    'bṛhatī': 'बृहती',
+    'brhati': 'बृहती',
+    'paṅktiḥ': 'पङ्क्ति',
+    'paṅkti': 'पङ्क्ति',
+    'pankti': 'पङ्क्ति',
+    'triṣṭup': 'त्रिष्टुभ्',
+    'triṣṭubh': 'त्रिष्टुभ्',
+    'tristup': 'त्रिष्टुभ्',
+    'jagatī': 'जगती',
+    'jagati': 'जगती',
     # Extended Vedic meters
-    'virāṭ': 'विराट्', 'virat': 'विराट्',
-    'pragāthaḥ': 'प्रगाथ', 'pragātha': 'प्रगाथ',
-    'mahāpaṅktiḥ': 'महापङ्क्ति', 'mahāpaṅkti': 'महापङ्क्ति',
-    'kakup': 'ककुभ्', 'kakubh': 'ककुभ्',
+    'virāṭ': 'विराट्',
+    'virat': 'विराट्',
+    'pragāthaḥ': 'प्रगाथ',
+    'pragātha': 'प्रगाथ',
+    'mahāpaṅktiḥ': 'महापङ्क्ति',
+    'mahāpaṅkti': 'महापङ्क्ति',
+    'kakup': 'ककुभ्',
+    'kakubh': 'ककुभ्',
     'dvipadā virāṭ': 'द्विपदा विराट्',
     'dvipadā triṣṭup': 'द्विपदा त्रिष्टुभ्',
 }
@@ -132,6 +148,7 @@ def meters_match_vedic(expected, predicted):
 # CSV METER MATCHING (from test_csv_accuracy.py)
 # ============================================================================
 
+
 def to_iast(text):
     """Convert Devanagari to IAST"""
     if not HAS_TRANSLITERATION:
@@ -152,13 +169,23 @@ def normalize_csv(name):
 
 
 CSV_METER_FAMILIES = {
-    'anustup': 'anustubh', 'anustubh': 'anustubh',
-    'sardulavkridita': 'sardula', 'sardulavikriditam': 'sardula', 'sardulavikridita': 'sardula',
-    'upajatih': 'upajati', 'upajati': 'upajati', 'indravajra': 'upajati', 'upendravajra': 'upajati',
-    'vasantatilakam': 'vasantatilaka', 'vasantatilaka': 'vasantatilaka',
-    'mandakranta': 'mandakranta', 'mandakrantam': 'mandakranta',
-    'sragdhara': 'sragdhara', 'pancakavali': 'sragdhara',
-    'bhujangaprayatam': 'bhujanga', 'bhujangaprayata': 'bhujanga',
+    'anustup': 'anustubh',
+    'anustubh': 'anustubh',
+    'sardulavkridita': 'sardula',
+    'sardulavikriditam': 'sardula',
+    'sardulavikridita': 'sardula',
+    'upajatih': 'upajati',
+    'upajati': 'upajati',
+    'indravajra': 'upajati',
+    'upendravajra': 'upajati',
+    'vasantatilakam': 'vasantatilaka',
+    'vasantatilaka': 'vasantatilaka',
+    'mandakranta': 'mandakranta',
+    'mandakrantam': 'mandakranta',
+    'sragdhara': 'sragdhara',
+    'pancakavali': 'sragdhara',
+    'bhujangaprayatam': 'bhujanga',
+    'bhujangaprayata': 'bhujanga',
 }
 
 
@@ -183,6 +210,7 @@ def meters_match_csv(expected, predicted):
 # RIGVEDA DATASET TESTING
 # ============================================================================
 
+
 def load_rigveda_dataset(filepath, limit=None):
     """Load the Rigveda dataset"""
     data = []
@@ -196,12 +224,14 @@ def load_rigveda_dataset(filepath, limit=None):
             normalized = normalize_meter_name(meter)
             if not normalized:
                 continue
-            data.append({
-                'ref': f"{row.get('mandala', '')}.{row.get('sukta', '')}.{row.get('rik', '')}",
-                'verse_text': verse_text,
-                'expected_meter': normalized,
-                'original_meter': meter,
-            })
+            data.append(
+                {
+                    'ref': f"{row.get('mandala', '')}.{row.get('sukta', '')}.{row.get('rik', '')}",
+                    'verse_text': verse_text,
+                    'expected_meter': normalized,
+                    'original_meter': meter,
+                }
+            )
             if limit and len(data) >= limit:
                 break
     return data
@@ -216,7 +246,9 @@ def test_rigveda_autodetect(chanda, data, verbose=False):
         'auto': {'exact': 0, 'family': 0, 'miss': 0},
         'vedic': {'exact': 0, 'family': 0, 'miss': 0},
     }
-    meter_stats = defaultdict(lambda: {'auto_exact': 0, 'auto_family': 0, 'vedic_exact': 0, 'vedic_family': 0, 'total': 0})
+    meter_stats = defaultdict(
+        lambda: {'auto_exact': 0, 'auto_family': 0, 'vedic_exact': 0, 'vedic_family': 0, 'total': 0}
+    )
     mismatches = []
 
     total = len(data)
@@ -224,7 +256,7 @@ def test_rigveda_autodetect(chanda, data, verbose=False):
 
     for i, entry in enumerate(data):
         if i % 2000 == 0 and i > 0:
-            print(f"  Progress: {i}/{total} ({i*100//total}%)")
+            print(f"  Progress: {i}/{total} ({i * 100 // total}%)")
 
         verse_text = entry['verse_text']
         expected = entry['expected_meter']
@@ -253,12 +285,14 @@ def test_rigveda_autodetect(chanda, data, verbose=False):
         else:
             results['auto']['miss'] += 1
             if len(mismatches) < 100:
-                mismatches.append({
-                    'ref': entry['ref'],
-                    'expected': expected,
-                    'auto': auto_meter,
-                    'vedic': vedic_meter,
-                })
+                mismatches.append(
+                    {
+                        'ref': entry['ref'],
+                        'expected': expected,
+                        'auto': auto_meter,
+                        'vedic': vedic_meter,
+                    }
+                )
 
         if vedic_exact:
             results['vedic']['exact'] += 1
@@ -296,11 +330,13 @@ def load_csv_dataset(filepath):
             row_index += 1
             if row_index > REAL_VERSE_COUNT:
                 break
-            data.append({
-                'verse': verse,
-                'expected_meter': expected,
-                'row': row_index,
-            })
+            data.append(
+                {
+                    'verse': verse,
+                    'expected_meter': expected,
+                    'row': row_index,
+                }
+            )
     return data
 
 
@@ -339,12 +375,14 @@ def test_csv_autodetect(chanda, data, verbose=False):
         else:
             results['auto']['incorrect'] += 1
             if len(mismatches) < 50:
-                mismatches.append({
-                    'row': entry['row'],
-                    'expected': expected,
-                    'auto': auto_meter,
-                    'standard': std_meter,
-                })
+                mismatches.append(
+                    {
+                        'row': entry['row'],
+                        'expected': expected,
+                        'auto': auto_meter,
+                        'standard': std_meter,
+                    }
+                )
 
         if std_match:
             results['standard']['correct'] += 1
@@ -357,6 +395,7 @@ def test_csv_autodetect(chanda, data, verbose=False):
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
 
 def extract_meter(result):
     """Extract primary meter from result"""
@@ -390,6 +429,7 @@ def extract_first_line_meter(result):
 # ============================================================================
 # MAIN
 # ============================================================================
+
 
 def main():
     parser = argparse.ArgumentParser(description='Test auto-detect mode accuracy')
@@ -445,8 +485,12 @@ def main():
             print()
             print(f"{'Mode':<15} {'Exact':>10} {'Family':>10} {'Miss':>10} {'Exact%':>10} {'Family%':>10}")
             print("-" * 65)
-            print(f"{'AUTO':<15} {auto_exact:>10} {auto_family:>10} {rigveda_results['auto']['miss']:>10} {auto_exact_acc:>9.1f}% {auto_family_acc:>9.1f}%")
-            print(f"{'VEDIC':<15} {vedic_exact:>10} {vedic_family:>10} {rigveda_results['vedic']['miss']:>10} {vedic_exact_acc:>9.1f}% {vedic_family_acc:>9.1f}%")
+            print(
+                f"{'AUTO':<15} {auto_exact:>10} {auto_family:>10} {rigveda_results['auto']['miss']:>10} {auto_exact_acc:>9.1f}% {auto_family_acc:>9.1f}%"
+            )
+            print(
+                f"{'VEDIC':<15} {vedic_exact:>10} {vedic_family:>10} {rigveda_results['vedic']['miss']:>10} {vedic_exact_acc:>9.1f}% {vedic_family_acc:>9.1f}%"
+            )
             print()
             print(f"📊 Auto vs Vedic difference: {auto_family_acc - vedic_family_acc:+.1f}% (family accuracy)")
 
@@ -462,9 +506,7 @@ def main():
         csv_path = os.path.join(settings.DATA_DIR, 'page 1-47 chanda list - complete.csv')
         if os.path.exists(csv_path):
             csv_data = load_csv_dataset(csv_path)
-            csv_results, csv_mismatches = test_csv_autodetect(
-                chanda, csv_data, verbose=args.verbose
-            )
+            csv_results, csv_mismatches = test_csv_autodetect(chanda, csv_data, verbose=args.verbose)
 
             total = csv_results['auto']['correct'] + csv_results['auto']['incorrect']
             auto_acc = csv_results['auto']['correct'] / total * 100
@@ -477,8 +519,12 @@ def main():
             print()
             print(f"{'Mode':<15} {'Correct':>10} {'Incorrect':>10} {'Accuracy':>12}")
             print("-" * 50)
-            print(f"{'AUTO':<15} {csv_results['auto']['correct']:>10} {csv_results['auto']['incorrect']:>10} {auto_acc:>11.1f}%")
-            print(f"{'STANDARD':<15} {csv_results['standard']['correct']:>10} {csv_results['standard']['incorrect']:>10} {std_acc:>11.1f}%")
+            print(
+                f"{'AUTO':<15} {csv_results['auto']['correct']:>10} {csv_results['auto']['incorrect']:>10} {auto_acc:>11.1f}%"
+            )
+            print(
+                f"{'STANDARD':<15} {csv_results['standard']['correct']:>10} {csv_results['standard']['incorrect']:>10} {std_acc:>11.1f}%"
+            )
             print()
             print(f"📊 Auto vs Standard difference: {auto_acc - std_acc:+.1f}%")
 
@@ -496,8 +542,12 @@ def main():
 
     if rigveda_results:
         total_rv = len(rigveda_data) if 'rigveda_data' in dir() else 0
-        auto_rv = (rigveda_results['auto']['exact'] + rigveda_results['auto']['family']) / total_rv * 100 if total_rv else 0
-        vedic_rv = (rigveda_results['vedic']['exact'] + rigveda_results['vedic']['family']) / total_rv * 100 if total_rv else 0
+        auto_rv = (
+            (rigveda_results['auto']['exact'] + rigveda_results['auto']['family']) / total_rv * 100 if total_rv else 0
+        )
+        vedic_rv = (
+            (rigveda_results['vedic']['exact'] + rigveda_results['vedic']['family']) / total_rv * 100 if total_rv else 0
+        )
         print("\nRigveda (Vedic texts):")
         print(f"  Auto mode:  {auto_rv:.1f}% family accuracy")
         print(f"  Vedic mode: {vedic_rv:.1f}% family accuracy")

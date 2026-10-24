@@ -5,11 +5,7 @@ import unicodedata
 import Levenshtein
 
 # Vedic accent marks: svarita, anudatta and the Vedic Extensions block
-_VEDIC_MARKS = (
-    "॒॑॓॔"
-    "᳐᳑᳒᳓᳔᳕᳖᳗᳘᳙᳚᳛"
-    "᳜᳝᳞᳟᳠᳡"
-)
+_VEDIC_MARKS = "॒॑॓॔᳐᳑᳒᳓᳔᳕᳖᳗᳘᳙᳜᳝᳞᳟᳚᳛᳠᳡"
 _ACCENT_TABLE = str.maketrans("", "", _VEDIC_MARKS)
 _PUNCTUATION_TABLE = str.maketrans({"।": " ", "॥": " ", ",": " ", ".": " ", ":": " "})
 

@@ -20,7 +20,9 @@ import time
 # Add paths
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
+)
 
 from chanda_iitk import Chanda as IITKChanda
 from core.chanda import Chanda as OurChanda
@@ -72,10 +74,23 @@ def normalize_name(name):
         return ""
     name = name.strip().lower()
     replacements = {
-        'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r',
-        'ṅ': 'n', 'ñ': 'n', 'ṭ': 't', 'ḍ': 'd', 'ṇ': 'n',
-        'ś': 's', 'ṣ': 's', 'ḥ': 'h', 'ṃ': 'm',
-        '-': '', '_': '', ' ': ''
+        'ā': 'a',
+        'ī': 'i',
+        'ū': 'u',
+        'ṛ': 'r',
+        'ṝ': 'r',
+        'ṅ': 'n',
+        'ñ': 'n',
+        'ṭ': 't',
+        'ḍ': 'd',
+        'ṇ': 'n',
+        'ś': 's',
+        'ṣ': 's',
+        'ḥ': 'h',
+        'ṃ': 'm',
+        '-': '',
+        '_': '',
+        ' ': '',
     }
     for old, new in replacements.items():
         name = name.replace(old, new)
@@ -148,13 +163,15 @@ def load_dataset(filepath):
                 shloka = row['Example Shloka'].strip()
                 shloka = shloka.replace('।', ' ').replace('॥', ' ').strip()
 
-                tests.append({
-                    'name': row['Chandas Name'].strip(),
-                    'expected': row['Chandas Name'].strip(),
-                    'verse': shloka,
-                    'syllables': row.get('Syllables per Quarter', ''),
-                    'source': row.get('Translation/Source', '')[:30]
-                })
+                tests.append(
+                    {
+                        'name': row['Chandas Name'].strip(),
+                        'expected': row['Chandas Name'].strip(),
+                        'verse': shloka,
+                        'syllables': row.get('Syllables per Quarter', ''),
+                        'source': row.get('Translation/Source', '')[:30],
+                    }
+                )
     return tests
 
 
@@ -196,7 +213,7 @@ def main():
     print("Database Comparison:")
     print(f"  Our Model:  {our_count:,} meters")
     print(f"  IITK Model: {iitk_count:,} meters")
-    print(f"  Ratio:      {our_count/iitk_count:.1f}x larger")
+    print(f"  Ratio:      {our_count / iitk_count:.1f}x larger")
     print()
 
     # Load all 35 test cases
@@ -314,7 +331,7 @@ def main():
     if diff > 0:
         print("🏆 WINNER: OUR MODEL")
         print(f"   Accuracy: {our_accuracy:.1f}% vs IITK's {iitk_accuracy:.1f}% (+{diff:.1f}% improvement)")
-        print(f"   Database: {our_count:,} vs {iitk_count:,} meters ({our_count/iitk_count:.1f}x larger)")
+        print(f"   Database: {our_count:,} vs {iitk_count:,} meters ({our_count / iitk_count:.1f}x larger)")
     elif diff < 0:
         print(f"📉 IITK Model leads: {iitk_accuracy:.1f}% vs Our's {our_accuracy:.1f}%")
     else:

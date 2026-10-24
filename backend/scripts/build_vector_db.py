@@ -4,7 +4,7 @@ Preprocesses meter data, documentation, and examples for semantic search
 
 Usage:
     python scripts/build_vector_db.py [--rebuild]
-    
+
 Author: Meru Coders (SIH 2025)
 Date: December 9, 2025
 """
@@ -44,7 +44,7 @@ class VectorDBBuilder:
     def __init__(self, rebuild: bool = False):
         """
         Initialize the builder
-        
+
         Args:
             rebuild: If True, deletes existing database and rebuilds from scratch
         """
@@ -57,6 +57,7 @@ class VectorDBBuilder:
         if rebuild and CHROMA_DIR.exists():
             print(f"🗑️  Deleting existing database at {CHROMA_DIR}")
             import shutil
+
             shutil.rmtree(CHROMA_DIR)
 
         # Initialize embeddings
@@ -64,7 +65,7 @@ class VectorDBBuilder:
         self.embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL,
             model_kwargs={'device': 'cpu'},  # Use 'cuda' if GPU available
-            encode_kwargs={'normalize_embeddings': True}
+            encode_kwargs={'normalize_embeddings': True},
         )
 
         # Initialize text splitter for documents
@@ -72,17 +73,17 @@ class VectorDBBuilder:
             chunk_size=CHUNK_SIZE,
             chunk_overlap=CHUNK_OVERLAP,
             length_function=len,
-            separators=["\n\n", "\n", ".", " ", ""]
+            separators=["\n\n", "\n", ".", " ", ""],
         )
 
     def process_meter_csv(self, csv_path: Path, category: str) -> int:
         """
         Process a meter CSV file into documents
-        
+
         Args:
             csv_path: Path to CSV file
             category: Category name (sama, vishama, vedic, etc.)
-        
+
         Returns:
             Number of documents created
         """
@@ -127,8 +128,8 @@ Matra: {matra}"""
                             "meter_name": meter_name,
                             "pattern": pattern,
                             "syllables": syllables,
-                            "matra": matra
-                        }
+                            "matra": matra,
+                        },
                     )
 
                     self.documents.append(doc)
@@ -142,10 +143,10 @@ Matra: {matra}"""
     def process_examples_json(self, json_path: Path) -> int:
         """
         Process examples.json into documents
-        
+
         Args:
             json_path: Path to examples JSON file
-        
+
         Returns:
             Number of documents created
         """
@@ -180,8 +181,8 @@ Source: {source}"""
                         "type": "example_verse",
                         "meter": meter,
                         "text_source": source,
-                        "verse": verse
-                    }
+                        "verse": verse,
+                    },
                 )
 
                 self.documents.append(doc)
@@ -195,10 +196,10 @@ Source: {source}"""
     def process_documentation(self, doc_path: Path) -> int:
         """
         Process markdown/text documentation into chunked documents
-        
+
         Args:
             doc_path: Path to documentation file
-        
+
         Returns:
             Number of chunks created
         """
@@ -237,8 +238,8 @@ Source: {source}"""
                         "type": doc_type,
                         "title": title,
                         "chunk_index": i,
-                        "total_chunks": len(chunks)
-                    }
+                        "total_chunks": len(chunks),
+                    },
                 )
 
                 self.documents.append(doc)
@@ -252,10 +253,10 @@ Source: {source}"""
     def process_bhagavad_gita_csv(self, csv_path: Path) -> int:
         """
         Process Bhagavad Gita verses CSV
-        
+
         Args:
             csv_path: Path to Bhagavad Gita CSV file
-        
+
         Returns:
             Number of documents created
         """
@@ -289,8 +290,8 @@ Source: Bhagavad Gita"""
                             "meter": meter,
                             "text_source": "Bhagavad Gita",
                             "chapter": chapter,
-                            "verse_number": verse_num
-                        }
+                            "verse_number": verse_num,
+                        },
                     )
 
                     self.documents.append(doc)
@@ -303,9 +304,9 @@ Source: Bhagavad Gita"""
 
     def build_database(self):
         """Build the complete vector database"""
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🚀 Building Vector Database for RAG System")
-        print("="*60 + "\n")
+        print("=" * 60 + "\n")
 
         total_docs = 0
 
@@ -359,7 +360,7 @@ Source: Bhagavad Gita"""
             "meter.md",
             "List_Vedic_Chandas.md",
             "7_vedic_chandas_showcase.md",
-            "online_course_resource.md"
+            "online_course_resource.md",
         ]
 
         for filename in doc_files:
@@ -387,7 +388,7 @@ Source: Bhagavad Gita"""
             documents=self.documents,
             embedding=self.embeddings,
             persist_directory=str(CHROMA_DIR),
-            collection_name="chandas_knowledge"
+            collection_name="chandas_knowledge",
         )
 
         print(f"✅ Vector store created with {vectorstore._collection.count()} documents")
@@ -402,8 +403,14 @@ Source: Bhagavad Gita"""
                 "meter_definitions": len([d for d in self.documents if d.metadata.get("type") == "meter_definition"]),
                 "example_verses": len([d for d in self.documents if d.metadata.get("type") == "example_verse"]),
                 "sacred_texts": len([d for d in self.documents if d.metadata.get("type") == "sacred_text_example"]),
-                "documentation": len([d for d in self.documents if d.metadata.get("type") in ["documentation", "rules", "vedic_reference", "tutorial"]])
-            }
+                "documentation": len(
+                    [
+                        d
+                        for d in self.documents
+                        if d.metadata.get("type") in ["documentation", "rules", "vedic_reference", "tutorial"]
+                    ]
+                ),
+            },
         }
 
         summary_path = PROCESSED_DIR / "build_summary.json"
@@ -411,9 +418,9 @@ Source: Bhagavad Gita"""
             json.dump(summary, f, indent=2, ensure_ascii=False)
 
         print(f"\n📊 Summary saved to {summary_path}")
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("✅ Vector Database Build Complete!")
-        print("="*60)
+        print("=" * 60)
         print(f"\n📍 Location: {CHROMA_DIR}")
         print(f"📈 Total Documents: {total_docs}")
         print("🔍 Embedding Dimensions: 768")

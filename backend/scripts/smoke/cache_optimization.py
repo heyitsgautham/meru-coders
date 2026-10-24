@@ -26,34 +26,34 @@ TEST_CASES = [
         "name": "Rigveda 1.1.1 (Gayatri)",
         "text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
         "expected_cache_hit": True,
-        "expected_meter": "gāyatrī"
+        "expected_meter": "gāyatrī",
     },
     {
         "name": "Rigveda 1.1.3",
         "text": "अग्निना रयिमश्नवत्पोषमेव दिवेदिवे यशसं वीरवत्तमं",
         "expected_cache_hit": True,
-        "expected_meter": "gāyatrī"
+        "expected_meter": "gāyatrī",
     },
     # Bhagavad Gita verses (should be in chandovallari or similar)
     {
         "name": "BG 1.1 (Anushtubh)",
         "text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
         "expected_cache_hit": False,  # May or may not be cached
-        "expected_meter": "अनुष्टुभ्"
+        "expected_meter": "अनुष्टुभ्",
     },
     # Made up verse (definitely NOT in cache)
     {
         "name": "Novel verse (no cache)",
         "text": "काव्यं करोति कविः सुन्दरं वचनं रम्यम्",
         "expected_cache_hit": False,
-        "expected_meter": None  # Unknown
+        "expected_meter": None,  # Unknown
     },
     # Mandakranta from chandovallari (likely cached)
     {
         "name": "Mandakranta sample",
         "text": "श्यामास्वाङ्गं चकितहरिणीप्रेक्षणे दृष्टिपातं",
         "expected_cache_hit": True,
-        "expected_meter": "mandākrāntā"
+        "expected_meter": "mandākrāntā",
     },
 ]
 
@@ -61,10 +61,7 @@ TEST_CASES = [
 def test_single_verse(verse_data):
     """Test a single verse and return timing info."""
     url = f"{BASE_URL}/identify/text"
-    payload = {
-        "text": verse_data["text"],
-        "text_mode": "line"
-    }
+    payload = {"text": verse_data["text"], "text_mode": "line"}
 
     start = time.time()
     try:
@@ -76,7 +73,7 @@ def test_single_verse(verse_data):
                 "name": verse_data["name"],
                 "success": False,
                 "error": f"HTTP {response.status_code}",
-                "elapsed_ms": elapsed_ms
+                "elapsed_ms": elapsed_ms,
             }
 
         data = response.json()
@@ -96,7 +93,7 @@ def test_single_verse(verse_data):
             "similarity": cache_info.get("similarity", 0),
             "cached_chandas": cache_info.get("cached_chandas", ""),
             "expected_cache_hit": verse_data.get("expected_cache_hit"),
-            "identified_meter": data.get("summary", {}).get("line", {}).get("match", {}).get("chanda", {})
+            "identified_meter": data.get("summary", {}).get("line", {}).get("match", {}).get("chanda", {}),
         }
 
     except Exception as e:
@@ -104,7 +101,7 @@ def test_single_verse(verse_data):
             "name": verse_data["name"],
             "success": False,
             "error": str(e),
-            "elapsed_ms": (time.time() - start) * 1000
+            "elapsed_ms": (time.time() - start) * 1000,
         }
 
 
@@ -148,16 +145,18 @@ def run_benchmark(iterations=3):
             print(f"      - AI validation: {avg_ai:.1f}ms {'(SKIPPED)' if ai_skipped else ''}")
             print(f"      - Rule engine: {avg_rule:.1f}ms")
 
-            all_results.append({
-                "name": verse["name"],
-                "cache_hit": cache_hit,
-                "ai_skipped": ai_skipped,
-                "avg_total_ms": avg_total,
-                "avg_cache_ms": avg_cache,
-                "avg_ai_ms": avg_ai,
-                "avg_rule_ms": avg_rule,
-                "similarity": similarity
-            })
+            all_results.append(
+                {
+                    "name": verse["name"],
+                    "cache_hit": cache_hit,
+                    "ai_skipped": ai_skipped,
+                    "avg_total_ms": avg_total,
+                    "avg_cache_ms": avg_cache,
+                    "avg_ai_ms": avg_ai,
+                    "avg_rule_ms": avg_rule,
+                    "similarity": similarity,
+                }
+            )
         else:
             print("   ❌ All iterations failed!")
             if verse_results:
@@ -191,7 +190,9 @@ def run_benchmark(iterations=3):
         print("\n⚡ OPTIMIZATION IMPACT:")
         print(f"   Speedup: {speedup:.1f}x faster for cached verses")
         print(f"   Time saved: {savings:.1f}ms per request")
-        print(f"   AI calls avoided: {len(cache_hits)} / {len(all_results)} ({100*len(cache_hits)/len(all_results):.0f}%)")
+        print(
+            f"   AI calls avoided: {len(cache_hits)} / {len(all_results)} ({100 * len(cache_hits) / len(all_results):.0f}%)"
+        )
 
     return all_results
 

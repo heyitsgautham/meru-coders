@@ -28,29 +28,29 @@ from typing import List, Optional, Tuple
 
 # Characters to normalize/remove from input
 DEVANAGARI_NORMALIZE = [
-    ("॥", ""),      # Double danda (verse separator)
-    ("।", ""),      # Single danda (line separator)
-    ("ॐ", "ओम्"),   # Om symbol -> "Om" in Devanagari
-    ("\n", " "),    # Newline -> space
-    ("\t", " "),    # Tab -> space
-    ("़", ""),      # Nukta (remove)
-    ("॰", ""),      # Abbreviation sign
-    ("ऽ", ""),      # Avagraha (elision marker) - remove for syllable counting
+    ("॥", ""),  # Double danda (verse separator)
+    ("।", ""),  # Single danda (line separator)
+    ("ॐ", "ओम्"),  # Om symbol -> "Om" in Devanagari
+    ("\n", " "),  # Newline -> space
+    ("\t", " "),  # Tab -> space
+    ("़", ""),  # Nukta (remove)
+    ("॰", ""),  # Abbreviation sign
+    ("ऽ", ""),  # Avagraha (elision marker) - remove for syllable counting
 ]
 
 # Additional Vedic character normalization
 VEDIC_NORMALIZE = [
-    ("\u1CF2", "ः"),  # VEDIC SIGN ARDHAVISARGA -> Visarga
-    ("\u1CF3", "ः"),  # VEDIC SIGN ROTATED ARDHAVISARGA -> Visarga
-    ("\u1CF4", ""),   # VEDIC TONE CANDRA ABOVE -> remove
-    ("\u1CF5", "ः"),  # VEDIC SIGN JIHVAMULIYA -> Visarga
-    ("\u1CF6", "ः"),  # VEDIC SIGN UPADHMANIYA -> Visarga
-    ("\u1CFA", "ं"),  # VEDIC SIGN DOUBLE ANUSVARA -> Anusvara
-    ("\u1CD0", ""),   # VEDIC TONE KARSHANA -> remove
-    ("\u1CD1", ""),   # VEDIC TONE SHARA -> remove
-    ("\u1CD2", ""),   # VEDIC TONE PRENKHA -> remove
-    ("\u1CD3", ""),   # VEDIC SIGN NIHSHVASA -> remove
-    ("\u1CE1", ""),   # VEDIC TONE ATHARVAVEDIC INDEPENDENT SVARITA -> remove
+    ("\u1cf2", "ः"),  # VEDIC SIGN ARDHAVISARGA -> Visarga
+    ("\u1cf3", "ः"),  # VEDIC SIGN ROTATED ARDHAVISARGA -> Visarga
+    ("\u1cf4", ""),  # VEDIC TONE CANDRA ABOVE -> remove
+    ("\u1cf5", "ः"),  # VEDIC SIGN JIHVAMULIYA -> Visarga
+    ("\u1cf6", "ः"),  # VEDIC SIGN UPADHMANIYA -> Visarga
+    ("\u1cfa", "ं"),  # VEDIC SIGN DOUBLE ANUSVARA -> Anusvara
+    ("\u1cd0", ""),  # VEDIC TONE KARSHANA -> remove
+    ("\u1cd1", ""),  # VEDIC TONE SHARA -> remove
+    ("\u1cd2", ""),  # VEDIC TONE PRENKHA -> remove
+    ("\u1cd3", ""),  # VEDIC SIGN NIHSHVASA -> remove
+    ("\u1ce1", ""),  # VEDIC TONE ATHARVAVEDIC INDEPENDENT SVARITA -> remove
 ]
 
 
@@ -58,10 +58,10 @@ def normalize_sanskrit(text: str) -> str:
     """
     Normalize Sanskrit text by removing punctuation, expanding symbols,
     and standardizing whitespace.
-    
+
     Args:
         text: Input Sanskrit text (Devanagari or IAST)
-    
+
     Returns:
         Normalized text string
     """
@@ -116,17 +116,17 @@ NUKTA = "़"
 def split_syllables(text: str) -> List[str]:
     """
     Split Sanskrit text into syllables (akṣaras).
-    
+
     We treat a syllable as:
     [consonant cluster] + vowel + (anusvāra/visarga optional)
-    
+
     A new syllable starts when:
     - A new independent vowel appears
     - A vowel sign (mātrā) appears after a consonant/cluster
-    
+
     Args:
         text: Normalized Sanskrit text in Devanagari
-    
+
     Returns:
         List of syllable strings
     """
@@ -227,13 +227,13 @@ def split_syllables(text: str) -> List[str]:
 def split_syllables_simple(text: str) -> List[str]:
     """
     Simplified syllable splitter - original algorithm from specification.
-    
+
     This is a more straightforward implementation that treats a syllable as:
     [consonant cluster] + vowel + (anusvāra/visarga optional)
-    
+
     Args:
         text: Normalized Sanskrit text in Devanagari
-    
+
     Returns:
         List of syllable strings
     """
@@ -282,18 +282,18 @@ SHORT_MATRA = ["ि", "ु", "ृ", "ॢ"]
 def is_guru(syllable: str, next_syllable: Optional[str] = None) -> bool:
     """
     Determine if a syllable is Guru (long/heavy).
-    
+
     Pingala's rules for Guru:
     1. Syllable contains a long vowel (ā, ī, ū, ai, au, e, o)
     2. Syllable ends with anusvāra (ं) or visarga (ः)
     3. Syllable ends with halanta (्) - half consonant
     4. Syllable is followed by a conjunct consonant (saṃyoga rule)
     5. Last syllable of a pāda is typically Guru (anta-guru rule)
-    
+
     Args:
         syllable: The syllable to check
         next_syllable: The following syllable (for conjunct check)
-    
+
     Returns:
         True if the syllable is Guru, False otherwise
     """
@@ -333,15 +333,15 @@ def is_guru(syllable: str, next_syllable: Optional[str] = None) -> bool:
 def is_laghu(syllable: str, next_syllable: Optional[str] = None) -> bool:
     """
     Determine if a syllable is Laghu (short/light).
-    
+
     A syllable is Laghu if:
     - It has a short vowel AND
     - None of the Guru rules apply
-    
+
     Args:
         syllable: The syllable to check
         next_syllable: The following syllable (for conjunct check)
-    
+
     Returns:
         True if the syllable is Laghu, False otherwise
     """
@@ -352,14 +352,15 @@ def is_laghu(syllable: str, next_syllable: Optional[str] = None) -> bool:
 # STEP 4 — Convert Syllables to Binary L-G Sequence
 ###############################################################################
 
+
 def syllables_to_lg(syllables: List[str], apply_anta_guru: bool = True) -> List[int]:
     """
     Convert syllables to binary Laghu-Guru sequence.
-    
+
     Args:
         syllables: List of syllable strings
         apply_anta_guru: If True, treat the last syllable as Guru (traditional rule)
-    
+
     Returns:
         List of 0s (Laghu) and 1s (Guru)
     """
@@ -373,7 +374,7 @@ def syllables_to_lg(syllables: List[str], apply_anta_guru: bool = True) -> List[
         next_syl = syllables[i + 1] if i + 1 < len(syllables) else None
 
         # Check if last syllable (for anta-guru rule)
-        is_last = (i == len(syllables) - 1)
+        is_last = i == len(syllables) - 1
 
         if is_guru(syl, next_syl):
             binary.append(1)  # Guru
@@ -388,11 +389,11 @@ def syllables_to_lg(syllables: List[str], apply_anta_guru: bool = True) -> List[
 def syllables_to_lg_string(syllables: List[str], apply_anta_guru: bool = True) -> str:
     """
     Convert syllables to L-G string representation.
-    
+
     Args:
         syllables: List of syllable strings
         apply_anta_guru: If True, treat the last syllable as Guru
-    
+
     Returns:
         String of 'L's and 'G's (e.g., "LGLGLGGL")
     """
@@ -403,11 +404,11 @@ def syllables_to_lg_string(syllables: List[str], apply_anta_guru: bool = True) -
 def syllables_to_lg_devanagari(syllables: List[str], apply_anta_guru: bool = True) -> str:
     """
     Convert syllables to Devanagari L-G representation.
-    
+
     Args:
         syllables: List of syllable strings
         apply_anta_guru: If True, treat the last syllable as Guru
-    
+
     Returns:
         String of 'ल's and 'ग's (e.g., "लगलगलगगल")
     """
@@ -419,20 +420,21 @@ def syllables_to_lg_devanagari(syllables: List[str], apply_anta_guru: bool = Tru
 # STEP 5 — Infer Pada Count and Syllables Per Pada
 ###############################################################################
 
+
 def guess_padas(text: str, syllables: List[str]) -> Tuple[int, List[int]]:
     """
     Infer the pada (foot) count and syllables per pada from text structure.
-    
+
     Heuristics:
     1. If text has explicit dandas (।/॥), split by them
     2. If newlines present, treat each line as potential pada
     3. Otherwise, assume 4 pādas (most common in śloka meters)
     4. Divide syllables as equally as possible
-    
+
     Args:
         text: Original input text (before normalization)
         syllables: List of syllables from the normalized text
-    
+
     Returns:
         Tuple of (pada_count, list of syllables_per_pada)
     """
@@ -478,13 +480,13 @@ def guess_padas(text: str, syllables: List[str]) -> Tuple[int, List[int]]:
     # - Jagati: 48 syllables = 4 padas × 12
 
     meter_structures = {
-        24: (3, [8, 8, 8]),           # Gayatri
-        28: (4, [7, 7, 7, 7]),        # Ushnik
-        32: (4, [8, 8, 8, 8]),        # Anushtubh
-        36: (4, [9, 9, 9, 9]),        # Brihati
-        40: (5, [8, 8, 8, 8, 8]),     # Pankti
-        44: (4, [11, 11, 11, 11]),    # Trishtubh
-        48: (4, [12, 12, 12, 12]),    # Jagati
+        24: (3, [8, 8, 8]),  # Gayatri
+        28: (4, [7, 7, 7, 7]),  # Ushnik
+        32: (4, [8, 8, 8, 8]),  # Anushtubh
+        36: (4, [9, 9, 9, 9]),  # Brihati
+        40: (5, [8, 8, 8, 8, 8]),  # Pankti
+        44: (4, [11, 11, 11, 11]),  # Trishtubh
+        48: (4, [12, 12, 12, 12]),  # Jagati
     }
 
     # Check for exact match first
@@ -515,21 +517,22 @@ def guess_padas(text: str, syllables: List[str]) -> Tuple[int, List[int]]:
 # COMPLETE ANALYSIS FUNCTION
 ###############################################################################
 
+
 def analyze_verse(text: str, apply_anta_guru: bool = True) -> dict:
     """
     Complete analysis of a Sanskrit verse.
-    
+
     Performs:
     1. Text normalization
     2. Syllable tokenization
     3. L-G determination
     4. Pada structure inference
     5. Matra (weight) counting
-    
+
     Args:
         text: Input Sanskrit verse in Devanagari
         apply_anta_guru: If True, apply anta-guru rule for last syllable
-    
+
     Returns:
         Dictionary with complete analysis results
     """
@@ -554,13 +557,10 @@ def analyze_verse(text: str, apply_anta_guru: bool = True) -> dict:
     matra_count = sum(2 if b else 1 for b in lg_binary)
 
     # Calculate gana pattern (groups of 3)
-    gana_map = {
-        'LGG': 'य', 'GLG': 'र', 'GGL': 'त', 'LLL': 'न',
-        'GLL': 'भ', 'LGL': 'ज', 'LLG': 'स', 'GGG': 'म'
-    }
+    gana_map = {'LGG': 'य', 'GLG': 'र', 'GGL': 'त', 'LLL': 'न', 'GLL': 'भ', 'LGL': 'ज', 'LLG': 'स', 'GGG': 'म'}
     gana_pattern = ""
     for i in range(0, len(lg_string), 3):
-        group = lg_string[i:i+3]
+        group = lg_string[i : i + 3]
         if len(group) == 3:
             gana_pattern += gana_map.get(group, '?')
         else:
@@ -585,14 +585,15 @@ def analyze_verse(text: str, apply_anta_guru: bool = True) -> dict:
 # UTILITY FUNCTIONS
 ###############################################################################
 
+
 def compare_patterns(pattern1: str, pattern2: str) -> float:
     """
     Compare two L-G patterns and return similarity score (0.0 to 1.0).
-    
+
     Args:
         pattern1: First L-G pattern string
         pattern2: Second L-G pattern string
-    
+
     Returns:
         Similarity score (1.0 = identical)
     """
@@ -614,11 +615,11 @@ def compare_patterns(pattern1: str, pattern2: str) -> float:
 def split_into_padas(lg_pattern: str, syllables_per_pada: List[int]) -> List[str]:
     """
     Split an L-G pattern into pada-wise patterns.
-    
+
     Args:
         lg_pattern: Full L-G pattern string
         syllables_per_pada: List of syllable counts per pada
-    
+
     Returns:
         List of L-G patterns for each pada
     """
@@ -626,7 +627,7 @@ def split_into_padas(lg_pattern: str, syllables_per_pada: List[int]) -> List[str
     start = 0
 
     for count in syllables_per_pada:
-        pada = lg_pattern[start:start + count]
+        pada = lg_pattern[start : start + count]
         padas.append(pada)
         start += count
 
@@ -642,13 +643,10 @@ if __name__ == "__main__":
     test_verses = [
         # Bhagavad Gita 1.1 - Anushtubh (4×8 = 32 syllables)
         "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
-
         # Gayatri Mantra (3×8 = 24 syllables)
         "तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि",
-
         # Another line from BG
         "वसुदेवसुतं देवं कंसचाणूरमर्दनम्",
-
         # Full shloka with danda
         "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः। मामकाः पाण्डवाश्चैव किमकुर्वत संजय॥",
     ]

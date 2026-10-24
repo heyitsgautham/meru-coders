@@ -49,11 +49,7 @@ def merge_sama_data(original_file, imported_file, output_file):
     for row in original:
         pattern = normalize_pattern(row.get('लक्षण (raw)', ''))
         if pattern:
-            pattern_to_names[pattern].append({
-                'name': row.get('वृत्त', ''),
-                'source': 'original',
-                'row': row
-            })
+            pattern_to_names[pattern].append({'name': row.get('वृत्त', ''), 'source': 'original', 'row': row})
 
     # Check imported data for duplicates
     new_entries = []
@@ -71,27 +67,15 @@ def merge_sama_data(original_file, imported_file, output_file):
                 duplicates.append(name)
             else:
                 # Same pattern, different name (meter synonym)
-                pattern_conflicts.append({
-                    'new_name': name,
-                    'existing_names': existing_names,
-                    'pattern': pattern
-                })
+                pattern_conflicts.append({'new_name': name, 'existing_names': existing_names, 'pattern': pattern})
                 # Add as new entry (it's a valid synonym)
                 new_entries.append(row)
-                pattern_to_names[pattern].append({
-                    'name': name,
-                    'source': 'imported',
-                    'row': row
-                })
+                pattern_to_names[pattern].append({'name': name, 'source': 'imported', 'row': row})
         else:
             # Completely new pattern
             new_entries.append(row)
             if pattern:
-                pattern_to_names[pattern].append({
-                    'name': name,
-                    'source': 'imported',
-                    'row': row
-                })
+                pattern_to_names[pattern].append({'name': name, 'source': 'imported', 'row': row})
 
     print(f"Original entries: {len(original)}")
     print(f"Imported entries: {len(imported)}")
@@ -267,9 +251,7 @@ def main():
 
     # Sama
     sama_total, sama_dup, sama_syn = merge_sama_data(
-        data_dir / 'chanda_sama.csv',
-        data_dir / 'chanda_sama_imported.csv',
-        data_dir / 'chanda_sama_merged.csv'
+        data_dir / 'chanda_sama.csv', data_dir / 'chanda_sama_imported.csv', data_dir / 'chanda_sama_merged.csv'
     )
     stats['sama'] = {'total': sama_total, 'duplicates': sama_dup, 'synonyms': sama_syn}
 
@@ -277,7 +259,7 @@ def main():
     ardha_total, ardha_dup = merge_ardhasama_data(
         data_dir / 'chanda_ardhasama.csv',
         data_dir / 'chanda_ardhasama_imported.csv',
-        data_dir / 'chanda_ardhasama_merged.csv'
+        data_dir / 'chanda_ardhasama_merged.csv',
     )
     stats['ardhasama'] = {'total': ardha_total, 'duplicates': ardha_dup}
 
@@ -285,7 +267,7 @@ def main():
     vishama_total, vishama_dup = merge_vishama_data(
         data_dir / 'chanda_vishama.csv',
         data_dir / 'chanda_vishama_imported.csv',
-        data_dir / 'chanda_vishama_merged.csv'
+        data_dir / 'chanda_vishama_merged.csv',
     )
     stats['vishama'] = {'total': vishama_total, 'duplicates': vishama_dup}
 

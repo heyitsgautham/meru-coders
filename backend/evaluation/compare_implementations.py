@@ -24,8 +24,7 @@ import importlib.util
 from core.chanda import Chanda as CurrentChanda
 
 iitk_spec = importlib.util.spec_from_file_location(
-    "iitk_chanda",
-    os.path.join(project_root, 'repos', 'chanda', 'chanda.py')
+    "iitk_chanda", os.path.join(project_root, 'repos', 'chanda', 'chanda.py')
 )
 iitk_module = importlib.util.module_from_spec(iitk_spec)
 iitk_spec.loader.exec_module(iitk_module)
@@ -40,15 +39,18 @@ test_file = os.path.join(current_dir, 'tests_lg.json')
 with open(test_file, 'r', encoding='utf-8') as f:
     test_patterns = json.load(f)
 
+
 def normalize_pattern(pattern):
     """Normalize pattern by removing separators and spaces"""
     return pattern.replace('|', '').replace(' ', '').replace('.', '')
+
 
 def pattern_to_lg(pattern):
     """Convert pattern with separators to clean L-G string"""
     clean = normalize_pattern(pattern)
     # Filter only L and G characters
     return ''.join(c for c in clean if c in 'LG')
+
 
 def find_meter_in_chanda(chanda_instance, lg_pattern, meter_name):
     """
@@ -84,20 +86,36 @@ def find_meter_in_chanda(chanda_instance, lg_pattern, meter_name):
 
     return bool(found_names), found_names, matched_pattern
 
+
 def normalize_meter_name(name):
     """Normalize meter name for comparison"""
     # Remove diacritics and make lowercase
     name = name.lower()
     # Common transliteration variants
     replacements = {
-        'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r',
-        'ṅ': 'n', 'ñ': 'n', 'ṭ': 't', 'ḍ': 'd', 'ṇ': 'n',
-        'ś': 's', 'ṣ': 's', 'ḥ': 'h', 'ṃ': 'm', 'ḷ': 'l',
-        'ḻ': 'l', 'kṣ': 'ksh', 'jñ': 'gn'
+        'ā': 'a',
+        'ī': 'i',
+        'ū': 'u',
+        'ṛ': 'r',
+        'ṝ': 'r',
+        'ṅ': 'n',
+        'ñ': 'n',
+        'ṭ': 't',
+        'ḍ': 'd',
+        'ṇ': 'n',
+        'ś': 's',
+        'ṣ': 's',
+        'ḥ': 'h',
+        'ṃ': 'm',
+        'ḷ': 'l',
+        'ḻ': 'l',
+        'kṣ': 'ksh',
+        'jñ': 'gn',
     }
     for old, new in replacements.items():
         name = name.replace(old, new)
     return name
+
 
 def name_matches(expected_name, found_names):
     """Check if expected name matches any found name"""
@@ -107,6 +125,7 @@ def name_matches(expected_name, found_names):
         if expected_norm in found_norm or found_norm in expected_norm:
             return True
     return False
+
 
 def run_comparison():
     """Run comparison between current and IITK implementations"""
@@ -152,7 +171,7 @@ def run_comparison():
     # Test results
     results = {
         'current': {'exact': 0, 'name_match': 0, 'pattern_only': 0, 'not_found': 0},
-        'iitk': {'exact': 0, 'name_match': 0, 'pattern_only': 0, 'not_found': 0}
+        'iitk': {'exact': 0, 'name_match': 0, 'pattern_only': 0, 'not_found': 0},
     }
 
     detailed_results = []
@@ -180,14 +199,10 @@ def run_comparison():
             total_tests += 1
 
             # Test current implementation
-            curr_found, curr_names, curr_matched = find_meter_in_chanda(
-                current_chanda, lg_pattern, meter_name
-            )
+            curr_found, curr_names, curr_matched = find_meter_in_chanda(current_chanda, lg_pattern, meter_name)
 
             # Test IITK implementation
-            iitk_found, iitk_names, iitk_matched = find_meter_in_chanda(
-                iitk_chanda, lg_pattern, meter_name
-            )
+            iitk_found, iitk_names, iitk_matched = find_meter_in_chanda(iitk_chanda, lg_pattern, meter_name)
 
             # Categorize results
             curr_status = 'not_found'
@@ -213,13 +228,15 @@ def run_comparison():
             else:
                 results['iitk']['not_found'] += 1
 
-            detailed_results.append({
-                'meter': meter_name,
-                'pattern': pattern,
-                'lg_pattern': lg_pattern,
-                'current': {'found': curr_found, 'names': curr_names, 'status': curr_status},
-                'iitk': {'found': iitk_found, 'names': iitk_names, 'status': iitk_status}
-            })
+            detailed_results.append(
+                {
+                    'meter': meter_name,
+                    'pattern': pattern,
+                    'lg_pattern': lg_pattern,
+                    'current': {'found': curr_found, 'names': curr_names, 'status': curr_status},
+                    'iitk': {'found': iitk_found, 'names': iitk_names, 'status': iitk_status},
+                }
+            )
 
     # Print detailed results
     print(f"\n{'Meter Name':<25} {'Pattern':<20} {'Current':<15} {'IITK':<15}")
@@ -246,7 +263,9 @@ def run_comparison():
     print(f"\n{'Metric':<30} {'Current':<15} {'IITK':<15}")
     print("-" * 60)
     print(f"{'Exact Match (name + pattern)':<30} {results['current']['exact']:<15} {results['iitk']['exact']:<15}")
-    print(f"{'Pattern Found (diff name)':<30} {results['current']['pattern_only']:<15} {results['iitk']['pattern_only']:<15}")
+    print(
+        f"{'Pattern Found (diff name)':<30} {results['current']['pattern_only']:<15} {results['iitk']['pattern_only']:<15}"
+    )
     print(f"{'Not Found':<30} {results['current']['not_found']:<15} {results['iitk']['not_found']:<15}")
 
     curr_total_found = results['current']['exact'] + results['current']['pattern_only']
@@ -297,6 +316,7 @@ def run_comparison():
     print("=" * 80)
 
     return results, detailed_results
+
 
 if __name__ == "__main__":
     run_comparison()

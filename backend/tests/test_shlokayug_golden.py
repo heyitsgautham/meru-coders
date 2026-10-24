@@ -5,7 +5,7 @@ Test script for validating Chanda engine against ShlokaYug Golden Dataset.
 Extracted from repos/ShlokaYug/Web-App/src/data/enhancedDummyData.ts and dummyData.ts
 
 NOTE: The `CHANDAS_DATABASE` in ShlokaYug contains SIGNIFICANT ERRORS.
-Many famous Anushtubh verses (Gita 4.7, Gita 18.78, Gita 6.5) are misclassified 
+Many famous Anushtubh verses (Gita 4.7, Gita 18.78, Gita 6.5) are misclassified
 as Jagati, Brihati, or Pankti.
 Rigveda 1.1.1 (Gayatri) is misclassified as Trishtubh.
 Rigveda 1.189.1 (Trishtubh) is misclassified as Ushnik.
@@ -70,7 +70,10 @@ class TestShlokaYugGolden(unittest.TestCase):
                     match_found = True
                     break
 
-        self.assertTrue(match_found, f"Expected {expected_meter} (or variants {expected_variants}), but found '{found_meter_str}' for text: {text[:50]}...")
+        self.assertTrue(
+            match_found,
+            f"Expected {expected_meter} (or variants {expected_variants}), but found '{found_meter_str}' for text: {text[:50]}...",
+        )
 
     # --- VERIFIED CORRECT EXAMPLES ---
 

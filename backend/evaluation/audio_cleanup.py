@@ -24,7 +24,7 @@ from utils.cleanup import cleanup_directory, get_file_age_minutes
 def create_test_audio_file(directory: Path, filename: str, age_minutes: float = 0):
     """
     Create a test audio file with specified age.
-    
+
     Args:
         directory: Directory to create file in
         filename: Name of the file
@@ -60,11 +60,11 @@ def test_audio_cleanup():
     # Create test files
     print("Creating test files...")
     test_files = [
-        ("recent_audio_1.mp3", 5),    # 5 minutes old (should be kept)
-        ("recent_audio_2.mp3", 30),   # 30 minutes old (should be kept)
-        ("old_audio_1.mp3", 65),      # 65 minutes old (should be deleted)
-        ("old_audio_2.mp3", 120),     # 120 minutes old (should be deleted)
-        ("old_audio_3.mp3", 180),     # 180 minutes old (should be deleted)
+        ("recent_audio_1.mp3", 5),  # 5 minutes old (should be kept)
+        ("recent_audio_2.mp3", 30),  # 30 minutes old (should be kept)
+        ("old_audio_1.mp3", 65),  # 65 minutes old (should be deleted)
+        ("old_audio_2.mp3", 120),  # 120 minutes old (should be deleted)
+        ("old_audio_3.mp3", 180),  # 180 minutes old (should be deleted)
     ]
 
     created_files = []
@@ -80,20 +80,14 @@ def test_audio_cleanup():
     # Run cleanup in dry-run mode first
     print("🔍 Running DRY RUN cleanup...")
     files_deleted_dry, size_freed_dry = cleanup_directory(
-        settings.AUDIO_DIR,
-        settings.FILE_MAX_AGE_MINUTES,
-        dry_run=True
+        settings.AUDIO_DIR, settings.FILE_MAX_AGE_MINUTES, dry_run=True
     )
     print(f"   Would delete: {files_deleted_dry} files")
     print()
 
     # Run actual cleanup
     print("🗑️  Running ACTUAL cleanup...")
-    files_deleted, size_freed = cleanup_directory(
-        settings.AUDIO_DIR,
-        settings.FILE_MAX_AGE_MINUTES,
-        dry_run=False
-    )
+    files_deleted, size_freed = cleanup_directory(settings.AUDIO_DIR, settings.FILE_MAX_AGE_MINUTES, dry_run=False)
     print(f"   ✅ Deleted: {files_deleted} files")
     print(f"   💾 Freed: {size_freed:.4f} MB")
     print()
@@ -147,5 +141,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Test failed with error: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)

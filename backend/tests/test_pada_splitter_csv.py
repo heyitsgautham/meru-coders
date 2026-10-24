@@ -3,7 +3,7 @@
 """
 Tests for PadaSplitter CSV loading functionality.
 
-Tests the loading of Viṣamavṛtta (unequal meter) and Ardhasama (half-equal meter) 
+Tests the loading of Viṣamavṛtta (unequal meter) and Ardhasama (half-equal meter)
 patterns from CSV files.
 """
 

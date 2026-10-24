@@ -21,6 +21,7 @@ def transliterate_to_devanagari(iast_name):
     except Exception:
         return None
 
+
 def main():
     input_file = 'data/chanda_matra.csv'
     output_file = 'data/chanda_matra.csv'
@@ -44,7 +45,7 @@ def main():
     for name, pattern in meters:
         # Check if this is IAST (Latin script with diacritics) vs Devanagari
         # Devanagari range: U+0900 to U+097F
-        is_devanagari = any('\u0900' <= c <= '\u097F' for c in name)
+        is_devanagari = any('\u0900' <= c <= '\u097f' for c in name)
 
         if not is_devanagari:
             # IAST or other Latin script
@@ -61,12 +62,7 @@ def main():
                 # Check for conflicts
                 existing_pattern = consolidated[sanskrit][0]
                 if existing_pattern != pattern:
-                    conflicts.append({
-                        'name': name,
-                        'sanskrit': sanskrit,
-                        'existing': existing_pattern,
-                        'new': pattern
-                    })
+                    conflicts.append({'name': name, 'sanskrit': sanskrit, 'existing': existing_pattern, 'new': pattern})
                     # Use ganesh.json data (the IAST new one) as authoritative
                     print(f"⚠ CONFLICT: {name} ({sanskrit})")
                     print(f"  Old: {existing_pattern}")
@@ -106,6 +102,7 @@ def main():
             print(f"  - {c['name']}: {c['existing']} -> {c['new']}")
 
     print(f"\nFinal count: {len(consolidated)} unique mātrā meters")
+
 
 if __name__ == '__main__':
     main()

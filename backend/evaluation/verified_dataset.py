@@ -17,7 +17,9 @@ import time
 # Add paths
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
+)
 
 from chanda_iitk import Chanda as IITKChanda
 from core.chanda import Chanda as OurChanda
@@ -63,10 +65,23 @@ def normalize_name(name):
     name = name.strip().lower()
     # Normalize common diacritics
     replacements = {
-        'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r',
-        'ṅ': 'n', 'ñ': 'n', 'ṭ': 't', 'ḍ': 'd', 'ṇ': 'n',
-        'ś': 's', 'ṣ': 's', 'ḥ': 'h', 'ṃ': 'm',
-        '-': '', '_': '', ' ': ''
+        'ā': 'a',
+        'ī': 'i',
+        'ū': 'u',
+        'ṛ': 'r',
+        'ṝ': 'r',
+        'ṅ': 'n',
+        'ñ': 'n',
+        'ṭ': 't',
+        'ḍ': 'd',
+        'ṇ': 'n',
+        'ś': 's',
+        'ṣ': 's',
+        'ḥ': 'h',
+        'ṃ': 'm',
+        '-': '',
+        '_': '',
+        ' ': '',
     }
     for old, new in replacements.items():
         name = name.replace(old, new)
@@ -180,12 +195,14 @@ def run_test():
         reader = csv.DictReader(f)
         for row in reader:
             if row.get('Chandas Name') and row.get('Example Shloka'):
-                test_cases.append({
-                    'expected': row['Chandas Name'].strip(),
-                    'shloka': row['Example Shloka'].strip(),
-                    'syllables': row.get('Syllables per Quarter', ''),
-                    'lg_pattern': row.get('L-G Pattern', '')
-                })
+                test_cases.append(
+                    {
+                        'expected': row['Chandas Name'].strip(),
+                        'shloka': row['Example Shloka'].strip(),
+                        'syllables': row.get('Syllables per Quarter', ''),
+                        'lg_pattern': row.get('L-G Pattern', ''),
+                    }
+                )
 
     print(f"Loaded {len(test_cases)} test cases from chanda_dataset_verified.csv")
     print()
@@ -293,7 +310,7 @@ def run_test():
     if speed_ratio > 1:
         print(f"  ⚡ Our model is {speed_ratio:.1f}x faster")
     else:
-        print(f"  🐢 IITK model is {1/speed_ratio:.1f}x faster")
+        print(f"  🐢 IITK model is {1 / speed_ratio:.1f}x faster")
     print()
 
     # Detailed breakdown

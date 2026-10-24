@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 """Quick test for a single test case"""
+
 import time
 
 import requests
 
 API_BASE = "http://localhost:5000/api/chatbot"
 
+
 def test_case_41():
     """Test 41: Can you help me write a Sanskrit shloka?"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Testing: Can you help me write a Sanskrit shloka?")
-    print("="*80)
+    print("=" * 80)
 
-    payload = {
-        "message": "Can you help me write a Sanskrit shloka?",
-        "persona": "default"
-    }
+    payload = {"message": "Can you help me write a Sanskrit shloka?", "persona": "default"}
 
     try:
         response = requests.post(f"{API_BASE}/chat", json=payload, timeout=30)
@@ -45,6 +44,7 @@ def test_case_41():
         print(f"❌ ERROR: {e}")
         return False
 
+
 if __name__ == "__main__":
     print("🚀 Testing Fix for Test 41...")
     print("⏳ Make sure Flask backend is running on localhost:5000")
@@ -52,11 +52,10 @@ if __name__ == "__main__":
 
     result = test_case_41()
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     if result:
         print("🎉 SUCCESS! Test 41 now passes.")
         print("The chatbot now properly accepts requests to help write Sanskrit shlokas.")
     else:
         print("❌ Test still failing. May need to restart Flask backend.")
-    print("="*80)
-
+    print("=" * 80)

@@ -56,5 +56,6 @@ def main():
     else:
         print("⚠️  Migration Incomplete. Please run the SQL schema in Supabase.")
 
+
 if __name__ == "__main__":
     main()

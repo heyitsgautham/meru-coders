@@ -1,6 +1,7 @@
 """
 Test user-provided examples to determine correct dandaka classification
 """
+
 import sys
 
 sys.path.insert(0, '.')
@@ -14,7 +15,6 @@ examples = {
 जातिस्मरत्वमाप्नोति ब्रह्मज्ञानमनुत्तमम् ।
 सदाशिवत्वमाप्नोति सोन्ते नात्र विचारणा ॥ २४ ॥
 इति श्री श्यामला स्तोत्रम् ।""",
-
     'Example 2': """अणिमादिगुणाधारे जय नीलाद्रिसन्निभे ।
 शङ्खपद्मादिसम्युक्ते सिद्धिदे त्वां भजाम्यहम् ॥ १२ ॥
 जय त्वं वरभूषाङ्गि वराङ्गीं त्वां भजाम्यहम् ।
@@ -37,7 +37,6 @@ examples = {
 लभेदष्टगुणैश्वर्यं दारिद्र्येण विमुच्यते ॥ २१ ॥
 शङ्खादि निधयो द्वार्स्थाः सान्निध्यं पर्युपासते ।
 व्याचष्टे सर्वशास्त्राणि सर्वविद्यानिधिर्भवेत् ॥ २२ ॥""",
-
     'Example 3': """जय मातर्विशालाक्षि जय सङ्गीतमातृके ।
 जय मातङ्गि चण्डालि गृहीतमधुपात्रके ॥ १ ॥
 नमस्तेऽस्तु महादेवि नमो भगवतीश्वरि ।
@@ -59,7 +58,7 @@ examples = {
 जय सङ्गीतरसिके वीणाहस्ते नमोऽस्तु ते ।
 जनमोहिनि वन्दे त्वां ब्रह्मविष्णुशिवात्मिके ॥ १० ॥
 वाग्वादिनि नमस्तुभ्यं सर्वविद्याप्रदे नमः ।
-नमस्ते कुलदेवेशि नमो नारीवशङ्करि ॥ ११ ॥"""
+नमस्ते कुलदेवेशि नमो नारीवशङ्करि ॥ ११ ॥""",
 }
 
 print("Testing User-Provided Examples:\n")
@@ -86,6 +85,7 @@ for name, text in examples.items():
 
     # Determine overall classification
     from collections import Counter
+
     overall = Counter(classifications).most_common(1)[0][0] if classifications else "Unknown"
     avg_aksaras = total_aksaras / len(lines) if lines else 0
     print(f"\n  Average: {avg_aksaras:.1f} akṣaras per line")

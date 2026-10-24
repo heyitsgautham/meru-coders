@@ -16,8 +16,7 @@ from core.chanda_modal import ChandaModal
 
 # Direct import to avoid ultralytics conflict
 spec = importlib.util.spec_from_file_location(
-    "rigveda_authentic",
-    os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
+    "rigveda_authentic", os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
 )
 rigveda_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rigveda_module)
@@ -30,13 +29,27 @@ def normalize_meter(name):
         return ''
     name = name.lower().strip()
     mapping = {
-        'gāyatrī': 'gāyatrī', 'gayatri': 'gāyatrī', 'गायत्री': 'gāyatrī',
-        'triṣṭup': 'triṣṭup', 'trishtup': 'triṣṭup', 'त्रिष्टुभ्': 'triṣṭup',
-        'jagatī': 'jagatī', 'jagati': 'jagatī', 'जगती': 'jagatī',
-        'anuṣṭup': 'anuṣṭup', 'anushtup': 'anuṣṭup', 'अनुष्टुभ्': 'anuṣṭup',
-        'bṛhatī': 'bṛhatī', 'brhati': 'bṛhatī', 'बृहती': 'bṛhatī',
-        'uṣṇik': 'uṣṇik', 'ushnik': 'uṣṇik', 'उष्णिक्': 'uṣṇik',
-        'paṅkti': 'paṅkti', 'pankti': 'paṅkti', 'पङ्क्ति': 'paṅkti',
+        'gāyatrī': 'gāyatrī',
+        'gayatri': 'gāyatrī',
+        'गायत्री': 'gāyatrī',
+        'triṣṭup': 'triṣṭup',
+        'trishtup': 'triṣṭup',
+        'त्रिष्टुभ्': 'triṣṭup',
+        'jagatī': 'jagatī',
+        'jagati': 'jagatī',
+        'जगती': 'jagatī',
+        'anuṣṭup': 'anuṣṭup',
+        'anushtup': 'anuṣṭup',
+        'अनुष्टुभ्': 'anuṣṭup',
+        'bṛhatī': 'bṛhatī',
+        'brhati': 'bṛhatī',
+        'बृहती': 'bṛhatī',
+        'uṣṇik': 'uṣṇik',
+        'ushnik': 'uṣṇik',
+        'उष्णिक्': 'uṣṇik',
+        'paṅkti': 'paṅkti',
+        'pankti': 'paṅkti',
+        'पङ्क्ति': 'paṅkti',
     }
     return mapping.get(name, name)
 
@@ -76,30 +89,34 @@ def main():
             by_meter[expected] = {'correct': 0, 'total': 0}
         by_meter[expected]['total'] += 1
 
-        is_correct = (predicted == expected)
+        is_correct = predicted == expected
         if is_correct:
             correct += 1
             by_meter[expected]['correct'] += 1
             status = '✓'
         else:
             status = '✗'
-            failures.append({
-                'index': i + 1,
-                'expected': expected,
-                'predicted': predicted,
-                'syl_count': syl_count,
-                'expected_syl': expected_syl,
-                'confidence': confidence,
-                'text': text[:60] + '...' if len(text) > 60 else text
-            })
+            failures.append(
+                {
+                    'index': i + 1,
+                    'expected': expected,
+                    'predicted': predicted,
+                    'syl_count': syl_count,
+                    'expected_syl': expected_syl,
+                    'confidence': confidence,
+                    'text': text[:60] + '...' if len(text) > 60 else text,
+                }
+            )
 
         # Print first 15
         if i < 15:
-            print(f'{status} [{i+1:3d}] Expected: {expected:10s} | Got: {predicted:10s} (syl: {syl_count}, conf: {confidence:.2f})')
+            print(
+                f'{status} [{i + 1:3d}] Expected: {expected:10s} | Got: {predicted:10s} (syl: {syl_count}, conf: {confidence:.2f})'
+            )
 
     print()
     print('=' * 70)
-    print(f'   OVERALL ACCURACY (VEDIC MODE): {correct}/{total} ({100*correct/total:.1f}%)')
+    print(f'   OVERALL ACCURACY (VEDIC MODE): {correct}/{total} ({100 * correct / total:.1f}%)')
     print('=' * 70)
     print()
     print('BY METER:')
@@ -114,15 +131,17 @@ def main():
     print('SAMPLE FAILURES (first 20):')
     print('-' * 70)
     for f in failures[:20]:
-        print(f"  [{f['index']:3d}] Expected: {f['expected']:10s} -> Got: {f['predicted']:10s} (syl: {f['syl_count']}, exp_syl: {f['expected_syl']})")
+        print(
+            f"  [{f['index']:3d}] Expected: {f['expected']:10s} -> Got: {f['predicted']:10s} (syl: {f['syl_count']}, exp_syl: {f['expected_syl']})"
+        )
 
     # Verdict
     print()
-    if correct/total >= 0.9:
+    if correct / total >= 0.9:
         print('✅ EXCELLENT: Vedic mode working well!')
-    elif correct/total >= 0.7:
+    elif correct / total >= 0.7:
         print('⚠️ GOOD: Vedic mode reasonable but needs improvement')
-    elif correct/total >= 0.5:
+    elif correct / total >= 0.5:
         print('⚠️ FAIR: Vedic mode partially working')
     else:
         print('❌ POOR: Vedic mode needs significant work')

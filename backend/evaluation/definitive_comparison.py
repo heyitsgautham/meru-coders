@@ -57,6 +57,7 @@ sys.path.insert(0, str(REFERENCE_PATH))
 try:
     from indic_transliteration import sanscript
     from indic_transliteration.sanscript import transliterate
+
     HAS_TRANSLITERATION = True
 except ImportError:
     HAS_TRANSLITERATION = False
@@ -67,11 +68,12 @@ except ImportError:
 # Core Utilities
 # =============================================================================
 
+
 def normalize_chanda_name(name: str) -> str:
     """
     Normalize meter name by converting to basic Latin for comparison.
     Uses proper transliteration library for accurate Devanagari→IAST conversion.
-    
+
     Examples:
         'इन्द्रवज्रा' → 'indravajra'
         'indravajrā' → 'indravajra'
@@ -83,7 +85,7 @@ def normalize_chanda_name(name: str) -> str:
     name = name.strip()
 
     # Check if contains Devanagari (Unicode range 0900-097F)
-    has_devanagari = any('\u0900' <= c <= '\u097F' for c in name)
+    has_devanagari = any('\u0900' <= c <= '\u097f' for c in name)
 
     if has_devanagari and HAS_TRANSLITERATION:
         # Use proper transliteration for accurate conversion
@@ -91,19 +93,65 @@ def normalize_chanda_name(name: str) -> str:
     elif has_devanagari:
         # Fallback: basic character-by-character mapping (less accurate)
         devanagari_map = {
-            'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ii', 'उ': 'u', 'ऊ': 'uu',
-            'ऋ': 'ri', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
-            'क': 'ka', 'ख': 'kha', 'ग': 'ga', 'घ': 'gha', 'ङ': 'na',
-            'च': 'ca', 'छ': 'cha', 'ज': 'ja', 'झ': 'jha', 'ञ': 'na',
-            'ट': 'ta', 'ठ': 'tha', 'ड': 'da', 'ढ': 'dha', 'ण': 'na',
-            'त': 'ta', 'थ': 'tha', 'द': 'da', 'ध': 'dha', 'न': 'na',
-            'प': 'pa', 'फ': 'pha', 'ब': 'ba', 'भ': 'bha', 'म': 'ma',
-            'य': 'ya', 'र': 'ra', 'ल': 'la', 'व': 'va', 'श': 'sha',
-            'ष': 'sha', 'स': 'sa', 'ह': 'ha',
-            'ा': 'a', 'ि': 'i', 'ी': 'i', 'ु': 'u', 'ू': 'u',
-            'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au',
-            'ं': 'm', 'ः': 'h', '्': '', 'ृ': 'ri',
-            'ँ': '', 'ऽ': '',
+            'अ': 'a',
+            'आ': 'aa',
+            'इ': 'i',
+            'ई': 'ii',
+            'उ': 'u',
+            'ऊ': 'uu',
+            'ऋ': 'ri',
+            'ए': 'e',
+            'ऐ': 'ai',
+            'ओ': 'o',
+            'औ': 'au',
+            'क': 'ka',
+            'ख': 'kha',
+            'ग': 'ga',
+            'घ': 'gha',
+            'ङ': 'na',
+            'च': 'ca',
+            'छ': 'cha',
+            'ज': 'ja',
+            'झ': 'jha',
+            'ञ': 'na',
+            'ट': 'ta',
+            'ठ': 'tha',
+            'ड': 'da',
+            'ढ': 'dha',
+            'ण': 'na',
+            'त': 'ta',
+            'थ': 'tha',
+            'द': 'da',
+            'ध': 'dha',
+            'न': 'na',
+            'प': 'pa',
+            'फ': 'pha',
+            'ब': 'ba',
+            'भ': 'bha',
+            'म': 'ma',
+            'य': 'ya',
+            'र': 'ra',
+            'ल': 'la',
+            'व': 'va',
+            'श': 'sha',
+            'ष': 'sha',
+            'स': 'sa',
+            'ह': 'ha',
+            'ा': 'a',
+            'ि': 'i',
+            'ी': 'i',
+            'ु': 'u',
+            'ू': 'u',
+            'े': 'e',
+            'ै': 'ai',
+            'ो': 'o',
+            'ौ': 'au',
+            'ं': 'm',
+            'ः': 'h',
+            '्': '',
+            'ृ': 'ri',
+            'ँ': '',
+            'ऽ': '',
         }
         for dev, lat in devanagari_map.items():
             name = name.replace(dev, lat)
@@ -111,16 +159,23 @@ def normalize_chanda_name(name: str) -> str:
     # Now normalize IAST diacritics to basic Latin
     n = name.lower()
     replacements = [
-        ('ā', 'a'), ('ä', 'a'),  # long a
-        ('ī', 'i'),              # long i
-        ('ü', 'u'), ('ū', 'u'),  # long u
-        ('ṭ', 't'), ('ḍ', 'd'),  # retroflex
-        ('ṇ', 'n'), ('ṅ', 'n'), ('ñ', 'n'),  # nasals
-        ('ṃ', 'm'), ('ṁ', 'm'),  # anusvara
-        ('ḥ', 'h'),              # visarga
-        ('ś', 'sh'), ('ṣ', 'sh'),  # sibilants
-        ('ṛ', 'ri'),             # vocalic r
-        ('ḷ', 'l'),              # vocalic l
+        ('ā', 'a'),
+        ('ä', 'a'),  # long a
+        ('ī', 'i'),  # long i
+        ('ü', 'u'),
+        ('ū', 'u'),  # long u
+        ('ṭ', 't'),
+        ('ḍ', 'd'),  # retroflex
+        ('ṇ', 'n'),
+        ('ṅ', 'n'),
+        ('ñ', 'n'),  # nasals
+        ('ṃ', 'm'),
+        ('ṁ', 'm'),  # anusvara
+        ('ḥ', 'h'),  # visarga
+        ('ś', 'sh'),
+        ('ṣ', 'sh'),  # sibilants
+        ('ṛ', 'ri'),  # vocalic r
+        ('ḷ', 'l'),  # vocalic l
     ]
     for old, new in replacements:
         n = n.replace(old, new)
@@ -136,13 +191,13 @@ def normalize_chanda_name(name: str) -> str:
 def chanda_names_match(expected: str, actual_list: list) -> bool:
     """
     Check if expected meter name matches any name in actual_list.
-    
+
     Uses normalized comparison with proper Devanagari transliteration.
     Also handles common spelling variants and partial matching.
-    
+
     Examples that should match:
         - 'indravajrā' and 'इन्द्रवज्रा'
-        - 'anuṣṭup' and 'anuṣṭubh'  
+        - 'anuṣṭup' and 'anuṣṭubh'
         - 'vasantatilakam' and 'वसन्ततिलका'
     """
     if not expected or not actual_list:
@@ -216,11 +271,11 @@ def extract_chanda_names_from_result(result: dict) -> list:
 def run_accuracy_test(implementation, test_data: list) -> dict:
     """
     Run accuracy test on an implementation.
-    
+
     Args:
         implementation: Chanda class instance with identify_line() method
         test_data: List of (verse, expected_chanda) tuples
-    
+
     Returns:
         dict with keys: correct, total, accuracy, avg_ms, mismatches
     """
@@ -263,6 +318,7 @@ def run_accuracy_test(implementation, test_data: list) -> dict:
 # Test Class
 # =============================================================================
 
+
 class TestDefinitiveComparison:
     """Definitive comparison tests between implementations."""
 
@@ -280,6 +336,7 @@ class TestDefinitiveComparison:
     def our_impl(self, paths):
         """Our implementation with our dataset."""
         from core.chanda import Chanda
+
         return Chanda(data_path=paths['our_data'])
 
     @pytest.fixture(scope="class")
@@ -287,6 +344,7 @@ class TestDefinitiveComparison:
         """IITK implementation with original dataset (434 patterns)."""
         try:
             from chanda_iitk import Chanda
+
             return Chanda(paths['iitk_data'])
         except ImportError:
             pytest.skip("IITK implementation not available at reference/alternative_implementations/chanda_iitk.py")
@@ -296,6 +354,7 @@ class TestDefinitiveComparison:
         """IITK implementation with our dataset (2062 patterns)."""
         try:
             from chanda_iitk import Chanda
+
             return Chanda(paths['our_data'])
         except ImportError:
             pytest.skip("IITK implementation not available")
@@ -314,11 +373,10 @@ class TestDefinitiveComparison:
     # Main Comparison Test
     # =========================================================================
 
-    def test_full_comparison_complete_dataset(self, our_impl, iitk_impl_original,
-                                               iitk_impl_our_data, complete_data):
+    def test_full_comparison_complete_dataset(self, our_impl, iitk_impl_original, iitk_impl_our_data, complete_data):
         """
         MAIN TEST: Full comparison on complete dataset (264 verses).
-        
+
         This is the definitive test that shows:
         1. Effect of data expansion (434 → 2062 patterns)
         2. Effect of code improvements (confidence scoring, multi-level matching)
@@ -332,21 +390,27 @@ class TestDefinitiveComparison:
         n = len(complete_data)
 
         # Print results
-        print(f"\n{'='*75}")
+        print(f"\n{'=' * 75}")
         print("DEFINITIVE COMPARISON RESULTS - Complete Dataset (264 verses)")
-        print(f"{'='*75}")
+        print(f"{'=' * 75}")
         print(f"\n| {'Implementation':<42} | {'Accuracy':<18} | {'Speed':<12} |")
-        print(f"|{'-'*42}|{'-'*18}|{'-'*12}|")
-        print(f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |")
-        print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
-        print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
-        print(f"{'='*75}")
+        print(f"|{'-' * 42}|{'-' * 18}|{'-' * 12}|")
+        print(
+            f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |"
+        )
+        print(
+            f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |"
+        )
+        print(
+            f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |"
+        )
+        print(f"{'=' * 75}")
 
         print("\nKey Insights:")
-        print(f"  • Data expansion (434→2062): +{r2['accuracy']-r1['accuracy']:.1f}% accuracy improvement")
-        print(f"  • Code improvements: +{r3['accuracy']-r2['accuracy']:.1f}% accuracy improvement")
-        print(f"  • Total improvement: +{r3['accuracy']-r1['accuracy']:.1f}% over IITK baseline")
-        print(f"  • Speed: Our impl is {r2['avg_ms']/r3['avg_ms']:.1f}x faster than IITK with same data")
+        print(f"  • Data expansion (434→2062): +{r2['accuracy'] - r1['accuracy']:.1f}% accuracy improvement")
+        print(f"  • Code improvements: +{r3['accuracy'] - r2['accuracy']:.1f}% accuracy improvement")
+        print(f"  • Total improvement: +{r3['accuracy'] - r1['accuracy']:.1f}% over IITK baseline")
+        print(f"  • Speed: Our impl is {r2['avg_ms'] / r3['avg_ms']:.1f}x faster than IITK with same data")
 
         # Show mismatches
         if r3['mismatches']:
@@ -359,8 +423,7 @@ class TestDefinitiveComparison:
         assert r3['accuracy'] >= r2['accuracy'], "Our impl should be more accurate than IITK with same data"
         assert r3['avg_ms'] < r2['avg_ms'], "Our impl should be faster than IITK with same data"
 
-    def test_full_comparison_sheet1_dataset(self, our_impl, iitk_impl_original,
-                                            iitk_impl_our_data, sheet1_data):
+    def test_full_comparison_sheet1_dataset(self, our_impl, iitk_impl_original, iitk_impl_our_data, sheet1_data):
         """
         Comparison on Sheet1 dataset (109 verses, simpler test set).
         """
@@ -370,15 +433,21 @@ class TestDefinitiveComparison:
 
         n = len(sheet1_data)
 
-        print(f"\n{'='*75}")
+        print(f"\n{'=' * 75}")
         print("COMPARISON RESULTS - Sheet1 Dataset (109 verses)")
-        print(f"{'='*75}")
+        print(f"{'=' * 75}")
         print(f"\n| {'Implementation':<42} | {'Accuracy':<18} | {'Speed':<12} |")
-        print(f"|{'-'*42}|{'-'*18}|{'-'*12}|")
-        print(f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |")
-        print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
-        print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
-        print(f"{'='*75}")
+        print(f"|{'-' * 42}|{'-' * 18}|{'-' * 12}|")
+        print(
+            f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |"
+        )
+        print(
+            f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |"
+        )
+        print(
+            f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |"
+        )
+        print(f"{'=' * 75}")
 
         assert r3['accuracy'] >= 90.0, f"Our accuracy {r3['accuracy']:.1f}% is below 90% threshold on Sheet1"
 
@@ -413,10 +482,11 @@ class TestDefinitiveComparison:
 # Standalone Execution
 # =============================================================================
 
+
 def main(quick_mode=False):
     """
     Run comparison directly without pytest.
-    
+
     Args:
         quick_mode: If True, skip IITK tests (which are slow)
     """
@@ -433,6 +503,7 @@ def main(quick_mode=False):
     if not quick_mode:
         try:
             from chanda_iitk import Chanda as IITKChanda
+
             iitk_orig = IITKChanda(str(BASE_PATH / 'repos' / 'chanda' / 'data'))
             iitk_ours = IITKChanda(str(BACKEND_PATH / 'data'))
             print("  - IITK implementation loaded")
@@ -471,33 +542,39 @@ def main(quick_mode=False):
 
     n = len(complete_data)
 
-    print(f"\n{'='*75}")
+    print(f"\n{'=' * 75}")
     print("DEFINITIVE COMPARISON RESULTS")
-    print(f"{'='*75}")
+    print(f"{'=' * 75}")
     print(f"Dataset: page 1-47 chanda list - complete.csv ({n} verses)")
-    print(f"{'='*75}")
+    print(f"{'=' * 75}")
     print(f"\n| {'Implementation':<42} | {'Accuracy':<18} | {'Speed':<12} |")
-    print(f"|{'-'*42}|{'-'*18}|{'-'*12}|")
+    print(f"|{'-' * 42}|{'-' * 18}|{'-' * 12}|")
 
     if r1:
-        print(f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |")
+        print(
+            f"| IITK + Original (434 patterns)           | {r1['correct']:>3}/{n} ({r1['accuracy']:>5.1f}%)     | {r1['avg_ms']:>6.2f} ms   |"
+        )
     else:
         print(f"| IITK + Original (434 patterns)           | {'(skipped)':<18} | {'---':<12} |")
 
     if r2:
-        print(f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |")
+        print(
+            f"| IITK + Our data (2062 patterns)          | {r2['correct']:>3}/{n} ({r2['accuracy']:>5.1f}%)     | {r2['avg_ms']:>6.2f} ms   |"
+        )
     else:
         print(f"| IITK + Our data (2062 patterns)          | {'(skipped)':<18} | {'---':<12} |")
 
-    print(f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |")
-    print(f"{'='*75}")
+    print(
+        f"| Our impl + Our data (2062 patterns)      | {r3['correct']:>3}/{n} ({r3['accuracy']:>5.1f}%)     | {r3['avg_ms']:>6.2f} ms   |"
+    )
+    print(f"{'=' * 75}")
 
     if r1 and r2:
         print("\nKey Insights:")
-        print(f"  • Data expansion (434→2062): +{r2['accuracy']-r1['accuracy']:.1f}% accuracy")
-        print(f"  • Code improvements: +{r3['accuracy']-r2['accuracy']:.1f}% accuracy")
-        print(f"  • Total improvement: +{r3['accuracy']-r1['accuracy']:.1f}% over baseline")
-        print(f"  • Speed: Our impl is {r2['avg_ms']/r3['avg_ms']:.1f}x faster than IITK with same data")
+        print(f"  • Data expansion (434→2062): +{r2['accuracy'] - r1['accuracy']:.1f}% accuracy")
+        print(f"  • Code improvements: +{r3['accuracy'] - r2['accuracy']:.1f}% accuracy")
+        print(f"  • Total improvement: +{r3['accuracy'] - r1['accuracy']:.1f}% over baseline")
+        print(f"  • Speed: Our impl is {r2['avg_ms'] / r3['avg_ms']:.1f}x faster than IITK with same data")
 
     if r3['mismatches']:
         print(f"\nMismatches in our impl ({len(r3['mismatches'])}):")
@@ -505,22 +582,21 @@ def main(quick_mode=False):
             print(f"  [{cnt}x] Expected: {exp:<25} Got: {act}")
 
     # Summary
-    print(f"\n{'='*75}")
+    print(f"\n{'=' * 75}")
     print("SUMMARY")
-    print(f"{'='*75}")
+    print(f"{'=' * 75}")
     print(f"✓ Our implementation achieves {r3['accuracy']:.1f}% accuracy on {n} verses")
     print(f"✓ Speed: {r3['avg_ms']:.2f} ms/verse")
     if r2:
-        print(f"✓ {r2['avg_ms']/r3['avg_ms']:.1f}x faster than IITK with same data")
+        print(f"✓ {r2['avg_ms'] / r3['avg_ms']:.1f}x faster than IITK with same data")
 
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description='Definitive Chanda Comparison Test')
-    parser.add_argument('--quick', '-q', action='store_true',
-                       help='Quick mode: skip slow IITK tests')
-    parser.add_argument('--full', '-f', action='store_true',
-                       help='Full mode: include all IITK tests (slow)')
+    parser.add_argument('--quick', '-q', action='store_true', help='Quick mode: skip slow IITK tests')
+    parser.add_argument('--full', '-f', action='store_true', help='Full mode: include all IITK tests (slow)')
     args = parser.parse_args()
 
     # Default to quick mode unless --full is specified

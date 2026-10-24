@@ -35,8 +35,8 @@ print(f"Valid L-G marks (non-empty): {len(valid_lg)}")
 
 print("\nFirst 15 syllables:")
 for i in range(min(15, len(syllables))):
-    print(f"  {i+1}: '{syllables[i]}' → LG: '{lg_marks[i] if i < len(lg_marks) else '?'}'")
+    print(f"  {i + 1}: '{syllables[i]}' → LG: '{lg_marks[i] if i < len(lg_marks) else '?'}'")
 
 print("\nLast 10 syllables:")
-for i in range(max(0, len(syllables)-10), len(syllables)):
-    print(f"  {i+1}: '{syllables[i]}' → LG: '{lg_marks[i] if i < len(lg_marks) else '?'}'")
+for i in range(max(0, len(syllables) - 10), len(syllables)):
+    print(f"  {i + 1}: '{syllables[i]}' → LG: '{lg_marks[i] if i < len(lg_marks) else '?'}'")

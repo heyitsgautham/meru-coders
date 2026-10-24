@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 try:
     from indic_transliteration import sanscript
     from indic_transliteration.sanscript import transliterate
+
     TRANSLITERATION_AVAILABLE = True
 except ImportError:
     TRANSLITERATION_AVAILABLE = False
@@ -33,12 +34,14 @@ except ImportError:
 # Meter Name Normalization (Enhanced)
 ###############################################################################
 
+
 def is_devanagari(text):
     """Check if text contains Devanagari characters"""
     for char in text:
-        if '\u0900' <= char <= '\u097F':
+        if '\u0900' <= char <= '\u097f':
             return True
     return False
+
 
 def normalize_meter_name(name):
     """Normalize meter name for comparison - handles both Devanagari and IAST"""
@@ -57,10 +60,22 @@ def normalize_meter_name(name):
 
     # Standard IAST to ASCII simplification (do this BEFORE suffix handling)
     ascii_map = {
-        'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r',
-        'ṣ': 'sh', 'ś': 'sh', 'ñ': 'n', 'ṇ': 'n', 'ṅ': 'n',
-        'ṭ': 't', 'ḍ': 'd', 'ṃ': 'm', 'ḥ': 'h',
-        'ä': 'a', 'ü': 'u',  # German-style diacritics from test data
+        'ā': 'a',
+        'ī': 'i',
+        'ū': 'u',
+        'ṛ': 'r',
+        'ṝ': 'r',
+        'ṣ': 'sh',
+        'ś': 'sh',
+        'ñ': 'n',
+        'ṇ': 'n',
+        'ṅ': 'n',
+        'ṭ': 't',
+        'ḍ': 'd',
+        'ṃ': 'm',
+        'ḥ': 'h',
+        'ä': 'a',
+        'ü': 'u',  # German-style diacritics from test data
         'ṁ': 'm',
     }
     for k, v in ascii_map.items():
@@ -80,19 +95,15 @@ def normalize_meter_name(name):
         'anustup': 'anushtubh',
         'anustubh': 'anushtubh',
         'anushtub': 'anushtubh',
-
         # Shardula variants (with/without 'k' in vikridita)
         'shardulavkridita': 'shardulavikridita',
         'shardulavrikridita': 'shardulavikridita',
-
         # Vamshastha variants
         'vamshasthavila': 'vamshastha',
         'vamshastham': 'vamshastha',
         'vamshasthavilam': 'vamshastha',
-
         # Upajati variants
         'upajatih': 'upajati',
-
         # With 'am' suffix
         'totakam': 'totaka',
         'vasantatilakam': 'vasantatilaka',
@@ -100,79 +111,61 @@ def normalize_meter_name(name):
         'drutavilambitam': 'drutavilambita',
         'shardulavikriditam': 'shardulavikridita',
         'pancacamaram': 'pancacamara',
-
         # Totaka variants
         'toṭakam': 'totaka',
         'toṭaka': 'totaka',
         'तोटक': 'totaka',
-
         # Vasantatilaka variants
         'vasantatilakam': 'vasantatilaka',
         'vasantatilakā': 'vasantatilaka',
         'वसन्ततिलका': 'vasantatilaka',
-
         # Malini variants
         'mālinī': 'malini',
         'मालिनी': 'malini',
-
         # Mandakranta variants
         'mandākrāntā': 'mandakranta',
         'mandäkräntä': 'mandakranta',
         'मन्दाक्रान्ता': 'mandakranta',
-
         # Shardula variants
         'śārdūlavikrīḍitam': 'shardula',
         'śārdülavkrīḍita': 'shardula',
         'śārdülavikrīḍita': 'shardula',
         'शार्दूलविक्रीडित': 'shardula',
-
         # Praharsini variants
         'praharṣiṇī': 'praharsini',
         'प्रहर्षिणी': 'praharsini',
-
         # Drutavilambita variants
         'drutavilambita': 'drutavilambita',
         'द्रुतविलम्बित': 'drutavilambita',
-
         # Udgatā variants
         'udgatā': 'udgata',
         'उद्गता': 'udgata',
-
         # Gajagati variants
         'gajagati': 'gajagati',
         'गजगति': 'gajagati',
-
         # Tvaritagati variants
         'tvaritagati': 'tvaritagati',
-
         # Upacitra variants
         'upacitrā': 'upacitra',
-
         # Trishtubh variants
         'triṣṭubh': 'trishtubh',
         'triṣṭup': 'trishtubh',
         'त्रिष्टुभ्': 'trishtubh',
-
         # Jagati variants
         'jagatī': 'jagati',
         'जगती': 'jagati',
-
         # Sragdhara
         'sragdharā': 'sragdhara',
         'स्रग्धरा': 'sragdhara',
-
         # Shikhirini
         'śikhariṇī': 'shikharini',
         'शिखरिणी': 'shikharini',
-
         # Arya
         'āryā': 'arya',
         'आर्या': 'arya',
-
         # Tunaka
         'tūṇakam': 'tunaka',
         'तूणक': 'tunaka',
-
         # Panchacamara
         'pañcacāmaram': 'pancacamara',
         'पञ्चचामर': 'pancacamara',
@@ -192,23 +185,26 @@ def normalize_meter_name(name):
 
     return name
 
+
 ###############################################################################
 # Meter Family Classification
 ###############################################################################
 
 TRISHTUBH_FAMILY = {
-    'indravajra', 'upendravajra', 'upajati', 'shalini', 'rathoddhata',
-    'svagata', 'dodhaka', 'trishtubh'
+    'indravajra',
+    'upendravajra',
+    'upajati',
+    'shalini',
+    'rathoddhata',
+    'svagata',
+    'dodhaka',
+    'trishtubh',
 }
 
-JAGATI_FAMILY = {
-    'vamshastham', 'indravamsha', 'bhujangaprayata', 'totaka',
-    'sragvini', 'drutavilambita', 'jagati'
-}
+JAGATI_FAMILY = {'vamshastham', 'indravamsha', 'bhujangaprayata', 'totaka', 'sragvini', 'drutavilambita', 'jagati'}
 
-ANUSHTUBH_FAMILY = {
-    'anushtubh', 'anustubh', 'sloka'
-}
+ANUSHTUBH_FAMILY = {'anushtubh', 'anustubh', 'sloka'}
+
 
 def get_meter_family(meter_name):
     """Get the family of a meter"""
@@ -223,9 +219,11 @@ def get_meter_family(meter_name):
     else:
         return normalized
 
+
 ###############################################################################
 # Test Data Loading
 ###############################################################################
+
 
 def load_test_data(csv_path):
     """Load test data from CSV"""
@@ -257,20 +255,24 @@ def load_test_data(csv_path):
             cleaned_lines = [' '.join(line.split()) for line in lines]
             shloka = '\n'.join(cleaned_lines)
 
-            test_cases.append({
-                'shloka': shloka,
-                'lg_pattern': lg_pattern,
-                'gana': gana,
-                'expected': expected_meter,
-                'expected_normalized': normalize_meter_name(expected_meter),
-                'expected_family': get_meter_family(expected_meter)
-            })
+            test_cases.append(
+                {
+                    'shloka': shloka,
+                    'lg_pattern': lg_pattern,
+                    'gana': gana,
+                    'expected': expected_meter,
+                    'expected_normalized': normalize_meter_name(expected_meter),
+                    'expected_family': get_meter_family(expected_meter),
+                }
+            )
 
     return test_cases
+
 
 ###############################################################################
 # Model Evaluation
 ###############################################################################
+
 
 def evaluate_model(model, test_cases, model_name):
     """Evaluate a model on test cases"""
@@ -338,7 +340,7 @@ def evaluate_model(model, test_cases, model_name):
             if predictions:
                 # Top-1 accuracy
                 pred_normalized = normalize_meter_name(predictions[0][0])
-                top1_match = (pred_normalized == expected_normalized)
+                top1_match = pred_normalized == expected_normalized
 
                 # Top-3 accuracy
                 for pred, conf in predictions[:3]:
@@ -372,35 +374,39 @@ def evaluate_model(model, test_cases, model_name):
             if isinstance(lg_pattern, list):
                 lg_pattern = ''.join(lg_pattern)
 
-            results.append({
-                'index': idx + 1,
-                'shloka': shloka[:60] + '...' if len(shloka) > 60 else shloka,
-                'expected': expected,
-                'expected_normalized': expected_normalized,
-                'predictions': predictions[:3],
-                'top1_match': top1_match,
-                'top3_match': top3_match,
-                'family_match': family_match,
-                'lg_pattern': lg_pattern,
-                'syllables': len(lg_pattern.replace(' ', '')),
-            })
+            results.append(
+                {
+                    'index': idx + 1,
+                    'shloka': shloka[:60] + '...' if len(shloka) > 60 else shloka,
+                    'expected': expected,
+                    'expected_normalized': expected_normalized,
+                    'predictions': predictions[:3],
+                    'top1_match': top1_match,
+                    'top3_match': top3_match,
+                    'family_match': family_match,
+                    'lg_pattern': lg_pattern,
+                    'syllables': len(lg_pattern.replace(' ', '')),
+                }
+            )
             if _DEBUG:
                 print(f'[DEBUG] idx={idx}, total at end of try={total}')
 
         except Exception as e:
             if _DEBUG:
                 print(f'[DEBUG] idx={idx}, EXCEPTION: {e}, total BEFORE={total}')
-            results.append({
-                'index': idx + 1,
-                'shloka': shloka[:60] + '...' if len(shloka) > 60 else shloka,
-                'expected': expected,
-                'expected_normalized': expected_normalized,
-                'predictions': [],
-                'top1_match': False,
-                'top3_match': False,
-                'family_match': False,
-                'error': str(e)
-            })
+            results.append(
+                {
+                    'index': idx + 1,
+                    'shloka': shloka[:60] + '...' if len(shloka) > 60 else shloka,
+                    'expected': expected,
+                    'expected_normalized': expected_normalized,
+                    'predictions': [],
+                    'top1_match': False,
+                    'top3_match': False,
+                    'family_match': False,
+                    'error': str(e),
+                }
+            )
             total += 1
 
     # Calculate metrics
@@ -417,9 +423,11 @@ def evaluate_model(model, test_cases, model_name):
 
     return metrics, results
 
+
 ###############################################################################
 # Confusion Matrix Generation
 ###############################################################################
+
 
 def generate_confusion_matrix(results):
     """Generate confusion matrix from results"""
@@ -436,11 +444,12 @@ def generate_confusion_matrix(results):
 
     return confusion
 
+
 def print_confusion_matrix(confusion, title):
     """Print confusion matrix"""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"CONFUSION MATRIX: {title}")
-    print('='*80)
+    print('=' * 80)
 
     # Get all labels
     all_labels = set(confusion.keys())
@@ -463,20 +472,19 @@ def print_confusion_matrix(confusion, title):
             print(f"{count:<10}", end='')
         print()
 
+
 ###############################################################################
 # Main Comparison
 ###############################################################################
 
+
 def main():
-    print("="*80)
+    print("=" * 80)
     print("COMPREHENSIVE CHANDA MODEL COMPARISON")
-    print("="*80)
+    print("=" * 80)
 
     # Load test data
-    test_data_path = os.path.join(
-        os.path.dirname(__file__), '..', 'data',
-        'page 1-47 chanda list - Sheet1.csv'
-    )
+    test_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'page 1-47 chanda list - Sheet1.csv')
 
     if not os.path.exists(test_data_path):
         print(f"ERROR: Test data not found at {test_data_path}")
@@ -499,6 +507,7 @@ def main():
     # Model 1: Current enhanced chanda.py
     try:
         from core.chanda import Chanda
+
         models['chanda.py'] = Chanda(data_path)
         print("\n✓ Loaded chanda.py (current model)")
     except Exception as e:
@@ -507,8 +516,11 @@ def main():
     # Model 2: Original IIT-K implementation
     try:
         # Import from reference folder
-        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
+        sys.path.insert(
+            0, os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')
+        )
         from chanda_iitk import Chanda as ChandaIITK
+
         models['chanda_iitk.py'] = ChandaIITK(data_path)
         print("✓ Loaded chanda_iitk.py (original IIT-K)")
     except Exception as e:
@@ -517,6 +529,7 @@ def main():
     # Model 3: Enhanced implementation with Chandovallari rules
     try:
         from core.enhanced_chanda import EnhancedChanda
+
         models['enhanced_chanda.py'] = EnhancedChanda(data_path)
         print("✓ Loaded enhanced_chanda.py (Chandovallari rules)")
     except Exception as e:
@@ -531,9 +544,9 @@ def main():
     all_results = {}
 
     for model_name, model in models.items():
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"EVALUATING: {model_name}")
-        print('='*80)
+        print('=' * 80)
 
         metrics, results = evaluate_model(model, test_cases, model_name)
         all_metrics.append(metrics)
@@ -541,9 +554,15 @@ def main():
 
         print(f"\nResults for {model_name}:")
         print(f"  Total test cases: {metrics['total']}")
-        print(f"  Top-1 Accuracy:   {metrics['accuracy_top1']*100:.1f}% ({metrics['correct_top1']}/{metrics['total']})")
-        print(f"  Top-3 Accuracy:   {metrics['accuracy_top3']*100:.1f}% ({metrics['correct_top3']}/{metrics['total']})")
-        print(f"  Family Accuracy:  {metrics['accuracy_family']*100:.1f}% ({metrics['correct_family']}/{metrics['total']})")
+        print(
+            f"  Top-1 Accuracy:   {metrics['accuracy_top1'] * 100:.1f}% ({metrics['correct_top1']}/{metrics['total']})"
+        )
+        print(
+            f"  Top-3 Accuracy:   {metrics['accuracy_top3'] * 100:.1f}% ({metrics['correct_top3']}/{metrics['total']})"
+        )
+        print(
+            f"  Family Accuracy:  {metrics['accuracy_family'] * 100:.1f}% ({metrics['correct_family']}/{metrics['total']})"
+        )
 
         # Show some failures
         failures = [r for r in results if not r['top1_match']][:5]
@@ -554,14 +573,16 @@ def main():
                 print(f"  Expected: {f['expected_normalized']}, Got: {normalize_meter_name(pred)}")
 
     # Comparison Summary
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("COMPARISON SUMMARY")
-    print("="*80)
+    print("=" * 80)
 
     print(f"\n{'Model':<25} {'Top-1':<12} {'Top-3':<12} {'Family':<12}")
-    print("-"*60)
+    print("-" * 60)
     for m in all_metrics:
-        print(f"{m['model_name']:<25} {m['accuracy_top1']*100:>5.1f}%      {m['accuracy_top3']*100:>5.1f}%      {m['accuracy_family']*100:>5.1f}%")
+        print(
+            f"{m['model_name']:<25} {m['accuracy_top1'] * 100:>5.1f}%      {m['accuracy_top3'] * 100:>5.1f}%      {m['accuracy_family'] * 100:>5.1f}%"
+        )
 
     # Generate confusion matrices
     for model_name, results in all_results.items():
@@ -570,9 +591,9 @@ def main():
 
     # Per-meter breakdown for best model
     best_model = max(all_metrics, key=lambda x: x['accuracy_top1'])
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"PER-METER BREAKDOWN: {best_model['model_name']}")
-    print("="*80)
+    print("=" * 80)
 
     best_results = all_results[best_model['model_name']]
     meter_accuracy = defaultdict(lambda: {'correct': 0, 'total': 0})
@@ -584,11 +605,11 @@ def main():
             meter_accuracy[meter]['correct'] += 1
 
     print(f"\n{'Meter':<25} {'Correct':<10} {'Total':<10} {'Accuracy':<10}")
-    print("-"*60)
+    print("-" * 60)
     for meter in sorted(meter_accuracy.keys()):
         data = meter_accuracy[meter]
         acc = data['correct'] / data['total'] if data['total'] > 0 else 0
-        print(f"{meter:<25} {data['correct']:<10} {data['total']:<10} {acc*100:>5.1f}%")
+        print(f"{meter:<25} {data['correct']:<10} {data['total']:<10} {acc * 100:>5.1f}%")
 
     # Save detailed results to CSV
     output_path = os.path.join(os.path.dirname(__file__), '..', 'outputs', 'comparison_results.csv')
@@ -596,28 +617,43 @@ def main():
 
     with open(output_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['Model', 'Index', 'Shloka', 'Expected', 'Predicted', 'Confidence',
-                        'Top1_Match', 'Top3_Match', 'Family_Match', 'Syllables'])
+        writer.writerow(
+            [
+                'Model',
+                'Index',
+                'Shloka',
+                'Expected',
+                'Predicted',
+                'Confidence',
+                'Top1_Match',
+                'Top3_Match',
+                'Family_Match',
+                'Syllables',
+            ]
+        )
 
         for model_name, results in all_results.items():
             for r in results:
                 pred = r['predictions'][0] if r['predictions'] else ('', 0)
-                writer.writerow([
-                    model_name,
-                    r['index'],
-                    r['shloka'][:50],
-                    r['expected'],
-                    pred[0],
-                    f"{pred[1]:.2f}" if isinstance(pred[1], float) else pred[1],
-                    r['top1_match'],
-                    r['top3_match'],
-                    r['family_match'],
-                    r.get('syllables', '')
-                ])
+                writer.writerow(
+                    [
+                        model_name,
+                        r['index'],
+                        r['shloka'][:50],
+                        r['expected'],
+                        pred[0],
+                        f"{pred[1]:.2f}" if isinstance(pred[1], float) else pred[1],
+                        r['top1_match'],
+                        r['top3_match'],
+                        r['family_match'],
+                        r.get('syllables', ''),
+                    ]
+                )
 
     print(f"\nDetailed results saved to: {output_path}")
 
     return all_metrics, all_results
+
 
 if __name__ == '__main__':
     main()

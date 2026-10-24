@@ -29,7 +29,7 @@ def test_trishtubh_over_vidhvankamala():
     Test case from user's bug report:
     The verse "इन्द्रं मित्रं वरुणमग्निमाहुः..." has 44 syllables (4×11)
     and should be identified as Triṣṭubh, NOT vidhvaṅkamālā.
-    
+
     Even though the 4th pada may exactly match vidhvaṅkamālā's L-G pattern,
     the verse structure (44 syllables = 4×11 padas) confirms it's Triṣṭubh.
     """
@@ -62,12 +62,12 @@ def test_trishtubh_over_vidhvankamala():
     if isinstance(primary_meter, tuple):
         primary_meter = primary_meter[0]
 
-    assert primary_meter == 'त्रिष्टुभ्', \
-        f"Primary meter should be 'त्रिष्टुभ्' (Triṣṭubh), got '{primary_meter}'"
+    assert primary_meter == 'त्रिष्टुभ्', f"Primary meter should be 'त्रिष्टुभ्' (Triṣṭubh), got '{primary_meter}'"
 
     # vidhvaṅkamālā should NOT be the primary meter
-    assert 'विध्वङ्कमाला' not in str(best_meters[0]) if best_meters else True, \
+    assert 'विध्वङ्कमाला' not in str(best_meters[0]) if best_meters else True, (
         "विध्वङ्कमाला should not be primary for a 44-syllable verse"
+    )
 
     print("✓ PASS: Triṣṭubh correctly identified over vidhvaṅkamālā")
     return True
@@ -85,7 +85,7 @@ def test_detect_verse_structure():
         "इन्द्रं मित्रं वरुणमग्निमाहुः",
         "अथो दिव्यः स सुपर्णो गरुत्मान्",
         "एकं सद्विप्रा बहुधा वदन्ति",
-        "अग्निं यमं मातरिश्वानमाहुः"
+        "अग्निं यमं मातरिश्वानमाहुः",
     ]
 
     structure = chanda.detect_verse_structure(verse_lines)
@@ -96,10 +96,8 @@ def test_detect_verse_structure():
     print(f"Vedic structure confirmed: {structure['vedic_structure_confirmed']}")
     print(f"Pada similarity score: {structure['pada_similarity_score']:.2f}")
 
-    assert structure['vedic_structure_confirmed'], \
-        "Structure should confirm Vedic meter for 4×11 verse"
-    assert structure['expected_vedic_meter'] == 'त्रिष्टुभ्', \
-        f"Expected Triṣṭubh, got {structure['expected_vedic_meter']}"
+    assert structure['vedic_structure_confirmed'], "Structure should confirm Vedic meter for 4×11 verse"
+    assert structure['expected_vedic_meter'] == 'त्रिष्टुभ्', f"Expected Triṣṭubh, got {structure['expected_vedic_meter']}"
 
     print("✓ PASS: Verse structure detection works correctly")
     return True
@@ -202,7 +200,7 @@ def test_holistic_verse_identification():
         "इन्द्रं मित्रं वरुणमग्निमाहुः",
         "अथो दिव्यः स सुपर्णो गरुत्मान्",
         "एकं सद्विप्रा बहुधा वदन्ति",
-        "अग्निं यमं मातरिश्वानमाहुः"
+        "अग्निं यमं मातरिश्वानमाहुः",
     ]
 
     result = chanda.identify_verse_holistically(verse_lines)
@@ -214,8 +212,7 @@ def test_holistic_verse_identification():
     print(f"Structure confirmed: {result.get('structure', {}).get('vedic_structure_confirmed', False)}")
 
     assert 'structure' in result, "Result should include structure information"
-    assert result['structure']['vedic_structure_confirmed'], \
-        "Structure should be confirmed for 4×11 verse"
+    assert result['structure']['vedic_structure_confirmed'], "Structure should be confirmed for 4×11 verse"
 
     print("✓ PASS: Holistic identification includes structure")
     return True

@@ -103,7 +103,9 @@ def meters_match(expected, got_meters):
         if 'sardula' in expected_norm and 'sardula' in meter_norm:
             return True  # Same meter family
         # Handle upajati variations
-        if 'upajati' in expected_norm and ('indravajra' in meter_norm or 'upendravajra' in meter_norm or 'tristup' in meter_norm):
+        if 'upajati' in expected_norm and (
+            'indravajra' in meter_norm or 'upendravajra' in meter_norm or 'tristup' in meter_norm
+        ):
             return True  # Upajati is a mixed meter in Trishtubh family
         # Handle trishtubh family
         if expected_norm in ['upajati', 'upendravajra', 'indravajra'] and meter_norm == 'tristup':
@@ -141,13 +143,7 @@ def run_test(verbose=False):
             chanda = chanda.strip()
             shloka = shloka.strip()
             if shloka and chanda and chanda.lower() != 'chanda':
-                valid_entries.append({
-                    'idx': i,
-                    'shloka': shloka,
-                    'lg': lg,
-                    'gana': gana,
-                    'chanda': chanda
-                })
+                valid_entries.append({'idx': i, 'shloka': shloka, 'lg': lg, 'gana': gana, 'chanda': chanda})
 
     print("=" * 70)
     print("VERSE-LEVEL ACCURACY TEST")
@@ -180,27 +176,31 @@ def run_test(verbose=False):
                 incorrect += 1
                 status = "✗"
 
-            results.append({
-                'idx': entry['idx'],
-                'expected': expected,
-                'got': primary,
-                'all_meters': primary_meters[:3],
-                'match': is_match,
-                'status': status
-            })
+            results.append(
+                {
+                    'idx': entry['idx'],
+                    'expected': expected,
+                    'got': primary,
+                    'all_meters': primary_meters[:3],
+                    'match': is_match,
+                    'status': status,
+                }
+            )
 
             if verbose:
                 print(f"{entry['idx']:3}. {status} Expected: {expected:<22} Got: {primary}")
         else:
             incorrect += 1
-            results.append({
-                'idx': entry['idx'],
-                'expected': expected,
-                'got': 'No result',
-                'all_meters': [],
-                'match': False,
-                'status': '✗'
-            })
+            results.append(
+                {
+                    'idx': entry['idx'],
+                    'expected': expected,
+                    'got': 'No result',
+                    'all_meters': [],
+                    'match': False,
+                    'status': '✗',
+                }
+            )
 
     # Print summary
     print()
@@ -238,6 +238,7 @@ def run_test(verbose=False):
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description='Test verse-level accuracy')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show all results')
     args = parser.parse_args()

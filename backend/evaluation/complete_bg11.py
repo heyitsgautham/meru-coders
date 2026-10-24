@@ -22,7 +22,7 @@ print(verse)
 print()
 
 for i, line in enumerate(verse.strip().split('\n')):
-    print(f"Line {i+1}: {line}")
+    print(f"Line {i + 1}: {line}")
     syllables, lg_marks = chanda.mark_lg(line)
 
     # Flatten syllables
@@ -35,7 +35,7 @@ for i, line in enumerate(verse.strip().split('\n')):
     # Show syllable-by-syllable
     print("  Breakdown:")
     for j, (syl, lg) in enumerate(zip(flat_syls, lg_marks)):
-        print(f"    {j+1:2}. {syl:6} → {lg}")
+        print(f"    {j + 1:2}. {syl:6} → {lg}")
     print()
 
 print("=" * 70)

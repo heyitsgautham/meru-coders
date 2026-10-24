@@ -103,7 +103,9 @@ def meters_match(expected, got_meters):
         if 'sardula' in expected_norm and 'sardula' in meter_norm:
             return True  # Same meter family
         # Handle upajati - it's a mixed meter (Indravajra + Upendravajra) in Trishtubh family
-        if 'upajati' in expected_norm and ('indravajra' in meter_norm or 'upendravajra' in meter_norm or 'tristup' in meter_norm):
+        if 'upajati' in expected_norm and (
+            'indravajra' in meter_norm or 'upendravajra' in meter_norm or 'tristup' in meter_norm
+        ):
             return True
         # Trishtubh family includes Indravajra, Upendravajra, Upajati
         if expected_norm in ['upajati', 'upendravajra', 'indravajra'] and meter_norm == 'tristup':
@@ -141,13 +143,7 @@ def run_test(verbose=False):
             chanda = chanda.strip()
             shloka = shloka.strip()
             if shloka and chanda and chanda.lower() != 'chanda':
-                valid_entries.append({
-                    'idx': i,
-                    'shloka': shloka,
-                    'lg': lg,
-                    'gana': gana,
-                    'chanda': chanda
-                })
+                valid_entries.append({'idx': i, 'shloka': shloka, 'lg': lg, 'gana': gana, 'chanda': chanda})
 
     print("=" * 70)
     print("LINE-BY-LINE ACCURACY TEST")
@@ -194,30 +190,30 @@ def run_test(verbose=False):
                     incorrect_lines += 1
                     status = "✗"
 
-                line_results.append({
-                    'line': line[:30],
-                    'expected': expected,
-                    'got': got_meters[0] if got_meters else 'Unknown',
-                    'match': is_match,
-                    'status': status
-                })
+                line_results.append(
+                    {
+                        'line': line[:30],
+                        'expected': expected,
+                        'got': got_meters[0] if got_meters else 'Unknown',
+                        'match': is_match,
+                        'status': status,
+                    }
+                )
             else:
                 incorrect_lines += 1
-                line_results.append({
-                    'line': line[:30],
-                    'expected': expected,
-                    'got': 'Not Found',
-                    'match': False,
-                    'status': "✗"
-                })
+                line_results.append(
+                    {'line': line[:30], 'expected': expected, 'got': 'Not Found', 'match': False, 'status': "✗"}
+                )
 
-        verse_results.append({
-            'idx': entry['idx'],
-            'expected': expected,
-            'lines': line_results,
-            'correct': verse_correct,
-            'total': verse_total
-        })
+        verse_results.append(
+            {
+                'idx': entry['idx'],
+                'expected': expected,
+                'lines': line_results,
+                'correct': verse_correct,
+                'total': verse_total,
+            }
+        )
 
         if verbose:
             pct = 100 * verse_correct / verse_total if verse_total > 0 else 0
@@ -262,6 +258,7 @@ def run_test(verbose=False):
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description='Test line-by-line accuracy')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show per-verse results')
     args = parser.parse_args()

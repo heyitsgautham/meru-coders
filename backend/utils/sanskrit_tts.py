@@ -19,12 +19,14 @@ try:
     import torch
     from parler_tts import ParlerTTSForConditionalGeneration
     from transformers import AutoTokenizer
+
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
 
 try:
     import soundfile as sf
+
     SOUNDFILE_AVAILABLE = True
 except ImportError:
     SOUNDFILE_AVAILABLE = False
@@ -33,6 +35,7 @@ try:
     import librosa
     import librosa.display
     import matplotlib.pyplot as plt
+
     SPECTROGRAM_AVAILABLE = True
 except ImportError:
     SPECTROGRAM_AVAILABLE = False
@@ -55,15 +58,15 @@ class SanskritTTS:
         output_dir: str = "./outputs",
         mode: Literal["api", "local", "auto"] = "auto",
         speaker: Optional[str] = None,
-        description: Optional[str] = None
+        description: Optional[str] = None,
     ):
         """
         Initialize Sanskrit TTS.
-        
+
         Args:
             hf_token: Hugging Face API token (required for API mode)
             output_dir: Directory to save output files
-            mode: "api" (HF Inference API), "local" (load model locally), 
+            mode: "api" (HF Inference API), "local" (load model locally),
                   or "auto" (choose based on availability)
             speaker: Speaker name (default: "Aryan" for Sanskrit)
             description: Voice description (auto-generated if None)
@@ -97,8 +100,7 @@ class SanskritTTS:
             print("   Use: --mode local")
         if self.mode == "local" and not TRANSFORMERS_AVAILABLE:
             raise ValueError(
-                "Local mode requires parler-tts and dependencies. "
-                "Install with: pip install -r requirements_tts.txt"
+                "Local mode requires parler-tts and dependencies. Install with: pip install -r requirements_tts.txt"
             )
 
         # Initialize local model if needed
@@ -114,33 +116,24 @@ class SanskritTTS:
             device = "cuda:0" if torch.cuda.is_available() else "cpu"
             print(f"Loading {self.MODEL_ID} on {device}...")
 
-            self.model = ParlerTTSForConditionalGeneration.from_pretrained(
-                self.MODEL_ID
-            ).to(device)
+            self.model = ParlerTTSForConditionalGeneration.from_pretrained(self.MODEL_ID).to(device)
 
             self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_ID)
-            self.description_tokenizer = AutoTokenizer.from_pretrained(
-                self.model.config.text_encoder._name_or_path
-            )
+            self.description_tokenizer = AutoTokenizer.from_pretrained(self.model.config.text_encoder._name_or_path)
 
             print(f"✓ Loaded {self.MODEL_ID} locally on {device}")
         except Exception as e:
             raise RuntimeError(f"Failed to load local model: {e}") from e
 
-    def synthesize_api(
-        self,
-        text: str,
-        description: Optional[str] = None,
-        wait_for_model: bool = True
-    ) -> bytes:
+    def synthesize_api(self, text: str, description: Optional[str] = None, wait_for_model: bool = True) -> bytes:
         """
         Synthesize speech using Hugging Face Inference API.
-        
+
         Args:
             text: Sanskrit text (Devanagari script recommended)
             description: Voice description (uses default if None)
             wait_for_model: Wait if model is loading (cold start)
-            
+
         Returns:
             Audio data as bytes (WAV format)
         """
@@ -149,19 +142,10 @@ class SanskritTTS:
 
         desc = description or self.description
         headers = {"Authorization": f"Bearer {self.hf_token}"}
-        payload = {
-            "inputs": {"text": text, "description": desc},
-            "options": {"wait_for_model": wait_for_model}
-        }
+        payload = {"inputs": {"text": text, "description": desc}, "options": {"wait_for_model": wait_for_model}}
 
         try:
-            response = requests.post(
-                self.HF_API_URL,
-                headers=headers,
-                json=payload,
-                stream=True,
-                timeout=120
-            )
+            response = requests.post(self.HF_API_URL, headers=headers, json=payload, stream=True, timeout=120)
             response.raise_for_status()
 
             # Check if response is audio bytes or JSON error
@@ -175,18 +159,14 @@ class SanskritTTS:
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"API request failed: {e}") from e
 
-    def synthesize_local(
-        self,
-        text: str,
-        description: Optional[str] = None
-    ) -> tuple[np.ndarray, int]:
+    def synthesize_local(self, text: str, description: Optional[str] = None) -> tuple[np.ndarray, int]:
         """
         Synthesize speech using local model.
-        
+
         Args:
             text: Sanskrit text (Devanagari script recommended)
             description: Voice description (uses default if None)
-            
+
         Returns:
             Tuple of (audio_array, sample_rate)
         """
@@ -198,20 +178,16 @@ class SanskritTTS:
             desc = description or self.description
 
             # Tokenize inputs
-            description_input_ids = self.description_tokenizer(
-                desc, return_tensors="pt"
-            ).to(device)
+            description_input_ids = self.description_tokenizer(desc, return_tensors="pt").to(device)
 
-            prompt_input_ids = self.tokenizer(
-                text, return_tensors="pt"
-            ).to(device)
+            prompt_input_ids = self.tokenizer(text, return_tensors="pt").to(device)
 
             # Generate audio
             generation = self.model.generate(
                 input_ids=description_input_ids.input_ids,
                 attention_mask=description_input_ids.attention_mask,
                 prompt_input_ids=prompt_input_ids.input_ids,
-                prompt_attention_mask=prompt_input_ids.attention_mask
+                prompt_attention_mask=prompt_input_ids.attention_mask,
             )
 
             audio_arr = generation.cpu().numpy().squeeze()
@@ -223,20 +199,17 @@ class SanskritTTS:
             raise RuntimeError(f"Local synthesis failed: {e}") from e
 
     def synthesize(
-        self,
-        text: str,
-        output_filename: Optional[str] = None,
-        generate_spectrogram: bool = False
+        self, text: str, output_filename: Optional[str] = None, generate_spectrogram: bool = False
     ) -> Dict[str, Path]:
         """
         Synthesize speech and save to file.
-        
+
         Args:
             text: Sanskrit text (Devanagari script recommended)
-            output_filename: Base filename (without extension). 
+            output_filename: Base filename (without extension).
                            If None, generates timestamped filename.
             generate_spectrogram: Also generate spectrogram image
-            
+
         Returns:
             Dictionary with paths: {"audio": Path, "spectrogram": Path | None}
         """
@@ -274,8 +247,7 @@ class SanskritTTS:
                 print("  Install with: pip install librosa matplotlib")
             else:
                 spec_path = self.generate_spectrogram(
-                    audio_path,
-                    self.output_dir / f"{output_filename}_spectrogram.png"
+                    audio_path, self.output_dir / f"{output_filename}_spectrogram.png"
                 )
                 result["spectrogram"] = spec_path
 
@@ -286,24 +258,23 @@ class SanskritTTS:
         audio_path: Union[str, Path],
         output_path: Optional[Union[str, Path]] = None,
         figsize: tuple = (10, 4),
-        dpi: int = 200
+        dpi: int = 200,
     ) -> Path:
         """
         Generate spectrogram image from audio file.
-        
+
         Args:
             audio_path: Path to audio file
             output_path: Path for output image. If None, uses audio_path with .png
             figsize: Figure size (width, height)
             dpi: Image resolution
-            
+
         Returns:
             Path to generated spectrogram image
         """
         if not SPECTROGRAM_AVAILABLE:
             raise RuntimeError(
-                "Spectrogram generation requires librosa and matplotlib. "
-                "Install with: pip install librosa matplotlib"
+                "Spectrogram generation requires librosa and matplotlib. Install with: pip install librosa matplotlib"
             )
 
         audio_path = Path(audio_path)
@@ -321,14 +292,7 @@ class SanskritTTS:
 
         # Plot
         plt.figure(figsize=figsize)
-        librosa.display.specshow(
-            S_db,
-            sr=sr,
-            hop_length=256,
-            x_axis='time',
-            y_axis='hz',
-            cmap='viridis'
-        )
+        librosa.display.specshow(S_db, sr=sr, hop_length=256, x_axis='time', y_axis='hz', cmap='viridis')
         plt.colorbar(format='%+2.0f dB')
         plt.title('Sanskrit TTS Spectrogram')
         plt.tight_layout()
@@ -339,19 +303,16 @@ class SanskritTTS:
         return output_path
 
     def batch_synthesize(
-        self,
-        texts: list[str],
-        output_prefix: str = "batch",
-        generate_spectrograms: bool = False
+        self, texts: list[str], output_prefix: str = "batch", generate_spectrograms: bool = False
     ) -> list[Dict[str, Path]]:
         """
         Synthesize multiple texts in batch.
-        
+
         Args:
             texts: List of Sanskrit texts
             output_prefix: Prefix for output filenames
             generate_spectrograms: Generate spectrograms for all
-            
+
         Returns:
             List of result dictionaries
         """
@@ -360,9 +321,7 @@ class SanskritTTS:
             print(f"\n[{i}/{len(texts)}] Processing: {text[:60]}...")
             try:
                 result = self.synthesize(
-                    text,
-                    output_filename=f"{output_prefix}_{i:03d}",
-                    generate_spectrogram=generate_spectrograms
+                    text, output_filename=f"{output_prefix}_{i:03d}", generate_spectrogram=generate_spectrograms
                 )
                 results.append(result)
             except Exception as e:
@@ -376,38 +335,15 @@ def main():
     """CLI interface for Sanskrit TTS."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Sanskrit Text-to-Speech using Hugging Face"
-    )
+    parser = argparse.ArgumentParser(description="Sanskrit Text-to-Speech using Hugging Face")
+    parser.add_argument("text", nargs="?", help="Sanskrit text to synthesize (Devanagari)")
+    parser.add_argument("-f", "--file", help="Text file with Sanskrit verses (one per line)")
+    parser.add_argument("-o", "--output", default="./outputs", help="Output directory (default: ./outputs)")
     parser.add_argument(
-        "text",
-        nargs="?",
-        help="Sanskrit text to synthesize (Devanagari)"
+        "-m", "--mode", choices=["api", "local", "auto"], default="auto", help="Inference mode (default: auto)"
     )
-    parser.add_argument(
-        "-f", "--file",
-        help="Text file with Sanskrit verses (one per line)"
-    )
-    parser.add_argument(
-        "-o", "--output",
-        default="./outputs",
-        help="Output directory (default: ./outputs)"
-    )
-    parser.add_argument(
-        "-m", "--mode",
-        choices=["api", "local", "auto"],
-        default="auto",
-        help="Inference mode (default: auto)"
-    )
-    parser.add_argument(
-        "-s", "--spectrogram",
-        action="store_true",
-        help="Generate spectrogram images"
-    )
-    parser.add_argument(
-        "--token",
-        help="Hugging Face API token (or set HF_TOKEN env var)"
-    )
+    parser.add_argument("-s", "--spectrogram", action="store_true", help="Generate spectrogram images")
+    parser.add_argument("--token", help="Hugging Face API token (or set HF_TOKEN env var)")
 
     args = parser.parse_args()
 
@@ -417,11 +353,7 @@ def main():
 
     # Initialize TTS
     try:
-        tts = SanskritTTS(
-            hf_token=args.token,
-            output_dir=args.output,
-            mode=args.mode
-        )
+        tts = SanskritTTS(hf_token=args.token, output_dir=args.output, mode=args.mode)
         print(f"✓ Initialized Sanskrit TTS (mode: {tts.mode})")
     except Exception as e:
         print(f"✗ Initialization failed: {e}")
@@ -441,9 +373,7 @@ def main():
 
         print(f"\n📄 Processing {len(texts)} texts from {args.file}")
         results = tts.batch_synthesize(
-            texts,
-            output_prefix=Path(args.file).stem,
-            generate_spectrograms=args.spectrogram
+            texts, output_prefix=Path(args.file).stem, generate_spectrograms=args.spectrogram
         )
 
         success = sum(1 for r in results if "error" not in r)

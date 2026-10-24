@@ -32,6 +32,7 @@ try:
     import numpy as np
     import pandas as pd
     import seaborn as sns
+
     PLOT_AVAILABLE = True
 except ImportError:
     PLOT_AVAILABLE = False
@@ -55,7 +56,6 @@ METER_SYNONYMS = {
     'ushnik': ['uṣṇik', 'ushnik', 'उष्णिक्', 'उष्णिक'],
     'pankti': ['paṅkti', 'pankti', 'पङ्क्ति', 'पंक्ति'],
     'brihati': ['bṛhatī', 'brihati', 'बृहती'],
-
     # Classical meters - 11 syllable patterns (Trishtubh family)
     'indravajra': ['indravajrā', 'indravajra', 'इन्द्रवज्रा', 'इन्द्रवज्र'],
     'upendravajra': ['upendravajra', 'upendravajrā', 'उपेन्द्रवज्रा', 'उपेन्द्रवज्र'],
@@ -63,23 +63,27 @@ METER_SYNONYMS = {
     'shalini': ['śālinī', 'shalini', 'salini', 'शालिनी'],
     'rathoddhata': ['rathoddhata', 'rathoddhātā', 'रथोद्धता', 'rathōddhata'],
     'svagata': ['svāgatā', 'svagata', 'स्वागता'],
-
     # Classical meters - 12 syllable patterns (Jagati family)
     'vamshastham': ['vaṁśasthavilam', 'vamshasthavila', 'vaṁśastha', 'vamshastham', 'वंशस्थ', 'वंशस्थविल', 'वंशशथविल'],
     'drutavilambita': ['drutavilambita', 'द्रुतविलम्बित', 'द्रुतविलंबित', 'druta-vilambita'],
     'totaka': ['toṭakam', 'totaka', 'toṭaka', 'तोटक', 'तोटकम्'],
     'bhujangaprayata': ['bhujangaprayātam', 'bhujangaprayāta', 'bhujangaprayata', 'भुजङ्गप्रयात', 'भुजंगप्रयात'],
-
     # Classical meters - 13+ syllable patterns
     'vasantatilaka': ['vasantatilakam', 'vasantatilaka', 'vasantatilakā', 'वसन्ततिलका', 'वसन्ततिलक'],
     'malini': ['mālinī', 'malini', 'mālini', 'मालिनी'],
     'praharsini': ['praharṣinī', 'praharsini', 'praharshini', 'प्रहर्षिणी'],
-
     # Classical meters - 17+ syllable patterns
     'mandakranta': ['mandäkräntä', 'mandākrāntā', 'mandakranta', 'mandākrānta', 'मन्दाक्रान्ता', 'मन्दाक्रान्त', 'मंदाक्रांता'],
-    'shardula': ['śārdülavkrīḍita', 'śārdūlavikrīḍita', 'shardula', 'shardulavikridit', 'शार्दूलविक्रीडित', 'शार्दूलविक्रीडितम्', 'sārdulavikrīḍita'],
+    'shardula': [
+        'śārdülavkrīḍita',
+        'śārdūlavikrīḍita',
+        'shardula',
+        'shardulavikridit',
+        'शार्दूलविक्रीडित',
+        'शार्दूलविक्रीडितम्',
+        'sārdulavikrīḍita',
+    ],
     'sragdhara': ['sragdharā', 'sragdhara', 'स्रग्धरा'],
-
     # Other meters
     'pancacamara': ['pañcacāmaram', 'pancacamara', 'pañcacāmara', 'पञ्चचामर', 'पंचचामर'],
     'tunaka': ['tūṇakam', 'tunaka', 'tūṇaka', 'तूणक', 'चामर'],
@@ -87,7 +91,6 @@ METER_SYNONYMS = {
     'upacitra': ['upacitrā', 'upacitra', 'उपचित्रा'],
     'udgata': ['udgatā', 'udgata', 'उद्गता'],
     'gajagati': ['gajagati', 'गजगति'],
-
     # Meters that may be confused - special mapping
     'kalahansa': ['kalahaṁsa', 'kalahansa', 'कलहंस'],
     'apavaha': ['apavāha', 'apavaha', 'अपवाह'],
@@ -95,6 +98,7 @@ METER_SYNONYMS = {
     'meghavispurjita': ['meghavispūrjita', 'meghavispurjita', 'मेघविस्फूर्जिता'],
     'atishayini': ['atiśāyinī', 'atishayini', 'अतिशायिनी'],
 }
+
 
 def normalize_meter_name(name):
     """
@@ -123,12 +127,29 @@ def normalize_meter_name(name):
 
 # Define meter families for lenient matching
 # Trishtubh family: 11 syllables per pada (44 total for 4 padas)
-TRISHTUBH_FAMILY = {'trishtubh', 'indravajra', 'upendravajra', 'upajati', 'shalini',
-                    'rathoddhata', 'svagata', 'dodhaka', 'shalinivishama'}
+TRISHTUBH_FAMILY = {
+    'trishtubh',
+    'indravajra',
+    'upendravajra',
+    'upajati',
+    'shalini',
+    'rathoddhata',
+    'svagata',
+    'dodhaka',
+    'shalinivishama',
+}
 
 # Jagati family: 12 syllables per pada (48 total for 4 padas)
-JAGATI_FAMILY = {'jagati', 'vamshastham', 'totaka', 'bhujangaprayata', 'drutavilambita',
-                 'indravamsha', 'vamshasthavilam', 'praharshini'}
+JAGATI_FAMILY = {
+    'jagati',
+    'vamshastham',
+    'totaka',
+    'bhujangaprayata',
+    'drutavilambita',
+    'indravamsha',
+    'vamshasthavilam',
+    'praharshini',
+}
 
 
 def is_family_match(expected_norm, predicted_norm):
@@ -151,7 +172,7 @@ def extract_top_meter(result, expected_meter=None):
     """
     Extract the top predicted meter from identification result.
     Returns (meter_name, confidence, match_rank) tuple.
-    
+
     match_rank is:
     - 1 if expected meter is top-1
     - 2-3 if expected meter is in top-3
@@ -200,11 +221,12 @@ def extract_top_meter(result, expected_meter=None):
 # DATA LOADING
 ###############################################################################
 
+
 def load_test_data(csv_path):
     """
     Load test data from CSV file.
     Handles multi-line verses and filters out empty entries.
-    
+
     Returns list of dicts: [{text, expected_chanda, lg_pattern, gana}, ...]
     """
     test_cases = []
@@ -234,12 +256,7 @@ def load_test_data(csv_path):
         shloka = re.sub(r'\s+', ' ', shloka)
         shloka = shloka.strip('" ')
 
-        test_cases.append({
-            'text': shloka,
-            'expected_chanda': expected_chanda,
-            'lg_pattern': lg_pattern,
-            'gana': gana
-        })
+        test_cases.append({'text': shloka, 'expected_chanda': expected_chanda, 'lg_pattern': lg_pattern, 'gana': gana})
 
     return test_cases
 
@@ -247,6 +264,7 @@ def load_test_data(csv_path):
 ###############################################################################
 # EVALUATION
 ###############################################################################
+
 
 def evaluate_model(test_cases, verbose=False):
     """
@@ -335,6 +353,7 @@ def evaluate_model(test_cases, verbose=False):
             if verbose:
                 print(f"Error processing verse {idx}: {e}")
                 import traceback
+
                 traceback.print_exc()
             predicted = 'ERROR'
             predicted_norm = 'error'
@@ -362,19 +381,21 @@ def evaluate_model(test_cases, verbose=False):
         # Record for confusion matrix
         confusion_data.append((expected_norm, predicted_norm))
 
-        results.append({
-            'idx': idx,
-            'text': text[:60] + '...' if len(text) > 60 else text,
-            'expected': expected,
-            'expected_norm': expected_norm,
-            'predicted': predicted,
-            'predicted_norm': predicted_norm,
-            'confidence': confidence,
-            'match_rank': match_rank,
-            'is_top1': is_top1_match,
-            'is_top3': is_top3_match,
-            'is_family_match': is_family_match_flag
-        })
+        results.append(
+            {
+                'idx': idx,
+                'text': text[:60] + '...' if len(text) > 60 else text,
+                'expected': expected,
+                'expected_norm': expected_norm,
+                'predicted': predicted,
+                'predicted_norm': predicted_norm,
+                'confidence': confidence,
+                'match_rank': match_rank,
+                'is_top1': is_top1_match,
+                'is_top3': is_top3_match,
+                'is_family_match': is_family_match_flag,
+            }
+        )
 
         # Progress indicator
         if idx % 20 == 0:
@@ -409,7 +430,7 @@ def evaluate_model(test_cases, verbose=False):
             'support': support,
             'tp': tp,
             'fp': fp,
-            'fn': fn
+            'fn': fn,
         }
 
     summary = {
@@ -421,7 +442,7 @@ def evaluate_model(test_cases, verbose=False):
         'top3_accuracy': top3_accuracy,
         'family_accuracy': family_accuracy,
         'meter_metrics': meter_metrics,
-        'confusion_data': confusion_data
+        'confusion_data': confusion_data,
     }
 
     return results, summary
@@ -449,16 +470,14 @@ def print_results(results, summary, show_errors=True):
     print("-" * 70)
 
     # Sort by support (most common first)
-    sorted_meters = sorted(
-        summary['meter_metrics'].items(),
-        key=lambda x: x[1]['support'],
-        reverse=True
-    )
+    sorted_meters = sorted(summary['meter_metrics'].items(), key=lambda x: x[1]['support'], reverse=True)
 
     for meter, metrics in sorted_meters:
         if metrics['support'] > 0:  # Only show meters with actual examples
-            print(f"{meter:<25} {metrics['precision']:>10.2f} {metrics['recall']:>10.2f} "
-                  f"{metrics['f1']:>10.2f} {metrics['support']:>10}")
+            print(
+                f"{meter:<25} {metrics['precision']:>10.2f} {metrics['recall']:>10.2f} "
+                f"{metrics['f1']:>10.2f} {metrics['support']:>10}"
+            )
 
     # Show errors if requested
     if show_errors:
@@ -542,16 +561,36 @@ def save_results_csv(results, summary, output_path):
         writer = csv.writer(f)
 
         # Header
-        writer.writerow(['Index', 'Text', 'Expected', 'Expected_Normalized',
-                         'Predicted', 'Predicted_Normalized', 'Confidence',
-                         'Match_Rank', 'Is_Top1', 'Is_Top3'])
+        writer.writerow(
+            [
+                'Index',
+                'Text',
+                'Expected',
+                'Expected_Normalized',
+                'Predicted',
+                'Predicted_Normalized',
+                'Confidence',
+                'Match_Rank',
+                'Is_Top1',
+                'Is_Top3',
+            ]
+        )
 
         for r in results:
-            writer.writerow([
-                r['idx'], r['text'], r['expected'], r['expected_norm'],
-                r['predicted'], r['predicted_norm'], f"{r['confidence']:.2f}",
-                r['match_rank'], r['is_top1'], r['is_top3']
-            ])
+            writer.writerow(
+                [
+                    r['idx'],
+                    r['text'],
+                    r['expected'],
+                    r['expected_norm'],
+                    r['predicted'],
+                    r['predicted_norm'],
+                    f"{r['confidence']:.2f}",
+                    r['match_rank'],
+                    r['is_top1'],
+                    r['is_top3'],
+                ]
+            )
 
     print(f"\nDetailed results saved to: {output_path}")
 
@@ -583,8 +622,7 @@ def plot_confusion_matrix(matrix, labels, output_path, title="Chandas Identifica
         return
 
     # Filter to labels with at least 1 sample
-    active_labels = [l for l in labels if sum(matrix[l].values()) > 0 or
-                     any(matrix[e][l] > 0 for e in labels)]
+    active_labels = [l for l in labels if sum(matrix[l].values()) > 0 or any(matrix[e][l] > 0 for e in labels)]
 
     # Limit to top N for readability
     max_labels = 20
@@ -608,9 +646,15 @@ def plot_confusion_matrix(matrix, labels, output_path, title="Chandas Identifica
     plt.figure(figsize=(14, 12))
 
     # Plot heatmap
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-                xticklabels=active_labels, yticklabels=active_labels,
-                cbar_kws={'label': 'Count'})
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt='d',
+        cmap='Blues',
+        xticklabels=active_labels,
+        yticklabels=active_labels,
+        cbar_kws={'label': 'Count'},
+    )
 
     plt.xlabel('Predicted Meter', fontsize=12)
     plt.ylabel('Expected Meter', fontsize=12)
@@ -630,6 +674,7 @@ def plot_confusion_matrix(matrix, labels, output_path, title="Chandas Identifica
 ###############################################################################
 # MAIN
 ###############################################################################
+
 
 def main():
     """Main evaluation function."""

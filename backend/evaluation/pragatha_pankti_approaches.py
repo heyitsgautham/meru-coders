@@ -24,7 +24,7 @@ import pandas as pd
 
 # Known Paṅkti refrain patterns (found in 35.8% of Paṅkti, <1% of Pragātha)
 PANKTI_REFRAINS = [
-    'स्वराज्यं',      # 9.3% of Pankti, 0% Pragatha
+    'स्वराज्यं',  # 9.3% of Pankti, 0% Pragatha
     'ते हरी',
     'तुवीमघ',
     'रोदसी',
@@ -39,26 +39,26 @@ PANKTI_REFRAINS = [
 
 # Paṅkti-EXCLUSIVE endings (appear in Paṅkti, ZERO in Pragātha)
 PANKTI_EXCLUSIVE_ENDINGS = [
-    'उत्तरः',        # 23 in Paṅkti, 0 in Pragātha
-    'स्वराज्यं',     # 19 in Paṅkti, 0 in Pragātha
-    'स्रव',          # 19 in Paṅkti, 0 in Pragātha
-    'विवक्षसे',     # 17 in Paṅkti, 0 in Pragātha
-    'अश्वसूनृते',   # 10 in Paṅkti, 0 in Pragātha
-    'तुवीमघ',       # 7 in Paṅkti, 0 in Pragātha
-    'हरी',          # 5 in Paṅkti, 0 in Pragātha (as ending word)
-    'चनाममत्',     # 3 in Paṅkti, 0 in Pragātha
+    'उत्तरः',  # 23 in Paṅkti, 0 in Pragātha
+    'स्वराज्यं',  # 19 in Paṅkti, 0 in Pragātha
+    'स्रव',  # 19 in Paṅkti, 0 in Pragātha
+    'विवक्षसे',  # 17 in Paṅkti, 0 in Pragātha
+    'अश्वसूनृते',  # 10 in Paṅkti, 0 in Pragātha
+    'तुवीमघ',  # 7 in Paṅkti, 0 in Pragātha
+    'हरी',  # 5 in Paṅkti, 0 in Pragātha (as ending word)
+    'चनाममत्',  # 3 in Paṅkti, 0 in Pragātha
 ]
 
 # Paṅkti-exclusive 2-word sequences
 PANKTI_EXCLUSIVE_SEQUENCES = [
-    'परि स्रव',             # 19 in Paṅkti
-    'इंद्र उत्तरः',          # 16+ in Paṅkti
-    'अस्य रोदसी',           # 10 in Paṅkti
-    'अश्वसूनृते',           # 10 in Paṅkti
-    'श्रुतं हवं',            # 9 in Paṅkti
-    'सहस्रेषु तुवीमघ',     # 7 in Paṅkti
-    'ते हरी',               # 5 in Paṅkti
-    'नो वृधे',              # 4 in Paṅkti
+    'परि स्रव',  # 19 in Paṅkti
+    'इंद्र उत्तरः',  # 16+ in Paṅkti
+    'अस्य रोदसी',  # 10 in Paṅkti
+    'अश्वसूनृते',  # 10 in Paṅkti
+    'श्रुतं हवं',  # 9 in Paṅkti
+    'सहस्रेषु तुवीमघ',  # 7 in Paṅkti
+    'ते हरी',  # 5 in Paṅkti
+    'नो वृधे',  # 4 in Paṅkti
 ]
 
 # Seers predominantly associated with one meter
@@ -78,7 +78,7 @@ PANKTI_SEERS = {
 def approach_a_syllable_only(syllable_count: int) -> Tuple[str, float]:
     """
     Approach A: Pure syllable-count based discrimination.
-    
+
     Based on empirical data:
     - ≤33: 98%+ Pragātha
     - 34-36: 82-97% Pragātha
@@ -111,7 +111,7 @@ def approach_a_syllable_only(syllable_count: int) -> Tuple[str, float]:
 def approach_b_refrain_first(verse_text: str, syllable_count: int) -> Tuple[str, float]:
     """
     Approach B: Refrain detection first, then syllable count.
-    
+
     Key insight: Paṅkti verses often have refrains (35.8%), Pragātha rarely (0.7%).
     """
     # Check for Paṅkti refrain patterns in last 40 characters
@@ -135,7 +135,7 @@ def approach_b_refrain_first(verse_text: str, syllable_count: int) -> Tuple[str,
 def approach_c_seer_aware(verse_text: str, syllable_count: int, seer: str) -> Tuple[str, float]:
     """
     Approach C: Use seer information + refrain + syllable count.
-    
+
     Some seers are strongly associated with specific meters.
     """
     # Check seer first
@@ -158,7 +158,7 @@ def approach_c_seer_aware(verse_text: str, syllable_count: int, seer: str) -> Tu
 def approach_d_hybrid_weighted(verse_text: str, syllable_count: int, seer: str) -> Tuple[str, float]:
     """
     Approach D: Weighted combination of all signals.
-    
+
     Scoring system:
     - Start neutral (score=0)
     - Positive = Pragātha, Negative = Paṅkti
@@ -219,7 +219,7 @@ def approach_d_hybrid_weighted(verse_text: str, syllable_count: int, seer: str) 
 def approach_e_simple_threshold(syllable_count: int, verse_text: str) -> Tuple[str, float]:
     """
     Approach E: Simple decision tree based on strongest discriminators.
-    
+
     1. If refrain → Paṅkti
     2. If ≤36 syllables → Pragātha
     3. If ≥43 syllables → mahāpaṅkti
@@ -247,7 +247,7 @@ def approach_e_simple_threshold(syllable_count: int, verse_text: str) -> Tuple[s
 def approach_f_exclusive_endings(verse_text: str, syllable_count: int, seer: str) -> Tuple[str, float]:
     """
     Approach F: Use Paṅkti-EXCLUSIVE word endings (100% precision).
-    
+
     These endings appear ONLY in Paṅkti, never in Pragātha.
     """
     # Get last word
@@ -295,7 +295,7 @@ def approach_f_exclusive_endings(verse_text: str, syllable_count: int, seer: str
 def approach_g_all_signals(verse_text: str, syllable_count: int, seer: str, lg_pattern: str) -> Tuple[str, float]:
     """
     Approach G: All signals combined with weighted scoring.
-    
+
     Combines:
     1. Exclusive endings (strongest signal)
     2. Refrain patterns
@@ -397,7 +397,9 @@ def run_evaluation():
         'D: Hybrid Weighted': lambda r: approach_d_hybrid_weighted(r['verse_text'], r['syllable_count'], r['seer']),
         'E: Simple Threshold': lambda r: approach_e_simple_threshold(r['syllable_count'], r['verse_text']),
         'F: Exclusive Endings': lambda r: approach_f_exclusive_endings(r['verse_text'], r['syllable_count'], r['seer']),
-        'G: All Signals': lambda r: approach_g_all_signals(r['verse_text'], r['syllable_count'], r['seer'], r['lg_pattern']),
+        'G: All Signals': lambda r: approach_g_all_signals(
+            r['verse_text'], r['syllable_count'], r['seer'], r['lg_pattern']
+        ),
     }
 
     results = {name: {'correct': 0, 'total': 0, 'by_meter': {}} for name in approaches}
@@ -408,7 +410,7 @@ def run_evaluation():
         for name, approach_fn in approaches.items():
             predicted, confidence = approach_fn(row)
 
-            is_correct = (predicted == actual)
+            is_correct = predicted == actual
             results[name]['total'] += 1
             if is_correct:
                 results[name]['correct'] += 1
@@ -429,7 +431,7 @@ def run_evaluation():
     print(f"{'Approach':<25} {'Accuracy':>10} {'Correct':>10} {'Total':>8}")
     print("-" * 55)
 
-    sorted_results = sorted(results.items(), key=lambda x: x[1]['correct']/x[1]['total'], reverse=True)
+    sorted_results = sorted(results.items(), key=lambda x: x[1]['correct'] / x[1]['total'], reverse=True)
 
     for name, data in sorted_results:
         acc = 100 * data['correct'] / data['total']
@@ -471,7 +473,9 @@ def run_evaluation():
     print(f"{'Approach':<25} {'Accuracy':>10}")
     print("-" * 37)
 
-    sorted_overlap = sorted(overlap_results.items(), key=lambda x: x[1]['correct']/max(1, x[1]['total']), reverse=True)
+    sorted_overlap = sorted(
+        overlap_results.items(), key=lambda x: x[1]['correct'] / max(1, x[1]['total']), reverse=True
+    )
     for name, data in sorted_overlap:
         if data['total'] > 0:
             acc = 100 * data['correct'] / data['total']

@@ -2,6 +2,7 @@
 """
 Direct test for TTS functionality
 """
+
 import json
 
 import requests
@@ -11,10 +12,7 @@ import requests
 def test_tts():
     url = "http://localhost:5000/api/tts/generate"
 
-    payload = {
-        "text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
-        "voice": "male"
-    }
+    payload = {"text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः", "voice": "male"}
 
     print("🧪 Testing TTS generation...")
     print(f"📝 Text: {payload['text']}")
@@ -56,7 +54,9 @@ def test_tts():
     except Exception as e:
         print(f"\n❌ Exception occurred: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     test_tts()

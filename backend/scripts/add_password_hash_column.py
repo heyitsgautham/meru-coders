@@ -44,9 +44,9 @@ try:
     # Supabase Python client doesn't support direct SQL execution
     # We need to use the REST API or run this in Supabase SQL editor
     print("\n⚠️  Please run the following SQL in Supabase SQL Editor:")
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print(sql)
-    print("="*70)
+    print("=" * 70)
     print("\n📍 Go to: https://supabase.com/dashboard/project/_/sql/new")
     print("📝 Copy and paste the SQL above")
     print("▶️  Click 'Run' to execute")

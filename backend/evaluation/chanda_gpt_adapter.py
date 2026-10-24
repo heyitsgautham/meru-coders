@@ -19,7 +19,7 @@ import chanda_gpt
 class ChandaGPTAdapter:
     """
     Adapter class to make chanda_gpt.py compatible with existing test infrastructure.
-    
+
     Maps the functional API of chanda_gpt.identify_from_text() to the Chanda class interface.
     """
 
@@ -30,7 +30,7 @@ class ChandaGPTAdapter:
     def identify_line(self, text):
         """
         Identify meter for a single line.
-        
+
         Maps chanda_gpt output to the format expected by tests:
         - found: bool
         - display_chanda_primary: str (primary meter name)
@@ -82,7 +82,7 @@ class ChandaGPTAdapter:
     def identify_from_text(self, text, verse=False):
         """
         Identify meter from text (single line or verse).
-        
+
         Returns format compatible with test_csv_accuracy.py
         """
         lines = [line.strip() for line in text.split('\n') if line.strip()]
@@ -112,30 +112,15 @@ class ChandaGPTAdapter:
 
             meter_devanagari = meter_map.get(meter, meter) if meter else None
 
-            return {
-                'result': {
-                    'verse': [
-                        {
-                            'chanda': [[meter_devanagari, confidence]] if meter_devanagari else []
-                        }
-                    ]
-                }
-            }
+            return {'result': {'verse': [{'chanda': [[meter_devanagari, confidence]] if meter_devanagari else []}]}}
         else:
             # Line-by-line analysis
             line_results = []
             for line in lines:
                 line_result = self.identify_line(line)
-                line_results.append({
-                    'line': line,
-                    'result': line_result
-                })
+                line_results.append({'line': line, 'result': line_result})
 
-            return {
-                'result': {
-                    'line': line_results
-                }
-            }
+            return {'result': {'line': line_results}}
 
     def identify_verse_holistically(self, lines):
         """
@@ -163,10 +148,7 @@ class ChandaGPTAdapter:
 
         meter_devanagari = meter_map.get(meter, meter) if meter else None
 
-        return {
-            'found': meter is not None,
-            'meter': meter_devanagari or ''
-        }
+        return {'found': meter is not None, 'meter': meter_devanagari or ''}
 
     def _identify_vedic_mode(self, text):
         """
@@ -193,6 +175,4 @@ class ChandaGPTAdapter:
 
         meter_devanagari = meter_map.get(meter, meter) if meter else None
 
-        return {
-            'meter': meter_devanagari
-        }
+        return {'meter': meter_devanagari}

@@ -49,6 +49,7 @@ def load_api_keys_from_env():
                             keys.append(key_part)
     return keys
 
+
 # Gemini API setup - using new google-genai SDK
 from google import genai
 from google.genai import types
@@ -117,7 +118,7 @@ def normalize(name: str) -> str:
     # Remove common suffixes and variations
     for suffix in ['m', 'h', 'am', 'a', 'ā']:
         if name.endswith(suffix) and len(name) > len(suffix) + 2:
-            name = name[:-len(suffix)]
+            name = name[: -len(suffix)]
             break
     return name.strip()
 
@@ -125,37 +126,42 @@ def normalize(name: str) -> str:
 # Meter family mappings for flexible matching
 METER_FAMILIES = {
     # Anuṣṭup family
-    'anustup': 'anustubh', 'anustubh': 'anustubh', 'sloka': 'anustubh',
-
+    'anustup': 'anustubh',
+    'anustubh': 'anustubh',
+    'sloka': 'anustubh',
     # Śārdūlavikrīḍita family
-    'sardulavkridita': 'sardula', 'sardulavikriditam': 'sardula',
-    'sardulavikridita': 'sardula', 'sardula': 'sardula',
-    'shardulavikridita': 'sardula', 'saardulavikriidita': 'sardula',
-
+    'sardulavkridita': 'sardula',
+    'sardulavikriditam': 'sardula',
+    'sardulavikridita': 'sardula',
+    'sardula': 'sardula',
+    'shardulavikridita': 'sardula',
+    'saardulavikriidita': 'sardula',
     # Mandākrāntā family
-    'mandakranta': 'mandakranta', 'mandaakraantaa': 'mandakranta',
-
+    'mandakranta': 'mandakranta',
+    'mandaakraantaa': 'mandakranta',
     # Vasantatilakā family
-    'vasantatilaka': 'vasantatilaka', 'vasantatilakam': 'vasantatilaka',
-
+    'vasantatilaka': 'vasantatilaka',
+    'vasantatilakam': 'vasantatilaka',
     # Bhujangaprayāta family
-    'bhujangaprayata': 'bhujangaprayata', 'bhujangaprayatam': 'bhujangaprayata',
-
+    'bhujangaprayata': 'bhujangaprayata',
+    'bhujangaprayatam': 'bhujangaprayata',
     # Upajāti family
-    'upajati': 'upajati', 'upajatih': 'upajati',
-    'indravajra': 'upajati', 'upendravajra': 'upajati',
-
+    'upajati': 'upajati',
+    'upajatih': 'upajati',
+    'indravajra': 'upajati',
+    'upendravajra': 'upajati',
     # Drutavilaṃbita family
-    'drutavilambita': 'drutavilambita', 'drutavilambitam': 'drutavilambita',
-
+    'drutavilambita': 'drutavilambita',
+    'drutavilambitam': 'drutavilambita',
     # Sragdharā family
-    'sragdhara': 'sragdhara', 'sragdharaa': 'sragdhara',
-
+    'sragdhara': 'sragdhara',
+    'sragdharaa': 'sragdhara',
     # Śikhariṇī family
-    'sikharini': 'sikharini', 'sikharina': 'sikharini',
-
+    'sikharini': 'sikharini',
+    'sikharina': 'sikharini',
     # Mālinī family
-    'malini': 'malini', 'maalini': 'malini',
+    'malini': 'malini',
+    'maalini': 'malini',
 }
 
 
@@ -177,13 +183,13 @@ def create_gemini_client():
 def predict_chanda_with_llm(verse: str, client, key_index: int, max_retries: int = 3) -> Optional[str]:
     """
     Use Gemini LLM to predict the Chanda (meter) of a Sanskrit verse.
-    
+
     Args:
         verse: Sanskrit verse in Devanagari script
         client: Gemini client instance
         key_index: Current API key index (for tracking exhaustion)
         max_retries: Maximum number of retries with different keys
-    
+
     Returns:
         Predicted meter name or None if prediction fails
     """
@@ -216,11 +222,7 @@ Meter name:"""
 
     while retries < max_retries:
         try:
-            response = current_client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config=config
-            )
+            response = current_client.models.generate_content(model="gemini-2.5-flash", contents=prompt, config=config)
             if response and response.text:
                 # Clean up the response
                 meter_name = response.text.strip()
@@ -261,11 +263,11 @@ Meter name:"""
 def load_test_data(csv_path: str, num_samples: Optional[int] = None) -> List[Dict]:
     """
     Load test verses from CSV file.
-    
+
     Args:
         csv_path: Path to the CSV file
         num_samples: Number of samples to load (None for all)
-    
+
     Returns:
         List of dictionaries with 'verse' and 'expected_meter' keys
     """
@@ -283,10 +285,7 @@ def load_test_data(csv_path: str, num_samples: Optional[int] = None) -> List[Dic
 
             # Skip empty verses or meters
             if verse and expected_meter and len(verse) > 10:
-                test_data.append({
-                    'verse': verse,
-                    'expected_meter': expected_meter
-                })
+                test_data.append({'verse': verse, 'expected_meter': expected_meter})
 
     # Sample if requested
     if num_samples and num_samples < len(test_data):
@@ -298,7 +297,7 @@ def load_test_data(csv_path: str, num_samples: Optional[int] = None) -> List[Dic
 def compare_meters(predicted: str, expected: str) -> Tuple[bool, str]:
     """
     Compare predicted and expected meter names.
-    
+
     Returns:
         Tuple of (is_match, match_type)
         match_type: 'exact', 'normalized', 'family', or 'no_match'
@@ -334,7 +333,7 @@ def compare_meters(predicted: str, expected: str) -> Tuple[bool, str]:
 def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compare_with_chanda: bool = False):
     """
     Run the LLM-based Chanda prediction test.
-    
+
     Args:
         num_samples: Number of verses to test
         verbose: Whether to print detailed results
@@ -350,11 +349,7 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
     exhausted_keys = set()
 
     # Load test data
-    csv_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        'data',
-        'page 1-47 chanda list - complete.csv'
-    )
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'page 1-47 chanda list - complete.csv')
 
     print(f"\nLoading test data from: {os.path.basename(csv_path)}")
     test_data = load_test_data(csv_path, num_samples)
@@ -369,6 +364,7 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
     chanda_identifier = None
     if compare_with_chanda:
         from core.chanda import Chanda
+
         data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
         chanda_identifier = Chanda(data_path)
         print("Initialized traditional Chanda identifier for comparison")
@@ -382,18 +378,22 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
         'partial': 0,
         'no_match': 0,
         'no_prediction': 0,
-        'errors': []
+        'errors': [],
     }
 
     # Track traditional Chanda results if comparing
-    chanda_results = {
-        'exact': 0,
-        'normalized': 0,
-        'family': 0,
-        'partial': 0,
-        'no_match': 0,
-        'no_prediction': 0,
-    } if compare_with_chanda else None
+    chanda_results = (
+        {
+            'exact': 0,
+            'normalized': 0,
+            'family': 0,
+            'partial': 0,
+            'no_match': 0,
+            'no_prediction': 0,
+        }
+        if compare_with_chanda
+        else None
+    )
 
     print(f"\nRunning predictions on {len(test_data)} verses...\n")
 
@@ -475,12 +475,14 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
             print()
 
         if not is_match:
-            results['errors'].append({
-                'verse': verse[:100],
-                'expected': expected,
-                'predicted': predicted,
-                'chanda_predicted': chanda_predicted if chanda_identifier else None
-            })
+            results['errors'].append(
+                {
+                    'verse': verse[:100],
+                    'expected': expected,
+                    'predicted': predicted,
+                    'chanda_predicted': chanda_predicted if chanda_identifier else None,
+                }
+            )
 
         # Rate limiting - small delay between requests
         time.sleep(0.5)
@@ -505,35 +507,52 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
 
     print(f"\nTotal verses tested: {total}")
     print("\n📊 LLM (Gemini) Accuracy Breakdown:")
-    print(f"  - Exact matches:      {results['exact']:3d} ({100*results['exact']/total:5.1f}%)")
-    print(f"  - Normalized matches: {results['normalized']:3d} ({100*results['normalized']/total:5.1f}%)")
-    print(f"  - Family matches:     {results['family']:3d} ({100*results['family']/total:5.1f}%)")
-    print(f"  - Partial matches:    {results['partial']:3d} ({100*results['partial']/total:5.1f}%)")
-    print(f"  - No match:           {results['no_match']:3d} ({100*results['no_match']/total:5.1f}%)")
-    print(f"  - No prediction:      {results['no_prediction']:3d} ({100*results['no_prediction']/total:5.1f}%)")
+    print(f"  - Exact matches:      {results['exact']:3d} ({100 * results['exact'] / total:5.1f}%)")
+    print(f"  - Normalized matches: {results['normalized']:3d} ({100 * results['normalized'] / total:5.1f}%)")
+    print(f"  - Family matches:     {results['family']:3d} ({100 * results['family'] / total:5.1f}%)")
+    print(f"  - Partial matches:    {results['partial']:3d} ({100 * results['partial'] / total:5.1f}%)")
+    print(f"  - No match:           {results['no_match']:3d} ({100 * results['no_match'] / total:5.1f}%)")
+    print(f"  - No prediction:      {results['no_prediction']:3d} ({100 * results['no_prediction'] / total:5.1f}%)")
 
     print("\n📈 LLM Overall Accuracy:")
-    print(f"  - Strict (exact only):     {100*results['exact']/total:5.1f}%")
-    print(f"  - Relaxed (incl. family):  {100*correct/total:5.1f}%")
+    print(f"  - Strict (exact only):     {100 * results['exact'] / total:5.1f}%")
+    print(f"  - Relaxed (incl. family):  {100 * correct / total:5.1f}%")
 
     # Show traditional Chanda comparison if available
     if chanda_results:
-        chanda_correct = chanda_results['exact'] + chanda_results['normalized'] + chanda_results['family'] + chanda_results['partial']
+        chanda_correct = (
+            chanda_results['exact']
+            + chanda_results['normalized']
+            + chanda_results['family']
+            + chanda_results['partial']
+        )
         print("\n📊 Traditional Chanda Identifier Accuracy:")
-        print(f"  - Exact matches:      {chanda_results['exact']:3d} ({100*chanda_results['exact']/total:5.1f}%)")
-        print(f"  - Normalized matches: {chanda_results['normalized']:3d} ({100*chanda_results['normalized']/total:5.1f}%)")
-        print(f"  - Family matches:     {chanda_results['family']:3d} ({100*chanda_results['family']/total:5.1f}%)")
-        print(f"  - Partial matches:    {chanda_results['partial']:3d} ({100*chanda_results['partial']/total:5.1f}%)")
-        print(f"  - No match:           {chanda_results['no_match']:3d} ({100*chanda_results['no_match']/total:5.1f}%)")
+        print(f"  - Exact matches:      {chanda_results['exact']:3d} ({100 * chanda_results['exact'] / total:5.1f}%)")
+        print(
+            f"  - Normalized matches: {chanda_results['normalized']:3d} ({100 * chanda_results['normalized'] / total:5.1f}%)"
+        )
+        print(f"  - Family matches:     {chanda_results['family']:3d} ({100 * chanda_results['family'] / total:5.1f}%)")
+        print(
+            f"  - Partial matches:    {chanda_results['partial']:3d} ({100 * chanda_results['partial'] / total:5.1f}%)"
+        )
+        print(
+            f"  - No match:           {chanda_results['no_match']:3d} ({100 * chanda_results['no_match'] / total:5.1f}%)"
+        )
 
         print("\n📈 Chanda Overall Accuracy:")
-        print(f"  - Strict (exact only):     {100*chanda_results['exact']/total:5.1f}%")
-        print(f"  - Relaxed (incl. family):  {100*chanda_correct/total:5.1f}%")
+        print(f"  - Strict (exact only):     {100 * chanda_results['exact'] / total:5.1f}%")
+        print(f"  - Relaxed (incl. family):  {100 * chanda_correct / total:5.1f}%")
 
         print("\n🏆 COMPARISON SUMMARY:")
-        print(f"  LLM (Gemini):     {100*correct/total:5.1f}% accuracy")
-        print(f"  Traditional:      {100*chanda_correct/total:5.1f}% accuracy")
-        winner = "Traditional Chanda Identifier" if chanda_correct > correct else "LLM (Gemini)" if correct > chanda_correct else "TIE"
+        print(f"  LLM (Gemini):     {100 * correct / total:5.1f}% accuracy")
+        print(f"  Traditional:      {100 * chanda_correct / total:5.1f}% accuracy")
+        winner = (
+            "Traditional Chanda Identifier"
+            if chanda_correct > correct
+            else "LLM (Gemini)"
+            if correct > chanda_correct
+            else "TIE"
+        )
         print(f"  Winner: {winner}")
 
     # Show some errors
@@ -551,23 +570,17 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
 
 def main():
     parser = argparse.ArgumentParser(description='Test LLM-based Chanda prediction')
-    parser.add_argument('-n', '--num-samples', type=int, default=20,
-                        help='Number of verses to test (default: 20)')
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Show detailed results for each verse')
-    parser.add_argument('--all', action='store_true',
-                        help='Test all verses in the dataset')
-    parser.add_argument('--compare', action='store_true',
-                        help='Compare with traditional Chanda identifier')
+    parser.add_argument('-n', '--num-samples', type=int, default=20, help='Number of verses to test (default: 20)')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show detailed results for each verse')
+    parser.add_argument('--all', action='store_true', help='Test all verses in the dataset')
+    parser.add_argument('--compare', action='store_true', help='Compare with traditional Chanda identifier')
 
     args = parser.parse_args()
 
     num_samples = None if args.all else args.num_samples
 
     results, chanda_results = run_llm_prediction_test(
-        num_samples=num_samples,
-        verbose=args.verbose,
-        compare_with_chanda=args.compare
+        num_samples=num_samples, verbose=args.verbose, compare_with_chanda=args.compare
     )
 
     # Return exit code based on accuracy

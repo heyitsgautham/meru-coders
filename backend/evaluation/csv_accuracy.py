@@ -7,7 +7,7 @@ Tests the Chanda identifier against the "page 1-47 chanda list - complete.csv" d
 with THREE levels of accuracy measurement:
 
 1. FIRST-LINE ACCURACY: Check if first line's prediction matches expected meter
-2. ALL-LINES ACCURACY: Check if ALL lines in a verse match the expected meter  
+2. ALL-LINES ACCURACY: Check if ALL lines in a verse match the expected meter
 3. VERSE-LEVEL ACCURACY: Check if holistic verse analysis (verse=True) matches
 
 Usage:
@@ -49,52 +49,61 @@ def normalize(name):
 # Meter family mappings - meters with same/similar patterns or part of same family
 METER_FAMILIES = {
     # Anuṣṭup family (32 syllables = 4×8)
-    'anustup': 'anustubh', 'anustubh': 'anustubh',
+    'anustup': 'anustubh',
+    'anustubh': 'anustubh',
     'rsabhagajavilasita': 'anustubh',  # variant
-
     # Typo fixes in CSV
-    'pythvi': 'prthvi', 'prthvi': 'prthvi', 'prthi': 'prthvi',
-
+    'pythvi': 'prthvi',
+    'prthvi': 'prthvi',
+    'prthi': 'prthvi',
     # Śārdūlavikrīḍita family (19 syllables)
-    'sardulavkridita': 'sardula', 'sardulavikriditam': 'sardula',
-    'sardulavikridita': 'sardula', 'meghavisphurjita': 'sardula',
+    'sardulavkridita': 'sardula',
+    'sardulavikriditam': 'sardula',
+    'sardulavikridita': 'sardula',
+    'meghavisphurjita': 'sardula',
     'sardulalaltiam': 'sardula',
-
     # Upajāti family (mix of Indravajrā + Upendravajrā, 11 syllables)
-    'upajatih': 'upajati', 'upajati': 'upajati',
-    'indravajra': 'upajati', 'upendravajra': 'upajati',
-    'ihamrgi': 'upajati', 'sumukhi': 'upajati',
-
+    'upajatih': 'upajati',
+    'upajati': 'upajati',
+    'indravajra': 'upajati',
+    'upendravajra': 'upajati',
+    'ihamrgi': 'upajati',
+    'sumukhi': 'upajati',
     # Vaṃśastha family (12 syllables Jagati)
-    'vamsasthavilam': 'vamsastha', 'vamsasthavila': 'vamsastha',
-    'vamsastha': 'vamsastha', 'indravamsa': 'vamsastha',
-    'bhujangaprayatam': 'vamsastha', 'bhujangaprayata': 'vamsastha',
+    'vamsasthavilam': 'vamsastha',
+    'vamsasthavila': 'vamsastha',
+    'vamsastha': 'vamsastha',
+    'indravamsa': 'vamsastha',
+    'bhujangaprayatam': 'vamsastha',
+    'bhujangaprayata': 'vamsastha',
     'candravartma': 'vamsastha',
-
     # Vasantatilakā variants (14 syllables)
-    'vasantatilakam': 'vasantatilaka', 'vasantatilaka': 'vasantatilaka',
-
+    'vasantatilakam': 'vasantatilaka',
+    'vasantatilaka': 'vasantatilaka',
     # Tūṇaka = Cāmara (15 syllables, GLGL pattern)
-    'tunaka': 'tunaka', 'camara': 'tunaka', 'tunakam': 'tunaka',
-
+    'tunaka': 'tunaka',
+    'camara': 'tunaka',
+    'tunakam': 'tunaka',
     # Pañcacāmara (16 syllables, LGLG pattern) - different from Tūṇaka
-    'pancacamaram': 'pancacamara', 'pancacamara': 'pancacamara',
+    'pancacamaram': 'pancacamara',
+    'pancacamara': 'pancacamara',
     'рancacamaram': 'pancacamara',  # Cyrillic р fix
-
     # Strī/Śrī = Nārī (short meters)
-    'srih': 'nari', 'stri': 'nari', 'nari': 'nari',
-
+    'srih': 'nari',
+    'stri': 'nari',
+    'nari': 'nari',
     # Sragdharā family (21 syllables)
-    'sragdhara': 'sragdhara', 'pancakavali': 'sragdhara',
-
+    'sragdhara': 'sragdhara',
+    'pancakavali': 'sragdhara',
     # Mandākrāntā family (17 syllables)
-    'mandakranta': 'mandakranta', 'atisayini': 'mandakranta',
-
+    'mandakranta': 'mandakranta',
+    'atisayini': 'mandakranta',
     # Praharṣiṇī family (13 syllables)
-    'praharsini': 'praharsini', 'kalahamsa': 'praharsini',
-
+    'praharsini': 'praharsini',
+    'kalahamsa': 'praharsini',
     # Bhujanga variants
-    'bhujangasangata': 'bhujanga', 'bhujagasisubhrta': 'bhujanga',
+    'bhujangasangata': 'bhujanga',
+    'bhujagasisubhrta': 'bhujanga',
 }
 
 
@@ -123,11 +132,11 @@ REAL_VERSE_COUNT = 147
 def is_real_verse(row_index):
     """
     Check if this is a real verse example vs a meter definition row.
-    
+
     The CSV contains two types of rows:
     1. First 147 rows: Real verse examples (actual Sanskrit verses)
     2. Remaining rows: Definition rows (where 'verse' column contains meter name/definition)
-    
+
     Definition rows cannot be accurately tested because we're matching
     the L-G pattern of the meter NAME, not an actual verse.
     """
@@ -169,7 +178,7 @@ def extract_verse_prediction(result):
 def run_test(verbose=False, analysis_type='first-line'):
     """
     Run accuracy test on CSV dataset.
-    
+
     Parameters:
     -----------
     verbose : bool
@@ -228,12 +237,14 @@ def run_test(verbose=False, analysis_type='first-line'):
                     results['first-line']['correct'] += 1
                 else:
                     results['first-line']['incorrect'] += 1
-                    results['first-line']['issues'].append({
-                        'row': row_index,
-                        'expected': expected,
-                        'predicted': predicted or 'NO RESULT',
-                        'verse': verse[:60]
-                    })
+                    results['first-line']['issues'].append(
+                        {
+                            'row': row_index,
+                            'expected': expected,
+                            'predicted': predicted or 'NO RESULT',
+                            'verse': verse[:60],
+                        }
+                    )
 
             # ===== ALL-LINES ANALYSIS =====
             if 'all-lines' in run_types:
@@ -253,12 +264,14 @@ def run_test(verbose=False, analysis_type='first-line'):
                     results['all-lines']['correct'] += 1
                 else:
                     results['all-lines']['incorrect'] += 1
-                    results['all-lines']['issues'].append({
-                        'row': row_index,
-                        'expected': expected,
-                        'mismatched_lines': mismatched_lines,
-                        'verse': verse[:60]
-                    })
+                    results['all-lines']['issues'].append(
+                        {
+                            'row': row_index,
+                            'expected': expected,
+                            'mismatched_lines': mismatched_lines,
+                            'verse': verse[:60],
+                        }
+                    )
 
             # ===== VERSE-LEVEL ANALYSIS =====
             if 'verse' in run_types and result_verse:
@@ -269,12 +282,14 @@ def run_test(verbose=False, analysis_type='first-line'):
                     results['verse']['correct'] += 1
                 else:
                     results['verse']['incorrect'] += 1
-                    results['verse']['issues'].append({
-                        'row': row_index,
-                        'expected': expected,
-                        'predicted': predicted or 'NO RESULT',
-                        'verse': verse[:60]
-                    })
+                    results['verse']['issues'].append(
+                        {
+                            'row': row_index,
+                            'expected': expected,
+                            'predicted': predicted or 'NO RESULT',
+                            'verse': verse[:60],
+                        }
+                    )
 
     # ===== PRINT RESULTS =====
     print("=" * 75)
@@ -292,7 +307,7 @@ def run_test(verbose=False, analysis_type='first-line'):
         name = {
             'first-line': 'FIRST-LINE ACCURACY (line 1 prediction)',
             'all-lines': 'ALL-LINES ACCURACY (every line must match)',
-            'verse': 'VERSE-LEVEL ACCURACY (holistic analysis)'
+            'verse': 'VERSE-LEVEL ACCURACY (holistic analysis)',
         }[rtype]
 
         print(f"{icon} {name}")

@@ -21,6 +21,7 @@ from google.genai import types
 # Try to import Google Cloud Speech (optional dependency)
 try:
     from google.cloud import speech_v1 as gcp_speech
+
     SPEECH_AVAILABLE = True
 except ImportError:
     SPEECH_AVAILABLE = False
@@ -32,6 +33,7 @@ logger = logging.getLogger(__name__)
 # Try to import RAG engine (optional - requires vector database)
 try:
     from backend.core.rag_engine import RAGEngine
+
     RAG_AVAILABLE = True
     logger.info("✅ RAG engine module imported successfully")
 except ImportError as e:
@@ -68,6 +70,7 @@ conversations: Dict[str, List[Dict]] = {}
 rag_engine = None
 rag_initialized = False
 
+
 def get_rag_engine():
     """Lazy initialization of RAG engine on first request"""
     global rag_engine, rag_initialized
@@ -97,6 +100,7 @@ def get_rag_engine():
         logger.error(f"⚠️  Could not initialize RAG engine: {e}", exc_info=True)
         rag_engine = None
         return None
+
 
 # Persona configurations
 PERSONAS = {
@@ -208,13 +212,14 @@ PERSONAS = {
         Remember: You can answer ANY Sanskrit or dharma-related question, not just prosody! Questions about Sanskrit linguistics, comparative language studies, Vedic texts, philosophy are all within your divine mandate.""",
         "temperature": 0.8,
         "top_p": 0.9,
-    }
+    },
 }
 
 
 # ============================================================================
 # AGENTIC METER IDENTIFICATION FUNCTIONS
 # ============================================================================
+
 
 def extract_sanskrit_text(message: str) -> Optional[str]:
     """
@@ -268,10 +273,29 @@ def detect_meter_intent(message: str) -> Tuple[bool, Optional[str], Dict[str, bo
     """
     # Keywords indicating meter analysis intent
     intent_keywords = [
-        'identify', 'find', 'detect', 'analyze', 'analyse', 'what is the meter',
-        'which meter', 'chandas', 'chanda', 'meter', 'metre', 'pattern',
-        'laghu', 'guru', 'gana', 'syllable', 'मात्रा', 'छन्द', 'वृत्त',
-        'l-g pattern', 'lg pattern', 'scan', 'scansion'
+        'identify',
+        'find',
+        'detect',
+        'analyze',
+        'analyse',
+        'what is the meter',
+        'which meter',
+        'chandas',
+        'chanda',
+        'meter',
+        'metre',
+        'pattern',
+        'laghu',
+        'guru',
+        'gana',
+        'syllable',
+        'मात्रा',
+        'छन्द',
+        'वृत्त',
+        'l-g pattern',
+        'lg pattern',
+        'scan',
+        'scansion',
     ]
 
     message_lower = message.lower()
@@ -284,12 +308,23 @@ def detect_meter_intent(message: str) -> Tuple[bool, Optional[str], Dict[str, bo
         'gana_pattern': False,
         'syllable_count': False,
         'matra_count': False,
-        'full_analysis': False  # Default to full analysis if not specified
+        'full_analysis': False,  # Default to full analysis if not specified
     }
 
     if has_intent:
         # Check for specific field requests
-        if any(term in message_lower for term in ['chanda name', 'meter name', 'name of', 'which chanda', 'what chanda', 'chanda only', 'meter only']):
+        if any(
+            term in message_lower
+            for term in [
+                'chanda name',
+                'meter name',
+                'name of',
+                'which chanda',
+                'what chanda',
+                'chanda only',
+                'meter only',
+            ]
+        ):
             requested_fields['meter_name'] = True
 
         if any(term in message_lower for term in ['l-g', 'lg', 'laghu', 'guru', 'pattern']):
@@ -319,17 +354,17 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
     Perform meter analysis using the Chanda algorithm
     Handles both single-line and multi-line verses automatically
     Returns comprehensive meter information
-    
+
     Pada Detection Strategy (in order of precedence):
     1. Split by newlines if multi-line input
     2. Split by danda separators (।) if single line with dandas
     3. Smart pada detection based on syllable count for common meters:
        - Anuṣṭubh: 8 syllables/pada
-       - Śālinī: 11 syllables/pada  
+       - Śālinī: 11 syllables/pada
        - Vasantatilaka: 14 syllables/pada
        - Mandākrāntā: 17 syllables/pada
        - Śārdūlavikrīḍita: 19 syllables/pada
-    
+
     This ensures the chatbot output matches the home page analysis format
     with clear pada-by-pada L-G pattern display.
     """
@@ -418,7 +453,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                         'is_valid_input': False,
                         'validation_error': validation_error,
                         'prose_message': prose_message,
-                        'text': text
+                        'text': text,
                     }
 
             if 'verse' in result and len(result['verse']) > 0:
@@ -453,6 +488,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                                 if '/' in length or '+' in length:
                                     # Extract first number from formula
                                     import re
+
                                     match = re.search(r'\d+', length)
                                     total_syllables += int(match.group()) if match else 0
                                 else:
@@ -468,6 +504,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                                 if '/' in matra or '+' in matra:
                                     # Extract first number from formula
                                     import re
+
                                     match = re.search(r'\d+', matra)
                                     total_matra += int(match.group()) if match else 0
                                 else:
@@ -506,15 +543,19 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'meter_display': meter_display,
                     'lg_pattern': ''.join(all_lg),
                     'lg_pattern_padas': lg_by_line,
-                    'gana_pattern': result['line'][0].get('result', {}).get('display_gana', '') if 'line' in result and len(result['line']) > 0 else '',
+                    'gana_pattern': result['line'][0].get('result', {}).get('display_gana', '')
+                    if 'line' in result and len(result['line']) > 0
+                    else '',
                     'syllables': total_syllables,
                     'matra': total_matra,
                     'syllable_breakdown': all_syllables,
                     'found': found,
-                    'fuzzy_matches': result['line'][0].get('result', {}).get('fuzzy', [])[:3] if 'line' in result and len(result['line']) > 0 else [],
+                    'fuzzy_matches': result['line'][0].get('result', {}).get('fuzzy', [])[:3]
+                    if 'line' in result and len(result['line']) > 0
+                    else [],
                     'verse_lines': len(lines),
                     'is_multi_line': True,
-                    'confidence_reason': confidence_reason
+                    'confidence_reason': confidence_reason,
                 }
             else:
                 return {'success': False, 'error': 'Could not analyze verse'}
@@ -532,7 +573,7 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                     'is_valid_input': False,
                     'validation_error': validation_error,
                     'prose_message': prose_message,
-                    'text': text
+                    'text': text,
                 }
 
             # Get the full L-G pattern
@@ -574,13 +615,10 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
                 'fuzzy_matches': result.get('fuzzy', [])[:3] if result.get('fuzzy') else [],
                 'verse_lines': 1,
                 'is_multi_line': False,
-                'confidence_reason': result.get('primary_confidence_reason')
+                'confidence_reason': result.get('primary_confidence_reason'),
             }
     except Exception as e:
-        return {
-            'success': False,
-            'error': str(e)
-        }
+        return {'success': False, 'error': str(e)}
 
 
 def extract_primary_meter_name(meter_display: str) -> str:
@@ -663,7 +701,7 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
     # Split into padas
     padas = []
     for i in range(0, total_syllables, syllables_per_pada):
-        pada = lg_pattern[i:i+syllables_per_pada]
+        pada = lg_pattern[i : i + syllables_per_pada]
         if pada:
             padas.append(pada)
 
@@ -676,7 +714,12 @@ def split_lg_pattern_by_pada(lg_pattern: str, syllables_per_pada: int = None) ->
     return "\n".join(formatted_padas)
 
 
-def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', requested_fields: Dict[str, bool] = None, add_analyze_link: bool = False) -> str:
+def format_meter_response(
+    meter_data: Dict[str, Any],
+    persona: str = 'default',
+    requested_fields: Dict[str, bool] = None,
+    add_analyze_link: bool = False,
+) -> str:
     """
     Format meter analysis data into a conversational response
     Formats response based on what fields user specifically requested
@@ -695,7 +738,9 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         return f"I encountered an error analyzing the text: {meter_data.get('error', 'Unknown error')}"
 
     if not meter_data.get('found'):
-        response = f"I have analyzed the text **'{meter_data['text']}'** but could not definitively identify the meter.\n\n"
+        response = (
+            f"I have analyzed the text **'{meter_data['text']}'** but could not definitively identify the meter.\n\n"
+        )
         response += "**Analysis:**\n"
         response += f"- Syllable count: **{meter_data['syllables']}**\n"
         response += f"- L-G Pattern: `{meter_data['lg_pattern']}`\n"
@@ -710,6 +755,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
         if add_analyze_link:
             # URL encode the text for the link
             import urllib.parse
+
             encoded_text = urllib.parse.quote(meter_data.get('text', ''))
             analyze_url = f"/app?text={encoded_text}"
             response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
@@ -736,6 +782,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     else:
         # Fallback: Extract confidence score from meter_display if confidence_reason not available
         import re
+
         if meter_data.get('meter_display'):
             match = re.search(r'\[(\d+\.?\d*)\]', meter_data['meter_display'])
             if match:
@@ -744,13 +791,15 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
                 confidence_level = get_confidence_label(score)
 
     # Check if user asked for specific fields only
-    specific_fields_requested = any([
-        requested_fields.get('meter_name'),
-        requested_fields.get('lg_pattern'),
-        requested_fields.get('gana_pattern'),
-        requested_fields.get('syllable_count'),
-        requested_fields.get('matra_count')
-    ])
+    specific_fields_requested = any(
+        [
+            requested_fields.get('meter_name'),
+            requested_fields.get('lg_pattern'),
+            requested_fields.get('gana_pattern'),
+            requested_fields.get('syllable_count'),
+            requested_fields.get('matra_count'),
+        ]
+    )
 
     if specific_fields_requested:
         # PRECISION MODE - Show only what user asked for
@@ -835,6 +884,7 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
     if add_analyze_link:
         # URL encode the text for the link
         import urllib.parse
+
         encoded_text = urllib.parse.quote(meter_data.get('text', ''))
         analyze_url = f"/app?text={encoded_text}"
         response += f"\n---\n💡 **Tip:** Use the [**Analyse Chanda**]({analyze_url}) page for detailed analysis with visualizations.\n"
@@ -845,10 +895,10 @@ def format_meter_response(meter_data: Dict[str, Any], persona: str = 'default', 
 def get_gemini_client(exclude_keys: List[str] = None):
     """
     Get a configured Gemini client with load-balanced API keys
-    
+
     Args:
         exclude_keys: List of API keys to exclude (e.g., quota-exhausted keys)
-    
+
     Returns:
         genai.Client configured with an available API key
     """
@@ -856,9 +906,9 @@ def get_gemini_client(exclude_keys: List[str] = None):
         raise ValueError("No Gemini API keys found in environment variables")
 
     # Filter out excluded keys
-    available_keys = GEMINI_API_KEYS if not exclude_keys else [
-        key for key in GEMINI_API_KEYS if key not in exclude_keys
-    ]
+    available_keys = (
+        GEMINI_API_KEYS if not exclude_keys else [key for key in GEMINI_API_KEYS if key not in exclude_keys]
+    )
 
     if not available_keys:
         raise ValueError("All Gemini API keys are exhausted. Please wait for quota reset.")
@@ -879,8 +929,20 @@ def calculate_confidence_score(response_text: str, context: str = "") -> float:
     score = 0.8  # Base confidence
 
     # Increase confidence if response mentions specific meters
-    meters = ['अनुष्टुभ्', 'त्रिष्टुभ्', 'गायत्री', 'जगती', 'वसन्ततिलका', 'मन्दाक्रान्ता',
-              'Anushtubh', 'Trishtubh', 'Gayatri', 'Jagati', 'Vasantatilaka', 'Mandakranta']
+    meters = [
+        'अनुष्टुभ्',
+        'त्रिष्टुभ्',
+        'गायत्री',
+        'जगती',
+        'वसन्ततिलका',
+        'मन्दाक्रान्ता',
+        'Anushtubh',
+        'Trishtubh',
+        'Gayatri',
+        'Jagati',
+        'Vasantatilaka',
+        'Mandakranta',
+    ]
     if any(meter in response_text for meter in meters):
         score += 0.1
 
@@ -901,7 +963,7 @@ def chat():
     """
     Main chat endpoint supporting text, voice transcription, and image inputs
     WITH AGENTIC METER IDENTIFICATION
-    
+
     Request body:
     {
         "message": "text message",
@@ -920,14 +982,13 @@ def chat():
         audio_data = data.get('audio')
 
         # Log incoming request for debugging
-        logger.info(f"Chat request - Message length: {len(message)}, Has image: {bool(image_data)}, Has audio: {bool(audio_data)}")
+        logger.info(
+            f"Chat request - Message length: {len(message)}, Has image: {bool(image_data)}, Has audio: {bool(audio_data)}"
+        )
 
         # Validate persona
         if persona not in PERSONAS:
-            return jsonify({
-                'success': False,
-                'error': f'Invalid persona. Choose from: {list(PERSONAS.keys())}'
-            }), 400
+            return jsonify({'success': False, 'error': f'Invalid persona. Choose from: {list(PERSONAS.keys())}'}), 400
 
         # =====================================================================
         # AUDIO PROCESSING - Transcribe audio if provided
@@ -947,10 +1008,12 @@ def chat():
                 # Check if Speech-to-Text is available
                 if not SPEECH_AVAILABLE or gcp_speech is None:
                     logger.error("Google Cloud Speech is not available")
-                    return jsonify({
-                        'success': False,
-                        'error': 'Audio transcription service is not available. Please use text or image input.'
-                    }), 500
+                    return jsonify(
+                        {
+                            'success': False,
+                            'error': 'Audio transcription service is not available. Please use text or image input.',
+                        }
+                    ), 500
 
                 try:
                     # Initialize Speech-to-Text client
@@ -978,7 +1041,9 @@ def chat():
 
                         if response.results:
                             # Extract transcription and detected language
-                            extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
+                            extracted_audio_text = ' '.join(
+                                [result.alternatives[0].transcript for result in response.results]
+                            )
 
                             # Log detected language if available
                             if response.results[0].language_code:
@@ -999,28 +1064,36 @@ def chat():
                             response = client.recognize(config=fallback_config, audio=audio)
 
                             if response.results:
-                                extracted_audio_text = ' '.join([result.alternatives[0].transcript for result in response.results])
+                                extracted_audio_text = ' '.join(
+                                    [result.alternatives[0].transcript for result in response.results]
+                                )
                                 logger.info(f"Speech-to-Text extracted (fallback): {extracted_audio_text}")
                             else:
                                 logger.warning("Speech-to-Text found no speech in audio")
-                                return jsonify({
-                                    'success': False,
-                                    'error': 'Could not understand the audio. Please speak clearly or use text/image input.'
-                                }), 400
+                                return jsonify(
+                                    {
+                                        'success': False,
+                                        'error': 'Could not understand the audio. Please speak clearly or use text/image input.',
+                                    }
+                                ), 400
 
                     except Exception as recognition_error:
                         logger.error(f"Recognition error: {str(recognition_error)}")
-                        return jsonify({
-                            'success': False,
-                            'error': 'Audio transcription failed. Please try again or use text/image input.'
-                        }), 500
+                        return jsonify(
+                            {
+                                'success': False,
+                                'error': 'Audio transcription failed. Please try again or use text/image input.',
+                            }
+                        ), 500
 
                 except Exception as stt_error:
                     logger.error(f"Speech-to-Text error: {str(stt_error)}")
-                    return jsonify({
-                        'success': False,
-                        'error': 'Audio transcription service is not available. Please use text or image input.'
-                    }), 500
+                    return jsonify(
+                        {
+                            'success': False,
+                            'error': 'Audio transcription service is not available. Please use text or image input.',
+                        }
+                    ), 500
 
                 # Append transcribed text to message
                 if message.strip():
@@ -1032,10 +1105,7 @@ def chat():
 
             except Exception as audio_error:
                 logger.error(f"Audio processing error: {str(audio_error)}")
-                return jsonify({
-                    'success': False,
-                    'error': f'Error processing audio: {str(audio_error)}'
-                }), 500
+                return jsonify({'success': False, 'error': f'Error processing audio: {str(audio_error)}'}), 500
 
         # =====================================================================
         # OCR PROCESSING - Extract text from image if provided
@@ -1059,10 +1129,12 @@ def chat():
 
                 # Validate image size
                 if len(image_bytes) < 100:
-                    return jsonify({
-                        'success': False,
-                        'error': 'Image data appears to be invalid or corrupted. Please try uploading again.'
-                    }), 400
+                    return jsonify(
+                        {
+                            'success': False,
+                            'error': 'Image data appears to be invalid or corrupted. Please try uploading again.',
+                        }
+                    ), 400
 
                 # Use Cloud Vision OCR (primary) or Tesseract (fallback)
                 from flask import current_app
@@ -1079,6 +1151,7 @@ def chat():
                     import io
 
                     import PIL.Image
+
                     img = PIL.Image.open(io.BytesIO(image_bytes))
                     # Tesseract returns dict with 'text' key
                     ocr_result = current_app.tesseract_ocr.extract_text(img)
@@ -1087,17 +1160,18 @@ def chat():
 
                 else:
                     logger.error("No OCR service available")
-                    return jsonify({
-                        'success': False,
-                        'error': 'OCR service is not available. Please contact support.'
-                    }), 500
+                    return jsonify(
+                        {'success': False, 'error': 'OCR service is not available. Please contact support.'}
+                    ), 500
 
                 if not extracted_ocr_text:
                     logger.warning("OCR extracted no text from image")
-                    return jsonify({
-                        'success': False,
-                        'error': 'Could not extract any text from the image. Please ensure the image contains clear, readable Sanskrit text.'
-                    }), 400
+                    return jsonify(
+                        {
+                            'success': False,
+                            'error': 'Could not extract any text from the image. Please ensure the image contains clear, readable Sanskrit text.',
+                        }
+                    ), 400
 
                 # Append extracted text to user message
                 if message.strip():
@@ -1109,10 +1183,7 @@ def chat():
 
             except Exception as ocr_error:
                 logger.error(f"OCR processing error: {str(ocr_error)}")
-                return jsonify({
-                    'success': False,
-                    'error': f'Error processing image: {str(ocr_error)}'
-                }), 500
+                return jsonify({'success': False, 'error': f'Error processing image: {str(ocr_error)}'}), 500
 
         # Initialize conversation if new
         if conversation_id not in conversations:
@@ -1138,37 +1209,43 @@ def chat():
             agentic_response = format_meter_response(meter_analysis, persona, requested_fields, add_analyze_link=True)
 
             # Store conversation with meter data and image
-            conversations[conversation_id].append({
-                'role': 'user',
-                'content': message,
-                'timestamp': datetime.now().isoformat(),
-                'has_image': bool(image_preview_data),
-                'has_audio': bool(audio_data),
-                'image_data': image_preview_data,  # Store image for display
-                'ocr_text': extracted_ocr_text,
-                'meter_intent_detected': True
-            })
+            conversations[conversation_id].append(
+                {
+                    'role': 'user',
+                    'content': message,
+                    'timestamp': datetime.now().isoformat(),
+                    'has_image': bool(image_preview_data),
+                    'has_audio': bool(audio_data),
+                    'image_data': image_preview_data,  # Store image for display
+                    'ocr_text': extracted_ocr_text,
+                    'meter_intent_detected': True,
+                }
+            )
 
-            conversations[conversation_id].append({
-                'role': 'assistant',
-                'content': agentic_response,
-                'timestamp': datetime.now().isoformat(),
-                'confidence': 0.95 if meter_analysis.get('found') else 0.75,
-                'persona': persona,
-                'meter_analysis': meter_analysis,
-                'agentic_action': 'meter_identification'
-            })
+            conversations[conversation_id].append(
+                {
+                    'role': 'assistant',
+                    'content': agentic_response,
+                    'timestamp': datetime.now().isoformat(),
+                    'confidence': 0.95 if meter_analysis.get('found') else 0.75,
+                    'persona': persona,
+                    'meter_analysis': meter_analysis,
+                    'agentic_action': 'meter_identification',
+                }
+            )
 
-            return jsonify({
-                'success': True,
-                'response': agentic_response,
-                'confidence': 0.95 if meter_analysis.get('found') else 0.75,
-                'conversation_id': conversation_id,
-                'persona': PERSONAS[persona]['name'],
-                'timestamp': datetime.now().isoformat(),
-                'agentic_action': 'meter_identification',
-                'meter_data': meter_analysis
-            })
+            return jsonify(
+                {
+                    'success': True,
+                    'response': agentic_response,
+                    'confidence': 0.95 if meter_analysis.get('found') else 0.75,
+                    'conversation_id': conversation_id,
+                    'persona': PERSONAS[persona]['name'],
+                    'timestamp': datetime.now().isoformat(),
+                    'agentic_action': 'meter_identification',
+                    'meter_data': meter_analysis,
+                }
+            )
 
         # =====================================================================
         # REGULAR AI CHAT (No meter intent detected)
@@ -1183,7 +1260,9 @@ def chat():
         # Lazy-load RAG engine on first request
         rag_engine = get_rag_engine()
 
-        logger.info(f"🔍 RAG Check: rag_engine={rag_engine is not None}, is_ready={rag_engine.is_ready() if rag_engine else False}")
+        logger.info(
+            f"🔍 RAG Check: rag_engine={rag_engine is not None}, is_ready={rag_engine.is_ready() if rag_engine else False}"
+        )
 
         if rag_engine and rag_engine.is_ready():
             try:
@@ -1193,7 +1272,7 @@ def chat():
                 retrieved_docs = rag_engine.retrieve(
                     query=message,
                     k=5,
-                    min_score=0.5  # Lowered threshold from 0.6 to 0.5 for better recall
+                    min_score=0.5,  # Lowered threshold from 0.6 to 0.5 for better recall
                 )
 
                 logger.info(f"📊 RAG: Retrieved {len(retrieved_docs)} documents (threshold: 0.5)")
@@ -1210,7 +1289,7 @@ def chat():
                     rag_context = rag_engine.format_context_for_prompt(
                         documents=retrieved_docs,
                         include_source=True,
-                        max_length=3000  # Leave room for conversation + response
+                        max_length=3000,  # Leave room for conversation + response
                     )
                     logger.info(f"✅ RAG: Using {len(retrieved_docs)} documents ({len(rag_context)} chars context)")
                 else:
@@ -1238,17 +1317,10 @@ def chat():
         history = []
         for conv in conversations[conversation_id][-10:]:  # Last 10 messages
             role = 'user' if conv['role'] == 'user' else 'model'
-            history.append(types.Content(
-                role=role,
-                parts=[types.Part(text=conv['content'])]
-            ))
+            history.append(types.Content(role=role, parts=[types.Part(text=conv['content'])]))
 
         # Create chat session with the new SDK
-        chat = genai_client.chats.create(
-            model='gemini-2.5-flash',
-            config=config,
-            history=history
-        )
+        chat = genai_client.chats.create(model='gemini-2.5-flash', config=config, history=history)
 
         # Enhance message with RAG context if available
         enhanced_message = message
@@ -1271,16 +1343,15 @@ Please answer using the provided context when relevant. Do not include source ci
 
         for attempt in range(max_retries):
             try:
-                logger.info(f"Sending message to Gemini (RAG-enhanced: {bool(rag_context)}, attempt: {attempt + 1}/{max_retries})")
+                logger.info(
+                    f"Sending message to Gemini (RAG-enhanced: {bool(rag_context)}, attempt: {attempt + 1}/{max_retries})"
+                )
                 response = chat.send_message(enhanced_message)
 
                 # Check if response has valid content
                 if not response or not hasattr(response, 'text'):
                     logger.error("Gemini response failed - no text in response")
-                    return jsonify({
-                        'success': False,
-                        'error': 'Unable to generate a response.'
-                    }), 400
+                    return jsonify({'success': False, 'error': 'Unable to generate a response.'}), 400
 
                 response_text = response.text
                 logger.info(f"Gemini response received successfully, length: {len(response_text)}")
@@ -1296,59 +1367,54 @@ Please answer using the provided context when relevant. Do not include source ci
                     if current_key and current_key not in exhausted_keys:
                         exhausted_keys.append(current_key)
 
-                    logger.warning(f"⚠️  API key quota exhausted ({len(exhausted_keys)}/{len(GEMINI_API_KEYS)} keys tried)")
+                    logger.warning(
+                        f"⚠️  API key quota exhausted ({len(exhausted_keys)}/{len(GEMINI_API_KEYS)} keys tried)"
+                    )
 
                     # Try next key if available
                     if attempt < max_retries - 1:
                         try:
                             genai_client = get_gemini_client(exclude_keys=exhausted_keys)
                             # Recreate chat session with new client
-                            chat = genai_client.chats.create(
-                                model='gemini-2.5-flash',
-                                config=config,
-                                history=history
-                            )
+                            chat = genai_client.chats.create(model='gemini-2.5-flash', config=config, history=history)
                             logger.info("🔄 Retrying with different API key...")
                             continue  # Retry with new key
                         except ValueError:
                             # All keys exhausted
                             logger.error(f"❌ All {len(GEMINI_API_KEYS)} API keys quota exhausted")
-                            return jsonify({
-                                'success': False,
-                                'error': 'Service is temporarily busy. All API keys have reached their quota. Please try again later.'
-                            }), 429
+                            return jsonify(
+                                {
+                                    'success': False,
+                                    'error': 'Service is temporarily busy. All API keys have reached their quota. Please try again later.',
+                                }
+                            ), 429
                     else:
                         logger.error("❌ All retry attempts exhausted")
-                        return jsonify({
-                            'success': False,
-                            'error': 'Service is temporarily busy. Please wait a moment and try again.'
-                        }), 429
+                        return jsonify(
+                            {
+                                'success': False,
+                                'error': 'Service is temporarily busy. Please wait a moment and try again.',
+                            }
+                        ), 429
 
                 # Handle other errors
                 logger.error(f"Gemini API error: {error_msg}")
 
                 if 'finish_reason is 2' in error_msg or 'SAFETY' in error_msg:
-                    return jsonify({
-                        'success': False,
-                        'error': 'Content was blocked by safety filters. Please rephrase your question.'
-                    }), 400
+                    return jsonify(
+                        {
+                            'success': False,
+                            'error': 'Content was blocked by safety filters. Please rephrase your question.',
+                        }
+                    ), 400
                 elif 'finish_reason is 3' in error_msg or 'RECITATION' in error_msg:
-                    return jsonify({
-                        'success': False,
-                        'error': 'Content blocked due to recitation policy.'
-                    }), 400
+                    return jsonify({'success': False, 'error': 'Content blocked due to recitation policy.'}), 400
                 else:
-                    return jsonify({
-                        'success': False,
-                        'error': f'Error processing request: {error_msg}'
-                    }), 500
+                    return jsonify({'success': False, 'error': f'Error processing request: {error_msg}'}), 500
 
         # Check if we got a response after all retries
         if response_text is None:
-            return jsonify({
-                'success': False,
-                'error': 'Failed to generate response after all retry attempts.'
-            }), 500
+            return jsonify({'success': False, 'error': 'Failed to generate response after all retry attempts.'}), 500
 
         # Calculate confidence score
         confidence = calculate_confidence_score(response_text, message)
@@ -1356,42 +1422,45 @@ Please answer using the provided context when relevant. Do not include source ci
         # Don't add footer to response text - confidence will be shown in UI metadata only
 
         # Store conversation with image data
-        conversations[conversation_id].append({
-            'role': 'user',
-            'content': message,
-            'timestamp': datetime.now().isoformat(),
-            'has_image': bool(image_preview_data),
-            'has_audio': bool(audio_data),
-            'image_data': image_preview_data,  # Store image for display
-            'ocr_text': extracted_ocr_text
-        })
+        conversations[conversation_id].append(
+            {
+                'role': 'user',
+                'content': message,
+                'timestamp': datetime.now().isoformat(),
+                'has_image': bool(image_preview_data),
+                'has_audio': bool(audio_data),
+                'image_data': image_preview_data,  # Store image for display
+                'ocr_text': extracted_ocr_text,
+            }
+        )
 
-        conversations[conversation_id].append({
-            'role': 'assistant',
-            'content': response_text,
-            'timestamp': datetime.now().isoformat(),
-            'confidence': confidence,
-            'persona': persona,
-            'response_source': 'rag' if rag_context else 'ai',
-            'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
-        })
+        conversations[conversation_id].append(
+            {
+                'role': 'assistant',
+                'content': response_text,
+                'timestamp': datetime.now().isoformat(),
+                'confidence': confidence,
+                'persona': persona,
+                'response_source': 'rag' if rag_context else 'ai',
+                'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0,
+            }
+        )
 
-        return jsonify({
-            'success': True,
-            'response': response_text,
-            'confidence': confidence,
-            'conversation_id': conversation_id,
-            'persona': PERSONAS[persona]['name'],
-            'timestamp': datetime.now().isoformat(),
-            'response_source': 'rag' if rag_context else 'ai',
-            'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0
-        })
+        return jsonify(
+            {
+                'success': True,
+                'response': response_text,
+                'confidence': confidence,
+                'conversation_id': conversation_id,
+                'persona': PERSONAS[persona]['name'],
+                'timestamp': datetime.now().isoformat(),
+                'response_source': 'rag' if rag_context else 'ai',
+                'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0,
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/history/<conversation_id>', methods=['GET'])
@@ -1399,45 +1468,36 @@ def get_history(conversation_id: str):
     """Get conversation history for a specific conversation ID"""
     try:
         if conversation_id not in conversations:
-            return jsonify({
-                'success': False,
-                'error': 'Conversation not found'
-            }), 404
+            return jsonify({'success': False, 'error': 'Conversation not found'}), 404
 
-        return jsonify({
-            'success': True,
-            'conversation_id': conversation_id,
-            'messages': conversations[conversation_id]
-        })
+        return jsonify(
+            {'success': True, 'conversation_id': conversation_id, 'messages': conversations[conversation_id]}
+        )
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/conversations', methods=['GET'])
 def list_conversations():
     """List all conversation IDs"""
     try:
-        return jsonify({
-            'success': True,
-            'conversations': [
-                {
-                    'id': conv_id,
-                    'message_count': len(messages),
-                    'last_updated': messages[-1]['timestamp'] if messages else None
-                }
-                for conv_id, messages in conversations.items()
-            ]
-        })
+        return jsonify(
+            {
+                'success': True,
+                'conversations': [
+                    {
+                        'id': conv_id,
+                        'message_count': len(messages),
+                        'last_updated': messages[-1]['timestamp'] if messages else None,
+                    }
+                    for conv_id, messages in conversations.items()
+                ],
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/clear/<conversation_id>', methods=['DELETE'])
@@ -1447,38 +1507,28 @@ def clear_conversation(conversation_id: str):
         if conversation_id in conversations:
             del conversations[conversation_id]
 
-        return jsonify({
-            'success': True,
-            'message': 'Conversation cleared'
-        })
+        return jsonify({'success': True, 'message': 'Conversation cleared'})
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/personas', methods=['GET'])
 def get_personas():
     """Get available personas"""
     try:
-        return jsonify({
-            'success': True,
-            'personas': {
-                key: {
-                    'name': value['name'],
-                    'description': value['system_instruction'][:200] + '...'
-                }
-                for key, value in PERSONAS.items()
+        return jsonify(
+            {
+                'success': True,
+                'personas': {
+                    key: {'name': value['name'], 'description': value['system_instruction'][:200] + '...'}
+                    for key, value in PERSONAS.items()
+                },
             }
-        })
+        )
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/analyze-meter', methods=['POST'])
@@ -1494,10 +1544,7 @@ def analyze_meter():
         persona = data.get('persona', 'default')
 
         if not text:
-            return jsonify({
-                'success': False,
-                'error': 'Text is required'
-            }), 400
+            return jsonify({'success': False, 'error': 'Text is required'}), 400
 
         # First, analyze the meter using the core chanda module
         # Import here to avoid circular dependencies
@@ -1532,9 +1579,7 @@ def analyze_meter():
         """
 
         response = genai_client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=explanation_prompt,
-            config=config
+            model='gemini-2.5-flash', contents=explanation_prompt, config=config
         )
         explanation = response.text
 
@@ -1544,47 +1589,52 @@ def analyze_meter():
         if conversation_id not in conversations:
             conversations[conversation_id] = []
 
-        conversations[conversation_id].append({
-            'role': 'user',
-            'content': f"Analyze meter: {text}",
-            'timestamp': datetime.now().isoformat(),
-            'type': 'meter_analysis'
-        })
+        conversations[conversation_id].append(
+            {
+                'role': 'user',
+                'content': f"Analyze meter: {text}",
+                'timestamp': datetime.now().isoformat(),
+                'type': 'meter_analysis',
+            }
+        )
 
-        conversations[conversation_id].append({
-            'role': 'assistant',
-            'content': explanation,
-            'timestamp': datetime.now().isoformat(),
-            'confidence': confidence,
-            'persona': persona,
-            'meter_data': meter_result
-        })
+        conversations[conversation_id].append(
+            {
+                'role': 'assistant',
+                'content': explanation,
+                'timestamp': datetime.now().isoformat(),
+                'confidence': confidence,
+                'persona': persona,
+                'meter_data': meter_result,
+            }
+        )
 
-        return jsonify({
-            'success': True,
-            'meter': meter_result.get('display_chanda_primary'),
-            'lg_pattern': ''.join(meter_result.get('display_lg', [])),
-            'syllables': meter_result.get('display_length'),
-            'matra': meter_result.get('display_matra'),
-            'explanation': explanation,
-            'confidence': confidence,
-            'conversation_id': conversation_id,
-            'full_analysis': meter_result
-        })
+        return jsonify(
+            {
+                'success': True,
+                'meter': meter_result.get('display_chanda_primary'),
+                'lg_pattern': ''.join(meter_result.get('display_lg', [])),
+                'syllables': meter_result.get('display_length'),
+                'matra': meter_result.get('display_matra'),
+                'explanation': explanation,
+                'confidence': confidence,
+                'conversation_id': conversation_id,
+                'full_analysis': meter_result,
+            }
+        )
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @chatbot_bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
-    return jsonify({
-        'success': True,
-        'status': 'healthy',
-        'api_keys_configured': len(GEMINI_API_KEYS),
-        'personas_available': list(PERSONAS.keys())
-    })
+    return jsonify(
+        {
+            'success': True,
+            'status': 'healthy',
+            'api_keys_configured': len(GEMINI_API_KEYS),
+            'personas_available': list(PERSONAS.keys()),
+        }
+    )

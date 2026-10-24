@@ -40,16 +40,7 @@ def calculate_matra(pattern):
 
 def convert_to_gana_notation(pattern):
     """Convert L-G pattern to gana notation (य र त न भ ज स म)"""
-    gana_map = {
-        'LGG': 'य',
-        'GLG': 'र',
-        'GGL': 'त',
-        'LLL': 'न',
-        'GLL': 'भ',
-        'LGL': 'ज',
-        'LLG': 'स',
-        'GGG': 'म'
-    }
+    gana_map = {'LGG': 'य', 'GLG': 'र', 'GGL': 'त', 'LLL': 'न', 'GLL': 'भ', 'LGL': 'ज', 'LLG': 'स', 'GGG': 'म'}
 
     if not pattern or not re.match(r'^[LG]+$', pattern):
         return ''
@@ -58,7 +49,7 @@ def convert_to_gana_notation(pattern):
     i = 0
     while i < len(pattern):
         if i + 3 <= len(pattern):
-            triplet = pattern[i:i+3]
+            triplet = pattern[i : i + 3]
             if triplet in gana_map:
                 gana_str += gana_map[triplet]
                 i += 3
@@ -130,12 +121,14 @@ def process_json_files():
                     odd_pattern = clean_pattern(pattern_data[0])
                     even_pattern = clean_pattern(pattern_data[1])
                     if odd_pattern and even_pattern:
-                        ardhasama_meters.append({
-                            'name': name,
-                            'odd_pattern': odd_pattern,
-                            'even_pattern': even_pattern,
-                            'source': json_file
-                        })
+                        ardhasama_meters.append(
+                            {
+                                'name': name,
+                                'odd_pattern': odd_pattern,
+                                'even_pattern': even_pattern,
+                                'source': json_file,
+                            }
+                        )
                         total_imported += 1
                     else:
                         skipped += 1
@@ -144,14 +137,16 @@ def process_json_files():
                     # Vishama (4 different pada patterns)
                     patterns = [clean_pattern(p) for p in pattern_data]
                     if all(patterns):
-                        vishama_meters.append({
-                            'name': name,
-                            'pada1': patterns[0],
-                            'pada2': patterns[1],
-                            'pada3': patterns[2],
-                            'pada4': patterns[3],
-                            'source': json_file
-                        })
+                        vishama_meters.append(
+                            {
+                                'name': name,
+                                'pada1': patterns[0],
+                                'pada2': patterns[1],
+                                'pada3': patterns[2],
+                                'pada4': patterns[3],
+                                'source': json_file,
+                            }
+                        )
                         total_imported += 1
                     else:
                         skipped += 1
@@ -163,14 +158,16 @@ def process_json_files():
                 syllables = calculate_syllables(pattern)
                 matra = calculate_matra(pattern)
 
-                sama_meters.append({
-                    'name': name,
-                    'gana': gana,
-                    'pattern': pattern.lower(),
-                    'syllables': syllables,
-                    'matra': matra,
-                    'source': json_file
-                })
+                sama_meters.append(
+                    {
+                        'name': name,
+                        'gana': gana,
+                        'pattern': pattern.lower(),
+                        'syllables': syllables,
+                        'matra': matra,
+                        'source': json_file,
+                    }
+                )
                 total_imported += 1
             elif pattern:
                 # Non-standard pattern
@@ -197,15 +194,17 @@ def process_json_files():
         # Match our existing format: वृत्त,पद,लक्षण,लक्षण (raw),अक्षरसङ्ख्या,मात्रा,यति
         writer.writerow(['वृत्त', 'पद', 'लक्षण', 'लक्षण (raw)', 'अक्षरसङ्ख्या', 'मात्रा', 'यति'])
         for meter in sorted(sama_meters, key=lambda x: x['name']):
-            writer.writerow([
-                meter['name'],
-                '',  # पद (empty)
-                meter['gana'],
-                meter['pattern'],
-                meter['syllables'],
-                meter['matra'],
-                ''  # यति (empty)
-            ])
+            writer.writerow(
+                [
+                    meter['name'],
+                    '',  # पद (empty)
+                    meter['gana'],
+                    meter['pattern'],
+                    meter['syllables'],
+                    meter['matra'],
+                    '',  # यति (empty)
+                ]
+            )
     print(f"Written {len(sama_meters)} sama meters to {sama_output}")
 
     # Write ardhasama meters
@@ -217,13 +216,15 @@ def process_json_files():
             odd_syllables = calculate_syllables(meter['odd_pattern'])
             even_syllables = calculate_syllables(meter['even_pattern'])
             total_syllables = (odd_syllables + even_syllables) * 2
-            writer.writerow([
-                meter['name'],
-                meter['odd_pattern'].lower(),
-                meter['even_pattern'].lower(),
-                total_syllables,
-                meter['source']
-            ])
+            writer.writerow(
+                [
+                    meter['name'],
+                    meter['odd_pattern'].lower(),
+                    meter['even_pattern'].lower(),
+                    total_syllables,
+                    meter['source'],
+                ]
+            )
     print(f"Written {len(ardhasama_meters)} ardhasama meters to {ardhasama_output}")
 
     # Write vishama meters
@@ -232,21 +233,25 @@ def process_json_files():
         writer = csv.writer(f)
         writer.writerow(['वृत्त', 'पद-1', 'पद-2', 'पद-3', 'पद-4', 'अक्षरसङ्ख्या', 'source'])
         for meter in sorted(vishama_meters, key=lambda x: x['name']):
-            total_syllables = sum([
-                calculate_syllables(meter['pada1']),
-                calculate_syllables(meter['pada2']),
-                calculate_syllables(meter['pada3']),
-                calculate_syllables(meter['pada4'])
-            ])
-            writer.writerow([
-                meter['name'],
-                meter['pada1'].lower(),
-                meter['pada2'].lower(),
-                meter['pada3'].lower(),
-                meter['pada4'].lower(),
-                total_syllables,
-                meter['source']
-            ])
+            total_syllables = sum(
+                [
+                    calculate_syllables(meter['pada1']),
+                    calculate_syllables(meter['pada2']),
+                    calculate_syllables(meter['pada3']),
+                    calculate_syllables(meter['pada4']),
+                ]
+            )
+            writer.writerow(
+                [
+                    meter['name'],
+                    meter['pada1'].lower(),
+                    meter['pada2'].lower(),
+                    meter['pada3'].lower(),
+                    meter['pada4'].lower(),
+                    total_syllables,
+                    meter['source'],
+                ]
+            )
     print(f"Written {len(vishama_meters)} vishama meters to {vishama_output}")
 
     # Save regex meters info for manual review

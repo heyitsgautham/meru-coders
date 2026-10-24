@@ -22,10 +22,10 @@ socketio = None
 def init_socketio(app):
     """
     Initialize SocketIO with the Flask app.
-    
+
     Args:
         app: Flask application instance
-        
+
     Returns:
         SocketIO: Configured SocketIO instance
     """
@@ -38,7 +38,7 @@ def init_socketio(app):
         logger=True,
         engineio_logger=True,
         ping_timeout=60,
-        ping_interval=25
+        ping_interval=25,
     )
 
     # Register event handlers
@@ -57,21 +57,17 @@ def get_socketio():
 def verify_socket_token(token):
     """
     Verify JWT token for WebSocket authentication.
-    
+
     Args:
         token: JWT token string
-        
+
     Returns:
         dict: User data if valid, None otherwise
     """
     try:
         from backend.config import settings
 
-        payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=['HS256']
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         return {'id': payload.get('sub'), 'email': payload.get('email')}
     except jwt.ExpiredSignatureError:
         logger.warning("WebSocket auth: Token expired")
@@ -112,10 +108,7 @@ def register_handlers():
         logger.info(f"WebSocket client connected: user {user_id}, sid {request.sid}")
 
         # Send connection confirmation
-        emit('connected', {
-            'message': 'Connected to notification server',
-            'user_id': user_id
-        })
+        emit('connected', {'message': 'Connected to notification server', 'user_id': user_id})
 
     @socketio.on('disconnect')
     def handle_disconnect():
@@ -138,10 +131,7 @@ def register_handlers():
         user_id = user['id']
         join_room(f"notifications_{user_id}")
 
-        emit('subscribed', {
-            'channel': 'notifications',
-            'user_id': user_id
-        })
+        emit('subscribed', {'channel': 'notifications', 'user_id': user_id})
         logger.info(f"User {user_id} subscribed to notifications")
 
     @socketio.on('unsubscribe_notifications')
@@ -171,14 +161,12 @@ def register_handlers():
 
         try:
             from backend.models.community import CommunityModel
+
             community_model = CommunityModel()
 
             result = community_model.mark_notification_read(notification_id, user['id'])
             if result.get('success'):
-                emit('notification_read', {
-                    'notification_id': notification_id,
-                    'success': True
-                })
+                emit('notification_read', {'notification_id': notification_id, 'success': True})
             else:
                 emit('error', {'message': result.get('error', 'Failed to mark as read')})
         except Exception as e:
@@ -194,7 +182,7 @@ def register_handlers():
 def send_notification_to_user(user_id: str, notification: dict):
     """
     Send a real-time notification to a specific user.
-    
+
     Args:
         user_id: Target user's ID
         notification: Notification data to send
@@ -207,11 +195,7 @@ def send_notification_to_user(user_id: str, notification: dict):
 
     try:
         # Emit to user's personal room
-        socketio.emit(
-            'new_notification',
-            notification,
-            room=f"user_{user_id}"
-        )
+        socketio.emit('new_notification', notification, room=f"user_{user_id}")
         logger.info(f"Sent real-time notification to user {user_id}")
     except Exception as e:
         logger.error(f"Failed to send notification to user {user_id}: {e}")
@@ -220,7 +204,7 @@ def send_notification_to_user(user_id: str, notification: dict):
 def broadcast_notification(notification: dict, room: str = None):
     """
     Broadcast a notification to all connected clients or a specific room.
-    
+
     Args:
         notification: Notification data to send
         room: Optional room to broadcast to (None = all clients)
@@ -244,7 +228,7 @@ def broadcast_notification(notification: dict, room: str = None):
 def emit_notification_count(user_id: str, count: int):
     """
     Send updated unread notification count to a user.
-    
+
     Args:
         user_id: Target user's ID
         count: New unread count
@@ -255,10 +239,6 @@ def emit_notification_count(user_id: str, count: int):
         return
 
     try:
-        socketio.emit(
-            'notification_count',
-            {'unread_count': count},
-            room=f"user_{user_id}"
-        )
+        socketio.emit('notification_count', {'unread_count': count}, room=f"user_{user_id}")
     except Exception as e:
         logger.error(f"Failed to send notification count: {e}")

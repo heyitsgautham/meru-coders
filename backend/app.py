@@ -39,13 +39,15 @@ from backend.ocr import CloudVisionOCR, TesseractOCR  # noqa: E402
 def create_app():
     """
     Create and configure the Flask REST API application.
-    
+
     Returns:
         Flask: Configured Flask application instance
     """
-    app = Flask(__name__,
-                static_folder=None,  # No static files in API
-                template_folder=None)  # No templates in API
+    app = Flask(
+        __name__,
+        static_folder=None,  # No static files in API
+        template_folder=None,
+    )  # No templates in API
 
     # Load configuration
     app.config['SECRET_KEY'] = settings.SECRET_KEY
@@ -54,43 +56,44 @@ def create_app():
     app.config['CORS_ORIGINS'] = settings.CORS_ORIGINS  # For SocketIO
 
     # Configure logging
-    logging.basicConfig(
-        level=getattr(logging, settings.LOG_LEVEL),
-        format=settings.LOG_FORMAT
-    )
+    logging.basicConfig(level=getattr(logging, settings.LOG_LEVEL), format=settings.LOG_FORMAT)
     app.logger.setLevel(getattr(logging, settings.LOG_LEVEL))
 
     # Enable CORS for frontend
     # Allow all origins for development - handles localhost and local network IPs
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": "*",
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": "*",
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+            },
+            r"/health": {
+                "origins": "*",
+                "methods": ["GET", "OPTIONS"],
+            },
+            r"/auth/*": {
+                "origins": "*",
+                "methods": ["GET", "POST", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+            },
+            r"/socket.io/*": {
+                "origins": settings.CORS_ORIGINS,
+                "methods": ["GET", "POST", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+            },
         },
-        r"/health": {
-            "origins": "*",
-            "methods": ["GET", "OPTIONS"],
-        },
-        r"/auth/*": {
-            "origins": "*",
-            "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
-        },
-        r"/socket.io/*": {
-            "origins": settings.CORS_ORIGINS,
-            "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
-        }
-    })
+    )
 
     # Initialize WebSocket support
     global socketio
     app.logger.info("Initializing Flask-SocketIO...")
     try:
         from backend.api.websocket import init_socketio
+
         socketio = init_socketio(app)
         app.socketio = socketio
         app.logger.info("Flask-SocketIO initialized successfully")
@@ -104,7 +107,7 @@ def create_app():
         app=app,
         key_func=get_remote_address,
         default_limits=[settings.RATELIMIT_DEFAULT],
-        storage_uri=settings.RATELIMIT_STORAGE_URL
+        storage_uri=settings.RATELIMIT_STORAGE_URL,
     )
     app.limiter = limiter
 
@@ -112,11 +115,9 @@ def create_app():
     app.logger.info("Initializing Supabase client...")
     try:
         from supabase import Client, create_client
+
         if settings.SUPABASE_URL and settings.SUPABASE_SERVICE_KEY:
-            app.supabase: Client = create_client(
-                settings.SUPABASE_URL,
-                settings.SUPABASE_SERVICE_KEY
-            )
+            app.supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
             # Expose via config for auth module
             app.config['SUPABASE_CLIENT'] = app.supabase
             app.logger.info("Supabase client initialized successfully")
@@ -131,17 +132,12 @@ def create_app():
 
     # Initialize core components
     app.logger.info("Initializing Chanda Analyzer...")
-    app.chanda = Chanda(
-        data_path=str(settings.DATA_DIR),
-        syllabization_method=settings.SYLLABIZATION_METHOD
-    )
+    app.chanda = Chanda(data_path=str(settings.DATA_DIR), syllabization_method=settings.SYLLABIZATION_METHOD)
 
     # Initialize Tesseract OCR
     app.logger.info("Initializing Tesseract OCR...")
     try:
-        app.tesseract_ocr = TesseractOCR(
-            languages=settings.TESSERACT_LANGUAGES
-        )
+        app.tesseract_ocr = TesseractOCR(languages=settings.TESSERACT_LANGUAGES)
         app.logger.info("Tesseract OCR initialized successfully")
     except Exception as e:
         app.logger.warning(f"Tesseract OCR not available: {e}")
@@ -164,17 +160,14 @@ def create_app():
 
     # Register API routes
     from backend.api import register_routes
+
     register_routes(app)
 
     # Health check endpoint
     @app.route('/health', methods=['GET'])
     def health_check():
         """Health check endpoint for monitoring."""
-        return {
-            'status': 'healthy',
-            'service': 'Sanskrit Meter Identification API',
-            'version': '2.0.0'
-        }
+        return {'status': 'healthy', 'service': 'Sanskrit Meter Identification API', 'version': '2.0.0'}
 
     # API info endpoint
     @app.route(f'{settings.API_PREFIX}/info', methods=['GET'])
@@ -191,20 +184,20 @@ def create_app():
                 'file_extract': f'{settings.API_PREFIX}/file/extract',
                 'ocr_extract': f'{settings.API_PREFIX}/ocr/extract',
                 'download': f'{settings.API_PREFIX}/download/<filename>',
-                'examples': f'{settings.API_PREFIX}/examples'
+                'examples': f'{settings.API_PREFIX}/examples',
             },
             'ocr_available': {
                 'tesseract': app.tesseract_ocr is not None,
                 'cloud_vision': app.cloud_vision_ocr is not None,
-                'primary': 'cloud_vision' if app.cloud_vision_ocr else ('tesseract' if app.tesseract_ocr else 'none')
+                'primary': 'cloud_vision' if app.cloud_vision_ocr else ('tesseract' if app.tesseract_ocr else 'none'),
             },
             'features': {
                 'sandhi_splitting': True,
                 'fuzzy_matching': True,
                 'verse_mode': True,
                 'multiple_schemes': True,
-                'multi_format_upload': True  # DOCX, TXT support
-            }
+                'multi_format_upload': True,  # DOCX, TXT support
+            },
         }
 
     # Initialize background scheduler for upload cleanup
@@ -219,7 +212,7 @@ def create_app():
             minutes=settings.CLEANUP_INTERVAL_MINUTES,
             id='upload_cleanup',
             name='Upload files cleanup job',
-            replace_existing=True
+            replace_existing=True,
         )
         scheduler.start()
         app.scheduler = scheduler

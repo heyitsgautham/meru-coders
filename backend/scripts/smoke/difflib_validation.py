@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Test the improved sloka validation with difflib"""
 
-
 import requests
 
 # Test with a slightly modified sloka (3 intentional changes)
@@ -16,9 +15,7 @@ print("Testing sloka validation with difflib algorithm...")
 print(f"\nInput: {test_text}")
 print("-" * 60)
 
-response = requests.post('http://localhost:5000/api/sloka/validate', json={
-    'text': test_text
-})
+response = requests.post('http://localhost:5000/api/sloka/validate', json={'text': test_text})
 
 print(f"Status: {response.status_code}")
 data = response.json()
@@ -49,9 +46,7 @@ print("Testing with exact match...")
 
 exact_text = "माता रामो मत्पिता रामचन्द्रः स्वामी रामो मत्सखा रामचन्द्रः । सर्वस्वं मे रामचन्द्रो दयालु- र्नान्यं जाने नैव जाने न जाने ॥"
 
-response2 = requests.post('http://localhost:5000/api/sloka/validate', json={
-    'text': exact_text
-})
+response2 = requests.post('http://localhost:5000/api/sloka/validate', json={'text': exact_text})
 
 data2 = response2.json()
 if data2.get('success') and data2.get('found'):

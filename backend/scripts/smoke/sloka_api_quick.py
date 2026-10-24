@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 """Quick test for Sloka Search API"""
 
-
 import requests
 
 # Test the sloka search endpoint with the first Rigveda verse
-response = requests.post('http://localhost:5000/api/sloka/search', json={
-    'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं',
-    'threshold': 0.5,
-    'limit': 5
-})
+response = requests.post(
+    'http://localhost:5000/api/sloka/search',
+    json={'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं', 'threshold': 0.5, 'limit': 5},
+)
 
 print('Status:', response.status_code)
 data = response.json()
@@ -23,7 +21,7 @@ print('Best Similarity:', data.get('best_similarity'))
 if data.get('matches'):
     print('\n--- Matches ---')
     for i, match in enumerate(data['matches'][:3]):
-        print(f'\nMatch {i+1}:')
+        print(f'\nMatch {i + 1}:')
         print(f'  Similarity: {match["similarity"]}')
         print(f'  Exact: {match["is_exact_match"]}')
         print(f'  Chandas: {match["chandas"]}')
@@ -36,9 +34,12 @@ else:
 
 # Test with a modified (erroneous) verse
 print('\n\n=== Testing with a slightly wrong verse ===')
-response2 = requests.post('http://localhost:5000/api/sloka/validate', json={
-    'text': 'अग्निमीले पुरोहितम यज्ञस्य देवमृत्विजम'  # Wrong spelling: मीले instead of मीळे
-})
+response2 = requests.post(
+    'http://localhost:5000/api/sloka/validate',
+    json={
+        'text': 'अग्निमीले पुरोहितम यज्ञस्य देवमृत्विजम'  # Wrong spelling: मीले instead of मीळे
+    },
+)
 
 data2 = response2.json()
 print('Status:', response2.status_code)

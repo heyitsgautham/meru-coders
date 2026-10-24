@@ -29,20 +29,20 @@ def test_comparison():
             'name': 'Bhagavad Gita 1.1 (Anushtubh)',
             'text': 'धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः । मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ॥',
             'expected_syllables': 32,
-            'expected_meter': 'अनुष्टुभ्'
+            'expected_meter': 'अनुष्टुभ्',
         },
         {
             'name': 'Bhagavad Gita 2.47 (Anushtubh)',
             'text': 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन । मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥',
             'expected_syllables': 32,
-            'expected_meter': 'अनुष्टुभ्'
+            'expected_meter': 'अनुष्टुभ्',
         },
         {
             'name': 'Gayatri Mantra',
             'text': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्',
             'expected_syllables': 24,
-            'expected_meter': 'गायत्री'
-        }
+            'expected_meter': 'गायत्री',
+        },
     ]
 
     # Test with original method
@@ -69,14 +69,16 @@ def test_comparison():
         line_results = result['result']['line']
         total_syllables = sum(len(lr['result'].get('lg', [])) for lr in line_results)
 
-        original_results.append({
-            'name': test['name'],
-            'syllables': total_syllables,
-            'expected_syllables': test['expected_syllables'],
-            'meter': best_meter,
-            'expected_meter': test['expected_meter'],
-            'confidence': confidence
-        })
+        original_results.append(
+            {
+                'name': test['name'],
+                'syllables': total_syllables,
+                'expected_syllables': test['expected_syllables'],
+                'meter': best_meter,
+                'expected_meter': test['expected_meter'],
+                'confidence': confidence,
+            }
+        )
 
         syllable_correct = '✓' if total_syllables == test['expected_syllables'] else '✗'
         meter_correct = '✓' if test['expected_meter'] in str(best_meter) else '✗'
@@ -112,14 +114,16 @@ def test_comparison():
             line_results = result['result']['line']
             total_syllables = sum(len(lr['result'].get('lg', [])) for lr in line_results)
 
-            hybrid_results.append({
-                'name': test['name'],
-                'syllables': total_syllables,
-                'expected_syllables': test['expected_syllables'],
-                'meter': best_meter,
-                'expected_meter': test['expected_meter'],
-                'confidence': confidence
-            })
+            hybrid_results.append(
+                {
+                    'name': test['name'],
+                    'syllables': total_syllables,
+                    'expected_syllables': test['expected_syllables'],
+                    'meter': best_meter,
+                    'expected_meter': test['expected_meter'],
+                    'confidence': confidence,
+                }
+            )
 
             syllable_correct = '✓' if total_syllables == test['expected_syllables'] else '✗'
             meter_correct = '✓' if test['expected_meter'] in str(best_meter) else '✗'
@@ -145,13 +149,17 @@ def test_comparison():
         total_tests = len(test_cases)
 
         print("Syllable Counting Accuracy:")
-        print(f"  Original: {original_syllable_correct}/{total_tests} ({original_syllable_correct/total_tests*100:.1f}%)")
-        print(f"  Hybrid:   {hybrid_syllable_correct}/{total_tests} ({hybrid_syllable_correct/total_tests*100:.1f}%)")
+        print(
+            f"  Original: {original_syllable_correct}/{total_tests} ({original_syllable_correct / total_tests * 100:.1f}%)"
+        )
+        print(
+            f"  Hybrid:   {hybrid_syllable_correct}/{total_tests} ({hybrid_syllable_correct / total_tests * 100:.1f}%)"
+        )
         print()
 
         print("Meter Identification Accuracy:")
-        print(f"  Original: {original_meter_correct}/{total_tests} ({original_meter_correct/total_tests*100:.1f}%)")
-        print(f"  Hybrid:   {hybrid_meter_correct}/{total_tests} ({hybrid_meter_correct/total_tests*100:.1f}%)")
+        print(f"  Original: {original_meter_correct}/{total_tests} ({original_meter_correct / total_tests * 100:.1f}%)")
+        print(f"  Hybrid:   {hybrid_meter_correct}/{total_tests} ({hybrid_meter_correct / total_tests * 100:.1f}%)")
         print()
 
         if hybrid_syllable_correct >= original_syllable_correct and hybrid_meter_correct >= original_meter_correct:
@@ -160,7 +168,9 @@ def test_comparison():
             print("   ✓ Equal or better meter identification")
         else:
             print("📊 MIXED RESULTS")
-            print(f"   Syllable: {'Hybrid' if hybrid_syllable_correct > original_syllable_correct else 'Original'} wins")
+            print(
+                f"   Syllable: {'Hybrid' if hybrid_syllable_correct > original_syllable_correct else 'Original'} wins"
+            )
             print(f"   Meter: {'Hybrid' if hybrid_meter_correct > original_meter_correct else 'Original'} wins")
     else:
         print("\n⚠️  Skipping hybrid test - PyICU not installed")
@@ -187,6 +197,7 @@ def test_comparison():
         print("   - Better handling of conjunct characters")
         print("   - Superior Unicode support")
     print()
+
 
 if __name__ == '__main__':
     test_comparison()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test TTS API with male and female voices"""
+
 import json
 
 import requests
@@ -20,7 +21,7 @@ if result.get('success'):
 else:
     print(f"\n❌ Male voice FAILED: {result.get('error')}")
 
-print("\n" + "="*60 + "\n")
+print("\n" + "=" * 60 + "\n")
 
 # Test female voice
 print("Testing FEMALE voice...")

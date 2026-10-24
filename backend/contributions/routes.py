@@ -2,6 +2,7 @@
 Contributions API Routes
 Handles user submissions of verses and meter definitions
 """
+
 from flask import Blueprint, jsonify, request
 
 from ..auth.middleware import require_admin, require_auth
@@ -32,37 +33,30 @@ def submit_contribution(current_user):
 
         # Validate required fields
         if not data or 'contribution_type' not in data or 'data' not in data:
-            return jsonify({
-                'success': False,
-                'error': 'Missing required fields: contribution_type and data'
-            }), 400
+            return jsonify({'success': False, 'error': 'Missing required fields: contribution_type and data'}), 400
 
         contribution_type = data['contribution_type']
         contribution_data = data['data']
 
         # Validate contribution type
         if contribution_type not in ['verse', 'meter_definition']:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid contribution_type. Must be "verse" or "meter_definition"'
-            }), 400
+            return jsonify(
+                {'success': False, 'error': 'Invalid contribution_type. Must be "verse" or "meter_definition"'}
+            ), 400
 
         # Extract user ID safely
         user_id = _user_id(current_user)
-        current_app.logger.info(f"Submit contribution: user_type={type(current_user).__name__}, user_id={user_id}, contribution_type={contribution_type}")
+        current_app.logger.info(
+            f"Submit contribution: user_type={type(current_user).__name__}, user_id={user_id}, contribution_type={contribution_type}"
+        )
 
         if not user_id:
             current_app.logger.error(f"Unable to extract user ID from: {current_user}")
-            return jsonify({
-                'success': False,
-                'error': 'Unable to identify user'
-            }), 401
+            return jsonify({'success': False, 'error': 'Unable to identify user'}), 401
 
         # Create contribution via Supabase
         result = contribution_model.submit_contribution(
-            user_id=user_id,
-            contribution_type=contribution_type,
-            data=contribution_data
+            user_id=user_id, contribution_type=contribution_type, data=contribution_data
         )
 
         status_code = 201 if result.get('success') else 400
@@ -70,11 +64,9 @@ def submit_contribution(current_user):
 
     except Exception as e:
         from flask import current_app
+
         current_app.logger.error(f"Submit contribution error: {e}", exc_info=True)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @contributions_bp.route('/my-contributions', methods=['GET'])
@@ -89,24 +81,21 @@ def get_my_contributions(current_user):
 
         if not user_id:
             current_app.logger.error(f"Unable to extract user ID from: {current_user}")
-            return jsonify({
-                'success': False,
-                'error': 'Unable to identify user'
-            }), 401
+            return jsonify({'success': False, 'error': 'Unable to identify user'}), 401
 
         result = contribution_model.get_user_contributions(user_id)
-        current_app.logger.info(f"User contributions result: success={result.get('success')}, count={result.get('count')}")
+        current_app.logger.info(
+            f"User contributions result: success={result.get('success')}, count={result.get('count')}"
+        )
 
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
 
     except Exception as e:
         from flask import current_app
+
         current_app.logger.error(f"Get my contributions error: {e}", exc_info=True)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # Admin routes
@@ -120,10 +109,7 @@ def get_pending_contributions(current_user):
         return jsonify(result), status_code
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @contributions_bp.route('/admin/approve/<contribution_id>', methods=['POST'])
@@ -136,19 +122,14 @@ def approve_contribution(current_user, contribution_id):
         review_notes = data.get('review_notes', '')
 
         result = contribution_model.approve_contribution(
-            contribution_id=contribution_id,
-            admin_id=_user_id(current_user),
-            review_notes=review_notes
+            contribution_id=contribution_id, admin_id=_user_id(current_user), review_notes=review_notes
         )
 
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @contributions_bp.route('/admin/reject/<contribution_id>', methods=['POST'])
@@ -161,19 +142,14 @@ def reject_contribution(current_user, contribution_id):
         review_notes = data.get('review_notes', '')
 
         result = contribution_model.reject_contribution(
-            contribution_id=contribution_id,
-            admin_id=_user_id(current_user),
-            review_notes=review_notes
+            contribution_id=contribution_id, admin_id=_user_id(current_user), review_notes=review_notes
         )
 
         status_code = 200 if result.get('success') else 400
         return jsonify(result), status_code
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @contributions_bp.route('/approved', methods=['GET'])
@@ -185,18 +161,13 @@ def get_approved_contributions():
         contribution_type = request.args.get('type', None)
 
         result = contribution_model.get_approved_contributions(
-            limit=limit,
-            offset=offset,
-            contribution_type=contribution_type
+            limit=limit, offset=offset, contribution_type=contribution_type
         )
 
         return jsonify(result), 200
 
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # Aliases to support `/api/contributions/*` paths used by the frontend

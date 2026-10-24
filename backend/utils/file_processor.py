@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 class FileType(Enum):
     """Supported file types."""
+
     PDF = "pdf"
     DOCX = "docx"
     TXT = "txt"
@@ -44,16 +45,13 @@ class FileProcessingError(Exception):
         super().__init__(self.message)
 
     def to_dict(self):
-        return {
-            "error": self.message,
-            "error_code": self.error_code,
-            "details": self.details
-        }
+        return {"error": self.message, "error_code": self.error_code, "details": self.details}
 
 
 @dataclass
 class ExtractionResult:
     """Result of text extraction from a file."""
+
     text: str
     file_type: FileType
     page_count: int
@@ -64,7 +62,7 @@ class ExtractionResult:
 class FileProcessor:
     """
     Processes various file formats and extracts text content.
-    
+
     Features:
     - Multi-format support (PDF, DOCX, TXT)
     - Encoding auto-detection for text files
@@ -95,7 +93,7 @@ class FileProcessor:
     IAST_PATTERN = re.compile(
         r'[āīūṛṝḷḹṃḥśṣṇṭḍñṅĀĪŪṚṜḶḸṂḤŚṢṆṬḌÑṄ]|'  # Special IAST characters
         r'\b(ca|cha|ja|jha|ña|ṭa|ṭha|ḍa|ḍha|ṇa|ta|tha|da|dha|na|pa|pha|ba|bha|ma|ya|ra|la|va|śa|ṣa|sa|ha)\b',
-        re.IGNORECASE
+        re.IGNORECASE,
     )
 
     # Pattern to detect CID (Character ID) markers from PDFs with custom font encodings
@@ -104,7 +102,7 @@ class FileProcessor:
 
     # Minimum Sanskrit character ratio to consider content valid
     MIN_SANSKRIT_RATIO = 0.05  # At least 5% Sanskrit characters
-    MIN_SANSKRIT_CHARS = 5     # At least 5 Sanskrit characters (lowered for IAST compatibility)
+    MIN_SANSKRIT_CHARS = 5  # At least 5 Sanskrit characters (lowered for IAST compatibility)
 
     def __init__(self):
         """Initialize the file processor."""
@@ -120,12 +118,14 @@ class FileProcessor:
 
         try:
             import pdfplumber  # noqa: F401 - availability probe
+
             self._has_pdfplumber = True
         except ImportError:
             logger.warning("pdfplumber not installed")
 
         try:
             import fitz  # noqa: F401 - availability probe
+
             self._has_pymupdf = True
             logger.info("PyMuPDF available for enhanced PDF extraction")
         except ImportError:
@@ -136,18 +136,21 @@ class FileProcessor:
 
         try:
             import docx  # noqa: F401 - availability probe
+
             self._has_docx = True
         except ImportError:
             logger.warning("python-docx not installed - DOCX support disabled")
 
         try:
             import chardet  # noqa: F401 - availability probe
+
             self._has_chardet = True
         except ImportError:
             logger.warning("chardet not installed - encoding detection limited")
 
         try:
             import magic  # noqa: F401 - availability probe
+
             self._has_magic = True
         except ImportError:
             logger.warning("python-magic not installed - MIME detection by extension only")
@@ -161,12 +164,13 @@ class FileProcessor:
     def detect_file_type(self, filepath: Path) -> FileType:
         """
         Detect the actual file type using magic numbers.
-        
+
         Falls back to extension-based detection if python-magic unavailable.
         """
         if self._has_magic:
             try:
                 import magic
+
                 mime = magic.from_file(str(filepath), mime=True)
 
                 if mime in self.MIME_TYPE_MAP:
@@ -193,12 +197,12 @@ class FileProcessor:
     def validate_file(self, filepath: Path) -> Tuple[bool, Optional[str]]:
         """
         Validate file before processing.
-        
+
         Checks:
         - File exists
         - File size within limit
         - Extension is allowed
-        
+
         Returns:
             Tuple of (is_valid, error_message)
         """
@@ -224,7 +228,7 @@ class FileProcessor:
     def validate_sanskrit_content(self, text: str) -> Tuple[bool, Optional[str]]:
         """
         Validate that extracted text contains Sanskrit/Devanagari content.
-        
+
         Returns:
             Tuple of (is_valid, error_message)
         """
@@ -253,7 +257,7 @@ class FileProcessor:
             ratio = total_sanskrit_indicators / text_length
             if ratio < self.MIN_SANSKRIT_RATIO:
                 return False, (
-                    f"Insufficient Sanskrit content ({ratio*100:.1f}% Sanskrit characters). "
+                    f"Insufficient Sanskrit content ({ratio * 100:.1f}% Sanskrit characters). "
                     f"The file appears to contain mostly non-Sanskrit text. "
                     f"Please upload a file with Sanskrit content."
                 )
@@ -263,16 +267,16 @@ class FileProcessor:
     def check_cid_encoding(self, text: str) -> Tuple[bool, float]:
         """
         Check if extracted text contains CID (Character ID) markers.
-        
+
         CID markers like (cid:XX) appear when PDF fonts use custom encodings
         that pdfplumber/pdfminer cannot decode. This is common with:
         - Sanskrit PDFs with embedded Devanagari fonts
         - PDFs created with certain Indian language typesetting software
         - Scanned PDFs with OCR that used custom font mappings
-        
+
         Args:
             text: Extracted text to check
-            
+
         Returns:
             Tuple of (has_cid_issues, cid_ratio)
             - has_cid_issues: True if significant CID markers found
@@ -303,10 +307,10 @@ class FileProcessor:
     def clean_cid_text(self, text: str) -> str:
         """
         Remove CID markers from text and clean up resulting whitespace.
-        
+
         Args:
             text: Text with potential CID markers
-            
+
         Returns:
             Cleaned text with CID markers removed
         """
@@ -322,25 +326,21 @@ class FileProcessor:
         return cleaned.strip()
 
     def extract_from_pdf(
-        self,
-        filepath: Path,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        self, filepath: Path, progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> ExtractionResult:
         """
         Extract text from a PDF file.
-        
+
         Args:
             filepath: Path to the PDF file
             progress_callback: Optional callback(current_page, total_pages)
-        
+
         Raises:
             FileProcessingError: If PDF is corrupted, password-protected, or image-based
         """
         if not self._has_pdfplumber and not self._has_pymupdf:
             raise FileProcessingError(
-                "PDF processing not available",
-                "PDF_UNAVAILABLE",
-                "No PDF library is installed (pdfplumber or PyMuPDF)"
+                "PDF processing not available", "PDF_UNAVAILABLE", "No PDF library is installed (pdfplumber or PyMuPDF)"
             )
 
         # Try pdfplumber first if available
@@ -349,8 +349,9 @@ class FileProcessor:
 
             # If we got CID issues and have PyMuPDF, try that instead
             if result.warnings and self._has_pymupdf:
-                has_cid_warning = any('could not be extracted' in w.lower() or 'text loss' in w.lower()
-                                      for w in result.warnings)
+                has_cid_warning = any(
+                    'could not be extracted' in w.lower() or 'text loss' in w.lower() for w in result.warnings
+                )
                 if has_cid_warning:
                     logger.info("Trying PyMuPDF as fallback due to CID encoding issues")
                     try:
@@ -360,10 +361,14 @@ class FileProcessor:
                         pymupdf_devanagari = len(self.DEVANAGARI_PATTERN.findall(pymupdf_result.text))
 
                         if pymupdf_devanagari > pdfplumber_devanagari:
-                            logger.info(f"PyMuPDF extracted more Sanskrit text ({pymupdf_devanagari} vs {pdfplumber_devanagari} Devanagari chars)")
+                            logger.info(
+                                f"PyMuPDF extracted more Sanskrit text ({pymupdf_devanagari} vs {pdfplumber_devanagari} Devanagari chars)"
+                            )
                             return pymupdf_result
                         else:
-                            logger.info(f"pdfplumber result kept ({pdfplumber_devanagari} vs {pymupdf_devanagari} Devanagari chars)")
+                            logger.info(
+                                f"pdfplumber result kept ({pdfplumber_devanagari} vs {pymupdf_devanagari} Devanagari chars)"
+                            )
                     except Exception as e:
                         logger.warning(f"PyMuPDF fallback failed: {e}")
 
@@ -373,13 +378,11 @@ class FileProcessor:
         return self._extract_pdf_pymupdf(filepath, progress_callback)
 
     def _extract_pdf_pdfplumber(
-        self,
-        filepath: Path,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        self, filepath: Path, progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> ExtractionResult:
         """
         Extract text from PDF using pdfplumber.
-        
+
         Args:
             filepath: Path to the PDF file
             progress_callback: Optional callback(current_page, total_pages)
@@ -395,9 +398,7 @@ class FileProcessor:
 
                 if page_count == 0:
                     raise FileProcessingError(
-                        "PDF file has no pages",
-                        "PDF_EMPTY",
-                        "The uploaded PDF file contains no pages"
+                        "PDF file has no pages", "PDF_EMPTY", "The uploaded PDF file contains no pages"
                     )
 
                 for i, page in enumerate(pdf.pages):
@@ -412,7 +413,7 @@ class FileProcessor:
                         text_parts.append(page_text)
                     else:
                         # Page has no extractable text - might be image-based
-                        logger.warning(f"Page {i+1} has no extractable text")
+                        logger.warning(f"Page {i + 1} has no extractable text")
 
             # Combine all pages
             full_text = '\n\n'.join(text_parts)
@@ -423,7 +424,7 @@ class FileProcessor:
                     "No text could be extracted from PDF",
                     "PDF_NO_TEXT",
                     "This appears to be an image-based or scanned PDF. "
-                    "Please upload a text-based PDF or use the Image OCR feature."
+                    "Please upload a text-based PDF or use the Image OCR feature.",
                 )
 
             # Check for CID encoding issues (common with Sanskrit/Devanagari PDFs)
@@ -456,7 +457,7 @@ class FileProcessor:
                         "**Recommended:** Use the 'Image OCR' feature:\n"
                         "1. Open the PDF in a viewer\n"
                         "2. Take a screenshot of the text\n"
-                        "3. Upload the screenshot using 'Image OCR'"
+                        "3. Upload the screenshot using 'Image OCR'",
                     )
 
                 # We have some usable text! Return it with appropriate warning
@@ -473,9 +474,7 @@ class FileProcessor:
                             "Please verify the text looks correct before analysis."
                         )
                     else:
-                        warning_msg = (
-                            "Minor cleanup was performed on the extracted text."
-                        )
+                        warning_msg = "Minor cleanup was performed on the extracted text."
                 elif devanagari_ratio > 0.15:
                     # Moderate - some content may be missing
                     warning_msg = (
@@ -491,23 +490,14 @@ class FileProcessor:
                     )
 
                 return ExtractionResult(
-                    text=full_text.strip(),
-                    file_type=FileType.PDF,
-                    page_count=page_count,
-                    warnings=[warning_msg]
+                    text=full_text.strip(), file_type=FileType.PDF, page_count=page_count, warnings=[warning_msg]
                 )
 
-            return ExtractionResult(
-                text=full_text.strip(),
-                file_type=FileType.PDF,
-                page_count=page_count
-            )
+            return ExtractionResult(text=full_text.strip(), file_type=FileType.PDF, page_count=page_count)
 
         except pdfplumber.pdfminer.pdfparser.PDFSyntaxError as e:
             raise FileProcessingError(
-                "Corrupted PDF file",
-                "PDF_CORRUPTED",
-                f"The PDF file appears to be corrupted: {str(e)}"
+                "Corrupted PDF file", "PDF_CORRUPTED", f"The PDF file appears to be corrupted: {str(e)}"
             ) from e
         except Exception as e:
             error_str = str(e).lower()
@@ -516,33 +506,25 @@ class FileProcessor:
                 raise FileProcessingError(
                     "Password-protected PDF",
                     "PDF_PASSWORD_PROTECTED",
-                    "This PDF is password-protected. Please remove the password and try again."
+                    "This PDF is password-protected. Please remove the password and try again.",
                 ) from e
 
             if 'invalid' in error_str or 'corrupt' in error_str:
                 raise FileProcessingError(
-                    "Invalid PDF file",
-                    "PDF_INVALID",
-                    f"The file does not appear to be a valid PDF: {str(e)}"
+                    "Invalid PDF file", "PDF_INVALID", f"The file does not appear to be a valid PDF: {str(e)}"
                 ) from e
 
-            raise FileProcessingError(
-                "Failed to process PDF",
-                "PDF_ERROR",
-                str(e)
-            ) from e
+            raise FileProcessingError("Failed to process PDF", "PDF_ERROR", str(e)) from e
 
     def _extract_pdf_pymupdf(
-        self,
-        filepath: Path,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        self, filepath: Path, progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> ExtractionResult:
         """
         Extract text from PDF using PyMuPDF (fitz).
-        
+
         PyMuPDF often handles Sanskrit/Devanagari PDFs better than pdfplumber,
         especially when fonts use custom CID encodings.
-        
+
         Args:
             filepath: Path to the PDF file
             progress_callback: Optional callback(current_page, total_pages)
@@ -558,9 +540,7 @@ class FileProcessor:
 
                 if page_count == 0:
                     raise FileProcessingError(
-                        "PDF file has no pages",
-                        "PDF_EMPTY",
-                        "The uploaded PDF file contains no pages"
+                        "PDF file has no pages", "PDF_EMPTY", "The uploaded PDF file contains no pages"
                     )
 
                 for i, page in enumerate(pdf):
@@ -574,7 +554,7 @@ class FileProcessor:
                     if page_text and page_text.strip():
                         text_parts.append(page_text)
                     else:
-                        logger.warning(f"Page {i+1} has no extractable text (PyMuPDF)")
+                        logger.warning(f"Page {i + 1} has no extractable text (PyMuPDF)")
 
             # Combine all pages
             full_text = '\n\n'.join(text_parts)
@@ -585,7 +565,7 @@ class FileProcessor:
                     "No text could be extracted from PDF",
                     "PDF_NO_TEXT",
                     "This appears to be an image-based or scanned PDF. "
-                    "Please upload a text-based PDF or use the Image OCR feature."
+                    "Please upload a text-based PDF or use the Image OCR feature.",
                 )
 
             # Still check for CID issues (PyMuPDF can also have them, but less often)
@@ -602,7 +582,7 @@ class FileProcessor:
                         "PDF text extraction failed",
                         "PDF_CID_ENCODING",
                         "This PDF uses custom font encoding that could not be decoded. "
-                        "Please use the 'Image OCR' feature with a screenshot of the PDF."
+                        "Please use the 'Image OCR' feature with a screenshot of the PDF.",
                     )
 
                 full_text = cleaned_text
@@ -618,30 +598,21 @@ class FileProcessor:
                         warning_msg = "Minor cleanup was performed on the extracted text."
 
                     return ExtractionResult(
-                        text=full_text.strip(),
-                        file_type=FileType.PDF,
-                        page_count=page_count,
-                        warnings=[warning_msg]
+                        text=full_text.strip(), file_type=FileType.PDF, page_count=page_count, warnings=[warning_msg]
                     )
                 elif devanagari_ratio > 0.15:
                     return ExtractionResult(
                         text=full_text.strip(),
                         file_type=FileType.PDF,
                         page_count=page_count,
-                        warnings=["⚠️ Some characters could not be extracted. Review carefully before analysis."]
+                        warnings=["⚠️ Some characters could not be extracted. Review carefully before analysis."],
                     )
 
-            return ExtractionResult(
-                text=full_text.strip(),
-                file_type=FileType.PDF,
-                page_count=page_count
-            )
+            return ExtractionResult(text=full_text.strip(), file_type=FileType.PDF, page_count=page_count)
 
         except fitz.FileDataError as e:
             raise FileProcessingError(
-                "Corrupted PDF file",
-                "PDF_CORRUPTED",
-                f"The PDF file appears to be corrupted: {str(e)}"
+                "Corrupted PDF file", "PDF_CORRUPTED", f"The PDF file appears to be corrupted: {str(e)}"
             ) from e
         except Exception as e:
             error_str = str(e).lower()
@@ -650,32 +621,24 @@ class FileProcessor:
                 raise FileProcessingError(
                     "Password-protected PDF",
                     "PDF_PASSWORD_PROTECTED",
-                    "This PDF is password-protected. Please remove the password and try again."
+                    "This PDF is password-protected. Please remove the password and try again.",
                 ) from e
 
-            raise FileProcessingError(
-                "Failed to process PDF with PyMuPDF",
-                "PDF_ERROR",
-                str(e)
-            ) from e
+            raise FileProcessingError("Failed to process PDF with PyMuPDF", "PDF_ERROR", str(e)) from e
 
     def extract_from_docx(
-        self,
-        filepath: Path,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        self, filepath: Path, progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> ExtractionResult:
         """
         Extract text from a DOCX file.
-        
+
         Args:
             filepath: Path to the DOCX file
             progress_callback: Optional callback(current_para, total_paras)
         """
         if not self._has_docx:
             raise FileProcessingError(
-                "DOCX processing not available",
-                "DOCX_UNAVAILABLE",
-                "python-docx library is not installed"
+                "DOCX processing not available", "DOCX_UNAVAILABLE", "python-docx library is not installed"
             )
 
         from docx import Document
@@ -698,44 +661,35 @@ class FileProcessor:
 
             if not full_text.strip():
                 raise FileProcessingError(
-                    "No text content in DOCX",
-                    "DOCX_EMPTY",
-                    "The Word document contains no text content"
+                    "No text content in DOCX", "DOCX_EMPTY", "The Word document contains no text content"
                 )
 
             return ExtractionResult(
                 text=full_text.strip(),
                 file_type=FileType.DOCX,
-                page_count=1  # DOCX doesn't have a simple page count
+                page_count=1,  # DOCX doesn't have a simple page count
             )
 
         except PackageNotFoundError:
             raise FileProcessingError(
                 "Invalid DOCX file",
                 "DOCX_INVALID",
-                "The file is not a valid Word document (.docx). "
-                "Note: Legacy .doc files are not supported."
+                "The file is not a valid Word document (.docx). Note: Legacy .doc files are not supported.",
             ) from None
         except Exception as e:
             error_str = str(e).lower()
 
             if 'corrupt' in error_str or 'invalid' in error_str:
                 raise FileProcessingError(
-                    "Corrupted DOCX file",
-                    "DOCX_CORRUPTED",
-                    f"The Word document appears to be corrupted: {str(e)}"
+                    "Corrupted DOCX file", "DOCX_CORRUPTED", f"The Word document appears to be corrupted: {str(e)}"
                 ) from e
 
-            raise FileProcessingError(
-                "Failed to process DOCX",
-                "DOCX_ERROR",
-                str(e)
-            ) from e
+            raise FileProcessingError("Failed to process DOCX", "DOCX_ERROR", str(e)) from e
 
     def detect_encoding(self, filepath: Path) -> str:
         """
         Detect the encoding of a text file.
-        
+
         Returns:
             Detected encoding string (default: 'utf-8')
         """
@@ -766,13 +720,11 @@ class FileProcessor:
             return 'utf-8'
 
     def extract_from_txt(
-        self,
-        filepath: Path,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        self, filepath: Path, progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> ExtractionResult:
         """
         Extract text from a plain text file with encoding auto-detection.
-        
+
         Args:
             filepath: Path to the text file
             progress_callback: Optional callback (not really used for txt)
@@ -787,70 +739,49 @@ class FileProcessor:
                 progress_callback(1, 1)
 
             if not text.strip():
-                raise FileProcessingError(
-                    "Empty text file",
-                    "TXT_EMPTY",
-                    "The text file is empty"
-                )
+                raise FileProcessingError("Empty text file", "TXT_EMPTY", "The text file is empty")
 
-            return ExtractionResult(
-                text=text.strip(),
-                file_type=FileType.TXT,
-                page_count=1,
-                encoding=encoding
-            )
+            return ExtractionResult(text=text.strip(), file_type=FileType.TXT, page_count=1, encoding=encoding)
 
         except UnicodeDecodeError:
             # Try with UTF-8 if detected encoding fails
             try:
                 text = filepath.read_text(encoding='utf-8')
-                return ExtractionResult(
-                    text=text.strip(),
-                    file_type=FileType.TXT,
-                    page_count=1,
-                    encoding='utf-8'
-                )
+                return ExtractionResult(text=text.strip(), file_type=FileType.TXT, page_count=1, encoding='utf-8')
             except UnicodeDecodeError:
                 raise FileProcessingError(
                     "Unable to read text file",
                     "TXT_ENCODING_ERROR",
                     f"Could not decode file with detected encoding ({encoding}) or UTF-8. "
-                    "Please ensure the file is saved with UTF-8 encoding."
+                    "Please ensure the file is saved with UTF-8 encoding.",
                 ) from None
         except Exception as e:
-            raise FileProcessingError(
-                "Failed to read text file",
-                "TXT_ERROR",
-                str(e)
-            ) from e
+            raise FileProcessingError("Failed to read text file", "TXT_ERROR", str(e)) from e
 
     def process_file(
         self,
         filepath: Path,
         validate_sanskrit: bool = True,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        progress_callback: Optional[Callable[[int, int], None]] = None,
     ) -> ExtractionResult:
         """
         Main entry point for file processing.
-        
+
         Args:
             filepath: Path to the file to process
             validate_sanskrit: Whether to validate Sanskrit content
             progress_callback: Optional callback for progress updates
-        
+
         Returns:
             ExtractionResult with extracted text and metadata
-        
+
         Raises:
             FileProcessingError: If file is invalid, corrupted, or has no Sanskrit
         """
         # Validate file basics
         is_valid, error = self.validate_file(filepath)
         if not is_valid:
-            raise FileProcessingError(
-                error,
-                "VALIDATION_ERROR"
-            )
+            raise FileProcessingError(error, "VALIDATION_ERROR")
 
         # Detect actual file type
         file_type = self.detect_file_type(filepath)
@@ -860,25 +791,19 @@ class FileProcessor:
             raise FileProcessingError(
                 "Unknown file type",
                 "UNKNOWN_TYPE",
-                f"Cannot determine how to process '.{ext}' file. "
-                f"Supported formats: PDF, DOCX, TXT"
+                f"Cannot determine how to process '.{ext}' file. Supported formats: PDF, DOCX, TXT",
             )
 
         # Verify extension matches content
         ext = self.get_file_extension(filepath.name)
-        expected_type = {
-            'pdf': FileType.PDF,
-            'docx': FileType.DOCX,
-            'txt': FileType.TXT,
-            'text': FileType.TXT
-        }.get(ext)
+        expected_type = {'pdf': FileType.PDF, 'docx': FileType.DOCX, 'txt': FileType.TXT, 'text': FileType.TXT}.get(ext)
 
         if expected_type and file_type != expected_type:
             raise FileProcessingError(
                 "File content doesn't match extension",
                 "TYPE_MISMATCH",
                 f"File has .{ext} extension but content is {file_type.value}. "
-                f"Please rename the file with the correct extension."
+                f"Please rename the file with the correct extension.",
             )
 
         # Extract text based on file type
@@ -890,26 +815,21 @@ class FileProcessor:
             result = self.extract_from_txt(filepath, progress_callback)
         else:
             raise FileProcessingError(
-                "Unsupported file type",
-                "UNSUPPORTED_TYPE",
-                f"File type {file_type.value} is not supported"
+                "Unsupported file type", "UNSUPPORTED_TYPE", f"File type {file_type.value} is not supported"
             )
 
         # Validate Sanskrit content if requested
         if validate_sanskrit:
             is_valid, error = self.validate_sanskrit_content(result.text)
             if not is_valid:
-                raise FileProcessingError(
-                    "No Sanskrit content detected",
-                    "NO_SANSKRIT",
-                    error
-                )
+                raise FileProcessingError("No Sanskrit content detected", "NO_SANSKRIT", error)
 
         return result
 
 
 # Singleton instance for convenience
 _processor = None
+
 
 def get_processor() -> FileProcessor:
     """Get the singleton FileProcessor instance."""

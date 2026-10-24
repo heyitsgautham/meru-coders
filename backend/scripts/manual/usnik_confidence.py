@@ -70,5 +70,6 @@ def test_usnik_confidence():
 
     print("\n" + "=" * 80)
 
+
 if __name__ == "__main__":
     test_usnik_confidence()

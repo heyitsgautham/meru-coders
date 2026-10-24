@@ -41,11 +41,13 @@ def test_on_rigveda(classifier, limit=1000):
             else:
                 incorrect += 1
                 if len(misclassified) < 20:
-                    misclassified.append({
-                        'text': verse[:60],
-                        'classified_as': classification,
-                        'confidence': confidence,
-                    })
+                    misclassified.append(
+                        {
+                            'text': verse[:60],
+                            'classified_as': classification,
+                            'confidence': confidence,
+                        }
+                    )
 
             if limit and total >= limit:
                 break
@@ -55,7 +57,7 @@ def test_on_rigveda(classifier, limit=1000):
         'correct': correct,
         'incorrect': incorrect,
         'accuracy': correct / total * 100 if total > 0 else 0,
-        'misclassified_samples': misclassified
+        'misclassified_samples': misclassified,
     }
 
 
@@ -91,18 +93,20 @@ def test_on_classical_csv(classifier):
             else:
                 incorrect += 1
                 if len(misclassified) < 20:
-                    misclassified.append({
-                        'text': verse[:60],
-                        'classified_as': classification,
-                        'confidence': confidence,
-                    })
+                    misclassified.append(
+                        {
+                            'text': verse[:60],
+                            'classified_as': classification,
+                            'confidence': confidence,
+                        }
+                    )
 
     return {
         'total': total,
         'correct': correct,
         'incorrect': incorrect,
         'accuracy': correct / total * 100 if total > 0 else 0,
-        'misclassified_samples': misclassified
+        'misclassified_samples': misclassified,
     }
 
 

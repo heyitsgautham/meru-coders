@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test both male and female voices"""
+
 import asyncio
 import os
 
@@ -9,10 +10,7 @@ import edge_tts
 async def test_voices():
     text = "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजम्"
 
-    voices = {
-        "male": "hi-IN-MadhurNeural",
-        "female": "hi-IN-SwaraNeural"
-    }
+    voices = {"male": "hi-IN-MadhurNeural", "female": "hi-IN-SwaraNeural"}
 
     for voice_type, voice_name in voices.items():
         output_file = f"/tmp/test_tts_{voice_type}.mp3"
@@ -31,6 +29,7 @@ async def test_voices():
                 print("❌ File was not created")
         except Exception as e:
             print(f"❌ Error: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(test_voices())

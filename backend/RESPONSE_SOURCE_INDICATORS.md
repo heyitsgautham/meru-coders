@@ -116,30 +116,34 @@ else:
 #### 2. Metadata Storage (Lines ~1250-1257)
 
 ```python
-conversations[conversation_id].append({
-    'role': 'assistant',
-    'content': response_text,
-    'timestamp': datetime.now().isoformat(),
-    'confidence': confidence,
-    'persona': persona,
-    'response_source': 'rag' if rag_context else 'ai',  # NEW
-    'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0  # NEW
-})
+conversations[conversation_id].append(
+    {
+        'role': 'assistant',
+        'content': response_text,
+        'timestamp': datetime.now().isoformat(),
+        'confidence': confidence,
+        'persona': persona,
+        'response_source': 'rag' if rag_context else 'ai',  # NEW
+        'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0,  # NEW
+    }
+)
 ```
 
 #### 3. API Response Enhancement (Lines ~1260-1268)
 
 ```python
-return jsonify({
-    'success': True,
-    'response': response_text,
-    'confidence': confidence,
-    'conversation_id': conversation_id,
-    'persona': PERSONAS[persona]['name'],
-    'timestamp': datetime.now().isoformat(),
-    'response_source': 'rag' if rag_context else 'ai',  # NEW
-    'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0  # NEW
-})
+return jsonify(
+    {
+        'success': True,
+        'response': response_text,
+        'confidence': confidence,
+        'conversation_id': conversation_id,
+        'persona': PERSONAS[persona]['name'],
+        'timestamp': datetime.now().isoformat(),
+        'response_source': 'rag' if rag_context else 'ai',  # NEW
+        'rag_docs_used': len(retrieved_docs) if retrieved_docs else 0,  # NEW
+    }
+)
 ```
 
 ---

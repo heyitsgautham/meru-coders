@@ -20,9 +20,20 @@ DANDAKA_TYPES = [
 
 # Rājaśyāmalā Stotram semantic markers
 RAJASHYAMALA_KEYWORDS = [
-    'श्यामला', 'राजश्यामला', 'मातङ्गी', 'वाग्देवी', 'वरदा',
-    'विद्यादात्री', 'राज्यम्', 'ऐश्वर्यम्', 'मातङ्ग', 'श्याम',
-    'षोडशी', 'त्रिपुरसुन्दरी', 'महाविद्या', 'तन्त्र'
+    'श्यामला',
+    'राजश्यामला',
+    'मातङ्गी',
+    'वाग्देवी',
+    'वरदा',
+    'विद्यादात्री',
+    'राज्यम्',
+    'ऐश्वर्यम्',
+    'मातङ्ग',
+    'श्याम',
+    'षोडशी',
+    'त्रिपुरसुन्दरी',
+    'महाविद्या',
+    'तन्त्र',
 ]
 
 RAJASHYAMALA_TITLE_PATTERNS = [
@@ -73,7 +84,7 @@ def count_aksaras(text: str) -> int:
         # Consonants
         if '\u0915' <= char <= '\u0939':  # क to ह
             # Check if followed by virāma
-            if i + 1 < len(text) and text[i + 1] == '\u094D':  # ्
+            if i + 1 < len(text) and text[i + 1] == '\u094d':  # ्
                 # Consonant + virāma = no akṣara
                 i += 2
                 continue
@@ -81,14 +92,14 @@ def count_aksaras(text: str) -> int:
                 # Consonant (with implicit 'a' or vowel sign) = 1 akṣara
                 aksara_count += 1
                 # Skip following vowel sign if present
-                if i + 1 < len(text) and '\u093E' <= text[i + 1] <= '\u094C':
+                if i + 1 < len(text) and '\u093e' <= text[i + 1] <= '\u094c':
                     i += 2
                 else:
                     i += 1
                 continue
 
         # Vowel signs (should be handled with consonants, but count if standalone)
-        if '\u093E' <= char <= '\u094C':  # ा to ौ
+        if '\u093e' <= char <= '\u094c':  # ा to ौ
             aksara_count += 1
             i += 1
             continue
@@ -102,7 +113,7 @@ def count_aksaras(text: str) -> int:
 def count_viramas(text: str) -> int:
     """Count virāma (्) characters in text"""
     text = normalize_text(text)
-    return text.count('\u094D')
+    return text.count('\u094d')
 
 
 def calculate_density(aksara_count: int, virama_count: int) -> float:
@@ -123,7 +134,7 @@ def classify_dandaka_unit(aksara_count: int) -> str:
 def detect_dandaka(text: str) -> Dict[str, Any]:
     """
     Detect if text is a Daṇḍakam and classify units.
-    
+
     Returns:
         Dict with:
             - is_dandaka: bool
@@ -139,13 +150,7 @@ def detect_dandaka(text: str) -> Dict[str, Any]:
     units = [u.strip() for u in units if u.strip()]
 
     if not units:
-        return {
-            'is_dandaka': False,
-            'units': [],
-            'total_aksaras': 0,
-            'total_viramas': 0,
-            'average_density': 0.0
-        }
+        return {'is_dandaka': False, 'units': [], 'total_aksaras': 0, 'total_viramas': 0, 'average_density': 0.0}
 
     analyzed_units = []
     total_aksaras = 0
@@ -157,13 +162,15 @@ def detect_dandaka(text: str) -> Dict[str, Any]:
         density = calculate_density(aksara_count, virama_count)
         classification = classify_dandaka_unit(aksara_count)
 
-        analyzed_units.append({
-            'text': unit_text[:100] + '...' if len(unit_text) > 100 else unit_text,
-            'aksara_count': aksara_count,
-            'virama_count': virama_count,
-            'density': round(density, 3),
-            'classification': classification
-        })
+        analyzed_units.append(
+            {
+                'text': unit_text[:100] + '...' if len(unit_text) > 100 else unit_text,
+                'aksara_count': aksara_count,
+                'virama_count': virama_count,
+                'density': round(density, 3),
+                'classification': classification,
+            }
+        )
 
         total_aksaras += aksara_count
         total_viramas += virama_count
@@ -181,14 +188,14 @@ def detect_dandaka(text: str) -> Dict[str, Any]:
         'units': analyzed_units,
         'total_aksaras': total_aksaras,
         'total_viramas': total_viramas,
-        'average_density': round(average_density, 3)
+        'average_density': round(average_density, 3),
     }
 
 
 def detect_rajashyamala(text: str) -> Dict[str, Any]:
     """
     Detect if text is Rājaśyāmalā Stotram using semantic and structural markers.
-    
+
     Returns:
         Dict with:
             - is_rajashyamala: bool
@@ -214,15 +221,7 @@ def detect_rajashyamala(text: str) -> Dict[str, Any]:
             matched_keywords.append(keyword)
 
     # Semantic markers (phrases common in Rājaśyāmalā)
-    semantic_patterns = [
-        r'वाग्देव',
-        r'विद्या.*दात्र',
-        r'राज्य.*प्रद',
-        r'ऐश्वर्य',
-        r'मातङ्ग',
-        r'षोडश',
-        r'महाविद्या'
-    ]
+    semantic_patterns = [r'वाग्देव', r'विद्या.*दात्र', r'राज्य.*प्रद', r'ऐश्वर्य', r'मातङ्ग', r'षोडश', r'महाविद्या']
 
     semantic_markers = []
     for pattern in semantic_patterns:
@@ -254,7 +253,7 @@ def detect_rajashyamala(text: str) -> Dict[str, Any]:
         'matched_keywords': matched_keywords,
         'title_match': title_match,
         'semantic_markers': semantic_markers,
-        'structure_type': structure_type
+        'structure_type': structure_type,
     }
 
 
@@ -262,7 +261,7 @@ def analyze_dandaka_mode(text: str) -> Dict[str, Any]:
     """
     Complete analysis for Daṇḍaka mode.
     Checks both Daṇḍaka and Rājaśyāmalā identification.
-    
+
     Returns combined result with text_type classification.
     """
     dandaka_result = detect_dandaka(text)
@@ -278,9 +277,4 @@ def analyze_dandaka_mode(text: str) -> Dict[str, Any]:
     else:
         text_type = 'unclassified'
 
-    return {
-        'mode': 'dandaka',
-        'dandaka': dandaka_result,
-        'rajashyamala': rajashyamala_result,
-        'text_type': text_type
-    }
+    return {'mode': 'dandaka', 'dandaka': dandaka_result, 'rajashyamala': rajashyamala_result, 'text_type': text_type}

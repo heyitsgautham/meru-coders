@@ -123,7 +123,7 @@ def create_user(username, password, is_admin=False):
             'id': str(uuid.uuid4()),
             'username': username,
             'password_hash': password_hash,
-            'is_admin': is_admin
+            'is_admin': is_admin,
         }
 
         result = supabase.table('users').insert(user_data).execute()
@@ -184,7 +184,7 @@ Examples:
   %(prog)s create-user bob secret --admin    # Create admin user
   %(prog)s delete-user alice                 # Delete user
   %(prog)s oauth-setup google                # Check OAuth setup
-        """
+        """,
     )
 
     subparsers = parser.add_subparsers(dest='command', help='Available commands')

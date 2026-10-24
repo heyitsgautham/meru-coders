@@ -3,7 +3,7 @@
 """
 Pada Splitter - Split Sanskrit verses into padas based on chandas patterns
 
-This module takes a Sanskrit verse (Devanagari or transliteration) and splits it 
+This module takes a Sanskrit verse (Devanagari or transliteration) and splits it
 into padas based on the identified chandas. It counts syllables by counting vowels
 and follows standard meter patterns (e.g., Gayatri = 6-6-6-6, Anushtubh = 8-8-8-8).
 
@@ -34,6 +34,7 @@ from indic_transliteration.sanscript import transliterate
 @dataclass
 class Pada:
     """Represents a single pada (quarter) of a verse"""
+
     text: str
     syllable_count: int
     position: int  # 1, 2, 3, or 4
@@ -45,6 +46,7 @@ class Pada:
 @dataclass
 class SplitResult:
     """Result of splitting a verse into padas"""
+
     original_text: str
     meter: str
     meter_pattern: List[int]
@@ -58,7 +60,7 @@ class SplitResult:
             f"Meter: {self.meter}",
             f"Pattern: {'-'.join(map(str, self.meter_pattern))}",
             f"Total syllables: {self.total_syllables}",
-            "---"
+            "---",
         ]
         for pada in self.padas:
             lines.append(str(pada))
@@ -68,7 +70,7 @@ class SplitResult:
 class PadaSplitter:
     """
     Split Sanskrit verses into padas based on chandas patterns.
-    
+
     Meters supported:
     - Gayatri: 6-6-6-6 (24 syllables, 4 padas of 6)
       Note: Traditional Gayatri is 3 padas of 8, but 4×6 is also used
@@ -84,28 +86,25 @@ class PadaSplitter:
     # Standard meter definitions: name -> list of syllable counts per pada
     METERS: Dict[str, List[int]] = {
         # Classical meters
-        'gayatri': [6, 6, 6, 6],      # Classical Gayatri (4×6 = 24)
-        'gayatri_vedic': [8, 8, 8],    # Vedic Gayatri (3×8 = 24)
-        'anushtubh': [8, 8, 8, 8],     # Shloka meter (4×8 = 32)
-        'trishtubh': [11, 11, 11, 11], # Trishtubh (4×11 = 44)
-        'jagati': [12, 12, 12, 12],    # Jagati (4×12 = 48)
-
+        'gayatri': [6, 6, 6, 6],  # Classical Gayatri (4×6 = 24)
+        'gayatri_vedic': [8, 8, 8],  # Vedic Gayatri (3×8 = 24)
+        'anushtubh': [8, 8, 8, 8],  # Shloka meter (4×8 = 32)
+        'trishtubh': [11, 11, 11, 11],  # Trishtubh (4×11 = 44)
+        'jagati': [12, 12, 12, 12],  # Jagati (4×12 = 48)
         # Additional Vedic meters
-        'ushnik': [7, 7, 7, 7],        # Ushnik (4×7 = 28)
-        'brihati': [9, 9, 9, 9],       # Brihati (4×9 = 36)
-        'pankti': [8, 8, 8, 8, 8],     # Pankti (5×8 = 40)
-
+        'ushnik': [7, 7, 7, 7],  # Ushnik (4×7 = 28)
+        'brihati': [9, 9, 9, 9],  # Brihati (4×9 = 36)
+        'pankti': [8, 8, 8, 8, 8],  # Pankti (5×8 = 40)
         # Common classical meters with specific pada structures
-        'indravajra': [11, 11, 11, 11],       # Same as Trishtubh
-        'upendravajra': [11, 11, 11, 11],     # Same pattern
-        'vasantatilaka': [14, 14, 14, 14],    # 4×14 = 56
-        'mandakranta': [17, 17, 17, 17],      # 4×17 = 68
-        'shardula_vikridita': [19, 19, 19, 19], # 4×19 = 76
-        'sragdhara': [21, 21, 21, 21],        # 4×21 = 84
-
+        'indravajra': [11, 11, 11, 11],  # Same as Trishtubh
+        'upendravajra': [11, 11, 11, 11],  # Same pattern
+        'vasantatilaka': [14, 14, 14, 14],  # 4×14 = 56
+        'mandakranta': [17, 17, 17, 17],  # 4×17 = 68
+        'shardula_vikridita': [19, 19, 19, 19],  # 4×19 = 76
+        'sragdhara': [21, 21, 21, 21],  # 4×21 = 84
         # Half-verses (ardhachand)
-        'anushtubh_half': [8, 8],      # Half Anushtubh
-        'trishtubh_half': [11, 11],    # Half Trishtubh
+        'anushtubh_half': [8, 8],  # Half Anushtubh
+        'trishtubh_half': [11, 11],  # Half Trishtubh
     }
 
     # Meter name aliases (for flexible input)
@@ -145,7 +144,7 @@ class PadaSplitter:
     def __init__(self, data_path: Optional[str] = None):
         """
         Initialize the pada splitter with optional CSV data loading.
-        
+
         Args:
             data_path: Path to the data directory containing CSV files.
                        If None, uses default relative path.
@@ -181,7 +180,7 @@ class PadaSplitter:
     def _load_vishama_csv(self, filepath: Path):
         """
         Load Viṣamavṛtta patterns from CSV.
-        
+
         CSV format: वृत्त,पद,लक्षण,लक्षण (raw),अक्षरसङ्ख्या,मात्रा,यति
         """
         try:
@@ -215,7 +214,7 @@ class PadaSplitter:
                         'syllables': syllables,
                         'pattern': pattern,
                         'gana': gana,
-                        'matras': matras
+                        'matras': matras,
                     }
 
                     # Also add to METERS dict with syllable counts
@@ -243,7 +242,7 @@ class PadaSplitter:
     def _load_ardhasama_csv(self, filepath: Path):
         """
         Load Ardhasama patterns from CSV.
-        
+
         CSV format: वृत्त,पद,लक्षण,लक्षण (raw),अक्षरसङ्ख्या,मात्रा,यति
         """
         try:
@@ -277,7 +276,7 @@ class PadaSplitter:
                         'syllables': syllables,
                         'pattern': pattern,
                         'gana': gana,
-                        'matras': matras
+                        'matras': matras,
                     }
 
             # Update METERS dict with syllable patterns
@@ -299,7 +298,7 @@ class PadaSplitter:
         # Convert Devanagari to ASCII-safe key
         key = meter_name.lower().replace(' ', '_')
         # For Devanagari names, use transliteration or hash
-        if any('\u0900' <= c <= '\u097F' for c in key):
+        if any('\u0900' <= c <= '\u097f' for c in key):
             try:
                 key = transliterate(meter_name, sanscript.DEVANAGARI, sanscript.SLP1).lower()
             except Exception:
@@ -309,11 +308,11 @@ class PadaSplitter:
     def get_vishama_pattern(self, meter_name: str, pada_num: int) -> Optional[Dict]:
         """
         Get the pattern for a specific pada of a Viṣamavṛtta meter.
-        
+
         Args:
             meter_name: Name of the meter (Devanagari or romanized)
             pada_num: Pada number (1-4)
-            
+
         Returns:
             Dict with 'syllables', 'pattern', 'gana', 'matras' or None
         """
@@ -332,11 +331,11 @@ class PadaSplitter:
     def get_ardhasama_pattern(self, meter_name: str, pada_num: int) -> Optional[Dict]:
         """
         Get the pattern for a specific pada of an Ardhasama meter.
-        
+
         Args:
             meter_name: Name of the meter (Devanagari or romanized)
             pada_num: Pada number (1-4)
-            
+
         Returns:
             Dict with 'syllables', 'pattern', 'gana', 'matras' or None
         """
@@ -375,7 +374,7 @@ class PadaSplitter:
     def get_meter_info(self, meter_name: str) -> Optional[Dict]:
         """
         Get comprehensive information about a meter.
-        
+
         Returns:
             Dict with 'name', 'type', 'total_syllables', 'padas' info
         """
@@ -387,7 +386,7 @@ class PadaSplitter:
                 'type': 'viṣamavṛtta',
                 'total_syllables': sum(p['syllables'] for p in padas.values()),
                 'pada_count': len(padas),
-                'padas': padas
+                'padas': padas,
             }
 
         # Check Ardhasama
@@ -398,7 +397,7 @@ class PadaSplitter:
                 'type': 'ardhasama',
                 'total_syllables': sum(p['syllables'] for p in padas.values()),
                 'pada_count': len(padas),
-                'padas': padas
+                'padas': padas,
             }
 
         # Check standard meters
@@ -410,7 +409,7 @@ class PadaSplitter:
                 'type': 'sama' if len(set(pattern)) == 1 else 'mixed',
                 'total_syllables': sum(pattern),
                 'pada_count': len(pattern),
-                'syllable_pattern': pattern
+                'syllable_pattern': pattern,
             }
 
         return None
@@ -463,16 +462,16 @@ class PadaSplitter:
     def count_syllables(self, text: str) -> int:
         """
         Count syllables in Sanskrit text by counting vowels.
-        
+
         In Sanskrit, each syllable (akṣara) contains exactly one vowel sound.
         A syllable can be:
         - An independent vowel (अ, आ, इ, etc.)
         - A consonant + dependent vowel (मा, कि, etc.)
         - A consonant cluster + vowel (स्त्र + vowel)
-        
+
         Args:
             text: Sanskrit text (Devanagari or transliteration)
-        
+
         Returns:
             Number of syllables
         """
@@ -488,7 +487,7 @@ class PadaSplitter:
     def _count_syllables_devanagari(self, text: str) -> int:
         """
         Count syllables in Devanagari text.
-        
+
         Rules:
         1. Each independent vowel = 1 syllable
         2. Each consonant with inherent 'a' or explicit mātrā = 1 syllable
@@ -528,7 +527,7 @@ class PadaSplitter:
     def get_syllables_with_positions(self, text: str) -> List[Tuple[str, int, int]]:
         """
         Get syllables with their character positions in the original text.
-        
+
         Returns:
             List of (syllable_text, start_pos, end_pos) tuples
         """
@@ -571,8 +570,9 @@ class PadaSplitter:
                 if current_syllable:
                     # Check if previous syllable is complete
                     # (has a vowel or ends without halant)
-                    if any(c in self.DEVANAGARI_MATRAS + self.DEVANAGARI_VOWELS for c in current_syllable) or \
-                       (current_syllable and current_syllable[-1] not in '्'):
+                    if any(c in self.DEVANAGARI_MATRAS + self.DEVANAGARI_VOWELS for c in current_syllable) or (
+                        current_syllable and current_syllable[-1] not in '्'
+                    ):
                         syllables.append((current_syllable, start_pos, i))
                         start_pos = i
                         current_syllable = ""
@@ -623,24 +623,19 @@ class PadaSplitter:
 
         return syllables
 
-    def split_verse(
-        self,
-        text: str,
-        meter: Optional[str] = None,
-        pattern: Optional[List[int]] = None
-    ) -> SplitResult:
+    def split_verse(self, text: str, meter: Optional[str] = None, pattern: Optional[List[int]] = None) -> SplitResult:
         """
         Split a Sanskrit verse into padas based on the specified meter or pattern.
-        
+
         Args:
             text: Sanskrit verse (Devanagari or transliteration)
             meter: Name of the meter (e.g., 'anushtubh', 'trishtubh')
             pattern: Custom pattern as list of syllable counts per pada
                     (e.g., [8, 8, 8, 8] for anushtubh)
-        
+
         Returns:
             SplitResult object containing the padas and metadata
-        
+
         Raises:
             ValueError: If neither meter nor pattern is provided
         """
@@ -661,7 +656,7 @@ class PadaSplitter:
                     padas=[],
                     total_syllables=self.count_syllables(text),
                     success=False,
-                    message=f"Unknown meter: {meter}. Available: {', '.join(self.METERS.keys())}"
+                    message=f"Unknown meter: {meter}. Available: {', '.join(self.METERS.keys())}",
                 )
             meter_pattern = self.METERS[meter_name]
 
@@ -682,7 +677,7 @@ class PadaSplitter:
                 padas=[],
                 total_syllables=total_syllables,
                 success=False,
-                message=f"Syllable count mismatch: found {total_syllables}, expected {expected_syllables} for {meter_name}"
+                message=f"Syllable count mismatch: found {total_syllables}, expected {expected_syllables} for {meter_name}",
             )
 
         # Split into padas
@@ -695,18 +690,18 @@ class PadaSplitter:
             padas=padas,
             total_syllables=total_syllables,
             success=True,
-            message="Successfully split verse into padas"
+            message="Successfully split verse into padas",
         )
 
     def _split_into_padas(self, text: str, pattern: List[int]) -> List[Pada]:
         """
         Split text into padas according to the syllable pattern.
         Preserves whole words when possible.
-        
+
         Args:
             text: Sanskrit text in Devanagari
             pattern: List of syllable counts per pada
-        
+
         Returns:
             List of Pada objects
         """
@@ -739,9 +734,7 @@ class PadaSplitter:
 
                     if syllables_needed > 0:
                         # Split the word at the syllable boundary
-                        first_part, remaining_part = self._split_word_at_syllable(
-                            word, syllables_needed
-                        )
+                        first_part, remaining_part = self._split_word_at_syllable(word, syllables_needed)
 
                         if pada_text:
                             pada_text += " "
@@ -753,11 +746,7 @@ class PadaSplitter:
                         word_syllables[current_word_idx] = (remaining_part, remaining_syllables)
                     break
 
-            padas.append(Pada(
-                text=pada_text.strip(),
-                syllable_count=pada_syllable_count,
-                position=pada_num
-            ))
+            padas.append(Pada(text=pada_text.strip(), syllable_count=pada_syllable_count, position=pada_num))
 
         return padas
 
@@ -783,11 +772,11 @@ class PadaSplitter:
     def _split_word_at_syllable(self, word: str, syllable_count: int) -> Tuple[str, str]:
         """
         Split a word at a specific syllable boundary.
-        
+
         Args:
             word: The word to split (Devanagari)
             syllable_count: Number of syllables in the first part
-        
+
         Returns:
             Tuple of (first_part, remaining_part)
         """
@@ -810,7 +799,7 @@ class PadaSplitter:
     def _get_syllable_boundaries(self, word: str) -> List[Tuple[int, int]]:
         """
         Get the character boundaries of each syllable in a word.
-        
+
         Returns:
             List of (start, end) tuples for each syllable
         """
@@ -869,10 +858,10 @@ class PadaSplitter:
     def auto_split(self, text: str) -> SplitResult:
         """
         Automatically detect the meter and split the verse.
-        
+
         Args:
             text: Sanskrit verse
-        
+
         Returns:
             SplitResult with the best matching meter
         """
@@ -909,7 +898,7 @@ class PadaSplitter:
                     padas=[],
                     total_syllables=total_syllables,
                     success=False,
-                    message=f"Could not determine meter for {total_syllables} syllables"
+                    message=f"Could not determine meter for {total_syllables} syllables",
                 )
 
     def get_available_meters(self) -> Dict[str, List[int]]:
@@ -921,42 +910,18 @@ class PadaSplitter:
 # CLI Interface
 # =============================================================================
 
+
 def main():
     """Command-line interface for pada splitting"""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description='Split Sanskrit verses into padas based on chandas patterns'
-    )
-    parser.add_argument(
-        'text',
-        nargs='?',
-        help='Sanskrit verse to split (Devanagari or transliteration)'
-    )
-    parser.add_argument(
-        '-m', '--meter',
-        default='anushtubh',
-        help='Meter name (default: anushtubh)'
-    )
-    parser.add_argument(
-        '-p', '--pattern',
-        help='Custom pattern as comma-separated integers (e.g., "8,8,8,8")'
-    )
-    parser.add_argument(
-        '-a', '--auto',
-        action='store_true',
-        help='Auto-detect meter'
-    )
-    parser.add_argument(
-        '-l', '--list-meters',
-        action='store_true',
-        help='List available meters'
-    )
-    parser.add_argument(
-        '-c', '--count-only',
-        action='store_true',
-        help='Only count syllables, do not split'
-    )
+    parser = argparse.ArgumentParser(description='Split Sanskrit verses into padas based on chandas patterns')
+    parser.add_argument('text', nargs='?', help='Sanskrit verse to split (Devanagari or transliteration)')
+    parser.add_argument('-m', '--meter', default='anushtubh', help='Meter name (default: anushtubh)')
+    parser.add_argument('-p', '--pattern', help='Custom pattern as comma-separated integers (e.g., "8,8,8,8")')
+    parser.add_argument('-a', '--auto', action='store_true', help='Auto-detect meter')
+    parser.add_argument('-l', '--list-meters', action='store_true', help='List available meters')
+    parser.add_argument('-c', '--count-only', action='store_true', help='Only count syllables, do not split')
 
     args = parser.parse_args()
 
@@ -976,6 +941,7 @@ def main():
         # Interactive mode
         print("Enter Sanskrit verse (Ctrl+D to finish):")
         import sys
+
         text = sys.stdin.read().strip()
     else:
         text = args.text

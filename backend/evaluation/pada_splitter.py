@@ -53,7 +53,7 @@ def test_syllable_counting():
 
         print(f"{status} {description}: '{text}' -> {actual} (expected {expected})")
 
-    print(f"\nResult: {passed}/{passed+failed} passed")
+    print(f"\nResult: {passed}/{passed + failed} passed")
     return failed == 0
 
 
@@ -99,7 +99,7 @@ def test_anushtubh_splitting():
         else:
             print(f"   Message: {result.message}")
 
-    print(f"\nResult: {passed}/{passed+failed} passed")
+    print(f"\nResult: {passed}/{passed + failed} passed")
     return failed == 0
 
 
@@ -143,7 +143,7 @@ def test_trishtubh_splitting():
         else:
             print(f"   Message: {result.message}")
 
-    print(f"\nResult: {passed}/{passed+failed} passed")
+    print(f"\nResult: {passed}/{passed + failed} passed")
     return failed == 0
 
 
@@ -178,7 +178,7 @@ def test_auto_detection():
         print(f"   Detected: {result.meter} (expected: {expected_meter})")
         print(f"   Success: {result.success}")
 
-    print(f"\nResult: {passed}/{passed+failed} passed")
+    print(f"\nResult: {passed}/{passed + failed} passed")
     return failed == 0
 
 
@@ -217,7 +217,7 @@ def test_iast_input():
             for pada in result.padas:
                 print(f"   Pada {pada.position}: {pada.text}")
 
-    print(f"\nResult: {passed}/{passed+failed} passed")
+    print(f"\nResult: {passed}/{passed + failed} passed")
     return failed == 0
 
 

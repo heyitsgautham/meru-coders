@@ -13,6 +13,7 @@ from pathlib import Path
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+
 def test_tiny_image_rejected():
     """An image payload under 100 bytes is rejected before OCR runs."""
     from api.chatbot import chatbot_bp
@@ -31,8 +32,8 @@ def test_tiny_image_rejected():
             json={
                 'message': '',  # Empty message
                 'image': f'data:image/jpeg;base64,{fake_image_data}',
-                'persona': 'default'
-            }
+                'persona': 'default',
+            },
         )
 
         assert response.status_code == 400, f"Expected 400, got {response.status_code}"
@@ -62,14 +63,15 @@ def test_image_with_message():
             json={
                 'message': 'What is in this image?',
                 'image': f'data:image/jpeg;base64,{fake_image_data}',
-                'persona': 'default'
-            }
+                'persona': 'default',
+            },
         )
 
         # Note: This might fail due to Gemini API key issues in testing,
         # but it should NOT fail with a 400 validation error
-        assert response.status_code != 400 or 'text prompt' not in json.loads(response.data).get('error', '').lower(), \
+        assert response.status_code != 400 or 'text prompt' not in json.loads(response.data).get('error', '').lower(), (
             "Should not reject valid image + message combination"
+        )
 
         print("✅ Test 2 PASSED: Image with message validation accepted")
 
@@ -92,14 +94,15 @@ def test_invalid_image_data():
             json={
                 'message': 'What is in this image?',
                 'image': f'data:image/jpeg;base64,{fake_image_data}',
-                'persona': 'default'
-            }
+                'persona': 'default',
+            },
         )
 
         assert response.status_code == 400, f"Expected 400 for invalid image, got {response.status_code}"
         data = json.loads(response.data)
-        assert 'invalid' in data['error'].lower() or 'corrupted' in data['error'].lower(), \
+        assert 'invalid' in data['error'].lower() or 'corrupted' in data['error'].lower(), (
             f"Error should mention invalid/corrupted image: {data['error']}"
+        )
 
         print("✅ Test 3 PASSED: Invalid image data properly rejected")
         print(f"   Error message: {data['error']}")
@@ -130,5 +133,6 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"\n❌ ERROR: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)

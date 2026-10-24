@@ -17,6 +17,7 @@ from core.chanda import Chanda
 
 settings = Settings()
 
+
 def test_dataset_quality():
     """Test dataset.json quality by comparing labeled meters with identified meters."""
 
@@ -29,12 +30,7 @@ def test_dataset_quality():
     chanda = Chanda(data_path=str(settings.DATA_DIR))
 
     # Track results
-    results = {
-        'total': 0,
-        'correct': 0,
-        'incorrect': 0,
-        'errors': []
-    }
+    results = {'total': 0, 'correct': 0, 'incorrect': 0, 'errors': []}
 
     print(f"Testing {len(data['data'])} entries from dataset.json...\n")
 
@@ -62,33 +58,39 @@ def test_dataset_quality():
                     results['correct'] += 1
                 else:
                     results['incorrect'] += 1
-                    results['errors'].append({
+                    results['errors'].append(
+                        {
+                            'index': idx + 1,
+                            'text': first_line[:60] + '...' if len(first_line) > 60 else first_line,
+                            'expected': expected_meter,
+                            'identified': identified_meter,
+                            'identified_full': identified_full,
+                            'confidence': result.get('confidence', 'N/A'),
+                        }
+                    )
+            else:
+                results['incorrect'] += 1
+                results['errors'].append(
+                    {
                         'index': idx + 1,
                         'text': first_line[:60] + '...' if len(first_line) > 60 else first_line,
                         'expected': expected_meter,
-                        'identified': identified_meter,
-                        'identified_full': identified_full,
-                        'confidence': result.get('confidence', 'N/A')
-                    })
-            else:
-                results['incorrect'] += 1
-                results['errors'].append({
-                    'index': idx + 1,
-                    'text': first_line[:60] + '...' if len(first_line) > 60 else first_line,
-                    'expected': expected_meter,
-                    'identified': 'NOT FOUND',
-                    'confidence': 0
-                })
+                        'identified': 'NOT FOUND',
+                        'confidence': 0,
+                    }
+                )
 
         except Exception as e:
             results['incorrect'] += 1
-            results['errors'].append({
-                'index': idx + 1,
-                'text': text[:60] + '...' if len(text) > 60 else text,
-                'expected': expected_meter,
-                'identified': f'ERROR: {str(e)}',
-                'confidence': 0
-            })
+            results['errors'].append(
+                {
+                    'index': idx + 1,
+                    'text': text[:60] + '...' if len(text) > 60 else text,
+                    'expected': expected_meter,
+                    'identified': f'ERROR: {str(e)}',
+                    'confidence': 0,
+                }
+            )
 
     # Print results
     accuracy = (results['correct'] / results['total'] * 100) if results['total'] > 0 else 0
@@ -126,6 +128,7 @@ def test_dataset_quality():
     else:
         print("❌ VERDICT: Dataset is GARBAGE (<80% accuracy)")
         return False
+
 
 if __name__ == "__main__":
     success = test_dataset_quality()

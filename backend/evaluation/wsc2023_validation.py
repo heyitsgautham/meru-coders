@@ -3,7 +3,7 @@
 """
 WSC2023 Anukramani Validation Test for Chanda Identifier
 
-This test validates our Chanda identifier against the authoritative Rig Veda Anukramani 
+This test validates our Chanda identifier against the authoritative Rig Veda Anukramani
 dataset from the World Sanskrit Conference 2023 paper.
 
 IMPORTANT: No data leakage - this dataset is external ground truth from the Anukramani tradition,
@@ -30,6 +30,7 @@ from core.chanda import Chanda
 # =============================================================================
 # METER NAME NORMALIZATION
 # =============================================================================
+
 
 def normalize_meter_name(name):
     """
@@ -90,7 +91,6 @@ CANONICAL_METERS = {
     'brihati': 'brhati',
     'pankti': 'pankti',
     'panktih': 'pankti',
-
     # Extended Vedic Meters
     'virat': 'virat',
     'viraj': 'virat',
@@ -123,15 +123,16 @@ def get_canonical_form(meter_name):
 # PARSE ANUKRAMANI DATA - IMPROVED PARSING
 # =============================================================================
 
+
 def parse_meter_field(meter_info):
     """
     Parse the meter field from Anukramani which may contain composite meters.
-    
+
     Examples:
         "gāyatrī" → ['gayatri']
         "(1-6)jagatī,(7-9)triṣṭup" → ['jagati', 'tristubh']
         "(1-5,12)agniḥ,(6)devīrdvāraḥ" → ignores divinity info, extracts meters
-    
+
     Returns list of unique meter names found.
     """
     if not meter_info:
@@ -141,14 +142,50 @@ def parse_meter_field(meter_info):
 
     # Known meter names to look for (in IAST without diacritics)
     known_meters = {
-        'gayatri', 'usnik', 'anustup', 'anustubh', 'tristup', 'tristubh',
-        'jagati', 'brhati', 'brihati', 'pankti', 'panktih', 'virat', 'viraj',
-        'atyastih', 'atyasti', 'astih', 'asti', 'dhrtih', 'dhrti', 'adhrtih',
-        'adhrti', 'atisakvari', 'sakvari', 'pragathah', 'pragatha', 'atijagati',
-        'mahapanktih', 'mahapankti', 'mahabrhati', 'kakup', 'kakubh', 'krtih',
-        'krti', 'nastarupi', 'tanusira', 'abhisarini', 'dvipada', 'atinicrt',
-        'jyotih', 'prastarapanktih', 'nyankurarini', 'kakumnyankusira',
-        'pipilikamadhya', 'vardhamana'
+        'gayatri',
+        'usnik',
+        'anustup',
+        'anustubh',
+        'tristup',
+        'tristubh',
+        'jagati',
+        'brhati',
+        'brihati',
+        'pankti',
+        'panktih',
+        'virat',
+        'viraj',
+        'atyastih',
+        'atyasti',
+        'astih',
+        'asti',
+        'dhrtih',
+        'dhrti',
+        'adhrtih',
+        'adhrti',
+        'atisakvari',
+        'sakvari',
+        'pragathah',
+        'pragatha',
+        'atijagati',
+        'mahapanktih',
+        'mahapankti',
+        'mahabrhati',
+        'kakup',
+        'kakubh',
+        'krtih',
+        'krti',
+        'nastarupi',
+        'tanusira',
+        'abhisarini',
+        'dvipada',
+        'atinicrt',
+        'jyotih',
+        'prastarapanktih',
+        'nyankurarini',
+        'kakumnyankusira',
+        'pipilikamadhya',
+        'vardhamana',
     }
 
     # First, try to extract meter names by removing verse range markers
@@ -185,8 +222,20 @@ def parse_meter_field(meter_info):
         # Also accept if it looks like a meter name (no digits, reasonable length)
         elif not any(c.isdigit() for c in part) and 3 <= len(part) <= 20:
             # Skip obvious non-meter words
-            skip_words = ['agni', 'indra', 'soma', 'deva', 'mitra', 'varuna',
-                         'visnu', 'rudra', 'pusa', 'asvin', 'usa', 'surya']
+            skip_words = [
+                'agni',
+                'indra',
+                'soma',
+                'deva',
+                'mitra',
+                'varuna',
+                'visnu',
+                'rudra',
+                'pusa',
+                'asvin',
+                'usa',
+                'surya',
+            ]
             if not any(sw in normalized for sw in skip_words):
                 meters.append(part)
 
@@ -205,7 +254,7 @@ def parse_meter_field(meter_info):
 def parse_anukramani_file(filepath):
     """
     Parse an Anukramani file and extract hymn-meter mappings.
-    
+
     Format: hymn.verses.seer.divinity.meter
     Example: 1.9.vaiśvāmitro madhucchandāḥ.agniḥ.gāyatrī
     """
@@ -239,14 +288,16 @@ def parse_anukramani_file(filepath):
         # Get primary meter (first one)
         primary_meter = meters[0] if meters else meter_info
 
-        hymns.append({
-            'hymn': hymn_num,
-            'verses': verse_count,
-            'primary_meter': primary_meter,
-            'all_meters': meters,
-            'is_composite': len(meters) > 1,
-            'raw_meter_info': meter_info
-        })
+        hymns.append(
+            {
+                'hymn': hymn_num,
+                'verses': verse_count,
+                'primary_meter': primary_meter,
+                'all_meters': meters,
+                'is_composite': len(meters) > 1,
+                'raw_meter_info': meter_info,
+            }
+        )
 
     return hymns
 
@@ -254,8 +305,7 @@ def parse_anukramani_file(filepath):
 def load_all_anukramani_data():
     """Load Anukramani data from all 10 Mandalas."""
     base_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        'repos', 'WSC2023', 'Anukramani'
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'repos', 'WSC2023', 'Anukramani'
     )
 
     all_data = {}
@@ -279,6 +329,7 @@ def load_all_anukramani_data():
 # METER MATCHING
 # =============================================================================
 
+
 def meters_match(predicted, expected):
     """
     Check if predicted meter matches expected meter.
@@ -293,6 +344,7 @@ def meters_match(predicted, expected):
 # =============================================================================
 # VALIDATION TESTS
 # =============================================================================
+
 
 def test_vedic_meter_identification():
     """
@@ -344,7 +396,7 @@ def test_vedic_meter_identification():
         print(f"{meter:<12s} {syllables:>10d} {structure:>10s} {result_str:<20s} {status:>8s}")
 
     print("-" * 70)
-    print(f"Result: {passed}/{passed + failed} Vedic meters correctly mapped ({passed/(passed+failed)*100:.1f}%)")
+    print(f"Result: {passed}/{passed + failed} Vedic meters correctly mapped ({passed / (passed + failed) * 100:.1f}%)")
 
     return passed, failed
 
@@ -352,14 +404,14 @@ def test_vedic_meter_identification():
 def test_meter_distribution_coverage():
     """
     Analyze meter distribution in Anukramani and check our COVERAGE (NOT ACCURACY!).
-    
+
     IMPORTANT DISTINCTION:
     - COVERAGE: Percentage of hymns whose meter NAMES we recognize
     - ACCURACY: Would require actual verse TEXT to test predictions (NOT available here)
-    
+
     The Anukramani only provides: hymn number, verse count, seer, divinity, meter NAME
     It does NOT provide the actual Sanskrit verse text.
-    
+
     So we can only measure: "Do we support this meter name?" NOT "Can we correctly identify it?"
     """
     print("\n" + "=" * 70)
@@ -409,9 +461,22 @@ def test_meter_distribution_coverage():
     # Coverage analysis - which meters can we identify?
     # These are the 7 canonical + common extended Vedic meters
     our_supported_meters = {
-        'gayatri', 'usnik', 'anustubh', 'anustup', 'tristubh', 'tristup',
-        'jagati', 'brhati', 'brihati', 'pankti', 'panktih',
-        'virat', 'viraj', 'sakvari', 'pragatha', 'pragathah'
+        'gayatri',
+        'usnik',
+        'anustubh',
+        'anustup',
+        'tristubh',
+        'tristup',
+        'jagati',
+        'brhati',
+        'brihati',
+        'pankti',
+        'panktih',
+        'virat',
+        'viraj',
+        'sakvari',
+        'pragatha',
+        'pragathah',
     }
 
     covered_count = 0
@@ -433,19 +498,21 @@ def test_meter_distribution_coverage():
             primary = normalize_meter_name(hymn['primary_meter'])
             canonical = get_canonical_form(primary)
             if primary not in our_supported_meters and canonical not in our_supported_meters:
-                unsupported_hymns.append({
-                    'mandala': mandala,
-                    'hymn': hymn['hymn'],
-                    'meter': hymn['primary_meter'],
-                    'normalized': primary,
-                    'raw': hymn['raw_meter_info']
-                })
+                unsupported_hymns.append(
+                    {
+                        'mandala': mandala,
+                        'hymn': hymn['hymn'],
+                        'meter': hymn['primary_meter'],
+                        'normalized': primary,
+                        'raw': hymn['raw_meter_info'],
+                    }
+                )
 
     coverage_pct = covered_count / total_hymns * 100 if total_hymns > 0 else 0
 
     print("\n--- COVERAGE Analysis (NOT Accuracy!) ---")
     print(f"Hymns with SUPPORTED meter names: {covered_count}/{total_hymns} ({coverage_pct:.1f}%)")
-    print(f"Hymns with UNSUPPORTED meter names: {uncovered_count} ({100-coverage_pct:.1f}%)")
+    print(f"Hymns with UNSUPPORTED meter names: {uncovered_count} ({100 - coverage_pct:.1f}%)")
 
     if uncovered_meters:
         print("\nUnsupported meters:")
@@ -464,7 +531,7 @@ def test_pattern_identification_accuracy():
     """
     Test identification accuracy using synthetic L-G patterns for each Vedic meter.
     This tests whether our system correctly identifies patterns by syllable count.
-    
+
     NOTE: Some meters may return other meter names that share the same syllable count.
     This is expected behavior when exact pattern matches exist in the database.
     The key test is Test 1 which verifies the identify_vedic_meter() function works.
@@ -577,7 +644,7 @@ def run_full_validation():
     results['vedic_meter_mapping'] = {
         'passed': vedic_passed,
         'failed': vedic_failed,
-        'accuracy': vedic_passed / (vedic_passed + vedic_failed) * 100
+        'accuracy': vedic_passed / (vedic_passed + vedic_failed) * 100,
     }
 
     # Test 2: Distribution and coverage analysis
@@ -585,7 +652,7 @@ def run_full_validation():
     results['coverage'] = {
         'percentage': coverage_pct,
         'meter_counts': meter_counts,
-        'unsupported_hymns': unsupported_hymns
+        'unsupported_hymns': unsupported_hymns,
     }
 
     # Test 3: Pattern identification
@@ -593,7 +660,7 @@ def run_full_validation():
     results['pattern_identification'] = {
         'passed': pattern_passed,
         'failed': pattern_failed,
-        'accuracy': pattern_passed / (pattern_passed + pattern_failed) * 100
+        'accuracy': pattern_passed / (pattern_passed + pattern_failed) * 100,
     }
 
     # Summary

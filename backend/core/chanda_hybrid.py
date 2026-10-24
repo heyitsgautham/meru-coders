@@ -41,14 +41,20 @@ class ChandaHybrid(Chanda):
         cleaned_phrase = regex.sub("[%s]" % dev_scheme.PATTERN_OM, "ओम्", cleaned_phrase)
 
         # Remove non-letter characters
-        cleaned_phrase = regex.sub(r"([^%s%s%s%s%s%s])" % (
-            dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-            dev_scheme.PATTERN_VYANJANA,
-            dev_scheme.PATTERN_DEPENDENT_VOWEL,
-            dev_scheme.PATTERN_YOGAVAAHA,
-            dev_scheme.PATTERN_ACCENT,
-            dev_scheme.PATTERN_CONSONANT_MODIFIER
-        ), "", cleaned_phrase, flags=regex.UNICODE)
+        cleaned_phrase = regex.sub(
+            r"([^%s%s%s%s%s%s])"
+            % (
+                dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                dev_scheme.PATTERN_VYANJANA,
+                dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                dev_scheme.PATTERN_YOGAVAAHA,
+                dev_scheme.PATTERN_ACCENT,
+                dev_scheme.PATTERN_CONSONANT_MODIFIER,
+            ),
+            "",
+            cleaned_phrase,
+            flags=regex.UNICODE,
+        )
 
         cleaned_phrase = cleaned_phrase.replace(" ", "")
 
@@ -56,22 +62,25 @@ class ChandaHybrid(Chanda):
         cleaned_phrase = regex.sub(
             r"(%s)([%s])" % (dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL, dev_scheme.PATTERN_INDEPENDENT_VOWEL),
             lambda x: sanscript.SCHEMES[sanscript.DEVANAGARI].do_vyanjana_svara_join(x.group(1), x.group(2)),
-            cleaned_phrase
+            cleaned_phrase,
         )
 
         syllables = []
         while len(cleaned_phrase) > 0:
             match = regex.match(
-                (r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*" % (
-                    dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
-                    dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-                    dev_scheme.PATTERN_VYANJANA,
-                    dev_scheme.PATTERN_DEPENDENT_VOWEL,
-                    dev_scheme.PATTERN_YOGAVAAHA,
-                    dev_scheme.PATTERN_ACCENT,
-                    dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
-                )),
-                cleaned_phrase
+                (
+                    r"(%s)*[%s%s]़?[%s]*[%s]*[%s]*(%sँ?)*"
+                    % (
+                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+                        dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                        dev_scheme.PATTERN_VYANJANA,
+                        dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                        dev_scheme.PATTERN_YOGAVAAHA,
+                        dev_scheme.PATTERN_ACCENT,
+                        dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+                    )
+                ),
+                cleaned_phrase,
             )
             if match is None:
                 break
@@ -87,22 +96,30 @@ class ChandaHybrid(Chanda):
         dev_scheme = sanscript.SCHEMES[sanscript.DEVANAGARI]
 
         # Check for guru vowels
-        if regex.findall(r"[%s%s%s]" % (
-            dev_scheme.PATTERN_GURU_INDEPENDENT_VOWEL,
-            dev_scheme.PATTERN_GURU_DEPENDENT_VOWEL,
-            dev_scheme.PATTERN_GURU_YOGAVAAHA
-        ), syllable):
+        if regex.findall(
+            r"[%s%s%s]"
+            % (
+                dev_scheme.PATTERN_GURU_INDEPENDENT_VOWEL,
+                dev_scheme.PATTERN_GURU_DEPENDENT_VOWEL,
+                dev_scheme.PATTERN_GURU_YOGAVAAHA,
+            ),
+            syllable,
+        ):
             return self.G
 
         # Check for conjunct consonants (makes it guru)
-        elif regex.findall(r"[%s%s]़?[%s]*[%s]*[%s]*(%s)+" % (
-            dev_scheme.PATTERN_INDEPENDENT_VOWEL,
-            dev_scheme.PATTERN_VYANJANA,
-            dev_scheme.PATTERN_DEPENDENT_VOWEL,
-            dev_scheme.PATTERN_YOGAVAAHA,
-            dev_scheme.PATTERN_ACCENT,
-            dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL
-        ), syllable):
+        elif regex.findall(
+            r"[%s%s]़?[%s]*[%s]*[%s]*(%s)+"
+            % (
+                dev_scheme.PATTERN_INDEPENDENT_VOWEL,
+                dev_scheme.PATTERN_VYANJANA,
+                dev_scheme.PATTERN_DEPENDENT_VOWEL,
+                dev_scheme.PATTERN_YOGAVAAHA,
+                dev_scheme.PATTERN_ACCENT,
+                dev_scheme.PATTERN_VYANJANA_WITHOUT_VOWEL,
+            ),
+            syllable,
+        ):
             return self.G
         else:
             return self.L
@@ -133,5 +150,5 @@ class ChandaHybrid(Chanda):
         return {
             'syllabization': 'ICU-based',
             'pattern_matching': 'Original (from chanda.py)',
-            'data': 'Merged dataset (1,850 meters)'
+            'data': 'Merged dataset (1,850 meters)',
         }

@@ -20,7 +20,7 @@ from core.chanda import Chanda
 class ChandaModal(Chanda):
     """
     Modal Chanda Identifier - extends base Chanda with mode selection.
-    
+
     Modes:
         'vedic': Prioritizes syllable-count based Vedic meter identification
         'classical': Uses traditional L-G pattern matching for classical meters
@@ -43,13 +43,13 @@ class ChandaModal(Chanda):
     # Ranges are designed to be NON-OVERLAPPING where possible
     # When overlap is unavoidable, prefer higher meters (due to undercounting)
     VEDIC_METER_RANGES = {
-        'गायत्री': (19, 25),      # 24: target 24, allow 19-25
-        'उष्णिक्': (25, 29),      # 28: target 28, allow 25-29 (gap from Gayatri)
-        'अनुष्टुभ्': (29, 34),    # 32: target 32, allow 29-34
-        'बृहती': (34, 38),        # 36: target 36, allow 34-38
-        'पङ्क्ति': (38, 41),      # 40: target 40, allow 38-41 (NARROW - transition zone)
-        'त्रिष्टुभ्': (41, 46),   # 44: target 44, allow 41-46 (KEY: 42 → Triṣṭubh)
-        'जगती': (46, 52),         # 48: target 48, allow 46-52
+        'गायत्री': (19, 25),  # 24: target 24, allow 19-25
+        'उष्णिक्': (25, 29),  # 28: target 28, allow 25-29 (gap from Gayatri)
+        'अनुष्टुभ्': (29, 34),  # 32: target 32, allow 29-34
+        'बृहती': (34, 38),  # 36: target 36, allow 34-38
+        'पङ्क्ति': (38, 41),  # 40: target 40, allow 38-41 (NARROW - transition zone)
+        'त्रिष्टुभ्': (41, 46),  # 44: target 44, allow 41-46 (KEY: 42 → Triṣṭubh)
+        'जगती': (46, 52),  # 48: target 48, allow 46-52
     }
 
     # Tolerance for syllable count matching (Vedic texts have variations)
@@ -63,7 +63,7 @@ class ChandaModal(Chanda):
     def identify_modal(self, text, mode='auto', verse=True, fuzzy=False):
         """
         Identify meter with explicit mode selection.
-        
+
         Parameters
         ----------
         text : str
@@ -76,7 +76,7 @@ class ChandaModal(Chanda):
             Treat input as verse (multiple lines = one verse)
         fuzzy : bool
             Enable fuzzy matching for classical mode
-            
+
         Returns
         -------
         dict
@@ -95,7 +95,7 @@ class ChandaModal(Chanda):
     def _identify_vedic(self, text, verse=True):
         """
         Identify Vedic meter by syllable count.
-        
+
         Vedic meters are defined by total syllable count, not L-G pattern.
         """
         result = {
@@ -110,7 +110,7 @@ class ChandaModal(Chanda):
             'lines': [],
             'all_syllables': [],
             'all_lg': [],
-            'debug': {}
+            'debug': {},
         }
 
         # Clean and split text into lines
@@ -133,13 +133,15 @@ class ChandaModal(Chanda):
             syllables = self.get_syllables_icu(clean_line)
             lg = [self.get_syllable_weight_icu(s) for s in syllables]
 
-            line_details.append({
-                'line': clean_line,
-                'syllables': syllables,
-                'syllable_count': len(syllables),
-                'lg': lg,
-                'lg_pattern': ''.join(lg)
-            })
+            line_details.append(
+                {
+                    'line': clean_line,
+                    'syllables': syllables,
+                    'syllable_count': len(syllables),
+                    'lg': lg,
+                    'lg_pattern': ''.join(lg),
+                }
+            )
 
             total_syllables += len(syllables)
             all_syllables.extend(syllables)
@@ -215,14 +217,16 @@ class ChandaModal(Chanda):
                     diff = abs(syllable_count - expected)
                     confidence = max(0.5, 1.0 - (diff * 0.05))  # -5% per syllable difference
 
-                    candidates.append({
-                        'name': meter_name,
-                        'name_en': name_en,
-                        'expected': expected,
-                        'diff': diff,
-                        'confidence': confidence,
-                        'structure': structure
-                    })
+                    candidates.append(
+                        {
+                            'name': meter_name,
+                            'name_en': name_en,
+                            'expected': expected,
+                            'diff': diff,
+                            'confidence': confidence,
+                            'structure': structure,
+                        }
+                    )
 
         if candidates:
             # IMPORTANT: Prefer higher syllable-count meters when tied
@@ -246,7 +250,7 @@ class ChandaModal(Chanda):
                     'meter': meter_info['name'],
                     'meter_en': meter_info['name_en'],
                     'expected': syl_count,
-                    'diff': diff
+                    'diff': diff,
                 }
 
         return closest
@@ -254,7 +258,7 @@ class ChandaModal(Chanda):
     def _identify_classical(self, text, verse=True, fuzzy=False):
         """
         Identify Classical meter by L-G pattern matching.
-        
+
         Uses the base Chanda class's pattern matching logic.
         """
         # Use the parent class's identification
@@ -268,7 +272,7 @@ class ChandaModal(Chanda):
             'confidence': 0.0,
             'pattern': None,
             'lines': [],
-            'debug': {}
+            'debug': {},
         }
 
         # Extract the top result
@@ -294,12 +298,14 @@ class ChandaModal(Chanda):
             # Get line details
             for line_data in inner.get('line', []):
                 line_result = line_data.get('result', {})
-                result['lines'].append({
-                    'line': line_data.get('line', ''),
-                    'lg_pattern': ''.join(line_result.get('lg', [])),
-                    'syllables': line_result.get('syllables', []),
-                    'chanda': line_result.get('chanda', [])[:3]  # Top 3
-                })
+                result['lines'].append(
+                    {
+                        'line': line_data.get('line', ''),
+                        'lg_pattern': ''.join(line_result.get('lg', [])),
+                        'syllables': line_result.get('syllables', []),
+                        'chanda': line_result.get('chanda', [])[:3],  # Top 3
+                    }
+                )
 
             result['debug']['raw_result'] = base_result
 
@@ -308,7 +314,7 @@ class ChandaModal(Chanda):
     def _identify_auto(self, text, verse=True, fuzzy=False):
         """
         Auto-detect whether text is Vedic or Classical and identify accordingly.
-        
+
         Heuristics:
         1. Check syllable count - if matches Vedic meter exactly, likely Vedic
         2. Check for Vedic-specific markers (accent marks, rare characters)
@@ -347,7 +353,7 @@ class ChandaModal(Chanda):
                 'auto_decision': 'unknown',
                 'auto_reason': 'No confident match in either mode',
                 'vedic_result': vedic_result,
-                'classical_result': classical_result
+                'classical_result': classical_result,
             }
 
         return result
@@ -356,6 +362,7 @@ class ChandaModal(Chanda):
 # =============================================================================
 # STANDALONE TEST
 # =============================================================================
+
 
 def test_modal_identification():
     """Test the modal identification with sample verses."""
@@ -374,25 +381,25 @@ def test_modal_identification():
             'name': 'Gayatri Mantra (Vedic)',
             'text': 'तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि ।\nधियो यो नः प्रचोदयात् ॥',
             'expected_meter': 'गायत्री',
-            'expected_mode': 'vedic'
+            'expected_mode': 'vedic',
         },
         {
             'name': 'Agni Sukta RV 1.1.1 (Vedic)',
             'text': 'अग्निमीळे पुरोहितं यज्ञस्य देवं ऋत्विजम् ।\nहोतारं रत्नधातमम् ॥',
             'expected_meter': 'गायत्री',
-            'expected_mode': 'vedic'
+            'expected_mode': 'vedic',
         },
         {
             'name': 'Nasadiya Sukta (Vedic Triṣṭubh)',
             'text': 'नासदासीन्नो सदासीत्तदानीं नासीद्रजो नो व्योमा परो यत् ।\nकिमावरीवः कुह कस्य शर्मन्नम्भः किमासीद्गहनं गभीरम् ॥',
             'expected_meter': 'त्रिष्टुभ्',
-            'expected_mode': 'vedic'
+            'expected_mode': 'vedic',
         },
         {
             'name': 'Kalidasa Raghuvamsha (Classical)',
             'text': 'वागर्थाविव सम्पृक्तौ वागर्थप्रतिपत्तये ।\nजगतः पितरौ वन्दे पार्वतीपरमेश्वरौ ॥',
             'expected_meter': 'अनुष्टुभ्',
-            'expected_mode': 'classical'
+            'expected_mode': 'classical',
         },
     ]
 

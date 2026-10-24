@@ -4,7 +4,7 @@ Tests the integration of RAG engine with the Gemini chatbot
 
 Usage:
     python tests/test_rag_chatbot.py
-    
+
 Author: Meru Coders (SIH 2025)
 Date: December 9, 2025
 """
@@ -21,9 +21,9 @@ from backend.core.rag_engine import RAGEngine
 
 def test_rag_retrieval():
     """Test RAG retrieval with various queries"""
-    print("="*70)
+    print("=" * 70)
     print("TEST 1: RAG Retrieval Functionality")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     # Initialize RAG
     rag = RAGEngine()
@@ -45,23 +45,19 @@ def test_rag_retrieval():
         {
             "query": "What is the definition of Anushtubh meter?",
             "expected_content": ["anushtubh", "anushṭubh", "syllable", "8"],
-            "min_docs": 2
+            "min_docs": 2,
         },
         {
             "query": "Explain the difference between laghu and guru",
             "expected_content": ["laghu", "guru", "short", "long"],
-            "min_docs": 2
+            "min_docs": 2,
         },
         {
             "query": "What are the seven Vedic meters?",
             "expected_content": ["vedic", "gayatri", "trishtubh"],
-            "min_docs": 2
+            "min_docs": 2,
         },
-        {
-            "query": "गायत्री छन्द के बारे में बताओ",
-            "expected_content": ["gayatri", "गायत्री"],
-            "min_docs": 1
-        }
+        {"query": "गायत्री छन्द के बारे में बताओ", "expected_content": ["gayatri", "गायत्री"], "min_docs": 1},
     ]
 
     passed = 0
@@ -104,18 +100,18 @@ def test_rag_retrieval():
             print(f"\n   Top result [{docs[0].metadata.get('source', 'Unknown')}]:")
             print(f"   {docs[0].page_content[:150]}...")
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"RESULTS: {passed} passed, {failed} failed")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     return failed == 0
 
 
 def test_rag_context_formatting():
     """Test context formatting for LLM prompts"""
-    print("="*70)
+    print("=" * 70)
     print("TEST 2: Context Formatting for LLM Prompts")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     rag = RAGEngine()
 
@@ -131,11 +127,7 @@ def test_rag_context_formatting():
         return False
 
     # Test formatting
-    context = rag.format_context_for_prompt(
-        documents=docs,
-        include_source=True,
-        max_length=2000
-    )
+    context = rag.format_context_for_prompt(documents=docs, include_source=True, max_length=2000)
 
     print("✅ Context formatted successfully")
     print(f"   Length: {len(context)} characters")
@@ -154,9 +146,9 @@ def test_rag_context_formatting():
 
 def test_specialized_retrievals():
     """Test specialized retrieval methods"""
-    print("="*70)
+    print("=" * 70)
     print("TEST 3: Specialized Retrieval Methods")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     rag = RAGEngine()
 
@@ -197,18 +189,18 @@ def test_specialized_retrievals():
         print("❌ FAILED: No documentation retrieved")
         failed += 1
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"RESULTS: {passed} passed, {failed} failed")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     return failed == 0
 
 
 def test_multilingual_support():
     """Test multilingual query support (Sanskrit, English, Hindi)"""
-    print("="*70)
+    print("=" * 70)
     print("TEST 4: Multilingual Query Support")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     rag = RAGEngine()
 
@@ -237,18 +229,18 @@ def test_multilingual_support():
             print("❌ FAILED: No documents retrieved")
             failed += 1
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"RESULTS: {passed} passed, {failed} failed")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     return failed == 0
 
 
 def main():
     """Run all tests"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("RAG-ENHANCED CHATBOT TEST SUITE")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     results = []
 
@@ -259,9 +251,9 @@ def main():
     results.append(("Multilingual Support", test_multilingual_support()))
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("FINAL SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
     passed = sum(1 for _, result in results if result)
     failed = len(results) - passed
@@ -283,7 +275,7 @@ def main():
     else:
         print(f"\n⚠️  {failed} test(s) failed. Please review the output above.")
 
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     return failed == 0
 

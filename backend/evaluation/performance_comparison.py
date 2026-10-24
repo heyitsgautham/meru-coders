@@ -5,7 +5,7 @@ Comprehensive Performance Comparison Test
 
 Compares:
 1. chanda_iitk.py (original IITK implementation) with small dataset against Rigveda validation
-2. chanda_iitk.py with our large dataset against Rigveda validation  
+2. chanda_iitk.py with our large dataset against Rigveda validation
 3. chanda_iitk.py with small dataset against CSV accuracy test
 4. chanda_iitk.py with large dataset against CSV accuracy test
 5. chanda.py (our implementation) with large dataset against Rigveda validation
@@ -23,7 +23,12 @@ import unicodedata
 
 # Add paths for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '..', 'reference', 'alternative_implementations'))
+sys.path.insert(
+    0,
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '..', 'reference', 'alternative_implementations'
+    ),
+)
 
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
@@ -49,25 +54,50 @@ PAGE_CSV = os.path.join(LARGE_DATA_PATH, 'page 1-47 chanda list - complete.csv')
 # ============================================================================
 
 METER_NORMALIZATION = {
-    'gāyatrī': 'गायत्री', 'gayatri': 'गायत्री',
-    'uṣṇik': 'उष्णिक्', 'uṣnik': 'उष्णिक्', 'usnik': 'उष्णिक्',
-    'anuṣṭup': 'अनुष्टुभ्', 'anuṣṭubh': 'अनुष्टुभ्', 'anustup': 'अनुष्टुभ्',
-    'bṛhatī': 'बृहती', 'brhati': 'बृहती',
-    'paṅktiḥ': 'पङ्क्ति', 'paṅkti': 'पङ्क्ति', 'pankti': 'पङ्क्ति',
-    'triṣṭup': 'त्रिष्टुभ्', 'triṣṭubh': 'त्रिष्टुभ्', 'tristup': 'त्रिष्टुभ्',
-    'jagatī': 'जगती', 'jagati': 'जगती', 'jagatiī': 'जगती',
-    'virāṭ': 'विराट्', 'virat': 'विराट्',
-    'pragāthaḥ': 'प्रगाथ', 'pragātha': 'प्रगाथ',
-    'mahāpaṅktiḥ': 'महापङ्क्ति', 'mahāpaṅkti': 'महापङ्क्ति',
-    'atyaṣṭiḥ': 'अत्यष्टि', 'atyaṣṭi': 'अत्यष्टि', 'atyaṣtiḥ': 'अत्यष्टि',
-    'aṣṭiḥ': 'अष्टि', 'aṣṭi': 'अष्टि',
-    'jyotiḥ': 'ज्योतिस्', 'jyotis': 'ज्योतिस्',
-    'śakvarī': 'शक्वरी', 'atiśakvarī': 'अतिशक्वरी',
-    'kakup': 'ककुभ्', 'kakubh': 'ककुभ्',
-    'atijagatī': 'अतिजगती', 'atijagati': 'अतिजगती',
-    'dhṛtiḥ': 'धृति', 'dhṛti': 'धृति',
-    'kṛtiḥ': 'कृति', 'kṛti': 'कृति',
-    'ādhṛtiḥ': 'आधृति', 'ādhṛti': 'आधृति',
+    'gāyatrī': 'गायत्री',
+    'gayatri': 'गायत्री',
+    'uṣṇik': 'उष्णिक्',
+    'uṣnik': 'उष्णिक्',
+    'usnik': 'उष्णिक्',
+    'anuṣṭup': 'अनुष्टुभ्',
+    'anuṣṭubh': 'अनुष्टुभ्',
+    'anustup': 'अनुष्टुभ्',
+    'bṛhatī': 'बृहती',
+    'brhati': 'बृहती',
+    'paṅktiḥ': 'पङ्क्ति',
+    'paṅkti': 'पङ्क्ति',
+    'pankti': 'पङ्क्ति',
+    'triṣṭup': 'त्रिष्टुभ्',
+    'triṣṭubh': 'त्रिष्टुभ्',
+    'tristup': 'त्रिष्टुभ्',
+    'jagatī': 'जगती',
+    'jagati': 'जगती',
+    'jagatiī': 'जगती',
+    'virāṭ': 'विराट्',
+    'virat': 'विराट्',
+    'pragāthaḥ': 'प्रगाथ',
+    'pragātha': 'प्रगाथ',
+    'mahāpaṅktiḥ': 'महापङ्क्ति',
+    'mahāpaṅkti': 'महापङ्क्ति',
+    'atyaṣṭiḥ': 'अत्यष्टि',
+    'atyaṣṭi': 'अत्यष्टि',
+    'atyaṣtiḥ': 'अत्यष्टि',
+    'aṣṭiḥ': 'अष्टि',
+    'aṣṭi': 'अष्टि',
+    'jyotiḥ': 'ज्योतिस्',
+    'jyotis': 'ज्योतिस्',
+    'śakvarī': 'शक्वरी',
+    'atiśakvarī': 'अतिशक्वरी',
+    'kakup': 'ककुभ्',
+    'kakubh': 'ककुभ्',
+    'atijagatī': 'अतिजगती',
+    'atijagati': 'अतिजगती',
+    'dhṛtiḥ': 'धृति',
+    'dhṛti': 'धृति',
+    'kṛtiḥ': 'कृति',
+    'kṛti': 'कृति',
+    'ādhṛtiḥ': 'आधृति',
+    'ādhṛti': 'आधृति',
     'dvipadā virāṭ': 'द्विपदा विराट्',
     'dvipadā triṣṭup': 'द्विपदा त्रिष्टुभ्',
     'dvipadā': 'द्विपदा',
@@ -110,33 +140,55 @@ COMPOSITE_METERS = {
 # ============================================================================
 
 CSV_METER_FAMILIES = {
-    'anustup': 'anustubh', 'anustubh': 'anustubh',
+    'anustup': 'anustubh',
+    'anustubh': 'anustubh',
     'rsabhagajavilasita': 'anustubh',
-    'pythvi': 'prthvi', 'prthvi': 'prthvi', 'prthi': 'prthvi',
-    'sardulavkridita': 'sardula', 'sardulavikriditam': 'sardula',
-    'sardulavikridita': 'sardula', 'meghavisphurjita': 'sardula',
+    'pythvi': 'prthvi',
+    'prthvi': 'prthvi',
+    'prthi': 'prthvi',
+    'sardulavkridita': 'sardula',
+    'sardulavikriditam': 'sardula',
+    'sardulavikridita': 'sardula',
+    'meghavisphurjita': 'sardula',
     'sardulalaltiam': 'sardula',
-    'upajatih': 'upajati', 'upajati': 'upajati',
-    'indravajra': 'upajati', 'upendravajra': 'upajati',
-    'ihamrgi': 'upajati', 'sumukhi': 'upajati',
-    'vamsasthavilam': 'vamsastha', 'vamsasthavila': 'vamsastha',
-    'vamsastha': 'vamsastha', 'indravamsa': 'vamsastha',
-    'bhujangaprayatam': 'vamsastha', 'bhujangaprayata': 'vamsastha',
+    'upajatih': 'upajati',
+    'upajati': 'upajati',
+    'indravajra': 'upajati',
+    'upendravajra': 'upajati',
+    'ihamrgi': 'upajati',
+    'sumukhi': 'upajati',
+    'vamsasthavilam': 'vamsastha',
+    'vamsasthavila': 'vamsastha',
+    'vamsastha': 'vamsastha',
+    'indravamsa': 'vamsastha',
+    'bhujangaprayatam': 'vamsastha',
+    'bhujangaprayata': 'vamsastha',
     'candravartma': 'vamsastha',
-    'vasantatilakam': 'vasantatilaka', 'vasantatilaka': 'vasantatilaka',
-    'tunaka': 'tunaka', 'camara': 'tunaka', 'tunakam': 'tunaka',
-    'pancacamaram': 'pancacamara', 'pancacamara': 'pancacamara',
-    'srih': 'nari', 'stri': 'nari', 'nari': 'nari',
-    'sragdhara': 'sragdhara', 'pancakavali': 'sragdhara',
-    'mandakranta': 'mandakranta', 'atisayini': 'mandakranta',
-    'praharsini': 'praharsini', 'kalahamsa': 'praharsini',
-    'bhujangasangata': 'bhujanga', 'bhujagasisubhrta': 'bhujanga',
+    'vasantatilakam': 'vasantatilaka',
+    'vasantatilaka': 'vasantatilaka',
+    'tunaka': 'tunaka',
+    'camara': 'tunaka',
+    'tunakam': 'tunaka',
+    'pancacamaram': 'pancacamara',
+    'pancacamara': 'pancacamara',
+    'srih': 'nari',
+    'stri': 'nari',
+    'nari': 'nari',
+    'sragdhara': 'sragdhara',
+    'pancakavali': 'sragdhara',
+    'mandakranta': 'mandakranta',
+    'atisayini': 'mandakranta',
+    'praharsini': 'praharsini',
+    'kalahamsa': 'praharsini',
+    'bhujangasangata': 'bhujanga',
+    'bhujagasisubhrta': 'bhujanga',
 }
 
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
 
 def normalize_rigveda_meter(name):
     """Normalize meter name from IAST to Devanagari for Rigveda tests"""
@@ -147,9 +199,27 @@ def normalize_rigveda_meter(name):
         return None
     if name in METER_NORMALIZATION:
         return METER_NORMALIZATION[name]
-    simple_name = name.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
+    simple_name = (
+        name.replace('ṭ', 't')
+        .replace('ṣ', 's')
+        .replace('ṇ', 'n')
+        .replace('ī', 'i')
+        .replace('ā', 'a')
+        .replace('ṛ', 'r')
+        .replace('ṅ', 'n')
+        .replace('ḥ', 'h')
+    )
     for key, value in METER_NORMALIZATION.items():
-        simple_key = key.replace('ṭ', 't').replace('ṣ', 's').replace('ṇ', 'n').replace('ī', 'i').replace('ā', 'a').replace('ṛ', 'r').replace('ṅ', 'n').replace('ḥ', 'h')
+        simple_key = (
+            key.replace('ṭ', 't')
+            .replace('ṣ', 's')
+            .replace('ṇ', 'n')
+            .replace('ī', 'i')
+            .replace('ā', 'a')
+            .replace('ṛ', 'r')
+            .replace('ṅ', 'n')
+            .replace('ḥ', 'h')
+        )
         if simple_name == simple_key:
             return value
     return None
@@ -228,11 +298,7 @@ def load_rigveda_dataset(filepath, limit=None):
                     errors.append(f"Row {row_num}: Unknown meter '{meter_raw}'")
                     continue
 
-                data.append({
-                    'verse_text': verse_text,
-                    'expected_meter': expected_meter,
-                    'ref': ref
-                })
+                data.append({'verse_text': verse_text, 'expected_meter': expected_meter, 'ref': ref})
 
                 if limit and len(data) >= limit:
                     break
@@ -267,11 +333,7 @@ def load_csv_dataset(filepath, limit=147):
             if row_index > limit:
                 break
 
-            data.append({
-                'verse': verse,
-                'expected': expected,
-                'row_index': row_index
-            })
+            data.append({'verse': verse, 'expected': expected, 'row_index': row_index})
 
     return data
 
@@ -279,6 +341,7 @@ def load_csv_dataset(filepath, limit=147):
 # ============================================================================
 # TEST RUNNERS
 # ============================================================================
+
 
 def test_rigveda_with_iitk(chanda_class, data_path, limit=1000):
     """Test IITK Chanda implementation against Rigveda dataset"""
@@ -607,6 +670,7 @@ def test_csv_with_our_chanda():
 # MAIN EXECUTION
 # ============================================================================
 
+
 def print_separator(char='=', length=70):
     print(char * length)
 
@@ -623,18 +687,28 @@ def print_results(title, results, test_type='rigveda'):
     if test_type == 'rigveda':
         print(f"  📊 Total verses tested:    {results['total']}")
         print(f"  ✅ Exact matches:          {results['exact_matches']} ({results['exact_accuracy']:.2f}%)")
-        print(f"  🔶 Family matches:         {results['family_matches']} ({results['family_matches']/results['total']*100:.2f}%)" if results['total'] > 0 else "")
-        print(f"  ❌ Mismatches:             {results['mismatches']} ({results['mismatches']/results['total']*100:.2f}%)" if results['total'] > 0 else "")
+        print(
+            f"  🔶 Family matches:         {results['family_matches']} ({results['family_matches'] / results['total'] * 100:.2f}%)"
+            if results['total'] > 0
+            else ""
+        )
+        print(
+            f"  ❌ Mismatches:             {results['mismatches']} ({results['mismatches'] / results['total'] * 100:.2f}%)"
+            if results['total'] > 0
+            else ""
+        )
         print(f"  📈 EXACT ACCURACY:         {results['exact_accuracy']:.2f}%")
         print(f"  📈 FAMILY ACCURACY:        {results['family_accuracy']:.2f}%")
     else:  # csv
         print(f"  📊 Total verses tested:    {results['total']}")
         print(f"  ✅ Correct:                {results['correct']} ({results['accuracy']:.2f}%)")
-        print(f"  ❌ Incorrect:              {results['incorrect']} ({100-results['accuracy']:.2f}%)")
+        print(f"  ❌ Incorrect:              {results['incorrect']} ({100 - results['accuracy']:.2f}%)")
         print(f"  📈 ACCURACY:               {results['accuracy']:.2f}%")
 
     if 'time_seconds' in results:
-        print(f"  ⏱️  Time:                   {results['time_seconds']:.2f}s ({results['time_per_verse_ms']:.2f}ms/verse)")
+        print(
+            f"  ⏱️  Time:                   {results['time_seconds']:.2f}s ({results['time_per_verse_ms']:.2f}ms/verse)"
+        )
 
 
 def main():
@@ -651,6 +725,7 @@ def main():
 
     # Import IITK Chanda
     import importlib.util
+
     spec = importlib.util.spec_from_file_location("chanda_iitk", iitk_path)
     chanda_iitk_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(chanda_iitk_module)
@@ -737,9 +812,15 @@ def main():
             return "N/A"
         return f"{r['time_per_verse_ms']:.1f}ms"
 
-    print(f"│ chanda_iitk.py          │ Small    │ {fmt_acc(results['iitk_small_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_small_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_small_rigveda']):>8} │")
-    print(f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_large_rigveda']):>8} │")
-    print(f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['ours_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['ours_large_rigveda']):>8} │")
+    print(
+        f"│ chanda_iitk.py          │ Small    │ {fmt_acc(results['iitk_small_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_small_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_small_rigveda']):>8} │"
+    )
+    print(
+        f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['iitk_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['iitk_large_rigveda']):>8} │"
+    )
+    print(
+        f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_rigveda'], 'exact_accuracy'):>10} │ {fmt_acc(results['ours_large_rigveda'], 'family_accuracy'):>10} │ {fmt_time(results['ours_large_rigveda']):>8} │"
+    )
     print("└─────────────────────────────────────────────────────────────────────────┘")
 
     print("\n┌─────────────────────────────────────────────────────────────────────────┐")
@@ -747,9 +828,15 @@ def main():
     print("├─────────────────────────────────────────────────────────────────────────┤")
     print("│ Implementation          │ Dataset  │ Accuracy   │ Time/verse            │")
     print("├─────────────────────────────────────────────────────────────────────────┤")
-    print(f"│ chanda_iitk.py          │ Small    │ {fmt_acc(results['iitk_small_csv'], 'accuracy'):>10} │ {fmt_time(results['iitk_small_csv']):>21} │")
-    print(f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_csv'], 'accuracy'):>10} │ {fmt_time(results['iitk_large_csv']):>21} │")
-    print(f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_csv'], 'accuracy'):>10} │ {fmt_time(results['ours_large_csv']):>21} │")
+    print(
+        f"│ chanda_iitk.py          │ Small    │ {fmt_acc(results['iitk_small_csv'], 'accuracy'):>10} │ {fmt_time(results['iitk_small_csv']):>21} │"
+    )
+    print(
+        f"│ chanda_iitk.py          │ Large    │ {fmt_acc(results['iitk_large_csv'], 'accuracy'):>10} │ {fmt_time(results['iitk_large_csv']):>21} │"
+    )
+    print(
+        f"│ chanda.py (Ours)        │ Large    │ {fmt_acc(results['ours_large_csv'], 'accuracy'):>10} │ {fmt_time(results['ours_large_csv']):>21} │"
+    )
     print("└─────────────────────────────────────────────────────────────────────────┘")
 
     # Analysis

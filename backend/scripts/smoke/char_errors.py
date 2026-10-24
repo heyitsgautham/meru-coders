@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Test the improved sloka validation with actual character errors"""
 
-
 import requests
 
 # Test 1: Wrong characters (not missing)

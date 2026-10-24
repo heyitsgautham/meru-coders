@@ -36,11 +36,27 @@ def extract_shlokas_from_file(file_path: str) -> list:
 
     # Valid category names (skip PURPORT, TRANSLATION, etc.)
     valid_categories = {
-        'ANGER', 'CONFUSION', 'FEAR', 'GREED', 'LUST', 'PRIDE',
-        'DEPRESSION', 'LONELINESS', 'JEALOUSY', 'LAZINESS', 'DEATH',
-        'FEELING SINFUL', 'MIND CONTROL', 'FORGETFULNESS', 'DEMOTIVATED',
-        'FEELING DISCRIMINATED', 'SEEKING PEACE', 'TEMPTATION',
-        'PRACTISING FORGIVENESS', 'LOSING HOPE', 'ENVY (JEALOUSY)'
+        'ANGER',
+        'CONFUSION',
+        'FEAR',
+        'GREED',
+        'LUST',
+        'PRIDE',
+        'DEPRESSION',
+        'LONELINESS',
+        'JEALOUSY',
+        'LAZINESS',
+        'DEATH',
+        'FEELING SINFUL',
+        'MIND CONTROL',
+        'FORGETFULNESS',
+        'DEMOTIVATED',
+        'FEELING DISCRIMINATED',
+        'SEEKING PEACE',
+        'TEMPTATION',
+        'PRACTISING FORGIVENESS',
+        'LOSING HOPE',
+        'ENVY (JEALOUSY)',
     }
 
     i = 0
@@ -49,7 +65,9 @@ def extract_shlokas_from_file(file_path: str) -> list:
 
         # Detect category headers (ALL CAPS, must be in valid list or contains key emotions)
         if line and line.isupper() and len(line) < 30:
-            if line in valid_categories or any(cat in line for cat in ['ANGER', 'FEAR', 'GREED', 'LUST', 'PRIDE', 'DEATH']):
+            if line in valid_categories or any(
+                cat in line for cat in ['ANGER', 'FEAR', 'GREED', 'LUST', 'PRIDE', 'DEATH']
+            ):
                 current_category = line
             i += 1
             continue
@@ -103,14 +121,16 @@ def extract_shlokas_from_file(file_path: str) -> list:
                 devanagari_text = re.sub(r'\s*।\s*$', '', devanagari_text).strip()
 
                 if devanagari_text and len(devanagari_text) > 10:
-                    shlokas.append({
-                        'category': current_category,
-                        'chapter': chapter,
-                        'verse': verse,
-                        'devanagari': devanagari_text,
-                        'iast': ' '.join(iast_lines) if iast_lines else '',
-                        'reference': f"BG {chapter}.{verse}"
-                    })
+                    shlokas.append(
+                        {
+                            'category': current_category,
+                            'chapter': chapter,
+                            'verse': verse,
+                            'devanagari': devanagari_text,
+                            'iast': ' '.join(iast_lines) if iast_lines else '',
+                            'reference': f"BG {chapter}.{verse}",
+                        }
+                    )
             continue
 
         i += 1
@@ -158,22 +178,53 @@ def test_bhagavad_gita_shlokas():
         'jagati': 0,
         'other_classical': 0,
         'failed': 0,
-        'details': []
+        'details': [],
     }
 
     # Expected meters for Bhagavad Gita
-    expected_meters = {'अनुष्टुभ्', 'anuṣṭubh', 'anushtubh', 'Anuṣṭubh', 'Anushtubh',
-                       'त्रिष्टुभ्', 'triṣṭubh', 'trishtubh', 'Triṣṭubh',
-                       'जगती', 'jagatī', 'jagati', 'Jagatī',
-                       'उपजाति', 'Upajati', 'upajāti',
-                       'वंशस्थ', 'Vamshastha', 'vaṃśastha',
-                       'इन्द्रवज्रा', 'Indravajra', 'indravajrā',
-                       'उपेन्द्रवज्रा', 'Upendravajra'}
+    expected_meters = {
+        'अनुष्टुभ्',
+        'anuṣṭubh',
+        'anushtubh',
+        'Anuṣṭubh',
+        'Anushtubh',
+        'त्रिष्टुभ्',
+        'triṣṭubh',
+        'trishtubh',
+        'Triṣṭubh',
+        'जगती',
+        'jagatī',
+        'jagati',
+        'Jagatī',
+        'उपजाति',
+        'Upajati',
+        'upajāti',
+        'वंशस्थ',
+        'Vamshastha',
+        'vaṃśastha',
+        'इन्द्रवज्रा',
+        'Indravajra',
+        'indravajrā',
+        'उपेन्द्रवज्रा',
+        'Upendravajra',
+    }
 
     anushtubh_patterns = {'अनुष्टुभ्', 'anuṣṭubh', 'anushtubh', 'Anuṣṭubh', 'Anushtubh', 'श्लोक', 'Shloka'}
-    trishtubh_patterns = {'त्रिष्टुभ्', 'triṣṭubh', 'trishtubh', 'Triṣṭubh', 'Trishtubh',
-                          'इन्द्रवज्रा', 'Indravajra', 'उपेन्द्रवज्रा', 'Upendravajra',
-                          'उपजाति', 'Upajati', 'वंशस्थ', 'Vamshastha'}
+    trishtubh_patterns = {
+        'त्रिष्टुभ्',
+        'triṣṭubh',
+        'trishtubh',
+        'Triṣṭubh',
+        'Trishtubh',
+        'इन्द्रवज्रा',
+        'Indravajra',
+        'उपेन्द्रवज्रा',
+        'Upendravajra',
+        'उपजाति',
+        'Upajati',
+        'वंशस्थ',
+        'Vamshastha',
+    }
 
     print("\n" + "=" * 80)
     print("VALIDATION RESULTS")
@@ -254,13 +305,15 @@ def test_bhagavad_gita_shlokas():
                 status = "❌"
 
             # Store detail
-            results['details'].append({
-                'ref': ref,
-                'category': category,
-                'meter': identified_meter,
-                'syllables': syllable_count,
-                'status': status
-            })
+            results['details'].append(
+                {
+                    'ref': ref,
+                    'category': category,
+                    'meter': identified_meter,
+                    'syllables': syllable_count,
+                    'status': status,
+                }
+            )
 
             # Print result
             text_preview = text[:50] + "..." if len(text) > 50 else text
@@ -279,10 +332,10 @@ def test_bhagavad_gita_shlokas():
 📊 Total Shlokas Tested: {total}
 
 📈 Meter Distribution:
-   • Anushtubh (अनुष्टुभ्):     {results['anushtubh']} ({results['anushtubh']/total*100:.1f}%)
-   • Trishtubh (त्रिष्टुभ्):     {results['trishtubh']} ({results['trishtubh']/total*100:.1f}%)
-   • Other Classical:         {results['other_classical']} ({results['other_classical']/total*100:.1f}%)
-   • Failed/Unknown:          {results['failed']} ({results['failed']/total*100:.1f}%)
+   • Anushtubh (अनुष्टुभ्):     {results['anushtubh']} ({results['anushtubh'] / total * 100:.1f}%)
+   • Trishtubh (त्रिष्टुभ्):     {results['trishtubh']} ({results['trishtubh'] / total * 100:.1f}%)
+   • Other Classical:         {results['other_classical']} ({results['other_classical'] / total * 100:.1f}%)
+   • Failed/Unknown:          {results['failed']} ({results['failed'] / total * 100:.1f}%)
 
 ✨ Overall Accuracy: {accuracy:.1f}% ({success}/{total})
 """)

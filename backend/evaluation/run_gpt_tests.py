@@ -41,11 +41,12 @@ import pandas as pd
 
 def test_csv_accuracy(verbose=False):
     """Test against CSV dataset (test_csv_accuracy.py logic)"""
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("TEST 1: CSV ACCURACY (page 1-47 chanda list - complete.csv)")
-    print("="*75)
+    print("=" * 75)
 
     from config.settings import Settings
+
     settings = Settings()
 
     # Initialize adapter
@@ -63,6 +64,7 @@ def test_csv_accuracy(verbose=False):
 
     # Import normalization functions directly from test file
     import importlib.util
+
     test_csv_path = Path(__file__).parent / 'test_csv_accuracy.py'
     spec = importlib.util.spec_from_file_location("test_csv_accuracy", test_csv_path)
     test_csv_module = importlib.util.module_from_spec(spec)
@@ -109,12 +111,9 @@ def test_csv_accuracy(verbose=False):
             if predicted and meters_match(expected, predicted):
                 correct += 1
             else:
-                issues.append({
-                    'row': row_index,
-                    'expected': expected,
-                    'predicted': predicted or 'NO RESULT',
-                    'verse': verse[:60]
-                })
+                issues.append(
+                    {'row': row_index, 'expected': expected, 'predicted': predicted or 'NO RESULT', 'verse': verse[:60]}
+                )
 
     accuracy = 100 * correct / total if total > 0 else 0
 
@@ -130,17 +129,18 @@ def test_csv_accuracy(verbose=False):
         if len(issues) > 5:
             print(f"      ... and {len(issues) - 5} more")
 
-    print("="*75)
+    print("=" * 75)
     return {'accuracy': accuracy, 'correct': correct, 'total': total}
 
 
 def test_rigveda_validation(verbose=False, limit=100):
     """Test against Rigveda dataset (test_rigveda_validation.py logic)"""
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("TEST 2: RIGVEDA VALIDATION (rigveda_with_meters_complete.csv)")
-    print("="*75)
+    print("=" * 75)
 
     from config.settings import Settings
+
     settings = Settings()
 
     # Initialize adapter
@@ -154,6 +154,7 @@ def test_rigveda_validation(verbose=False, limit=100):
 
     # Import normalization from test file
     import importlib.util
+
     test_rigveda_path = Path(__file__).parent / 'test_rigveda_validation.py'
     spec = importlib.util.spec_from_file_location("test_rigveda_validation", test_rigveda_path)
     test_rigveda_module = importlib.util.module_from_spec(spec)
@@ -169,11 +170,13 @@ def test_rigveda_validation(verbose=False, limit=100):
         for row in reader:
             meter_name = normalize_meter_name(row.get('chandas', ''))
             if meter_name and row.get('full_verse'):
-                data.append({
-                    'verse_text': row['full_verse'],
-                    'expected_meter': meter_name,
-                    'ref': row.get('reference', 'unknown')
-                })
+                data.append(
+                    {
+                        'verse_text': row['full_verse'],
+                        'expected_meter': meter_name,
+                        'ref': row.get('reference', 'unknown'),
+                    }
+                )
 
     # Limit data
     if limit and limit < len(data):
@@ -214,17 +217,18 @@ def test_rigveda_validation(verbose=False, limit=100):
     print(f"   📈 EXACT ACCURACY: {exact_accuracy:.2f}%")
     print(f"   📈 FAMILY ACCURACY: {family_accuracy:.2f}%")
 
-    print("="*75)
+    print("=" * 75)
     return {'exact_accuracy': exact_accuracy, 'family_accuracy': family_accuracy, 'total': total}
 
 
 def test_matching_chandas(verbose=False, limit=100):
     """Test against matching chandas dataset (test_matching_chandas_dataset.py logic)"""
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("TEST 3: MATCHING CHANDAS DATASET (matching_chandas.csv)")
-    print("="*75)
+    print("=" * 75)
 
     from config.settings import Settings
+
     settings = Settings()
 
     # Initialize adapter
@@ -245,6 +249,7 @@ def test_matching_chandas(verbose=False, limit=100):
     matches = 0
 
     import importlib.util
+
     test_matching_path = Path(__file__).parent / 'test_matching_chandas_dataset.py'
     spec = importlib.util.spec_from_file_location("test_matching_chandas", test_matching_path)
     test_matching_module = importlib.util.module_from_spec(spec)
@@ -286,7 +291,7 @@ def test_matching_chandas(verbose=False, limit=100):
     print(f"   Correct matches: {matches}")
     print(f"   ACCURACY: {accuracy:.2f}%")
 
-    print("="*75)
+    print("=" * 75)
     return {'accuracy': accuracy, 'correct': matches, 'total': total}
 
 
@@ -303,9 +308,9 @@ def main():
 
     results = {}
 
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("🧪 TESTING chanda_gpt.py IMPLEMENTATION")
-    print("="*75)
+    print("=" * 75)
 
     if run_all or args.csv:
         results['csv'] = test_csv_accuracy(verbose=args.verbose)
@@ -317,9 +322,9 @@ def main():
         results['matching'] = test_matching_chandas(verbose=args.verbose, limit=args.limit)
 
     # Summary
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("📈 COMPREHENSIVE TEST SUMMARY")
-    print("="*75)
+    print("=" * 75)
 
     if 'csv' in results:
         print(f"\n✅ CSV Accuracy: {results['csv']['accuracy']:.1f}%")
@@ -331,13 +336,13 @@ def main():
     if 'matching' in results:
         print(f"✅ Matching Chandas: {results['matching']['accuracy']:.1f}%")
 
-    print("\n" + "="*75)
+    print("\n" + "=" * 75)
     print("\n💡 NOTES:")
     print("   - chanda_gpt.py uses only 12 Vedic meters (basic + variants)")
     print("   - No pattern-based matching or fuzzy logic")
     print("   - Syllable counting and pada structure heuristics only")
     print("   - Lower accuracy expected vs. full rule-based system")
-    print("="*75 + "\n")
+    print("=" * 75 + "\n")
 
 
 if __name__ == '__main__':

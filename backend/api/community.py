@@ -21,11 +21,13 @@ community_model = CommunityModel()
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # ==================== SERVE UPLOADED FILES ====================
+
 
 @community_bp.route('/uploads/<path:filepath>', methods=['GET'])
 def serve_upload(filepath):
@@ -44,15 +46,16 @@ def serve_upload(filepath):
 
 # ==================== IMAGE UPLOAD ====================
 
+
 @community_bp.route('/upload/image', methods=['POST'])
 @require_auth
 def upload_image(current_user):
     """
     Upload an image for a post
-    
+
     Request:
         multipart/form-data with 'image' field
-    
+
     Returns:
         JSON with image URL
     """
@@ -66,10 +69,9 @@ def upload_image(current_user):
             return jsonify({'success': False, 'error': 'No file selected'}), 400
 
         if not allowed_file(file.filename):
-            return jsonify({
-                'success': False,
-                'error': f'Invalid file type. Allowed: {", ".join(ALLOWED_EXTENSIONS)}'
-            }), 400
+            return jsonify(
+                {'success': False, 'error': f'Invalid file type. Allowed: {", ".join(ALLOWED_EXTENSIONS)}'}
+            ), 400
 
         # Check file size
         file.seek(0, 2)
@@ -77,10 +79,7 @@ def upload_image(current_user):
         file.seek(0)
 
         if size > MAX_IMAGE_SIZE:
-            return jsonify({
-                'success': False,
-                'error': 'Image too large. Maximum size is 5MB'
-            }), 400
+            return jsonify({'success': False, 'error': 'Image too large. Maximum size is 5MB'}), 400
 
         # Generate unique filename
         ext = file.filename.rsplit('.', 1)[1].lower()
@@ -97,18 +96,13 @@ def upload_image(current_user):
                 file_content = file.read()
 
                 community_model.supabase.storage.from_('community-images').upload(
-                    file_path,
-                    file_content,
-                    {'content-type': file.content_type}
+                    file_path, file_content, {'content-type': file.content_type}
                 )
 
                 # Get public URL
                 public_url = community_model.supabase.storage.from_('community-images').get_public_url(file_path)
 
-                return jsonify({
-                    'success': True,
-                    'url': public_url
-                }), 200
+                return jsonify({'success': True, 'url': public_url}), 200
 
             except Exception as storage_error:
                 current_app.logger.warning(f"Supabase storage error, falling back to local: {storage_error}")
@@ -128,10 +122,7 @@ def upload_image(current_user):
         # The route is at /api/community/uploads/<path>
         relative_url = f"/api/community/uploads/community/{user_id}/{secure_name}"
 
-        return jsonify({
-            'success': True,
-            'url': relative_url
-        }), 200
+        return jsonify({'success': True, 'url': relative_url}), 200
 
     except Exception as e:
         current_app.logger.error(f"Image upload error: {e}")
@@ -140,16 +131,17 @@ def upload_image(current_user):
 
 # ==================== POSTS ====================
 
+
 @community_bp.route('/posts', methods=['GET'])
 def get_posts():
     """
     Get posts feed (chronological, newest first)
-    
+
     Query Parameters:
         limit: Number of posts (default 20, max 100)
         offset: Pagination offset (default 0)
         user_id: Optional - filter by specific user
-    
+
     Returns:
         JSON with posts list
     """
@@ -158,11 +150,7 @@ def get_posts():
         offset = request.args.get('offset', 0, type=int)
         user_id = request.args.get('user_id', None)
 
-        result = community_model.get_posts(
-            limit=limit,
-            offset=offset,
-            user_id=user_id
-        )
+        result = community_model.get_posts(limit=limit, offset=offset, user_id=user_id)
 
         # Check if current user has liked/bookmarked each post
         current_user = get_current_user()
@@ -181,10 +169,7 @@ def get_posts():
 
     except Exception as e:
         current_app.logger.error(f"Get posts error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/posts', methods=['POST'])
@@ -192,14 +177,14 @@ def get_posts():
 def create_post(current_user):
     """
     Create a new post
-    
+
     Request JSON:
         {
             "content": "Post caption/text",
             "sanskrit_text": "Optional Sanskrit verse",
             "analyze_meter": true/false (default true if sanskrit_text provided)
         }
-    
+
     Returns:
         JSON with created post data
     """
@@ -207,10 +192,7 @@ def create_post(current_user):
         data = request.get_json()
 
         if not data or not data.get('content'):
-            return jsonify({
-                'success': False,
-                'error': 'Content is required'
-            }), 400
+            return jsonify({'success': False, 'error': 'Content is required'}), 400
 
         content = data['content'].strip()
         sanskrit_text = data.get('sanskrit_text', '').strip() or None
@@ -233,7 +215,7 @@ def create_post(current_user):
                         'syllable_count': analysis_result.get('display_length', 0),
                         'matra_count': analysis_result.get('display_matra', 0),
                         'gana_pattern': analysis_result.get('display_gana', ''),
-                        'found': True
+                        'found': True,
                     }
                 else:
                     meter_analysis = {'found': False}
@@ -252,7 +234,7 @@ def create_post(current_user):
             content=content,
             sanskrit_text=sanskrit_text,
             meter_analysis=meter_analysis,
-            image_url=image_url
+            image_url=image_url,
         )
 
         status_code = 201 if result.get('success') else 400
@@ -260,17 +242,14 @@ def create_post(current_user):
 
     except Exception as e:
         current_app.logger.error(f"Create post error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/posts/<post_id>', methods=['GET'])
 def get_post(post_id):
     """
     Get a single post by ID
-    
+
     Returns:
         JSON with post data including like status for current user
     """
@@ -287,10 +266,7 @@ def get_post(post_id):
 
     except Exception as e:
         current_app.logger.error(f"Get post error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/posts/<post_id>', methods=['DELETE'])
@@ -298,7 +274,7 @@ def get_post(post_id):
 def delete_post(current_user, post_id):
     """
     Delete a post (only by owner)
-    
+
     Returns:
         JSON with success status
     """
@@ -312,20 +288,18 @@ def delete_post(current_user, post_id):
 
     except Exception as e:
         current_app.logger.error(f"Delete post error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ==================== LIKES ====================
+
 
 @community_bp.route('/posts/<post_id>/like', methods=['POST'])
 @require_auth
 def toggle_like(current_user, post_id):
     """
     Toggle like on a post (like if not liked, unlike if already liked)
-    
+
     Returns:
         JSON with new like state
     """
@@ -339,20 +313,17 @@ def toggle_like(current_user, post_id):
 
     except Exception as e:
         current_app.logger.error(f"Toggle like error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/posts/<post_id>/likes', methods=['GET'])
 def get_post_likes(post_id):
     """
     Get users who liked a post
-    
+
     Query Parameters:
         limit: Max users to return (default 50)
-    
+
     Returns:
         JSON with users list
     """
@@ -366,23 +337,21 @@ def get_post_likes(post_id):
 
     except Exception as e:
         current_app.logger.error(f"Get post likes error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ==================== COMMENTS ====================
+
 
 @community_bp.route('/posts/<post_id>/comments', methods=['GET'])
 def get_comments(post_id):
     """
     Get comments for a post
-    
+
     Query Parameters:
         limit: Number of comments (default 50)
         offset: Pagination offset (default 0)
-    
+
     Returns:
         JSON with comments list
     """
@@ -397,10 +366,7 @@ def get_comments(post_id):
 
     except Exception as e:
         current_app.logger.error(f"Get comments error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/posts/<post_id>/comments', methods=['POST'])
@@ -408,12 +374,12 @@ def get_comments(post_id):
 def add_comment(current_user, post_id):
     """
     Add a comment to a post
-    
+
     Request JSON:
         {
             "content": "Comment text"
         }
-    
+
     Returns:
         JSON with created comment data
     """
@@ -421,10 +387,7 @@ def add_comment(current_user, post_id):
         data = request.get_json()
 
         if not data or not data.get('content'):
-            return jsonify({
-                'success': False,
-                'error': 'Content is required'
-            }), 400
+            return jsonify({'success': False, 'error': 'Content is required'}), 400
 
         content = data['content'].strip()
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
@@ -436,10 +399,7 @@ def add_comment(current_user, post_id):
 
     except Exception as e:
         current_app.logger.error(f"Add comment error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/comments/<comment_id>', methods=['DELETE'])
@@ -447,7 +407,7 @@ def add_comment(current_user, post_id):
 def delete_comment(current_user, comment_id):
     """
     Delete a comment (only by owner)
-    
+
     Returns:
         JSON with success status
     """
@@ -461,23 +421,21 @@ def delete_comment(current_user, comment_id):
 
     except Exception as e:
         current_app.logger.error(f"Delete comment error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ==================== USER ACTIVITY ====================
+
 
 @community_bp.route('/users/<user_id>/posts', methods=['GET'])
 def get_user_posts(user_id):
     """
     Get posts by a specific user
-    
+
     Query Parameters:
         limit: Number of posts (default 20)
         offset: Pagination offset (default 0)
-    
+
     Returns:
         JSON with posts list
     """
@@ -492,21 +450,18 @@ def get_user_posts(user_id):
 
     except Exception as e:
         current_app.logger.error(f"Get user posts error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/users/<user_id>/liked', methods=['GET'])
 def get_user_liked_posts(user_id):
     """
     Get posts liked by a user
-    
+
     Query Parameters:
         limit: Number of posts (default 20)
         offset: Pagination offset (default 0)
-    
+
     Returns:
         JSON with posts list
     """
@@ -521,24 +476,22 @@ def get_user_liked_posts(user_id):
 
     except Exception as e:
         current_app.logger.error(f"Get user liked posts error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ==================== MY ACTIVITY (Current User) ====================
+
 
 @community_bp.route('/me/posts', methods=['GET'])
 @require_auth
 def get_my_posts(current_user):
     """
     Get current user's posts
-    
+
     Query Parameters:
         limit: Number of posts (default 20)
         offset: Pagination offset (default 0)
-    
+
     Returns:
         JSON with posts list
     """
@@ -554,10 +507,7 @@ def get_my_posts(current_user):
 
     except Exception as e:
         current_app.logger.error(f"Get my posts error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @community_bp.route('/me/liked', methods=['GET'])
@@ -565,11 +515,11 @@ def get_my_posts(current_user):
 def get_my_liked_posts(current_user):
     """
     Get current user's liked posts
-    
+
     Query Parameters:
         limit: Number of posts (default 20)
         offset: Pagination offset (default 0)
-    
+
     Returns:
         JSON with posts list
     """
@@ -585,20 +535,18 @@ def get_my_liked_posts(current_user):
 
     except Exception as e:
         current_app.logger.error(f"Get my liked posts error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 # ==================== PHASE 2: EDIT POST ====================
+
 
 @community_bp.route('/posts/<post_id>', methods=['PUT', 'PATCH'])
 @require_auth
 def update_post(current_user, post_id):
     """
     Update a post (only by owner)
-    
+
     Request JSON:
         {
             "content": "Updated content",
@@ -629,6 +577,7 @@ def update_post(current_user, post_id):
             try:
                 from ..config import settings
                 from ..core import Chanda
+
                 chanda = Chanda(data_path=str(settings.DATA_DIR))
                 analysis_result = chanda.identify_line(sanskrit_text)
                 if analysis_result and analysis_result.get('found'):
@@ -636,7 +585,7 @@ def update_post(current_user, post_id):
                         'found': True,
                         'meter_name': analysis_result.get('display_chanda_primary', ''),
                         'syllables': analysis_result.get('display_length', 0),
-                        'pattern': ''.join(analysis_result.get('display_lg', []))
+                        'pattern': ''.join(analysis_result.get('display_lg', [])),
                     }
             except Exception as e:
                 current_app.logger.warning(f"Meter analysis failed: {e}")
@@ -648,7 +597,7 @@ def update_post(current_user, post_id):
             sanskrit_text=sanskrit_text,
             meter_analysis=meter_analysis,
             image_url=image_url,
-            update_image=update_image
+            update_image=update_image,
         )
 
         status_code = 200 if result.get('success') else 400
@@ -660,6 +609,7 @@ def update_post(current_user, post_id):
 
 
 # ==================== PHASE 2: FOLLOWS ====================
+
 
 @community_bp.route('/users/<user_id>/follow', methods=['POST'])
 @require_auth
@@ -715,6 +665,7 @@ def get_following_feed(current_user):
 
 # ==================== PHASE 2: TRENDING ====================
 
+
 @community_bp.route('/feed/trending', methods=['GET'])
 def get_trending_feed():
     """Get trending posts based on engagement"""
@@ -728,6 +679,7 @@ def get_trending_feed():
 
 
 # ==================== PHASE 2: BOOKMARKS ====================
+
 
 @community_bp.route('/posts/<post_id>/bookmark', methods=['POST'])
 @require_auth
@@ -756,6 +708,7 @@ def get_bookmarked_posts(current_user):
 
 
 # ==================== PHASE 2: SEARCH ====================
+
 
 @community_bp.route('/search/posts', methods=['GET'])
 def search_posts():
@@ -789,6 +742,7 @@ def search_users():
 
 
 # ==================== PHASE 2: NOTIFICATIONS ====================
+
 
 @community_bp.route('/notifications', methods=['GET'])
 @require_auth
@@ -830,6 +784,7 @@ def mark_all_notifications_read(current_user):
 
 # ==================== PHASE 2: USER PROFILES ====================
 
+
 @community_bp.route('/users/<user_id>/profile', methods=['GET'])
 def get_user_profile(user_id):
     """Get a user's profile"""
@@ -852,9 +807,7 @@ def update_my_profile(current_user):
         data = request.get_json()
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
         result = community_model.update_user_profile(
-            user_id=user_id,
-            bio=data.get('bio'),
-            avatar_url=data.get('avatar_url')
+            user_id=user_id, bio=data.get('bio'), avatar_url=data.get('avatar_url')
         )
         return jsonify(result), 200 if result.get('success') else 400
     except Exception as e:
@@ -862,6 +815,7 @@ def update_my_profile(current_user):
 
 
 # ==================== PHASE 2: REPORTS & BLOCKS ====================
+
 
 @community_bp.route('/reports', methods=['POST'])
 @require_auth
@@ -879,7 +833,7 @@ def report_content(current_user):
             description=data.get('description'),
             reported_user_id=data.get('user_id'),
             post_id=data.get('post_id'),
-            comment_id=data.get('comment_id')
+            comment_id=data.get('comment_id'),
         )
         return jsonify(result), 200 if result.get('success') else 400
     except Exception as e:
@@ -912,6 +866,7 @@ def get_blocked_users(current_user):
 
 # ==================== PHASE 2: COMMENT REPLIES ====================
 
+
 @community_bp.route('/posts/<post_id>/comments/<comment_id>/replies', methods=['POST'])
 @require_auth
 def add_comment_reply(current_user, post_id, comment_id):
@@ -923,10 +878,7 @@ def add_comment_reply(current_user, post_id, comment_id):
 
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
         result = community_model.add_comment_reply(
-            post_id=post_id,
-            user_id=user_id,
-            content=data['content'].strip(),
-            parent_id=comment_id
+            post_id=post_id, user_id=user_id, content=data['content'].strip(), parent_id=comment_id
         )
         return jsonify(result), 201 if result.get('success') else 400
     except Exception as e:
@@ -945,6 +897,7 @@ def get_comment_replies(comment_id):
 
 
 # ==================== PHASE 3: ADMIN MODERATION ====================
+
 
 @community_bp.route('/admin/reports', methods=['GET'])
 @require_auth
@@ -990,10 +943,7 @@ def take_report_action(current_user, report_id):
             return jsonify({'success': False, 'error': 'Invalid action'}), 400
 
         result = community_model.handle_report(
-            report_id=report_id,
-            admin_id=user_id,
-            action=action,
-            notes=data.get('notes')
+            report_id=report_id, admin_id=user_id, action=action, notes=data.get('notes')
         )
         return jsonify(result), 200 if result.get('success') else 400
 

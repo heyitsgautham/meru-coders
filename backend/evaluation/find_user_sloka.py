@@ -1,4 +1,5 @@
 """Search for user's sloka in database and provide test slokas"""
+
 import csv
 import os
 
@@ -8,7 +9,7 @@ files = [
     'source/chandovallari.csv',
     'source/rigveda-with-meters.csv',
     'source/atharvaveda.csv',
-    'source/chandas-as-vedanga.csv'
+    'source/chandas-as-vedanga.csv',
 ]
 
 print('=== SEARCHING FOR YOUR SLOKA ===')
