@@ -163,34 +163,7 @@ class Chanda(
         # Should be treated as ONE verse, not two separate lines.
         # =====================================================================
         if mode in ['vedic', 'auto']:
-            # Check if text has single danda but no double danda
-            single_danda_count = text.count('।')
-            double_danda_count = text.count('॥')
-            newline_count = text.count('\n')
-
-            # If only single dandas and no newlines/double dandas,
-            # this might be a Vedic verse with caesura marking
-            if single_danda_count >= 1 and double_danda_count == 0 and newline_count == 0:
-                # Remove single dandas temporarily and count syllables using chanda engine
-                text_no_danda = text.replace('।', ' ').replace('  ', ' ')
-
-                # Use our own syllable counting (more accurate than text_classifier)
-                try:
-                    _, lg_marks = self.mark_lg(text_no_danda)
-                    # Count non-empty lg marks
-                    total_syllables = sum(1 for lg in lg_marks if lg)
-                except Exception:
-                    total_syllables = 0
-
-                # Vedic meters: 24 (Gāyatrī), 32 (Anuṣṭubh), 36 (Bṛhatī),
-                # 40 (Paṅkti), 44 (Triṣṭubh), 48 (Jagatī)
-                vedic_syllable_counts = {24, 32, 36, 40, 44, 48}
-                # Also allow ±3 tolerance (Vedic verses can have slight variations)
-                is_vedic_count = any(abs(total_syllables - vc) <= 3 for vc in vedic_syllable_counts)
-
-                if is_vedic_count:
-                    # Replace single dandas with spaces to prevent splitting
-                    text = text_no_danda
+            text = self._merge_vedic_caesura(text)
         # =====================================================================
 
         # =====================================================================
@@ -199,43 +172,7 @@ class Chanda(
         # =====================================================================
         is_valid_input, validation_reason = self.is_valid_sanskrit_input(text)
         if not is_valid_input:
-            # Return early with invalid input result
-            invalid_result = {
-                'found': False,
-                'is_padya': False,
-                'is_valid_input': False,
-                'validation_error': validation_reason,
-                'padya_reason': validation_reason,
-                'padya_confidence': 0.0,
-                'prose_message': f"अमान्य आदान: {validation_reason} (Invalid input: {validation_reason})",
-                'syllables': [],
-                'lg': [],
-                'gana': '',
-                'length': 0,
-                'matra': 0,
-                'chanda': [],
-                'jaati': [],
-                'display_scheme': None,
-                'display_line': text,
-                'display_syllables': [],
-                'display_lg': [],
-                'display_gana': '',
-                'display_length': 0,
-                'display_matra': 0,
-                'display_chanda': '',
-                'display_chanda_primary': '',
-                'display_chanda_alternate': '',
-                'display_chanda_alternate_count': 0,
-                'display_chanda_hidden_count': 0,
-                'display_jaati': '',
-                'fuzzy': [],
-                'confidence_scores': {},
-            }
-            # Return a structure that matches expected output format
-            return {
-                'result': {'line': [{'line': text, 'result': invalid_result}], 'verse': [], 'pragatha': None},
-                'path': None,
-            }
+            return self._invalid_input_response(text, validation_reason)
         # =====================================================================
 
         lines, _scheme = self.process_text(text)

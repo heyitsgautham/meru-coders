@@ -306,3 +306,44 @@ class ResultFormatMixin:
             display_chanda_alternate_count,
             display_chanda_hidden_count,
         )
+
+    @staticmethod
+    def _invalid_input_response(text, reason):
+        """The identify_from_text result for input that is not Sanskrit verse."""
+        # Return early with invalid input result
+        invalid_result = {
+            'found': False,
+            'is_padya': False,
+            'is_valid_input': False,
+            'validation_error': reason,
+            'padya_reason': reason,
+            'padya_confidence': 0.0,
+            'prose_message': f"अमान्य आदान: {reason} (Invalid input: {reason})",
+            'syllables': [],
+            'lg': [],
+            'gana': '',
+            'length': 0,
+            'matra': 0,
+            'chanda': [],
+            'jaati': [],
+            'display_scheme': None,
+            'display_line': text,
+            'display_syllables': [],
+            'display_lg': [],
+            'display_gana': '',
+            'display_length': 0,
+            'display_matra': 0,
+            'display_chanda': '',
+            'display_chanda_primary': '',
+            'display_chanda_alternate': '',
+            'display_chanda_alternate_count': 0,
+            'display_chanda_hidden_count': 0,
+            'display_jaati': '',
+            'fuzzy': [],
+            'confidence_scores': {},
+        }
+        # Return a structure that matches expected output format
+        return {
+            'result': {'line': [{'line': text, 'result': invalid_result}], 'verse': [], 'pragatha': None},
+            'path': None,
+        }
