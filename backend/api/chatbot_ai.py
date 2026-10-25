@@ -142,3 +142,137 @@ def calculate_confidence_score(response_text: str, context: str = "") -> float:
 
     # Cap at 1.0
     return min(score, 1.0)
+
+
+# --------------------------------------------------------------------------- #
+# One chat turn: RAG context, then Gemini with key rotation on quota errors.
+
+GEMINI_MODEL = 'gemini-2.5-flash'
+RAG_MIN_SCORE = 0.5
+RAG_DOCUMENTS = 5
+RAG_CONTEXT_CHARS = 3000
+
+
+class ChatReplyError(Exception):
+    """Gemini could not answer; carries the user-facing message and HTTP status."""
+
+    def __init__(self, message: str, status: int):
+        super().__init__(message)
+        self.message = message
+        self.status = status
+
+
+def retrieve_rag_context(message: str):
+    """(context text or None, retrieved documents) from the knowledge base for one question."""
+    engine = get_rag_engine()
+    logger.info(f"🔍 RAG Check: rag_engine={engine is not None}, is_ready={engine.is_ready() if engine else False}")
+    if not (engine and engine.is_ready()):
+        logger.warning("⚠️  RAG: Engine not available or not ready")
+        return None, []
+    try:
+        logger.info(f"🔍 RAG: Retrieving relevant context for query: '{message[:100]}...'")
+        documents = engine.retrieve(query=message, k=RAG_DOCUMENTS, min_score=RAG_MIN_SCORE)
+        logger.info(f"📊 RAG: Retrieved {len(documents)} documents (threshold: {RAG_MIN_SCORE})")
+        if not documents:
+            logger.info(f"ℹ️  RAG: No relevant documents found (below threshold {RAG_MIN_SCORE})")
+            return None, documents
+        for i, doc in enumerate(documents[:3], 1):
+            metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+            logger.info(f"   Doc {i}: source={metadata.get('source', 'N/A')}, type={metadata.get('type', 'N/A')}")
+        context = engine.format_context_for_prompt(
+            documents=documents, include_source=True, max_length=RAG_CONTEXT_CHARS
+        )
+        logger.info(f"✅ RAG: Using {len(documents)} documents ({len(context)} chars context)")
+        return context, documents
+    except Exception as rag_error:
+        logger.error(f"⚠️  RAG retrieval error: {rag_error}", exc_info=True)
+        # Answer without RAG if retrieval fails; the documents found so far are still reported.
+        return None, []
+
+
+def ground_message(message: str, rag_context) -> str:
+    """The prompt sent to Gemini: the question alone, or wrapped in the retrieved context."""
+    if not rag_context:
+        return message
+    logger.info(f"📝 Enhanced message with {len(rag_context)} chars of context")
+    return f"""Context from knowledge base (use this to ground your response when relevant):
+
+{rag_context}
+
+---
+
+User question: {message}
+
+Please answer using the provided context when relevant. Do not include source citations like [Source 1] or [Source N] in your response."""
+
+
+def is_quota_error(error_msg: str) -> bool:
+    return 'quota' in error_msg.lower() or '429' in error_msg or 'RESOURCE_EXHAUSTED' in error_msg
+
+
+def gemini_error_reply(error_msg: str) -> ChatReplyError:
+    """The user-facing error for a Gemini failure that is not a quota error."""
+    logger.error(f"Gemini API error: {error_msg}")
+    if 'finish_reason is 2' in error_msg or 'SAFETY' in error_msg:
+        return ChatReplyError('Content was blocked by safety filters. Please rephrase your question.', 400)
+    if 'finish_reason is 3' in error_msg or 'RECITATION' in error_msg:
+        return ChatReplyError('Content blocked due to recitation policy.', 400)
+    return ChatReplyError(f'Error processing request: {error_msg}', 500)
+
+
+def generate_reply(persona: dict, turns: list, prompt: str, rag_used: bool) -> str:
+    """Send one prompt with the last turns as history, rotating API keys when a key's quota runs out."""
+    from google.genai import types
+
+    config = types.GenerateContentConfig(
+        system_instruction=persona['system_instruction'],
+        temperature=persona['temperature'],
+        top_p=persona['top_p'],
+        max_output_tokens=4096,
+    )
+    history = [
+        types.Content(role='user' if turn['role'] == 'user' else 'model', parts=[types.Part(text=turn['content'])])
+        for turn in turns
+    ]
+    client = get_gemini_client()
+    chat = client.chats.create(model=GEMINI_MODEL, config=config, history=history)
+
+    exhausted_keys = []
+    max_retries = len(GEMINI_API_KEYS)
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Sending message to Gemini (RAG-enhanced: {rag_used}, attempt: {attempt + 1}/{max_retries})")
+            response = chat.send_message(prompt)
+        except Exception as gemini_error:
+            error_msg = str(gemini_error)
+            if not is_quota_error(error_msg):
+                raise gemini_error_reply(error_msg) from gemini_error
+
+            current_key = client.api_key if hasattr(client, 'api_key') else None
+            if current_key and current_key not in exhausted_keys:
+                exhausted_keys.append(current_key)
+            logger.warning(f"⚠️  API key quota exhausted ({len(exhausted_keys)}/{len(GEMINI_API_KEYS)} keys tried)")
+
+            if attempt >= max_retries - 1:
+                logger.error("❌ All retry attempts exhausted")
+                raise ChatReplyError(
+                    'Service is temporarily busy. Please wait a moment and try again.', 429
+                ) from gemini_error
+            try:
+                client = get_gemini_client(exclude_keys=exhausted_keys)
+                chat = client.chats.create(model=GEMINI_MODEL, config=config, history=history)
+            except ValueError:
+                logger.error(f"❌ All {len(GEMINI_API_KEYS)} API keys quota exhausted")
+                raise ChatReplyError(
+                    'Service is temporarily busy. All API keys have reached their quota. Please try again later.', 429
+                ) from gemini_error
+            logger.info("🔄 Retrying with different API key...")
+            continue
+
+        if not response or not hasattr(response, 'text'):
+            logger.error("Gemini response failed - no text in response")
+            raise ChatReplyError('Unable to generate a response.', 400)
+        logger.info(f"Gemini response received successfully, length: {len(response.text)}")
+        return response.text
+
+    raise ChatReplyError('Failed to generate response after all retry attempts.', 500)
