@@ -42,7 +42,7 @@ def show_installation_guide():
     print("=" * 70)
     print("\nRun these commands to install dependencies:\n")
     print("# Option 1: Use the installation script")
-    print("bash install_tts.sh\n")
+    print("bash backend/scripts/install_tts.sh\n")
     print("# Option 2: Manual installation")
     print("pip install torch torchvision torchaudio")
     print("pip install transformers accelerate soundfile")
