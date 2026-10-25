@@ -22,6 +22,8 @@ Author: Meru Coders Team (SIH 2025)
 import re
 from typing import Dict, List, Tuple
 
+from . import text_classifier_vocab as vocab
+
 
 class TextClassifier:
     """
@@ -33,374 +35,16 @@ class TextClassifier:
         # Returns: ('vedic', 0.85, {'syllable_count': 24, 'vedic_vocab_hits': 3, ...})
     """
 
-    # =========================================================================
-    # VEDIC MARKERS
-    # =========================================================================
-
-    # Vedic-specific vocabulary (archaic forms, Vedic deities, ritual terms)
-    VEDIC_VOCABULARY = {
-        # Deities (Vedic style invocation)
-        'अग्नि',
-        'इन्द्र',
-        'वरुण',
-        'मित्र',
-        'सोम',
-        'अश्विन',
-        'मरुत',
-        'रुद्र',
-        'विष्णु',
-        'सविता',
-        'पूषन',
-        'भग',
-        'अर्यमन',
-        'दक्ष',
-        'अंश',
-        'त्वष्टृ',
-        'विवस्वत',
-        'आदित्य',
-        'वायु',
-        'पर्जन्य',
-        'द्यौस',
-        'पृथिवी',
-        'उषस',
-        'अहि',
-        'वृत्र',
-        'असुर',
-        'आपः',
-        'जातवेदस',
-        # Vedic ritual terms
-        'यज्ञ',
-        'होत',
-        'होतृ',
-        'होतार',
-        'ऋत्विज',
-        'अध्वर',
-        'सोमपीत',
-        'हव्य',
-        'पुरोहित',
-        'बर्हिस',
-        'स्रुच',
-        'स्रुव',
-        'जुहू',
-        'उपभृत',
-        'ध्रुवा',
-        'इध्म',
-        'समिध',
-        'आज्य',
-        'घृत',
-        'दधि',
-        'मधु',
-        'भेषज',
-        'वरूथ',
-        # Vedic archaic forms
-        'ईळ',
-        'ईड',
-        'स्तु',
-        'गृणा',
-        'अर्च',
-        'नम',
-        'वन्द',
-        'शंस',
-        'ब्रू',
-        'ऋषि',
-        'कवि',
-        'विप्र',
-        'वेधस',
-        'मेधस',
-        'शूर',
-        'महि',
-        # Ritual actions
-        'यज',
-        'जुहु',
-        'दा',
-        'भज',
-        'गम',
-        'इ',
-        'कृ',
-        # Vedic compounds
-        'रत्नधातम',
-        'वीरवत्तम',
-        'सत्यश्चित्र',
-        'कविक्रतु',
-        'घृताची',
-        # Vedic verb forms (archaic endings)
-        'वक्षति',
-        'गच्छति',
-        'करिष्यसि',
-        'एमसि',
-        'भरन्त',
-        # Common Vedic starters and vocatives
-        'अग्निमीळे',
-        'इन्द्रं',
-        'वायवा',
-        'मित्रं',
-        'सोमं',
-        # Vocatives (O Vayu, O Indra, etc.) - common in Rigveda
-        'वायो',
-        'इन्द्रा',
-        'अग्ने',
-        'देव',
-        'देवा',
-        # Vedic imperatives and verb forms
-        'याहि',
-        'पृणीत',
-        'श्रुधी',
-        'पाहि',
-        'गहि',
-        'एहि',
-        'जुषस्व',
-        'शृणु',
-        'वेधि',
-        'विद्धि',
-        # Vedic particles and common words
-        'दृशे',
-        'भुजे',
-        'सुशिप्र',
-        'शतक्रतु',
-        'वाजिन',
-        'स्तोम',
-        'उक्थ',
-        'ब्रह्म',
-        'गिर',
-        'मन्त्र',
-        'ऋच',
-        # Vedic adjectives and epithets
-        'सुमन',
-        'विश्वचर्षणि',
-        'पुरुष्टुत',
-        'वृषभ',
-        'वृषन',
-        'सुदक्ष',
-        'सुक्रतु',
-        'सुशंस',
-        'सुमति',
-        # Vedic nouns
-        'रयि',
-        'क्षत्र',
-        'वाज',
-        'सहस',
-        'ओजस',
-        'तेजस',
-        'केतु',
-        'अर्क',
-        'अर्चि',
-        'द्युम्न',
-        'श्रवस',
-        # Common Rigvedic words from misclassified verses
-        'अस्माकं',
-        'विश्वा',
-        'सुमनस',
-        'देवयंत',
-    }
-
-    # Vedic-specific suffixes and endings
-    VEDIC_SUFFIXES = [
-        'वत्तम',
-        'तम',
-        'वान्',
-        'मान्',
-        'आन',
-        'उस्',
-        'षि',
-        'न्वत्',
-        'धातम',
-        'कृतु',
-        'श्रवस्',
-    ]
-
-    # Vedic word patterns (regex) - archaic forms
-    VEDIC_PATTERNS = [
-        r'स्व\S+',  # Words starting with स्व (sva-)
-        r'\S+भिः',  # Instrumental plural ending -bhiḥ
-        r'\S+षु',  # Locative plural ending -ṣu
-        r'\S+ेभ्यः',  # Dative plural ending
-        r'\S+ाय',  # Dative singular ending
-    ]
-
-    # Vedic Unicode range (Vedic Extensions)
-    # U+1CD0-U+1CFF: Vedic Extensions including tone marks
-    VEDIC_UNICODE_RANGES = [
-        (0x1CD0, 0x1CFF),  # Vedic Extensions
-        (0x0951, 0x0954),  # Vedic tone marks in Devanagari
-    ]
-
-    # Vedic special characters
-    VEDIC_SPECIAL_CHARS = {
-        '\u0951',  # Udatta (svarita)
-        '\u0952',  # Anudatta
-        '\u1cd0',  # Vedic tone Karshana
-        '\u1cd1',  # Vedic tone Shara
-        '\u1cd2',  # Vedic tone Prenkha
-        '\u1cf2',  # Vedic sign Ardhavisarga
-        '\u1cf3',  # Vedic sign Rotated Ardhavisarga
-        '\u1cf4',  # Vedic tone Candra Above
-        '\u1cf5',  # Vedic sign Jihvamuliya
-        '\u1cf6',  # Vedic sign Upadhmaniya
-        'ळ',  # Used in Vedic texts
-    }
-
-    # Vedic syllable counts for major meters
-    # Maps syllable count -> (meter_name, is_exact)
-    VEDIC_SYLLABLE_COUNTS = {
-        24: ('गायत्री', True),  # 3×8 padas
-        28: ('उष्णिक्', True),  # 4×7 or 8+8+12
-        32: ('अनुष्टुभ्', True),  # 4×8 padas
-        36: ('बृहती', True),  # 8+8+12+8 or variations
-        40: ('पङ्क्ति', True),  # 5×8 or 4×10
-        44: ('त्रिष्टुभ्', True),  # 4×11 padas
-        48: ('जगती', True),  # 4×12 padas
-        # Variations with ±2 tolerance
-        22: ('गायत्री', False),
-        23: ('गायत्री', False),
-        25: ('गायत्री', False),
-        26: ('उष्णिक्', False),
-        27: ('उष्णिक्', False),
-        29: ('उष्णिक्', False),
-        30: ('अनुष्टुभ्', False),
-        31: ('अनुष्टुभ्', False),
-        33: ('अनुष्टुभ्', False),
-        34: ('बृहती', False),
-        35: ('बृहती', False),
-        37: ('बृहती', False),
-        38: ('पङ्क्ति', False),
-        39: ('पङ्क्ति', False),
-        41: ('पङ्क्ति', False),
-        42: ('त्रिष्टुभ्', False),
-        43: ('त्रिष्टुभ्', False),
-        45: ('त्रिष्टुभ्', False),
-        46: ('जगती', False),
-        47: ('जगती', False),
-        49: ('जगती', False),
-        50: ('जगती', False),
-    }
-
-    # =========================================================================
-    # CLASSICAL MARKERS
-    # =========================================================================
-
-    # Classical-specific vocabulary (later Sanskrit, Kavya terms)
-    CLASSICAL_VOCABULARY = {
-        # Common Shloka/Kavya terms
-        'श्लोक',
-        'काव्य',
-        'पद्य',
-        'गद्य',
-        'अलंकार',
-        'रस',
-        # Classical deities (with epithets)
-        'राम',
-        'कृष्ण',
-        'शिव',
-        'पार्वती',
-        'गणेश',
-        'हनुमान',
-        'सीता',
-        'राधा',
-        'गोविन्द',
-        'मुरारि',
-        'माधव',
-        'केशव',
-        'नारायण',
-        # Classical themes
-        'प्रेम',
-        'विरह',
-        'शृंगार',
-        'करुण',
-        'वीर',
-        'भक्ति',
-        'ज्ञान',
-        'मोक्ष',
-        'धर्म',
-        'अर्थ',
-        'काम',
-        # Nature imagery (Classical kavya)
-        'मेघ',
-        'वर्षा',
-        'चन्द्र',
-        'सूर्य',
-        'तारा',
-        'नक्षत्र',
-        'पुष्प',
-        'लता',
-        'वन',
-        'सरोवर',
-        'नदी',
-        'पर्वत',
-        'समुद्र',
-        # Human elements (Classical themes)
-        'राजा',
-        'रानी',
-        'नायक',
-        'नायिका',
-        'सखी',
-        'दूत',
-        'प्रिय',
-        'प्रिया',
-        # Classical compounds and descriptions
-        'चन्द्रमुख',
-        'कमलनयन',
-        'मृगनयन',
-        'पद्मपत्र',
-        'रत्नभूषण',
-        # Meghaduta-style
-        'यक्ष',
-        'विरहिन',
-        'प्रियतम',
-        'अलक',
-        'उज्जयिनी',
-        # Bhagavad Gita markers
-        'अर्जुन',
-        'पार्थ',
-        'भारत',
-        'कुरुक्षेत्र',
-        'धर्मक्षेत्र',
-        'संजय',
-        'धृतराष्ट्र',
-        'पाण्डव',
-        'कौरव',
-        # Classical philosophy
-        'योग',
-        'सांख्य',
-        'वेदान्त',
-        'न्याय',
-        'तत्त्व',
-        'आत्मा',
-        'ब्रह्म',
-        'माया',
-        'प्रकृति',
-        'पुरुष',
-        # Markers from danda usage in classical
-        'इति',
-        'एवं',
-        'तथा',
-        'यथा',
-        'अपि',
-        'तु',
-        'हि',
-        'च',
-        'वा',
-    }
-
-    # Classical structural markers
-    CLASSICAL_STRUCTURAL_PATTERNS = [
-        r'॥\s*\d+\s*॥',  # Verse numbering: ॥ 1 ॥
-        r'\|\|',  # Double danda
-        r'।\s*$',  # Line ending with danda
-        r'॥\s*$',  # Line ending with double danda
-        r'इति\s+.*॥',  # "iti" marking end
-        r'\d+\s*-\s*\d+',  # Verse references (1-5)
-    ]
-
-    # Classical meters with their typical syllable counts (often longer)
-    CLASSICAL_METERS_SYLLABLES = {
-        # Per line counts for classical meters
-        14: ['वसन्ततिलका'],  # 14 syllables per line
-        17: ['शार्दूलविक्रीडित', 'पृथ्वी'],  # 17 syllables
-        19: ['स्रग्धरा'],  # 19 syllables per line
-        21: ['मन्दाक्रान्ता'],  # 21 syllables per quarter (long verse)
-        11: ['इन्द्रवज्रा', 'उपेन्द्रवज्रा', 'उपजाति'],  # 11 per quarter
-        12: ['द्रुतविलम्बित', 'वंशस्थ'],  # 12 per quarter
-    }
+    # Vocabulary and pattern tables live in text_classifier_vocab.py.
+    VEDIC_VOCABULARY = vocab.VEDIC_VOCABULARY
+    VEDIC_SUFFIXES = vocab.VEDIC_SUFFIXES
+    VEDIC_PATTERNS = vocab.VEDIC_PATTERNS
+    VEDIC_UNICODE_RANGES = vocab.VEDIC_UNICODE_RANGES
+    VEDIC_SPECIAL_CHARS = vocab.VEDIC_SPECIAL_CHARS
+    VEDIC_SYLLABLE_COUNTS = vocab.VEDIC_SYLLABLE_COUNTS
+    CLASSICAL_VOCABULARY = vocab.CLASSICAL_VOCABULARY
+    CLASSICAL_STRUCTURAL_PATTERNS = vocab.CLASSICAL_STRUCTURAL_PATTERNS
+    CLASSICAL_METERS_SYLLABLES = vocab.CLASSICAL_METERS_SYLLABLES
 
     # =========================================================================
     # CLASSIFICATION METHODS
@@ -509,39 +153,16 @@ class TextClassifier:
         Check text for Vedic and Classical vocabulary markers.
         Returns: (vedic_hits, classical_hits, vedic_words, classical_words)
         """
-        vedic_hits = 0
-        classical_hits = 0
-        vedic_words = []
-        classical_words = []
-
-        # Normalize text for matching
-
-        for word in self.VEDIC_VOCABULARY:
-            if word in text:
-                vedic_hits += 1
-                vedic_words.append(word)
-
-        for word in self.CLASSICAL_VOCABULARY:
-            if word in text:
-                classical_hits += 1
-                classical_words.append(word)
-
-        return vedic_hits, classical_hits, vedic_words, classical_words
+        vedic_words = [word for word in self.VEDIC_VOCABULARY if word in text]
+        classical_words = [word for word in self.CLASSICAL_VOCABULARY if word in text]
+        return len(vedic_words), len(classical_words), vedic_words, classical_words
 
     def check_structural_markers(self, text: str) -> Tuple[int, List[str]]:
         """
         Check for Classical structural markers (dandas, verse numbers, etc.)
         """
-        matches = []
-        count = 0
-
-        for pattern in self.classical_patterns:
-            found = pattern.findall(text)
-            if found:
-                count += len(found)
-                matches.extend(found)
-
-        return count, matches
+        matches = [match for pattern in self.classical_patterns for match in pattern.findall(text)]
+        return len(matches), matches
 
     def check_syllable_pattern(self, text: str) -> Tuple[str, float]:
         """
@@ -706,18 +327,7 @@ class TextClassifier:
             vedic_score += 0.2
 
         # 7. Per-line syllable count (Classical has consistent per-line counts)
-        lines = re.split(r'[।॥\n]', text)
-        lines = [ln.strip() for ln in lines if ln.strip() and len(ln.strip()) > 5]
-        if len(lines) >= 2:
-            per_line_syllables = [self.count_syllables_fast(ln) for ln in lines]
-            avg = sum(per_line_syllables) / len(per_line_syllables)
-
-            # Classical meters have specific per-line counts
-            if 10 <= avg <= 21 and len(lines) >= 2:
-                # Check variance - classical is very regular
-                variance = sum((s - avg) ** 2 for s in per_line_syllables) / len(per_line_syllables)
-                if variance < 4:  # Very consistent
-                    classical_score += 0.2
+        classical_score += self._line_regularity_score(text)
 
         # 8. Check for specific markers
         # "॥" at end strongly suggests classical
@@ -725,44 +335,54 @@ class TextClassifier:
             classical_score += 0.2
 
         # 9. Compound word density (Classical has more elaborate compounds)
-        # Approximated by average word length
-        words = text.split()
-        if words:
-            avg_word_len = sum(len(w) for w in words) / len(words)
-            if avg_word_len > 12:  # Long compound words
-                classical_score += 0.1
+        classical_score += self._compound_density_score(text)
 
         # 10. Final structural override
         # If absolutely no punctuation and syllables in Vedic range, boost Vedic
         if single_danda == 0 and double_danda == 0 and 20 <= syllables <= 50:
             vedic_score += 0.15
 
-        # Normalize scores
-        total_score = vedic_score + classical_score
-        if total_score > 0:
-            vedic_score /= total_score
-            classical_score /= total_score
-        else:
-            # Default: use structural heuristic
-            if double_danda > 0 or single_danda >= 2:
-                vedic_score = 0.3
-                classical_score = 0.7
-            else:
-                vedic_score = 0.7  # Increased default Vedic score
-                classical_score = 0.3
-
-        # Determine classification
+        vedic_score, classical_score = self._normalize_scores(vedic_score, classical_score, single_danda, double_danda)
         if vedic_score > classical_score:
-            classification = 'vedic'
-            confidence = vedic_score
+            classification, confidence = 'vedic', vedic_score
         else:
-            classification = 'classical'
-            confidence = classical_score
+            classification, confidence = 'classical', classical_score
 
         features['vedic_score'] = vedic_score
         features['classical_score'] = classical_score
 
         return classification, confidence, features
+
+    def _line_regularity_score(self, text: str) -> float:
+        """0.2 when a multi-line text keeps a near-constant 10 to 21 syllables per line, as classical verse does."""
+        lines = re.split(r'[।॥\n]', text)
+        lines = [ln.strip() for ln in lines if ln.strip() and len(ln.strip()) > 5]
+        if len(lines) < 2:
+            return 0.0
+        per_line_syllables = [self.count_syllables_fast(ln) for ln in lines]
+        avg = sum(per_line_syllables) / len(per_line_syllables)
+        if not 10 <= avg <= 21:
+            return 0.0
+        variance = sum((s - avg) ** 2 for s in per_line_syllables) / len(per_line_syllables)
+        return 0.2 if variance < 4 else 0.0
+
+    @staticmethod
+    def _compound_density_score(text: str) -> float:
+        """0.1 when the average word is longer than 12 characters, a sign of classical compounds."""
+        words = text.split()
+        if words and sum(len(w) for w in words) / len(words) > 12:
+            return 0.1
+        return 0.0
+
+    @staticmethod
+    def _normalize_scores(vedic: float, classical: float, single_danda: int, double_danda: int) -> Tuple[float, float]:
+        """Scale both scores to sum to 1; with no evidence at all, lean on the danda count."""
+        total = vedic + classical
+        if total > 0:
+            return vedic / total, classical / total
+        if double_danda > 0 or single_danda >= 2:
+            return 0.3, 0.7
+        return 0.7, 0.3
 
     def classify_batch(self, texts: List[str]) -> List[Tuple[str, float, Dict]]:
         """Classify multiple texts"""
