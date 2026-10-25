@@ -12,9 +12,9 @@ l and g as well as ल and ग.
 from __future__ import annotations
 
 import csv
-from collections import Counter
-from dataclasses import dataclass
 from pathlib import Path
+
+from backend.pipeline.issues import Issue
 
 DEFINITION_FILES = ("chanda_sama.csv", "chanda_ardhasama.csv", "chanda_vishama.csv", "chanda_vedic.csv")
 DEFINITION_HEADER = ["वृत्त", "पद", "लक्षण", "लक्षण (raw)", "अक्षरसङ्ख्या", "मात्रा", "यति"]
@@ -37,18 +37,6 @@ WILDCARD = "-"
 LATIN_PATTERN = str.maketrans({"l": LAGHU, "g": GURU})
 # Vedic Paṅkti has five padas; classical meters have at most four.
 ALLOWED_PADAS = {"", "1", "2", "3", "4", "5"}
-
-
-@dataclass(frozen=True)
-class Issue:
-    file: str
-    line: int
-    meter: str
-    rule: str
-    detail: str
-
-    def __str__(self) -> str:
-        return f"{self.file}:{self.line} {self.meter}: {self.rule} ({self.detail})"
 
 
 def expand_gana(gana: str) -> str:
@@ -119,9 +107,3 @@ def check_definition_tables(data_dir: Path) -> list[Issue]:
     for name in DEFINITION_FILES:
         issues.extend(check_file(data_dir / name))
     return issues
-
-
-def count_by_rule(issues: list[Issue]) -> dict[str, int]:
-    """Issue counts keyed ``file:rule``, the shape of the committed baseline."""
-    counts = Counter(f"{issue.file}:{issue.rule}" for issue in issues)
-    return dict(sorted(counts.items()))

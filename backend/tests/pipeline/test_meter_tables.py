@@ -1,15 +1,12 @@
 """Rules for the meter definition CSVs, and the defects the committed tables still carry."""
 
-import json
 import re
-from pathlib import Path
 
 import pytest
 
 from backend.config import settings
 from backend.pipeline import meter_tables as mt
-
-BASELINE = Path(mt.__file__).with_name("known_issues.json")
+from backend.pipeline.issues import Issue, count_by_rule, load_known_issues
 
 
 def row(name="इन्द्रवज्रा", pada="", gana="ततजगग", pattern="गगलगगललगलगग", syllables="11", matras="18"):
@@ -84,7 +81,7 @@ def test_header_must_match(tmp_path):
 
 
 def test_issue_reads_as_file_line_meter_rule():
-    issue = mt.Issue("chanda_sama.csv", 7, "मालिनी", "syllable_count", "15 declared, pattern has 14")
+    issue = Issue("chanda_sama.csv", 7, "मालिनी", "syllable_count", "15 declared, pattern has 14")
     assert str(issue) == "chanda_sama.csv:7 मालिनी: syllable_count (15 declared, pattern has 14)"
 
 
@@ -95,8 +92,7 @@ def committed_issues():
 
 def test_committed_tables_match_the_known_issue_baseline(committed_issues):
     """A new defect fails here; so does a fix, until known_issues.json records it."""
-    baseline = json.loads(BASELINE.read_text(encoding="utf-8"))["meter_tables"]
-    assert mt.count_by_rule(committed_issues) == baseline
+    assert count_by_rule(committed_issues) == load_known_issues()["meter_tables"]
 
 
 def test_every_unmatchable_meter_is_an_imported_row(committed_issues):
@@ -104,4 +100,4 @@ def test_every_unmatchable_meter_is_an_imported_row(committed_issues):
     unmatchable = [issue for issue in committed_issues if issue.rule == "gana_symbols"]
     assert unmatchable
     devanagari = re.compile("[\u0900-\u097f]")
-    assert not [issue.meter for issue in unmatchable if devanagari.search(issue.meter)]
+    assert not [issue.subject for issue in unmatchable if devanagari.search(issue.subject)]
