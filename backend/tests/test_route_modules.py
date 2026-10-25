@@ -37,6 +37,14 @@ class TestDatasets:
         assert len(first["rows"]) == 3
         assert first["rows"] != second["rows"]
 
+    def test_listed_row_count_matches_the_dataset_view(self, client):
+        """Multi-line verses are one record each, so counting file lines overstates them."""
+        listed = {ds["id"]: ds["rowCount"] for ds in client.get("/api/datasets").get_json()["datasets"]}
+        for dataset_id, row_count in listed.items():
+            body = client.get(f"/api/datasets/{dataset_id}?limit=1").get_json()
+            assert body["totalCount"] == row_count, dataset_id
+        assert listed["chandovallari"] == 264
+
     def test_unknown_dataset_is_404(self, client):
         resp = client.get("/api/datasets/not-a-dataset")
         assert resp.status_code == 404

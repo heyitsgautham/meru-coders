@@ -79,6 +79,12 @@ def read_csv_data(filename, limit=None, offset=0, chandas_filter=None, source_fi
     return rows, total_count, columns
 
 
+def count_csv_records(filepath):
+    """Data rows in a CSV file; a quoted multi-line verse counts once, unlike a line count."""
+    with open(filepath, 'r', encoding='utf-8', newline='') as f:
+        return max(sum(1 for row in csv.reader(f) if row) - 1, 0)
+
+
 def get_unique_chandas(filename, chandas_column):
     """Get unique chandas values from a dataset."""
     filepath = SOURCE_DIR / filename
@@ -121,8 +127,7 @@ def list_datasets():
                 for file_info in ds_data['files']:
                     filepath = SOURCE_DIR / file_info.get('filename', '')
                     if filepath.exists():
-                        with open(filepath, 'r', encoding='utf-8') as f:
-                            actual_row_count += sum(1 for _ in f) - 1
+                        actual_row_count += count_csv_records(filepath)
                         # Get unique chandas from each file
                         chandas_col = file_info.get('chandasColumn')
                         if chandas_col:
@@ -137,8 +142,7 @@ def list_datasets():
                 filepath = SOURCE_DIR / ds_data.get('filename', '')
                 actual_row_count = 0
                 if filepath.exists():
-                    with open(filepath, 'r', encoding='utf-8') as f:
-                        actual_row_count = sum(1 for _ in f) - 1  # Subtract header
+                    actual_row_count = count_csv_records(filepath)
 
                 # Get unique chandas for filtering
                 chandas_column = ds_data.get('chandasColumn')
