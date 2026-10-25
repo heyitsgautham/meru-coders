@@ -43,6 +43,22 @@ jobs:
           path: coverage.xml
           if-no-files-found: ignore
 
+  data:
+    name: Data quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.5.14"
+          python-version: "3.11"
+          enable-cache: true
+      - name: Install dependencies from uv.lock
+        run: uv sync --frozen
+      - name: Validate meter tables and verse corpora
+        # Fails on any defect not recorded in backend/pipeline/known_issues.json.
+        run: uv run python -m backend.pipeline.validate
+
   frontend:
     name: Frontend lint, typecheck, tests and build
     runs-on: ubuntu-latest
