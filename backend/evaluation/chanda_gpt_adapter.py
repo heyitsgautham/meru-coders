@@ -7,13 +7,7 @@ This wraps the functional API of chanda_gpt.py to match the Chanda class interfa
 expected by test_csv_accuracy.py, test_rigveda_validation.py, and test_matching_chandas_dataset.py
 """
 
-import sys
-from pathlib import Path
-
-# Add the reference directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'reference' / 'alternative_implementations'))
-
-import chanda_gpt
+from reference.alternative_implementations import chanda_gpt
 
 
 class ChandaGPTAdapter:

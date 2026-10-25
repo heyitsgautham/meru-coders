@@ -37,7 +37,6 @@ Key Insights:
 - Our regex pre-compilation: 16x faster than IITK with same dataset
 """
 
-import sys
 import time
 from collections import Counter
 from pathlib import Path
@@ -50,8 +49,6 @@ BASE_PATH = Path(__file__).parent.parent.parent
 BACKEND_PATH = BASE_PATH / 'backend'
 REFERENCE_PATH = BASE_PATH / 'reference' / 'alternative_implementations'
 
-sys.path.insert(0, str(BACKEND_PATH))
-sys.path.insert(0, str(REFERENCE_PATH))
 
 # Import transliteration library for proper Devanagari handling
 try:
@@ -335,7 +332,7 @@ class TestDefinitiveComparison:
     @pytest.fixture(scope="class")
     def our_impl(self, paths):
         """Our implementation with our dataset."""
-        from core.chanda import Chanda
+        from backend.core.chanda import Chanda
 
         return Chanda(data_path=paths['our_data'])
 
@@ -343,7 +340,7 @@ class TestDefinitiveComparison:
     def iitk_impl_original(self, paths):
         """IITK implementation with original dataset (434 patterns)."""
         try:
-            from chanda_iitk import Chanda
+            from reference.alternative_implementations.chanda_iitk import Chanda
 
             return Chanda(paths['iitk_data'])
         except ImportError:
@@ -353,7 +350,7 @@ class TestDefinitiveComparison:
     def iitk_impl_our_data(self, paths):
         """IITK implementation with our dataset (2062 patterns)."""
         try:
-            from chanda_iitk import Chanda
+            from reference.alternative_implementations.chanda_iitk import Chanda
 
             return Chanda(paths['our_data'])
         except ImportError:
@@ -490,7 +487,7 @@ def main(quick_mode=False):
     Args:
         quick_mode: If True, skip IITK tests (which are slow)
     """
-    from core.chanda import Chanda as OurChanda
+    from backend.core.chanda import Chanda as OurChanda
 
     print("Loading implementations...")
 
@@ -502,7 +499,7 @@ def main(quick_mode=False):
     iitk_ours = None
     if not quick_mode:
         try:
-            from chanda_iitk import Chanda as IITKChanda
+            from reference.alternative_implementations.chanda_iitk import Chanda as IITKChanda
 
             iitk_orig = IITKChanda(str(BASE_PATH / 'repos' / 'chanda' / 'data'))
             iitk_ours = IITKChanda(str(BACKEND_PATH / 'data'))

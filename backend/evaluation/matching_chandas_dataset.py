@@ -10,16 +10,12 @@ Author: SIH 2025 Meru Coders Team
 Date: December 7, 2025
 """
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from config.settings import Settings
-from core.chanda import Chanda
+from backend.config.settings import Settings
+from backend.core.chanda import Chanda
 
 settings = Settings()
 
@@ -186,8 +182,9 @@ def run_dataset_test(csv_path, sample_size=None, verbose=False):
     # Chandas-wise accuracy
     chandas_accuracy = {}
     for chandas in df['chandas_normalized'].unique():
-        chandas_verses = df[df['chandas_normalized'] == chandas]
-        chandas_results = [r for r, (_, row) in zip(results, df.iterrows()) if row['chandas_normalized'] == chandas]
+        chandas_results = [
+            r for r, (_, row) in zip(results, df.iterrows(), strict=False) if row['chandas_normalized'] == chandas
+        ]
         chandas_matches = sum(1 for r in chandas_results if r['match'])
         chandas_total = len(chandas_results)
         chandas_accuracy[chandas] = {

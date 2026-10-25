@@ -14,24 +14,20 @@ All tested against: page 1-47 chanda list - Sheet1.csv (109 verses)
 Goal: Measure the improvement from our curated dataset vs original IITK dataset.
 """
 
+import csv
+import re
 import sys
 from pathlib import Path
 
-# Add paths for imports
+from indic_transliteration import sanscript
+from indic_transliteration.sanscript import transliterate
+
 BACKEND_PATH = Path(__file__).parent.parent
-sys.path.insert(0, str(BACKEND_PATH))
-sys.path.insert(0, str(BACKEND_PATH / 'core'))
 
 ORIGINAL_REPO_PATH = BACKEND_PATH.parent / 'repos' / 'chanda'
 REFERENCE_PATH = BACKEND_PATH.parent / 'reference' / 'alternative_implementations'
 sys.path.insert(0, str(ORIGINAL_REPO_PATH))
-sys.path.insert(0, str(REFERENCE_PATH))
 
-import csv
-import re
-
-from indic_transliteration import sanscript
-from indic_transliteration.sanscript import transliterate
 
 # ============================================================================
 # Meter Name Normalization
@@ -255,7 +251,7 @@ def load_original_repo_corpora():
 
         # Pair answers with verses
         corpus_data = []
-        for i, (answer, verse) in enumerate(zip(answers, verses)):
+        for _i, (answer, verse) in enumerate(zip(answers, verses, strict=False)):
             # Handle multiple expected meters (e.g., "उपेन्द्रवज्रा + इन्द्रवज्रा")
             expected = answer.split(' + ')
             corpus_data.append(
@@ -281,7 +277,7 @@ def load_original_repo_corpora():
 
 def evaluate_with_chanda_iitk(data, data_path, label=""):
     """Evaluate using chanda_iitk.py with a specified meter database"""
-    from chanda_iitk import Chanda
+    from reference.alternative_implementations.chanda_iitk import Chanda
 
     c = Chanda(str(data_path))
 
@@ -300,11 +296,9 @@ def evaluate_with_chanda_iitk(data, data_path, label=""):
             verse_results = result['result']['verse']
             if verse_results and verse_results[0].get('chanda'):
                 predicted_list = verse_results[0]['chanda'][0]
-                confidence = verse_results[0]['chanda'][1]
                 predicted = predicted_list[0] if predicted_list else ''
             else:
                 predicted = ''
-                confidence = 0
 
             is_correct = False
             for exp in all_expected:
@@ -328,7 +322,7 @@ def evaluate_with_chanda_iitk(data, data_path, label=""):
 
 def evaluate_with_enhanced_chanda(data, data_path):
     """Evaluate using enhanced_chanda.py with our meter database"""
-    from enhanced_chanda import EnhancedChanda
+    from backend.core.enhanced_chanda import EnhancedChanda
 
     c = EnhancedChanda(str(data_path))
 
@@ -347,11 +341,9 @@ def evaluate_with_enhanced_chanda(data, data_path):
             verse_results = result['result']['verse']
             if verse_results and verse_results[0].get('chanda'):
                 predicted_list = verse_results[0]['chanda'][0]
-                confidence = verse_results[0]['chanda'][1]
                 predicted = predicted_list[0] if predicted_list else ''
             else:
                 predicted = ''
-                confidence = 0
 
             is_correct = False
             for exp in all_expected:
@@ -375,7 +367,7 @@ def evaluate_with_enhanced_chanda(data, data_path):
 
 def evaluate_with_our_chanda(data, data_path):
     """Evaluate using our backend/core/chanda.py with our meter database"""
-    from chanda import Chanda
+    from backend.core.chanda import Chanda
 
     c = Chanda(str(data_path))
 
@@ -394,11 +386,9 @@ def evaluate_with_our_chanda(data, data_path):
             verse_results = result['result']['verse']
             if verse_results and verse_results[0].get('chanda'):
                 predicted_list = verse_results[0]['chanda'][0]
-                confidence = verse_results[0]['chanda'][1]
                 predicted = predicted_list[0] if predicted_list else ''
             else:
                 predicted = ''
-                confidence = 0
 
             is_correct = False
             for exp in all_expected:

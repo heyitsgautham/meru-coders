@@ -18,14 +18,10 @@ The Anukramani provides meter annotations for all Rig Veda hymns by traditional 
 
 import os
 import re
-import sys
 import unicodedata
 from collections import Counter
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # =============================================================================
 # METER NAME NORMALIZATION
@@ -379,7 +375,7 @@ def test_vedic_meter_identification():
     for meter, info in vedic_meters.items():
         syllables = info['syllables']
         structure = info['structure']
-        expected = info['expected_dev']
+        info['expected_dev']
 
         # Test identification
         result = chanda.identify_vedic_meter(syllables)
@@ -434,7 +430,7 @@ def test_meter_distribution_coverage():
     primary_meter_counts = Counter()
     unsupported_hymns = []  # Track hymns with unsupported meters
 
-    for mandala, hymns in all_data.items():
+    for hymns in all_data.values():
         for hymn in hymns:
             # Count primary meter
             primary = normalize_meter_name(hymn['primary_meter'])
@@ -593,7 +589,7 @@ def test_pattern_identification_accuracy():
             got_meter = match_name
 
             # Check if any match (not just top) is the expected Vedic meter
-            for match_name, confidence, match_type in matches:
+            for match_name, _confidence, _match_type in matches:
                 if isinstance(match_name, tuple):
                     match_name = match_name[0]
                 if match_name in acceptable_names:
@@ -610,10 +606,8 @@ def test_pattern_identification_accuracy():
         direct_vedic_match = vedic_meter_name in acceptable_names if vedic_meter_name else False
 
         if top_is_vedic or direct_vedic_match:
-            status = "✓ PASS"
             passed += 1
         else:
-            status = "✗ FAIL"
             failed += 1
 
         vedic_status = "✓ Yes" if (top_is_vedic or direct_vedic_match) else "✗ No"

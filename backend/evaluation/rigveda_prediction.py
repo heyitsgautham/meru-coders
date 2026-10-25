@@ -21,12 +21,8 @@ Sources:
 """
 
 import os
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # =============================================================================
 # RIG VEDA TEST VERSES WITH GROUND TRUTH METERS
@@ -533,10 +529,9 @@ def run_prediction_accuracy_test():
         is_correct = is_vedic_meter_match(predicted, expected)
 
         # Also check if syllable-based identification would work
-        syllable_correct = False
         try:
             # Count syllables in the verse
-            lines = [l.strip() for l in text.split('\n') if l.strip()]
+            lines = [line.strip() for line in text.split('\n') if line.strip()]
             total_syllables = 0
             for line in lines:
                 clean_line = line.replace('।', '').replace('॥', '').strip()
@@ -565,7 +560,6 @@ def run_prediction_accuracy_test():
             expected_syllables = vedic_syllable_map.get(expected.lower(), 0)
             # Allow ±2 syllables tolerance for Vedic text variations
             if expected_syllables > 0 and abs(total_syllables - expected_syllables) <= 2:
-                syllable_correct = True
                 syllable_based_correct += 1
         except Exception:
             pass

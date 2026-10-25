@@ -9,12 +9,9 @@ before even running meter identification.
 
 import csv
 import os
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from config import settings
-from core.text_classifier import TextClassifier, classify_text
+from backend.config import settings
+from backend.core.text_classifier import TextClassifier, classify_text
 
 
 def test_on_rigveda(classifier, limit=1000):

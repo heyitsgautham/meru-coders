@@ -12,12 +12,8 @@ Date: December 9, 2025
 import argparse
 import csv
 import json
-import sys
 from pathlib import Path
 from typing import List
-
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter

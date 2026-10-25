@@ -10,10 +10,7 @@ This is the authoritative test for meter identification accuracy.
 import os
 import sys
 
-# Add backend to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Data path
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data')
@@ -93,7 +90,6 @@ def test_direct_api():
 
             meter = result.get('display_chanda_primary', 'Unknown')
             syllables = result.get('display_length', 0)
-            lg_pattern = ''.join(result.get('display_lg', []))
 
             # Handle case where syllables might be a string
             if isinstance(syllables, str):

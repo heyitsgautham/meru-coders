@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """Demo verses for SIH 2025 judges showing different confidence scores."""
 
-import sys
-
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders')
-
 from backend.config import settings
 from backend.core import Chanda
 

@@ -13,10 +13,7 @@ Author: SIH 2025 Team
 import os
 import sys
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Initialize Chanda identifier
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')

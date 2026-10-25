@@ -3,16 +3,11 @@
 Debug syllable breakdown mismatch
 """
 
-import os
-import sys
-
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-
-from core.chanda import Chanda
+from backend.config import settings
+from backend.core.chanda import Chanda
 
 # Initialize Chanda engine
-chanda = Chanda(data_path='/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/data')
+chanda = Chanda(data_path=str(settings.DATA_DIR))
 
 # Test text
 text = "शालिन्युक्ता म्तौ तगौ गोऽब्धिलोकैः। माता रामो मत्पिता रामचन्द्रः स्वामी रामो मत्सखा रामचन्द्रः। सर्वस्वं मे रामचन्द्रो दयालुर् नान्यं‌ जाने नैव जाने न जाने॥"

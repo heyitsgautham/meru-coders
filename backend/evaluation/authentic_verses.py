@@ -40,7 +40,6 @@ def test_verse(test_num, verse, expected_meter, description):
                 length = result.get('length', 0)
                 matra = result.get('matra', 0)
                 chanda = result.get('chanda', [])
-                found = result.get('found', False)
 
                 print(f"  Syllables: {len(syllables)} - {' '.join(syllables)}")
                 print(f"  Pattern (L-G): {' '.join(lg)}")

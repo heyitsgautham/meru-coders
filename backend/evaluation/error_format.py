@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 """Test that error messages match the consistent format."""
 
-import sys
-
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from core.ai_validator import AIShlokaValidator, _rule_based_validation
+from backend.core.ai_validator import AIShlokaValidator, _rule_based_validation
 
 
 def main():

@@ -6,15 +6,12 @@ Test Multi-modal AI Chatbot API
 Tests all chatbot endpoints including text, image, and persona switching.
 """
 
-import sys
 from pathlib import Path
 
-# Add backend to path
-backend_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_dir))
-
-
 import requests
+
+backend_dir = Path(__file__).parent.parent
+
 
 # Configuration
 API_BASE_URL = "http://localhost:5000"
@@ -55,7 +52,7 @@ def test_health_check():
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert data['status'] == 'healthy', "Should be healthy"
         assert data['api_keys_configured'] > 0, "Should have API keys configured"
 
@@ -78,7 +75,7 @@ def test_get_personas():
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert 'default' in data['personas'], "Should have default persona"
         assert 'krishna' in data['personas'], "Should have krishna persona"
 
@@ -103,7 +100,7 @@ def test_simple_chat():
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert 'response' in data, "Should have response"
         assert 'confidence' in data, "Should have confidence score"
         assert 'conversation_id' in data, "Should have conversation ID"
@@ -137,7 +134,7 @@ def test_conversation_continuity(conversation_id):
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert data['conversation_id'] == conversation_id, "Should maintain conversation ID"
 
         print_success("Conversation continuity maintained")
@@ -168,7 +165,7 @@ def test_persona_switching(conversation_id):
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert data['persona'] == "Krishna", "Should be Krishna persona"
 
         print_success("Persona switching successful")
@@ -194,7 +191,7 @@ def test_get_history(conversation_id):
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert 'messages' in data, "Should have messages"
         assert len(data['messages']) > 0, "Should have at least one message"
 
@@ -218,7 +215,7 @@ def test_meter_analysis():
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert 'meter' in data, "Should have meter"
         assert 'explanation' in data, "Should have explanation"
         assert 'lg_pattern' in data, "Should have L-G pattern"
@@ -249,7 +246,7 @@ def test_clear_conversation(conversation_id):
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
 
         print_success("Conversation cleared successfully")
 
@@ -268,7 +265,7 @@ def test_list_conversations():
         data = response.json()
 
         assert response.status_code == 200, "Status code should be 200"
-        assert data['success'] == True, "Should be successful"
+        assert data['success'] is True, "Should be successful"
         assert 'conversations' in data, "Should have conversations"
 
         print_success("Conversations listed successfully")

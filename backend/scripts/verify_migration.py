@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """Verify Phase 2 database migration was successful."""
 
-import sys
+from supabase import create_client
 
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from config.supabase_client import get_supabase_client
+from backend.config import settings
 
 
 def main():
-    supabase = get_supabase_client()
+    supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
 
     print("=== Phase 2 Migration Verification ===")
     print()

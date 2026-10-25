@@ -11,14 +11,10 @@ Expected meters for Bhagavad Gita:
 """
 
 import re
-import sys
 from pathlib import Path
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from config import settings
-from core import Chanda
+from backend.config import settings
+from backend.core import Chanda
 
 
 def extract_shlokas_from_file(file_path: str) -> list:
@@ -182,32 +178,6 @@ def test_bhagavad_gita_shlokas():
     }
 
     # Expected meters for Bhagavad Gita
-    expected_meters = {
-        'अनुष्टुभ्',
-        'anuṣṭubh',
-        'anushtubh',
-        'Anuṣṭubh',
-        'Anushtubh',
-        'त्रिष्टुभ्',
-        'triṣṭubh',
-        'trishtubh',
-        'Triṣṭubh',
-        'जगती',
-        'jagatī',
-        'jagati',
-        'Jagatī',
-        'उपजाति',
-        'Upajati',
-        'upajāti',
-        'वंशस्थ',
-        'Vamshastha',
-        'vaṃśastha',
-        'इन्द्रवज्रा',
-        'Indravajra',
-        'indravajrā',
-        'उपेन्द्रवज्रा',
-        'Upendravajra',
-    }
 
     anushtubh_patterns = {'अनुष्टुभ्', 'anuṣṭubh', 'anushtubh', 'Anuṣṭubh', 'Anushtubh', 'श्लोक', 'Shloka'}
     trishtubh_patterns = {
@@ -252,7 +222,6 @@ def test_bhagavad_gita_shlokas():
             # Extract primary meter
             identified_meter = "Unknown"
             syllable_count = 0
-            confidence = 0
 
             # Navigate to the actual result structure
             if result and 'result' in result:
@@ -266,7 +235,6 @@ def test_bhagavad_gita_shlokas():
                         chanda_info = verse_entry.get('chanda', ([], 0))
                         if chanda_info and len(chanda_info) >= 2:
                             meters = chanda_info[0] if isinstance(chanda_info[0], list) else [chanda_info[0]]
-                            confidence = chanda_info[1]
                             if meters:
                                 identified_meter = meters[0]
                         # Get syllable count from lines
@@ -316,7 +284,6 @@ def test_bhagavad_gita_shlokas():
             )
 
             # Print result
-            text_preview = text[:50] + "..." if len(text) > 50 else text
             print(f"  {status} {ref}: {identified_meter} ({syllable_count} syl)")
 
     # Summary

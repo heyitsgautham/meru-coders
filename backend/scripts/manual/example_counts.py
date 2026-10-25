@@ -1,9 +1,5 @@
 """Test akṣara counts for dandaka examples"""
 
-import sys
-
-sys.path.insert(0, 'D:\\Projects\\meru-coders')
-
 from backend.core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 examples = [

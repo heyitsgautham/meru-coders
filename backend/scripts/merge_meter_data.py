@@ -15,7 +15,8 @@ import csv
 import shutil
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
+
+from backend.config import settings
 
 
 def load_csv_data(filepath):
@@ -232,7 +233,7 @@ def main():
     print("Merging Imported Meter Data with Existing Data")
     print("=" * 70)
 
-    data_dir = Path('/Users/gauthamkrishna/Projects/chanda/data')
+    data_dir = settings.DATA_DIR
 
     # Create backups
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

@@ -6,10 +6,9 @@ These are authentic verses used in traditional Sanskrit education.
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from core.chanda import Chanda
 from indic_transliteration import sanscript
+
+from backend.core.chanda import Chanda
 
 
 def test_course_examples():

@@ -2,14 +2,8 @@
 # -*- coding: utf-8 -*-
 """Test for user-provided Vedic verse"""
 
-import os
-import sys
-
-# Add backend to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
-from config.settings import settings
-from core.chanda import Chanda
+from backend.config.settings import settings
+from backend.core.chanda import Chanda
 
 
 def test_vedic_verse():

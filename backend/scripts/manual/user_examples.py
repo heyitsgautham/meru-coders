@@ -2,11 +2,7 @@
 Test user-provided examples to determine correct dandaka classification
 """
 
-import sys
-
-sys.path.insert(0, '.')
-
-from core.dandaka_detector import classify_dandaka_unit, count_aksaras
+from backend.core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 # User provided examples
 examples = {

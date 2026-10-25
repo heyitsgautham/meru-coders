@@ -6,11 +6,8 @@ Compare syllabification methods on the full CSV dataset.
 
 import csv
 import os
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Number of real verses (as defined in test_csv_accuracy.py)
 REAL_VERSE_COUNT = 147
@@ -80,7 +77,7 @@ def test_method(method_name, data_path, rows):
 
             if meters_match(expected, predicted):
                 correct += 1
-        except:
+        except Exception:
             pass  # Count as incorrect
 
         total += 1

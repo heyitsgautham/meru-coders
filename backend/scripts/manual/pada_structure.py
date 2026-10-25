@@ -3,16 +3,11 @@
 Analyze the verse to understand its pada structure
 """
 
-import os
-import sys
-
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-
-from core.chanda import Chanda
+from backend.config import settings
+from backend.core.chanda import Chanda
 
 # Initialize Chanda engine
-chanda = Chanda(data_path='/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/data')
+chanda = Chanda(data_path=str(settings.DATA_DIR))
 
 # The 5 lines as shown in home page
 pada_lines = [

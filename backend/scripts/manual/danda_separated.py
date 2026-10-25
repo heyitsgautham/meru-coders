@@ -3,13 +3,7 @@
 Test script to verify danda-separated verse handling in chatbot
 """
 
-import os
-import sys
-
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-
-from api.chatbot import analyze_meter_agentic, format_meter_response
+from backend.api.chatbot import analyze_meter_agentic, format_meter_response
 
 # Test with the problematic verse (as user typed it - single line with danda separators)
 test_verse = "शालिन्युक्ता म्तौ तगौ गोऽब्धिलोकैः। माता रामो मत्पिता रामचन्द्रः स्वामी रामो मत्सखा रामचन्द्रः। सर्वस्वं मे रामचन्द्रो दयालुर् नान्यं‌ जाने नैव जाने न जाने॥"

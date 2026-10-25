@@ -2,12 +2,8 @@
 # -*- coding: utf-8 -*-
 """Complete analysis of Bhagavad Gita 1.1"""
 
-import sys
-
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from config import settings
-from core import Chanda
+from backend.config import settings
+from backend.core import Chanda
 
 chanda = Chanda(data_path=str(settings.DATA_DIR))
 
@@ -34,7 +30,7 @@ for i, line in enumerate(verse.strip().split('\n')):
 
     # Show syllable-by-syllable
     print("  Breakdown:")
-    for j, (syl, lg) in enumerate(zip(flat_syls, lg_marks)):
+    for j, (syl, lg) in enumerate(zip(flat_syls, lg_marks, strict=False)):
         print(f"    {j + 1:2}. {syl:6} → {lg}")
     print()
 

@@ -10,7 +10,11 @@ existing CSV format for integration into the Chandojñānam project.
 import csv
 import json
 import re
-from pathlib import Path
+
+from backend.config import settings
+
+# Clone sanskrit-coders/chandas under repos/ at the repository root.
+CHANDAS_DATA = settings.BASE_DIR.parent / 'repos' / 'chandas' / 'chandas' / 'svat' / 'data'
 
 
 def clean_pattern(pattern_str):
@@ -64,8 +68,8 @@ def convert_to_gana_notation(pattern):
 def process_json_files():
     """Process all JSON files and convert to CSV format"""
 
-    base_path = Path('/Users/gauthamkrishna/Projects/chanda/repos/chandas/chandas/svat/data')
-    output_path = Path('/Users/gauthamkrishna/Projects/chanda/data')
+    base_path = CHANDAS_DATA
+    output_path = settings.DATA_DIR
 
     json_files = ['curated.json', 'ganesh.json', 'vrttaratnakara.json', 'mishra.json']
 

@@ -14,10 +14,6 @@ Key discriminating features discovered:
 """
 
 import os
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from typing import Tuple
 
 import pandas as pd
@@ -404,7 +400,7 @@ def run_evaluation():
 
     results = {name: {'correct': 0, 'total': 0, 'by_meter': {}} for name in approaches}
 
-    for idx, row in df.iterrows():
+    for _idx, row in df.iterrows():
         actual = row['meter']
 
         for name, approach_fn in approaches.items():
@@ -459,7 +455,7 @@ def run_evaluation():
 
     overlap_results = {name: {'correct': 0, 'total': 0} for name in approaches}
 
-    for idx, row in overlap_df.iterrows():
+    for _idx, row in overlap_df.iterrows():
         actual = row['meter']
 
         for name, approach_fn in approaches.items():

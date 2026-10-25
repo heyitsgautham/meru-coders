@@ -2,12 +2,8 @@
 # -*- coding: utf-8 -*-
 """Compare ICU vs sanskrit_text syllabization for युयुत्सवः"""
 
-import sys
-
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from config import settings
-from core import Chanda
+from backend.config import settings
+from backend.core import Chanda
 
 # Test with both methods
 print("=" * 60)

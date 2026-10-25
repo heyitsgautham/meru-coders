@@ -13,17 +13,16 @@ Usage:
     cd backend && python backend/evaluation/true_vedic_accuracy.py
 """
 
+import importlib.util
 import os
 import sys
 
-# Add parent directory to path
+from backend.core.chanda import Chanda
+
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, backend_dir)
 
 # Import AUTHENTIC test data (merged from Rigveda_api + WSC2023 Anukramani)
-import importlib.util
 
-from core.chanda import Chanda
 
 spec = importlib.util.spec_from_file_location(
     "rigveda_authentic", os.path.join(backend_dir, "evaluation", "data", "rigveda_authentic.py")
@@ -86,7 +85,7 @@ def meter_matches(predicted, expected_devanagari, expected_iast):
         'usnik': ['usnik', 'usnih', 'उष्णिक्', 'uṣṇik'],
     }
 
-    for canonical, vars in variants.items():
+    for _canonical, vars in variants.items():
         if any(v in pred_norm for v in [normalize_meter_name(x) for x in vars]):
             if any(v in exp_iast_norm for v in [normalize_meter_name(x) for x in vars]):
                 return True

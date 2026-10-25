@@ -54,7 +54,7 @@ print("=" * 80)
 # Each pada has the same L-G pattern for Śālinī
 lg_pattern_per_pada = "गगगगगलगगलगग"
 
-for idx, line in enumerate(lines, 1):
+for idx, _line in enumerate(lines, 1):
     print(f"- **Pada {idx}:** {lg_pattern_per_pada}")
 
 print("\n💡 Tip: Use the Analyse Chanda page for detailed analysis with visualizations.")

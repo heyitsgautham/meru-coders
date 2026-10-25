@@ -25,9 +25,7 @@ THE 7 MAJOR VEDIC METERS:
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Initialize Chanda engine
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))

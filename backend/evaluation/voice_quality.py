@@ -4,35 +4,15 @@ Test voice quality of Sanskrit TTS
 This script helps you test the TTS system and hear sample outputs
 """
 
+import importlib.util
 import sys
 from pathlib import Path
 
 
 def check_dependencies():
-    """Check if all required dependencies are installed"""
-    missing = []
-
-    try:
-        import torch
-    except ImportError:
-        missing.append("torch")
-
-    try:
-        from parler_tts import ParlerTTSForConditionalGeneration
-    except ImportError:
-        missing.append("parler_tts")
-
-    try:
-        from transformers import AutoTokenizer
-    except ImportError:
-        missing.append("transformers")
-
-    try:
-        import soundfile
-    except ImportError:
-        missing.append("soundfile")
-
-    return missing
+    """Names of the required packages that are not installed."""
+    required = ("torch", "parler_tts", "transformers", "soundfile")
+    return [name for name in required if importlib.util.find_spec(name) is None]
 
 
 def show_installation_guide():
@@ -52,7 +32,7 @@ def show_installation_guide():
 
 def generate_test_samples():
     """Generate test audio samples to evaluate voice quality"""
-    from sanskrit_tts import SanskritTTS
+    from backend.utils.sanskrit_tts import SanskritTTS
 
     print("\n" + "=" * 70)
     print("GENERATING SANSKRIT TTS TEST SAMPLES")

@@ -7,13 +7,9 @@ Compares latency for cache hits vs cache misses.
 Run: python tests/test_cache_optimization.py
 """
 
-import os
 import statistics
 import sys
 import time
-
-# Add backend to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import requests
 
@@ -119,7 +115,7 @@ def run_benchmark(iterations=3):
         print(f"   Text: {verse['text'][:50]}...")
 
         verse_results = []
-        for i in range(iterations):
+        for _i in range(iterations):
             result = test_single_verse(verse)
             verse_results.append(result)
 
@@ -202,7 +198,7 @@ def test_api_available():
     try:
         response = requests.get(f"{BASE_URL}/info", timeout=5)
         return response.status_code == 200
-    except:
+    except Exception:
         return False
 
 

@@ -16,11 +16,7 @@ We test:
 """
 
 import json
-import sys
 from pathlib import Path
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.core.chanda import Chanda
 
@@ -64,7 +60,7 @@ def compare_lg_patterns(expected, actual):
         return False, f"Length mismatch: {len(expected)} vs {len(actual)}"
 
     mismatches = []
-    for i, (e, a) in enumerate(zip(expected, actual)):
+    for i, (e, a) in enumerate(zip(expected, actual, strict=False)):
         if e != a:
             mismatches.append(f"pos {i}: expected {e}, got {a}")
 

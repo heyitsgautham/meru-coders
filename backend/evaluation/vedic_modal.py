@@ -6,13 +6,11 @@ Test Vedic accuracy using ChandaModal with VEDIC mode.
 
 import importlib.util
 import os
-import sys
 
-# Add backend to path FIRST
+from backend.core.chanda_modal import ChandaModal
+
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, backend_dir)
 
-from core.chanda_modal import ChandaModal
 
 # Direct import to avoid ultralytics conflict
 spec = importlib.util.spec_from_file_location(

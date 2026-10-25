@@ -14,18 +14,10 @@ Uses ALL 35 test cases from chanda_dataset_verified.csv
 
 import csv
 import os
-import sys
 import time
 
-# Add paths
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
-)
-
-from chanda_iitk import Chanda as IITKChanda
-from core.chanda import Chanda as OurChanda
+from backend.core.chanda import Chanda as OurChanda
+from reference.alternative_implementations.chanda_iitk import Chanda as IITKChanda
 
 # Mapping of English names to Devanagari equivalents
 METER_NAME_MAPPING = {

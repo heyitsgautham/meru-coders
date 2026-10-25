@@ -5,20 +5,18 @@ Manage your Supabase database without the Supabase CLI
 Uses REST API with credentials from backend/.env
 """
 
+import argparse
+import json
 import os
 import sys
 from pathlib import Path
 
-# Add backend to path
-backend_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_dir.parent))
-
-import argparse
-import json
-
 from dotenv import load_dotenv
 from supabase import Client, create_client
 from tabulate import tabulate
+
+backend_dir = Path(__file__).parent.parent
+
 
 # Load environment variables
 env_path = backend_dir / '.env'

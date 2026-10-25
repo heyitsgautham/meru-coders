@@ -2,12 +2,8 @@
 # -*- coding: utf-8 -*-
 """Debug script to analyze युयुत्सवः syllable marking"""
 
-import sys
-
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from config import settings
-from core import Chanda
+from backend.config import settings
+from backend.core import Chanda
 
 chanda = Chanda(data_path=str(settings.DATA_DIR))
 

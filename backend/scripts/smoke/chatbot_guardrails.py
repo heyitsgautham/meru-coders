@@ -10,6 +10,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import requests
@@ -772,7 +773,7 @@ class GuardrailTester:
             ],
         }
 
-        filepath = f"/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/tests/{filename}"
+        filepath = Path(__file__).with_name(filename)
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
 
@@ -791,8 +792,8 @@ def main():
 
     # Check if server is running
     try:
-        response = requests.get(f"{API_BASE_URL}/api/identify/text", timeout=5)
-    except:
+        requests.get(f"{API_BASE_URL}/api/identify/text", timeout=5)
+    except Exception:
         print("❌ ERROR: Backend server is not running!")
         print("Please start the server with: cd backend && python run.py")
         return

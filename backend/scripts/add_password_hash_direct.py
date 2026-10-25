@@ -8,12 +8,11 @@ import os
 import sys
 from pathlib import Path
 
-# Add backend to path
+from dotenv import load_dotenv
+
 backend_path = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_path))
 
 # Load environment variables
-from dotenv import load_dotenv
 
 load_dotenv(backend_path / '.env')
 

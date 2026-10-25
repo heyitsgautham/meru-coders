@@ -14,12 +14,10 @@ All verses have been syllable-count verified and sourced from:
 """
 
 import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import sanskrit_text as skt
-from core.chanda import Chanda
+
+from backend.core.chanda import Chanda
 
 # Initialize the Chanda system
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
@@ -62,12 +60,6 @@ def test_meter(meter_name, verses, expected_syllables, expected_identification=N
 
         # Check if expected meter is in top 3 results
         top_3_names = [name for name, pada in identified[:3]]
-
-        # For Vedic meters, check both English and Devanagari names
-        if expected_identification:
-            found_meter = any(exp in str(top_3_names) for exp in expected_identification)
-        else:
-            found_meter = meter_name in str(top_3_names)
 
         # Test passes if syllable count is correct (±1 tolerance for sandhi/prakrti)
         syllable_tolerance = 1

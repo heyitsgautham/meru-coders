@@ -24,11 +24,9 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict
 
-# Add backend to path
-backend_path = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_path))
+from backend.core.chanda import Chanda
 
-from core.chanda import Chanda
+backend_path = Path(__file__).parent.parent
 
 
 class RamayanaValidator:

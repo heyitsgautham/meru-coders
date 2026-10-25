@@ -21,16 +21,12 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-# Add project root to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Optional visualization imports
 try:
     import matplotlib.pyplot as plt
     import numpy as np
-    import pandas as pd
     import seaborn as sns
 
     PLOT_AVAILABLE = True
@@ -525,7 +521,7 @@ def print_confusion_matrix(matrix, labels, max_labels=15):
             label_counts[expected] += matrix[expected][predicted]
 
     if len(labels) > max_labels:
-        top_labels = [l for l, _ in label_counts.most_common(max_labels)]
+        top_labels = [label for label, _ in label_counts.most_common(max_labels)]
         labels = sorted(top_labels)
         print(f"\n(Showing top {max_labels} meters by frequency)")
 
@@ -622,7 +618,9 @@ def plot_confusion_matrix(matrix, labels, output_path, title="Chandas Identifica
         return
 
     # Filter to labels with at least 1 sample
-    active_labels = [l for l in labels if sum(matrix[l].values()) > 0 or any(matrix[e][l] > 0 for e in labels)]
+    active_labels = [
+        label for label in labels if sum(matrix[label].values()) > 0 or any(matrix[e][label] > 0 for e in labels)
+    ]
 
     # Limit to top N for readability
     max_labels = 20
@@ -630,9 +628,9 @@ def plot_confusion_matrix(matrix, labels, output_path, title="Chandas Identifica
         # Sort by frequency
         label_freq = Counter()
         for expected in matrix:
-            for predicted, count in matrix[expected].items():
+            for count in matrix[expected].values():
                 label_freq[expected] += count
-        active_labels = [l for l, _ in label_freq.most_common(max_labels)]
+        active_labels = [label for label, _ in label_freq.most_common(max_labels)]
 
     # Build matrix as 2D array
     n = len(active_labels)

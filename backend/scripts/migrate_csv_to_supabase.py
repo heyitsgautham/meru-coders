@@ -12,9 +12,6 @@ import os
 import sys
 from pathlib import Path
 
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from dotenv import load_dotenv
 from supabase import Client, create_client
 
@@ -205,14 +202,14 @@ def migrate_meter_definitions(category: str, filename: str):
             if row.get('अक्षरसङ्ख्या'):
                 try:
                     meter['syllable_count'] = int(row['अक्षरसङ्ख्या'])
-                except:
+                except Exception:
                     pass
 
             # Extract pada number
             if row.get('पद'):
                 try:
                     meter['pada_number'] = int(row['पद'])
-                except:
+                except Exception:
                     pass
 
             meters.append(meter)

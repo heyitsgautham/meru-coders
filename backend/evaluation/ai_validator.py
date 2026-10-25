@@ -6,15 +6,13 @@ Tests the AI pre-validation layer for chandas identification.
 This test is designed to work standalone without heavy dependencies.
 """
 
+import importlib.util
 import os
 import sys
 
-# Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, PROJECT_ROOT)
 
 # Import directly from the module file to avoid __init__.py importing heavy deps
-import importlib.util
 
 spec = importlib.util.spec_from_file_location(
     "ai_validator", os.path.join(PROJECT_ROOT, "backend", "core", "ai_validator.py")

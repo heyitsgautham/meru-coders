@@ -5,14 +5,10 @@ Test English text detection to ensure English text is rejected
 while valid IAST transliteration is accepted.
 """
 
-import os
 import sys
 
-# Add backend to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from config.settings import Settings
-from core.chanda import Chanda
+from backend.config.settings import Settings
+from backend.core.chanda import Chanda
 
 
 def test_english_detection():

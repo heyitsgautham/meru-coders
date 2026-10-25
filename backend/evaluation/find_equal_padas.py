@@ -2,12 +2,11 @@
 """Find verses with equal syllables per pada for all 7 Vedic meters."""
 
 import csv
-import sys
 
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-from core.chanda import Chanda
+from backend.config import settings
+from backend.core.chanda import Chanda
 
-chanda = Chanda(data_path='/home/harevasu/Projects/meru-coders/backend/data')
+chanda = Chanda(data_path=str(settings.DATA_DIR))
 
 # Target meters with expected syllable counts per pada
 targets = {
@@ -25,9 +24,7 @@ found = {k: [] for k in targets}
 print("Searching for verses with equal padas...")
 print("=" * 80)
 
-with open(
-    '/home/harevasu/Projects/meru-coders/backend/data/rigveda_with_meters_complete.csv', 'r', encoding='utf-8'
-) as f:
+with open(str(settings.DATA_DIR / 'rigveda_with_meters_complete.csv'), 'r', encoding='utf-8') as f:
     reader = csv.reader(f)
     header = next(reader)
 
@@ -38,10 +35,10 @@ with open(
 
         try:
             syl_count = int(syllable_count)
-        except:
+        except Exception:
             continue
 
-        for meter_name, (total, per_pada, num_padas) in targets.items():
+        for meter_name, (total, _per_pada, _num_padas) in targets.items():
             if syl_count == total and len(found[meter_name]) < 5:
                 result = chanda.identify_line(verse)
                 if result and 'display_syllables' in result:

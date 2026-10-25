@@ -3,11 +3,8 @@
 """Verify exact syllable counts for all 7 Vedic meters"""
 
 import os
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))
 

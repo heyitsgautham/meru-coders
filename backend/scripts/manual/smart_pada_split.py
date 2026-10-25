@@ -3,16 +3,11 @@
 Test smart pada splitting based on syllable count
 """
 
-import os
-import sys
-
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-os.chdir('/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-
-from core.chanda import Chanda
+from backend.config import settings
+from backend.core.chanda import Chanda
 
 # Initialize Chanda engine
-chanda = Chanda(data_path='/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/data')
+chanda = Chanda(data_path=str(settings.DATA_DIR))
 
 # Test text (55 syllables = 5 padas of 11 each)
 text = "शालिन्युक्ता म्तौ तगौ गोऽब्धिलोकैः। माता रामो मत्पिता रामचन्द्रः स्वामी रामो मत्सखा रामचन्द्रः। सर्वस्वं मे रामचन्द्रो दयालुर् नान्यं‌ जाने नैव जाने न जाने॥"
@@ -44,7 +39,7 @@ for pada_length in common_pada_lengths:
 
         # Filter to only include items with valid L-G marks (actual syllables)
         valid_syllables = []
-        for i, (syl, lg) in enumerate(zip(syllables, lg_marks)):
+        for syl, lg in zip(syllables, lg_marks, strict=False):
             if lg and lg.strip():  # Only include if has L-G mark
                 valid_syllables.append(syl)
 

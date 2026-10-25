@@ -5,7 +5,8 @@ Quick comparison test: Original vs Hybrid syllabization
 Demonstrates the performance improvement with ICU-based approach
 """
 
-from chanda import ICU_AVAILABLE, Chanda
+from backend.config import settings
+from backend.core.chanda import ICU_AVAILABLE, Chanda
 
 
 def test_comparison():
@@ -49,7 +50,7 @@ def test_comparison():
     print("=" * 70)
     print("METHOD 1: ORIGINAL (sanskrit_text library)")
     print("=" * 70)
-    c_original = Chanda('data/', syllabization_method='sanskrit_text')
+    c_original = Chanda(str(settings.DATA_DIR), syllabization_method='sanskrit_text')
     print(f"Using: {c_original.syllabization_method}")
     print()
 
@@ -94,7 +95,7 @@ def test_comparison():
         print("=" * 70)
         print("METHOD 2: HYBRID (ICU-based syllabization)")
         print("=" * 70)
-        c_hybrid = Chanda('data/', syllabization_method='icu')
+        c_hybrid = Chanda(str(settings.DATA_DIR), syllabization_method='icu')
         print(f"Using: {c_hybrid.syllabization_method}")
         print()
 

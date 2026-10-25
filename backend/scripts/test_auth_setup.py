@@ -4,10 +4,6 @@ Quick test script to verify authentication and database setup.
 """
 
 import sys
-from pathlib import Path
-
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.config.settings import settings
 

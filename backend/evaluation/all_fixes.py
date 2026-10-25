@@ -8,11 +8,8 @@ Tests all 8 test cases mentioned in the implementation checklist
 """
 
 import os
-import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Initialize Chanda
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))

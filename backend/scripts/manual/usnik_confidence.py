@@ -6,12 +6,8 @@ where it shows "14 syllables" instead of "28 syllables"
 """
 
 import os
-import sys
 
-# Add backend to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 
 def test_usnik_confidence():

@@ -12,16 +12,12 @@ This script processes rows where:
 2. Gana is missing (NaN) or numeric (invalid)
 """
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from config import settings
-from core import Chanda
+from backend.config import settings
+from backend.core import Chanda
 
 
 def normalize_lg_pattern(lg_str: str) -> str:
@@ -162,7 +158,7 @@ def main():
     parser.add_argument(
         '--input',
         '-i',
-        default='data/without gana rig - ML_base_dataset_COMPLETE_with_rigveda.csv',
+        default=str(settings.DATA_DIR / 'without gana rig - ML_base_dataset_COMPLETE_with_rigveda.csv'),
         help='Input CSV file path',
     )
     parser.add_argument('--output', '-o', default=None, help='Output CSV file path (default: overwrites input)')

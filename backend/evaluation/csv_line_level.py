@@ -10,10 +10,8 @@ import csv
 import io
 import os
 import re
-import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 
 def normalize(s):
@@ -162,9 +160,9 @@ def run_test(verbose=False):
         expected = entry['chanda']
 
         # Split verse into lines
-        lines = [l.strip() for l in verse.split('\n') if l.strip()]
-        lines = [l.replace('।', '').replace('॥', '').strip() for l in lines]
-        lines = [l for l in lines if l]  # Remove empty
+        lines = [line.strip() for line in verse.split('\n') if line.strip()]
+        lines = [line.replace('।', '').replace('॥', '').strip() for line in lines]
+        lines = [line for line in lines if line]  # Remove empty
 
         verse_correct = 0
         verse_total = 0

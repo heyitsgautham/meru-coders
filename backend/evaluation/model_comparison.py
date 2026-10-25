@@ -14,13 +14,8 @@ Uses test data from: page 1-47 chanda list - Sheet1.csv
 import csv
 import os
 import re
-import sys
 import unicodedata
 from collections import Counter, defaultdict
-
-# Add paths
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 try:
     from indic_transliteration import sanscript
@@ -48,7 +43,6 @@ def normalize_meter_name(name):
     if not name:
         return ''
 
-    original = name
     name = name.strip()
 
     # Convert Devanagari to IAST if needed
@@ -116,7 +110,6 @@ def normalize_meter_name(name):
         'toṭaka': 'totaka',
         'तोटक': 'totaka',
         # Vasantatilaka variants
-        'vasantatilakam': 'vasantatilaka',
         'vasantatilakā': 'vasantatilaka',
         'वसन्ततिलका': 'vasantatilaka',
         # Malini variants
@@ -232,7 +225,7 @@ def load_test_data(csv_path):
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
 
-        for row_num, row in enumerate(reader):
+        for _row_num, row in enumerate(reader):
             if len(row) < 4:
                 continue
 
@@ -343,14 +336,14 @@ def evaluate_model(model, test_cases, model_name):
                 top1_match = pred_normalized == expected_normalized
 
                 # Top-3 accuracy
-                for pred, conf in predictions[:3]:
+                for pred, _conf in predictions[:3]:
                     pred_normalized = normalize_meter_name(pred)
                     if pred_normalized == expected_normalized:
                         top3_match = True
                         break
 
                 # Family-level accuracy
-                for pred, conf in predictions[:5]:
+                for pred, _conf in predictions[:5]:
                     pred_family = get_meter_family(pred)
                     if pred_family == expected_family:
                         family_match = True
@@ -453,7 +446,7 @@ def print_confusion_matrix(confusion, title):
 
     # Get all labels
     all_labels = set(confusion.keys())
-    for expected, predictions in confusion.items():
+    for predictions in confusion.values():
         all_labels.update(predictions.keys())
     all_labels = sorted(all_labels)
 
@@ -506,7 +499,7 @@ def main():
 
     # Model 1: Current enhanced chanda.py
     try:
-        from core.chanda import Chanda
+        from backend.core.chanda import Chanda
 
         models['chanda.py'] = Chanda(data_path)
         print("\n✓ Loaded chanda.py (current model)")
@@ -516,10 +509,7 @@ def main():
     # Model 2: Original IIT-K implementation
     try:
         # Import from reference folder
-        sys.path.insert(
-            0, os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations')
-        )
-        from chanda_iitk import Chanda as ChandaIITK
+        from reference.alternative_implementations.chanda_iitk import Chanda as ChandaIITK
 
         models['chanda_iitk.py'] = ChandaIITK(data_path)
         print("✓ Loaded chanda_iitk.py (original IIT-K)")
@@ -528,7 +518,7 @@ def main():
 
     # Model 3: Enhanced implementation with Chandovallari rules
     try:
-        from core.enhanced_chanda import EnhancedChanda
+        from backend.core.enhanced_chanda import EnhancedChanda
 
         models['enhanced_chanda.py'] = EnhancedChanda(data_path)
         print("✓ Loaded enhanced_chanda.py (Chandovallari rules)")

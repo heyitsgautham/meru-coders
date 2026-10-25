@@ -14,16 +14,15 @@ import csv
 import os
 import sys
 
-# Add paths
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from backend.config import settings
+from backend.core import Chanda
+
 sanskrit_repo_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'repos/sanskrit'
 )
 sys.path.insert(0, sanskrit_repo_path)
 
 # Import our system
-from config import settings
-from core import Chanda
 
 # Import sanskrit repo components
 try:
@@ -58,7 +57,7 @@ def to_slp1(text):
         if script:
             return transliterate(text, script, sanscript.SLP1)
         return text
-    except:
+    except Exception:
         return text
 
 
@@ -74,7 +73,7 @@ def normalize_meter_name(name):
         script = detect(name)
         if script == sanscript.DEVANAGARI:
             name = transliterate(name, sanscript.DEVANAGARI, sanscript.IAST)
-    except:
+    except Exception:
         pass
 
     # Normalize
@@ -125,7 +124,7 @@ def identify_with_sanskrit_repo(text, identifier):
             # If scanning fails, try as single line
             try:
                 lg_patterns = [scan._ScanVowelInitialLine(slp1_text, True)]
-            except:
+            except Exception:
                 return None, None
 
         # Identify using patterns

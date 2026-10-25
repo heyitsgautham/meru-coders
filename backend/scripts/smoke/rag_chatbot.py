@@ -12,11 +12,9 @@ Date: December 9, 2025
 import sys
 from pathlib import Path
 
-# Add backend to path
-backend_path = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_path.parent))
-
 from backend.core.rag_engine import RAGEngine
+
+backend_path = Path(__file__).parent.parent
 
 
 def test_rag_retrieval():

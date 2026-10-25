@@ -17,26 +17,14 @@ Usage:
 """
 
 import argparse
-import sys
+import csv
 from pathlib import Path
 
-# Add backend to path
-backend_path = str(Path(__file__).parent.parent)
-sys.path.insert(0, backend_path)
-
-# Import the adapter directly
-import importlib.util
-
-adapter_path = Path(__file__).parent / 'test_chanda_gpt_adapter.py'
-spec = importlib.util.spec_from_file_location("chanda_gpt_adapter", adapter_path)
-adapter_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(adapter_module)
-ChandaGPTAdapter = adapter_module.ChandaGPTAdapter
-
-# Import test utilities
-import csv
-
 import pandas as pd
+
+from backend.evaluation.chanda_gpt_adapter import ChandaGPTAdapter
+
+backend_path = str(Path(__file__).parent.parent)
 
 
 def test_csv_accuracy(verbose=False):
@@ -45,7 +33,7 @@ def test_csv_accuracy(verbose=False):
     print("TEST 1: CSV ACCURACY (page 1-47 chanda list - complete.csv)")
     print("=" * 75)
 
-    from config.settings import Settings
+    from backend.config.settings import Settings
 
     settings = Settings()
 
@@ -70,8 +58,6 @@ def test_csv_accuracy(verbose=False):
     test_csv_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(test_csv_module)
 
-    normalize = test_csv_module.normalize
-    get_family = test_csv_module.get_family
     meters_match = test_csv_module.meters_match
     REAL_VERSE_COUNT = test_csv_module.REAL_VERSE_COUNT
 
@@ -139,7 +125,7 @@ def test_rigveda_validation(verbose=False, limit=100):
     print("TEST 2: RIGVEDA VALIDATION (rigveda_with_meters_complete.csv)")
     print("=" * 75)
 
-    from config.settings import Settings
+    from backend.config.settings import Settings
 
     settings = Settings()
 
@@ -227,7 +213,7 @@ def test_matching_chandas(verbose=False, limit=100):
     print("TEST 3: MATCHING CHANDAS DATASET (matching_chandas.csv)")
     print("=" * 75)
 
-    from config.settings import Settings
+    from backend.config.settings import Settings
 
     settings = Settings()
 

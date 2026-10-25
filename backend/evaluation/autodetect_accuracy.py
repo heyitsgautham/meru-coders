@@ -32,11 +32,8 @@ import sys
 import unicodedata
 from collections import defaultdict
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from config import settings
-from core.chanda import Chanda
+from backend.config import settings
+from backend.core.chanda import Chanda
 
 try:
     from indic_transliteration import sanscript
@@ -138,7 +135,7 @@ def meters_match_vedic(expected, predicted):
     if exp_family == pred_family:
         return False, True
     # Check cross-family
-    for family, members in METER_FAMILIES.items():
+    for _family, members in METER_FAMILIES.items():
         if expected in members and predicted in members:
             return False, True
     return False, False
@@ -155,7 +152,7 @@ def to_iast(text):
         return text
     try:
         return transliterate(text, sanscript.DEVANAGARI, sanscript.IAST)
-    except:
+    except Exception:
         return text
 
 
@@ -216,7 +213,7 @@ def load_rigveda_dataset(filepath, limit=None):
     data = []
     with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
-        for row_num, row in enumerate(reader, start=2):
+        for _row_num, row in enumerate(reader, start=2):
             verse_text = row.get('verse_text', '').strip()
             meter = row.get('meter', '').strip()
             if not verse_text or not meter or meter.startswith('('):

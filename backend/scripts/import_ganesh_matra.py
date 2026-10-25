@@ -28,6 +28,8 @@ import csv
 import json
 from collections import OrderedDict
 
+from backend.config import settings
+
 
 def parse_matra_pattern(pattern_str):
     """
@@ -198,7 +200,7 @@ def main():
     print(f"\nFound {len(matra_meters)} mātrā meters")
 
     # Load existing mātrā meters
-    csv_file = 'data/chanda_matra.csv'
+    csv_file = settings.DATA_DIR / 'chanda_matra.csv'
     existing = load_existing_matra_meters(csv_file)
     print(f"\nExisting mātrā meters: {len(existing)}")
 
@@ -248,7 +250,7 @@ def main():
     print(f"\nUpdated {csv_file}")
 
     # Update examples.json if needed
-    examples_file = 'data/examples.json'
+    examples_file = settings.DATA_DIR / 'examples.json'
     try:
         with open(examples_file, 'r', encoding='utf-8') as f:
             examples = json.load(f)

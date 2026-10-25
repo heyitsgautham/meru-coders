@@ -13,6 +13,8 @@ import csv
 
 from indic_transliteration import sanscript
 
+from backend.config import settings
+
 
 def transliterate_to_devanagari(iast_name):
     """Transliterate IAST to Devanagari."""
@@ -23,8 +25,8 @@ def transliterate_to_devanagari(iast_name):
 
 
 def main():
-    input_file = 'data/chanda_matra.csv'
-    output_file = 'data/chanda_matra.csv'
+    input_file = settings.DATA_DIR / 'chanda_matra.csv'
+    output_file = settings.DATA_DIR / 'chanda_matra.csv'
 
     # Read current CSV
     meters = []

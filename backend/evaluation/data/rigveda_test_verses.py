@@ -260,7 +260,7 @@ def summary():
     print(f"{'=' * 60}")
     print(f"Total verses: {len(RIGVEDA_VERSES)}")
     print("\nMeters represented:")
-    for iast, info in sorted(meters.items(), key=lambda x: x[1]['syllables']):
+    for _iast, info in sorted(meters.items(), key=lambda x: x[1]['syllables']):
         print(f"  {info['name']} ({info['iast']}): {info['count']} verses, {info['syllables']} syllables")
     print(f"{'=' * 60}\n")
 

@@ -21,15 +21,6 @@ import sys
 import time
 import unicodedata
 
-# Add paths for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(
-    0,
-    os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '..', 'reference', 'alternative_implementations'
-    ),
-)
-
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
 
@@ -229,7 +220,7 @@ def to_iast(text):
     """Convert Devanagari to IAST"""
     try:
         return transliterate(text, sanscript.DEVANAGARI, sanscript.IAST)
-    except:
+    except Exception:
         return text
 
 
@@ -257,7 +248,7 @@ def rigveda_meters_match(expected, predicted):
     if expected in COMPOSITE_METERS:
         if predicted in COMPOSITE_METERS[expected]:
             return False, True
-    for family, members in METER_FAMILIES.items():
+    for _family, members in METER_FAMILIES.items():
         if expected in members and predicted in members:
             return False, True
     return False, False
@@ -503,8 +494,8 @@ def test_csv_with_iitk(chanda_class, data_path):
 def test_rigveda_with_our_chanda(limit=1000):
     """Test our Chanda implementation against Rigveda dataset"""
 
-    from config import settings
-    from core import Chanda
+    from backend.config import settings
+    from backend.core import Chanda
 
     # Initialize Chanda
     try:
@@ -593,8 +584,8 @@ def test_rigveda_with_our_chanda(limit=1000):
 def test_csv_with_our_chanda():
     """Test our Chanda implementation against CSV accuracy test"""
 
-    from config import settings
-    from core import Chanda
+    from backend.config import settings
+    from backend.core import Chanda
 
     # Initialize Chanda
     try:

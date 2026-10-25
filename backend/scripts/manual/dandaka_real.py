@@ -1,9 +1,5 @@
 """Test dandaka_detector with real examples"""
 
-import sys
-
-sys.path.insert(0, 'D:\\Projects\\meru-coders')
-
 import json
 
 from backend.core.dandaka_detector import analyze_dandaka_mode

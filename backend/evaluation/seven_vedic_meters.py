@@ -22,9 +22,7 @@ These are the 7 canonical Vedic meters mentioned in the SIH 2025 problem stateme
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from core.chanda import Chanda
+from backend.core.chanda import Chanda
 
 # Initialize Chanda
 c = Chanda(os.path.join(os.path.dirname(__file__), '..', 'data'))

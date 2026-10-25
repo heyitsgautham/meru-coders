@@ -1,16 +1,12 @@
 import os
 import re
-import sys
-from pathlib import Path
 
-# Add backend to path
+from backend.config import settings
+from backend.core.chanda import Chanda
+
 # This script lives in backend/evaluation/
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 backend_path = os.path.join(project_root, 'backend')
-sys.path.insert(0, backend_path)
-
-from config import settings
-from core.chanda import Chanda
 
 
 def parse_shlokas(file_path):

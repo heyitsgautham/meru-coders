@@ -100,14 +100,9 @@ select = ["E", "F", "W", "I", "B"]
 # inside prompt and data strings, where changing them changes the string.
 ignore = ["E501", "W291", "W293"]
 
-[tool.ruff.lint.per-file-ignores]
-# Evaluation harnesses and one-off scripts set sys.path before importing.
-# Their loose style (bare excepts, throwaway loop variables) is kept as written.
-"backend/evaluation/**" = ["E402", "F401", "F601", "E722", "E741", "E712", "B007", "B904", "B905", "B011", "B023", "F841"]
-"backend/scripts/**" = ["E402", "E722", "E741", "E712", "B007", "B904", "B905", "F841"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["backend"]
+known-first-party = ["backend", "reference"]
 
 [tool.ruff.format]
 quote-style = "preserve"

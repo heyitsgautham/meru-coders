@@ -11,18 +11,10 @@ IITK Model: 398 meters database
 """
 
 import os
-import sys
 import time
 
-# Add paths
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reference', 'alternative_implementations'))
-)
-
-from chanda_iitk import Chanda as IITKChanda
-from core.chanda import Chanda as OurChanda
+from backend.core.chanda import Chanda as OurChanda
+from reference.alternative_implementations.chanda_iitk import Chanda as IITKChanda
 
 # Authentic test verses with known meters
 # Using single pada (quarter) for fair comparison since IITK model works per-pada

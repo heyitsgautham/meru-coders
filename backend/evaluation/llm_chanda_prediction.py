@@ -24,6 +24,11 @@ import time
 import unicodedata
 from typing import Dict, List, Optional, Tuple
 
+from google import genai
+from google.genai import types
+from indic_transliteration import sanscript
+from indic_transliteration.sanscript import transliterate
+
 
 # Load environment variables from .env file manually (handles non-standard format)
 def load_api_keys_from_env():
@@ -51,8 +56,6 @@ def load_api_keys_from_env():
 
 
 # Gemini API setup - using new google-genai SDK
-from google import genai
-from google.genai import types
 
 # API key rotation for rate limiting
 API_KEYS = load_api_keys_from_env()
@@ -92,18 +95,11 @@ def mark_key_exhausted(key_index: int):
     print(f"  ⚠️ API key #{key_index + 1} exhausted. {remaining} keys remaining.")
 
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from indic_transliteration import sanscript
-from indic_transliteration.sanscript import transliterate
-
-
 def to_iast(text: str) -> str:
     """Convert Devanagari to IAST."""
     try:
         return transliterate(text, sanscript.DEVANAGARI, sanscript.IAST)
-    except:
+    except Exception:
         return text
 
 
@@ -363,7 +359,7 @@ def run_llm_prediction_test(num_samples: int = 20, verbose: bool = False, compar
     # Initialize Chanda identifier for comparison if requested
     chanda_identifier = None
     if compare_with_chanda:
-        from core.chanda import Chanda
+        from backend.core.chanda import Chanda
 
         data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
         chanda_identifier = Chanda(data_path)

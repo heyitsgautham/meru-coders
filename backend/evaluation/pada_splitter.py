@@ -7,13 +7,9 @@ Run with: python -m pytest backend/evaluation/pada_splitter.py -v
 Or directly: python backend/evaluation/pada_splitter.py
 """
 
-import os
 import sys
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from utils.pada_splitter import PadaSplitter
+from backend.utils.pada_splitter import PadaSplitter
 
 
 def test_syllable_counting():

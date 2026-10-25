@@ -9,9 +9,6 @@ Quick test to verify all major features work correctly.
 import sys
 from pathlib import Path
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
 from backend.app import create_app
 from backend.config import settings
 from backend.core import Chanda
@@ -177,20 +174,20 @@ def test_ocr_availability():
     try:
         from backend.ocr import TesseractOCR
 
-        tesseract = TesseractOCR(languages=settings.TESSERACT_LANGUAGES)
+        TesseractOCR(languages=settings.TESSERACT_LANGUAGES)
         print("✓ Tesseract OCR available")
     except Exception as e:
         print(f"⚠ Tesseract OCR not available: {e}")
 
     # Test Google OCR
     try:
-        from backend.ocr import GoogleOCR
+        from backend.ocr import CloudVisionOCR
 
-        if settings.CLIENT_SECRET:
-            google_ocr = GoogleOCR(credentials_path=settings.CLIENT_SECRET)
-            print("✓ Google OCR available")
+        if Path(settings.GCP_CREDENTIALS).exists():
+            CloudVisionOCR(credentials_path=settings.GCP_CREDENTIALS)
+            print("✓ Google Cloud Vision OCR available")
         else:
-            print("⚠ Google OCR credentials not configured")
+            print("⚠ Google Cloud Vision credentials not configured")
     except Exception as e:
         print(f"⚠ Google OCR not available: {e}")
 

@@ -4,14 +4,8 @@
 Quick manual demonstration of English text detection
 """
 
-import os
-import sys
-
-# Add backend to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from config.settings import Settings
-from core.chanda import Chanda
+from backend.config.settings import Settings
+from backend.core.chanda import Chanda
 
 
 def demo():

@@ -2,11 +2,7 @@
 Verify the syllable counts for the 4 Dandaka examples in examples.json
 """
 
-import sys
-
-sys.path.insert(0, '.')
-
-from core.dandaka_detector import classify_dandaka_unit, count_aksaras
+from backend.core.dandaka_detector import classify_dandaka_unit, count_aksaras
 
 examples = {
     'संकीर्णदण्डकम्': "रामो राजमणिः सदा विजयते रामं रमेशं भजे",

@@ -14,11 +14,8 @@ import sys
 import time
 from pathlib import Path
 
-# Add backend to path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from config import settings
-from utils.cleanup import cleanup_directory, get_file_age_minutes
+from backend.config import settings
+from backend.utils.cleanup import cleanup_directory, get_file_age_minutes
 
 
 def create_test_audio_file(directory: Path, filename: str, age_minutes: float = 0):

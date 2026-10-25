@@ -6,15 +6,11 @@ Compares three implementations on accuracy, speed, and coverage
 """
 
 import os
-import sys
 import time
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(__file__))
-
-from chanda import Chanda
-from chanda_hybrid import ChandaHybrid
-from chanda_icu import ChandaICU
+from backend.core.chanda import Chanda
+from backend.core.chanda_hybrid import ChandaHybrid
+from reference.alternative_implementations.chanda_icu import ChandaICU
 
 # Test cases from test_all_fixes.py
 TEST_CASES = [

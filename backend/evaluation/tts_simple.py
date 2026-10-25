@@ -17,11 +17,11 @@ def test_basic_import():
 def test_initialization():
     """Test basic initialization"""
     try:
-        from sanskrit_tts import SanskritTTS
+        from backend.utils.sanskrit_tts import SanskritTTS
 
         # This should fail gracefully without dependencies
         try:
-            tts = SanskritTTS(mode="local")
+            SanskritTTS(mode="local")
             print("✓ Initialization succeeded (unexpected)")
         except ValueError as e:
             if "requires" in str(e).lower():
@@ -36,10 +36,10 @@ def test_initialization():
 def test_api_mode_check():
     """Test API mode requirements"""
     try:
-        from sanskrit_tts import SanskritTTS
+        from backend.utils.sanskrit_tts import SanskritTTS
 
         try:
-            tts = SanskritTTS(mode="api")
+            SanskritTTS(mode="api")
             print("✗ Should have required HF_TOKEN")
             return False
         except ValueError as e:

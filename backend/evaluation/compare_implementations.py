@@ -5,23 +5,22 @@ Test script to compare current implementation vs IITK implementation
 Using patterns from tests_lg.json
 """
 
+import importlib.util
 import json
 import os
 import sys
 
-# Add paths for both implementations
+from backend.core.chanda import Chanda as CurrentChanda
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.dirname(current_dir)
 project_root = os.path.dirname(backend_dir)
 
-sys.path.insert(0, backend_dir)
 sys.path.insert(0, os.path.join(project_root, 'repos', 'chanda'))
 
 # Import both implementations
 # Import IITK implementation with alias
-import importlib.util
 
-from core.chanda import Chanda as CurrentChanda
 
 iitk_spec = importlib.util.spec_from_file_location(
     "iitk_chanda", os.path.join(project_root, 'repos', 'chanda', 'chanda.py')
@@ -185,7 +184,6 @@ def run_comparison():
     for test in test_patterns:
         meter_name = test['name']
         patterns = test.get('pattern', [])
-        counts = test.get('counts', None)
 
         # Skip meters without patterns (like āryā which uses counts)
         if not patterns or all(not pattern_to_lg(p) for p in patterns):

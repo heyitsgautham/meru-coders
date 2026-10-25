@@ -6,6 +6,8 @@ They print reports instead of asserting, and several of them call Gemini or need
 The two main reports share their benchmarks and matching rules with the test suite through `backend/pipeline/benchmarks.py`.
 `backend/tests/test_corpus_accuracy.py` asserts their figures as floors, and CI runs it in the Data quality job.
 
+Every harness imports the backend as a package, so run it as a module from the repository root:
+
 ```bash
 uv run python -m backend.evaluation.csv_accuracy --all -v    # 147-verse classical benchmark
 uv run python -m backend.evaluation.rigveda_validation -v    # 9,247 labelled Rigveda riks
@@ -20,3 +22,6 @@ uv run pytest -m corpus                                      # the same figures 
 | Fixture data | `data/` holds the Rigveda verse sets that `backend/scripts/build_rigveda_dataset.py` and `build_complete_verses.py` generate |
 
 The Markdown files beside them are the reports those runs produced during the hackathon.
+
+Comparisons with the original IITK engine and the sanskrit-coders repositories expect those clones under `repos/` at the repository root, the only place a harness still adds to `sys.path`.
+`backend/tests/test_harness_imports.py` checks that every first-party import in this directory and in `backend/scripts/` resolves, so a renamed module breaks CI instead of the next manual run.

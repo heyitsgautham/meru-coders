@@ -6,14 +6,11 @@ import os
 import re
 import sys
 
-sys.path.insert(0, '/home/harevasu/Projects/meru-coders/backend')
-
-from dotenv import load_dotenv
-
-load_dotenv('/home/harevasu/Projects/meru-coders/backend/.env')
-
 from google import genai
 from google.genai import types
+
+# Importing settings loads the repository's .env.
+from backend.config import settings  # noqa: F401
 
 # Get API keys from environment (same way ai_validator.py does it)
 GEMINI_API_KEYS = [

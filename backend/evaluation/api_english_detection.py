@@ -5,11 +5,7 @@ Test API endpoints for English text detection
 """
 
 import json
-import os
 import sys
-
-# Add parent (project root) to path so 'backend' module can be imported
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from backend.app import create_app
 
@@ -53,7 +49,7 @@ def test_api_english_detection():
 
         # Check if it was rejected
         is_rejected = False
-        if data.get('success') == False:
+        if data.get('success') is False:
             is_rejected = True
         elif 'result' in data and 'line' in data['result']:
             for line_result in data['result']['line']:

@@ -12,18 +12,14 @@ Compares multiple syllabification approaches:
 Goal: Identify root causes of undercounting and find the best approach.
 """
 
-import sys
-
-# Add paths
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend')
-sys.path.insert(0, '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/reference/alternative_implementations')
-
 import sanskrit_text as skt
-from core.chanda import Chanda
+
+from backend.config import settings
+from backend.core.chanda import Chanda
 
 # Try to import IITK reference
 try:
-    from chanda_iitk import Chanda as ChandaIITK
+    from reference.alternative_implementations.chanda_iitk import Chanda as ChandaIITK
 
     IITK_AVAILABLE = True
 except ImportError as e:
@@ -396,7 +392,7 @@ def analyze_with_raw_sanskrit_text(text):
 
 def run_analysis():
     """Run comprehensive syllabification analysis"""
-    data_path = '/Users/gauthamkrishna/Projects/chanda/repos/meru-coders/backend/data'
+    data_path = str(settings.DATA_DIR)
 
     print("=" * 80)
     print("COMPREHENSIVE SYLLABIFICATION ANALYSIS")
@@ -543,7 +539,7 @@ def detailed_syllable_breakdown():
 
         print("Word-by-word breakdown:")
         total = 0
-        for line_idx, line in enumerate(syllables):
+        for _line_idx, line in enumerate(syllables):
             for word_idx, word in enumerate(line):
                 word_str = ''.join(word)
                 print(f"  Word {word_idx + 1}: '{word_str}' -> {word} ({len(word)} syllables)")
