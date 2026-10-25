@@ -29,7 +29,7 @@ meru-coders/
 │   ├── api/                    REST routes, chatbot, community feed, WebSocket
 │   ├── auth/                   username and password login, Google OAuth through Supabase
 │   ├── contributions/          crowd-sourced verse and meter submissions
-│   ├── core/                   meter engine (chanda.py), daṇḍaka detector, text classifier,
+│   ├── core/                   meter engine (chanda.py and its chanda_* mixins), daṇḍaka detector, text classifier,
 │   │                           Gemini input validator, RAG engine
 │   ├── models/                 Supabase data access for community and contributions
 │   ├── ocr/                    Google Cloud Vision and Tesseract OCR
@@ -143,6 +143,10 @@ Each match gets a confidence score, and `display_chanda_primary` lists the match
 For whole verses, a text classifier picks Vedic syllable-count rules or classical pattern rules.
 Gemini is optional and only screens input and powers the chatbot.
 
+`backend/core/chanda.py` keeps the constructor and the `identify_*` entry points; the rest of the engine lives in mixin modules beside it (`chanda_syllables`, `chanda_matching`, `chanda_vedic` and others).
+`backend/api/validation.py` checks JSON bodies before a handler runs and answers 400 for malformed input.
+Every response carries an `X-Request-ID` header that also appears on each log line, and `GET /metrics` serves Prometheus request counts and latency histograms.
+
 ### API endpoints
 
 All routes sit under `/api` except `/health`.
@@ -156,7 +160,7 @@ All routes sit under `/api` except `/health`.
 | Auth | `POST /auth/signup`, `/auth/login`, `/auth/logout`, `/auth/admin-login`, `/auth/oauth/start`, `/auth/oauth/exchange`; `GET /auth/profile` |
 | Contributions | `POST /contributions/submit`; `GET /contributions/my-contributions`, `/contributions/approved`, `/contributions/admin/pending`; `POST /contributions/admin/approve/<id>`, `/contributions/admin/reject/<id>` |
 | Community | 38 routes under `/community` for posts, comments, likes, bookmarks, follows, notifications, search, reports and image upload |
-| Service | `GET /health`, `/api/info` |
+| Service | `GET /health`, `/metrics` (Prometheus), `/api/info` |
 
 ---
 
@@ -1002,6 +1006,7 @@ Nothing is required to run meter identification.
 |---|---|---|
 | `SECRET_KEY` | signing local JWTs | a development-only value |
 | `DEBUG`, `LOG_LEVEL`, `PORT` | Flask runtime | `false`, `INFO`, `5000` |
+| `LOG_FORMAT` | `text`, or `json` for one JSON object per log line | `text` |
 | `CORS_ORIGINS` | allowed origins for Socket.IO | `*` |
 | `REDIS_URL`, `RATELIMIT_DEFAULT` | Flask-Limiter storage and default limit | `memory://`, `100 per hour` |
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` | auth, community and contributions | unset, features answer 503 |
