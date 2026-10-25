@@ -60,6 +60,11 @@ def create_app():
     configure_logging(settings.LOG_LEVEL, settings.LOG_FORMAT)
     init_request_logging(app)
 
+    # Prometheus request counters and latency histograms at /metrics
+    from backend.api.metrics import init_metrics
+
+    init_metrics(app)
+
     # Enable CORS for frontend
     # Allow all origins for development - handles localhost and local network IPs
     CORS(
