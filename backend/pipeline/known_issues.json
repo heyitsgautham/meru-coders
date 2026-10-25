@@ -1,0 +1,15 @@
+{
+  "meter_tables": {
+    "chanda_ardhasama.csv:gana_symbols": 154,
+    "chanda_ardhasama.csv:pattern_symbols": 154,
+    "chanda_sama.csv:gana_expansion": 16,
+    "chanda_sama.csv:gana_symbols": 886,
+    "chanda_sama.csv:matra_count": 11,
+    "chanda_sama.csv:syllable_count": 5,
+    "chanda_vedic.csv:matra_count": 16,
+    "chanda_vedic.csv:pattern_symbols": 1,
+    "chanda_vishama.csv:gana_symbols": 164,
+    "chanda_vishama.csv:pattern_symbols": 4,
+    "chanda_vishama.csv:syllable_count": 160
+  }
+}
