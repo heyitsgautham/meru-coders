@@ -34,6 +34,7 @@ meru-coders/
 │   ├── models/                 Supabase data access for community and contributions
 │   ├── ocr/                    Google Cloud Vision and Tesseract OCR
 │   ├── utils/                  file processing, pada splitting, TTS, upload cleanup
+│   ├── pipeline/               dataset checks, accuracy benchmarks, Rigveda ground-truth build
 │   ├── config/settings.py      every setting, read from environment variables
 │   ├── data/                   meter definition CSVs and the ChromaDB index
 │   ├── source/                 verse corpora behind the dataset browser and verse search
@@ -105,8 +106,10 @@ Compose passes the root `.env` to the backend container when it exists.
 ## Running tests
 
 ```bash
-uv run pytest                    # offline backend suite
+uv run pytest                    # offline backend suite, corpus accuracy floors included
 uv run pytest --cov              # same, with the coverage floor from pyproject.toml
+uv run pytest -m corpus          # only the accuracy floors on the classical and Rigveda corpora
+uv run python -m backend.pipeline.validate   # meter table, corpus and registry checks
 uv run ruff check .              # lint
 uv run ruff format --check .     # formatting
 
@@ -119,7 +122,13 @@ npm run build
 
 GitHub Actions runs all of these on every push and pull request, plus `pip-audit`, `npm audit` and a gitleaks secret scan.
 The suite in `backend/tests/` runs without network access or API keys.
-The corpus accuracy runs live in `backend/evaluation/` and print reports instead of asserting; see [Accuracy evaluation](#accuracy-evaluation).
+`backend/tests/test_engine_golden.py` pins the engine's output on 150 reference verses, and `backend/tests/test_corpus_accuracy.py` holds the accuracy figures below as floors.
+
+## Data pipeline
+
+The engine and the API read committed datasets only: meter definition CSVs in `backend/data/`, verse corpora in `backend/source/`, and a generated Rigveda ground-truth module in `backend/evaluation/data/`.
+`backend/pipeline/` checks them and builds the generated one, and the Data quality CI job runs those checks on every push.
+[docs/data-pipeline.md](docs/data-pipeline.md) traces each file to its origin and its readers, lists the checks, and records the defects the meter tables still carry.
 
 ## Architecture
 
