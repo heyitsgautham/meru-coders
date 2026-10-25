@@ -65,3 +65,19 @@ def test_pymupdf_alone_still_extracts(tmp_path, processor):
     processor._has_pdfplumber = False
     result = processor.extract_from_pdf(make_pdf(tmp_path / "gita.pdf", [LINES]))
     assert LINES[1] in result.text
+
+
+def test_a_pdf_without_text_is_rejected(tmp_path, processor):
+    pdf = make_pdf(tmp_path / "scan.pdf", [None, None])
+    with pytest.raises(FileProcessingError) as error:
+        processor.extract_from_pdf(pdf)
+    assert error.value.error_code == "PDF_NO_TEXT"
+
+
+@pytest.mark.parametrize("method", ["_extract_pdf_pdfplumber", "_extract_pdf_pymupdf"])
+def test_each_backend_keeps_its_specific_error(tmp_path, processor, method):
+    pdf = make_pdf(tmp_path / "scan.pdf", [None])
+    with pytest.raises(FileProcessingError) as error:
+        getattr(processor, method)(pdf, None)
+    assert error.value.error_code == "PDF_NO_TEXT"
+    assert "Image OCR" in error.value.details

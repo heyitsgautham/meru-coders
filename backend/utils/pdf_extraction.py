@@ -182,6 +182,9 @@ class PdfExtraction:
 
             return ExtractionResult(text=full_text.strip(), file_type=FileType.PDF, page_count=page_count)
 
+        except FileProcessingError:
+            # Our own errors already carry the right code and advice.
+            raise
         except pdfplumber.pdfminer.pdfparser.PDFSyntaxError as e:
             raise FileProcessingError(
                 "Corrupted PDF file", "PDF_CORRUPTED", f"The PDF file appears to be corrupted: {str(e)}"
@@ -297,6 +300,8 @@ class PdfExtraction:
 
             return ExtractionResult(text=full_text.strip(), file_type=FileType.PDF, page_count=page_count)
 
+        except FileProcessingError:
+            raise
         except fitz.FileDataError as e:
             raise FileProcessingError(
                 "Corrupted PDF file", "PDF_CORRUPTED", f"The PDF file appears to be corrupted: {str(e)}"
