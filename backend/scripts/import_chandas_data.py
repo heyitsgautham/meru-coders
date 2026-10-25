@@ -58,8 +58,9 @@ def convert_to_gana_notation(pattern):
                 gana_str += gana_map[triplet]
                 i += 3
                 continue
-        # If not a complete triplet, add the remaining characters
-        gana_str += pattern[i:].lower()
+        # Syllables left over after the last full gaṇa are written as ल and ग,
+        # the only other symbols the engine's gaṇa table understands.
+        gana_str += pattern[i:].replace('L', 'ल').replace('G', 'ग')
         break
 
     return gana_str
