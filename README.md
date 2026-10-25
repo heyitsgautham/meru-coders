@@ -703,7 +703,7 @@ The harnesses in `backend/evaluation/` run the engine over real corpora.
 These are the figures from running them on the current code.
 
 ```bash
-uv run python backend/evaluation/csv_accuracy.py --all
+uv run python -m backend.evaluation.csv_accuracy --all
 ```
 
 | Measure on the 147-verse benchmark | Result |
@@ -712,6 +712,17 @@ uv run python backend/evaluation/csv_accuracy.py --all
 | Every line of the verse correct | 134 of 147 (91.2%) |
 | Individual lines | 485 of 499 (97.2%) |
 | Whole-verse identification | 139 of 147 (94.6%) |
+
+```bash
+uv run python -m backend.evaluation.rigveda_validation
+```
+
+| Measure on the 9,247 labelled Rigveda riks | Result |
+|---|---|
+| Exact meter in Vedic mode | 8,067 (87.2%) |
+| Exact meter, a family member or a part of a compound meter | 9,009 (97.4%) |
+
+`backend/tests/test_corpus_accuracy.py` holds these counts as floors, and the Data quality CI job runs it with `uv run pytest -m corpus`.
 
 ```bash
 uv run python backend/evaluation/all_fixes.py

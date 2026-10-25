@@ -2,13 +2,14 @@
 
 These scripts measure how well the meter engine does on real corpora, and compare it with other implementations.
 They print reports instead of asserting, and several of them call Gemini or need the IITK, GPT and ICU baselines in `reference/alternative_implementations/`.
-That is why they live here and not in `backend/tests/`, which holds the offline pytest suite that CI runs.
 
-Run one from the repository root, for example:
+The two main reports share their benchmarks and matching rules with the test suite through `backend/pipeline/benchmarks.py`.
+`backend/tests/test_corpus_accuracy.py` asserts their figures as floors, and CI runs it in the Data quality job.
 
 ```bash
-uv run python backend/evaluation/csv_accuracy.py
-uv run python backend/evaluation/rigveda_validation.py
+uv run python -m backend.evaluation.csv_accuracy --all -v    # 147-verse classical benchmark
+uv run python -m backend.evaluation.rigveda_validation -v    # 9,247 labelled Rigveda riks
+uv run pytest -m corpus                                      # the same figures as assertions
 ```
 
 | Group | Files |

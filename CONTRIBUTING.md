@@ -56,7 +56,7 @@ The coverage floor sits in `pyproject.toml` under `[tool.coverage.report]`; rais
 Use the fixtures in `backend/tests/conftest.py`.
 `chanda` is one shared meter engine, and `app` and `client` give you the Flask app without Supabase.
 
-When you change the meter engine, also run `uv run python backend/evaluation/csv_accuracy.py --all` and compare the four figures with the README's accuracy table.
+When you change the meter engine, `uv run pytest -m corpus` checks the accuracy floors, and `uv run python -m backend.evaluation.csv_accuracy --all -v` lists every miss.
 
 ## Dependencies
 

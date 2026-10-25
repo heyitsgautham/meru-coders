@@ -73,6 +73,7 @@ pythonpath = [".", "backend"]
 addopts = "-ra --strict-markers"
 markers = [
     "integration: needs a running backend server, network access or API keys; deselected in CI",
+    "corpus: scores the engine on the full classical and Rigveda benchmarks; CI runs these in the Data quality job",
 ]
 
 [tool.coverage.run]
