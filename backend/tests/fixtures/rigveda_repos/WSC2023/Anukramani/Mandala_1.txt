@@ -1,0 +1,6 @@
+sukta.verses.rsi.devata.chandas
+1.1-9.madhucchandā vaiśvāmitraḥ.agniḥ.gāyatrī
+2.1-9.medhātithiḥ kāṇvaḥ.indraḥ.(1-6)jagatī,(7-9)triṣṭup
+3.1-12.dīrghatamāḥ.viśvedevāḥ.virāṭ
+not-a-hymn.x.y.z.gāyatrī
+4.short
