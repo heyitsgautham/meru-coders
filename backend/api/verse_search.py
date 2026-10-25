@@ -4,12 +4,13 @@ identify_text skip the AI validator for known verses."""
 import csv
 import logging
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 
 from backend.api.datasets import load_dataset_catalog
 from backend.api.helpers import SOURCE_DIR
+from backend.api.schemas import SlokaSearchRequest, SlokaValidateRequest
 from backend.api.text_matching import calculate_similarity, normalize_sanskrit_text
-from backend.api.validation import text_payload
+from backend.api.validation import parse_body
 from backend.config import settings
 
 logger = logging.getLogger(__name__)
@@ -166,22 +167,17 @@ def search_sloka():
     Returns:
         JSON with matching slokas sorted by similarity
     """
-    text_payload()
+    body = parse_body(SlokaSearchRequest)
     try:
         # Build index if not already done
         build_sloka_search_index()
 
-        data = request.get_json()
-
-        if not data or 'text' not in data:
-            return jsonify({'success': False, 'error': 'Missing required field: text'}), 400
-
-        query_text = data['text'].strip()
+        query_text = body.text.strip()
         if not query_text:
             return jsonify({'success': False, 'error': 'Search text cannot be empty'}), 400
 
-        threshold = float(data.get('threshold', 0.7))
-        limit = min(int(data.get('limit', 10)), 50)  # Cap at 50 results
+        threshold = body.threshold
+        limit = min(body.limit, 50)  # Cap at 50 results
 
         # Normalize query for comparison
         query_normalized = normalize_sanskrit_text(query_text)
@@ -269,19 +265,14 @@ def validate_sloka():
         - highlighted_text: User's text with error positions marked
         - differences: List of actual differences (not cascading)
     """
-    text_payload()
+    body = parse_body(SlokaValidateRequest)
     try:
         import difflib
 
         # Build index if not already done
         build_sloka_search_index()
 
-        data = request.get_json()
-
-        if not data or 'text' not in data:
-            return jsonify({'success': False, 'error': 'Missing required field: text'}), 400
-
-        query_text = data['text'].strip()
+        query_text = body.text.strip()
         if not query_text:
             return jsonify({'success': False, 'error': 'Text cannot be empty'}), 400
 

@@ -8,7 +8,8 @@ from flask import Blueprint, current_app, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file
-from backend.api.validation import text_payload
+from backend.api.schemas import DandakaRequest, IdentifyTextRequest
+from backend.api.validation import parse_body
 from backend.api.verse_search import CACHE_CLOSE_MATCH_THRESHOLD, find_cached_verse_match
 from backend.config import settings
 from backend.core.ai_validator import validate_shloka_input
@@ -41,20 +42,13 @@ def identify_text():
     Returns:
         JSON with identified meters and analysis results
     """
-    text_payload()
+    body = parse_body(IdentifyTextRequest)
     try:
-        data = request.get_json()
-
-        if not data or 'text' not in data:
-            return jsonify({'error': 'Missing required field: text'}), 400
-
-        text = data['text']
-        output_scheme = data.get('output_scheme', None)
-        # Accept both 'text_mode' and 'mode' for compatibility with frontend
-        text_mode = data.get('text_mode') or data.get('mode', 'line')
-        enable_sandhi = data.get('enable_sandhi', False)
-        # New: identification_mode for Vedic vs Classical detection
-        identification_mode = data.get('identification_mode', 'auto')
+        text = body.text
+        output_scheme = body.output_scheme
+        text_mode = body.effective_text_mode
+        enable_sandhi = body.enable_sandhi
+        identification_mode = body.identification_mode
         verse_mode = text_mode == 'verse'
 
         # Start timing for latency measurement
@@ -252,16 +246,9 @@ def identify_dandaka():
     Returns:
         JSON with dandaka and rajashyamala analysis results
     """
-    text_payload()
+    text = parse_body(DandakaRequest).text
     try:
         from backend.core.dandaka_detector import analyze_dandaka_mode
-
-        data = request.get_json()
-
-        if not data or 'text' not in data:
-            return jsonify({'error': 'Missing required field: text'}), 400
-
-        text = data['text']
 
         logger.info("Analyzing text in Dandaka mode")
 

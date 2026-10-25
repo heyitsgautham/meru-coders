@@ -153,7 +153,8 @@ For whole verses, a text classifier picks Vedic syllable-count rules or classica
 Gemini is optional and only screens input and powers the chatbot.
 
 `backend/core/chanda.py` keeps the constructor and the `identify_*` entry points; the rest of the engine lives in mixin modules beside it (`chanda_syllables`, `chanda_matching`, `chanda_vedic` and others).
-`backend/api/validation.py` checks JSON bodies before a handler runs and answers 400 for malformed input.
+`backend/api/schemas.py` declares the JSON body of each POST route as a pydantic model, and `parse_body` in `backend/api/validation.py` validates it before the handler runs.
+A malformed body gets a 400 whose `error` names the first bad field and whose `details` lists every problem.
 Every response carries an `X-Request-ID` header that also appears on each log line, and `GET /metrics` serves Prometheus request counts and latency histograms.
 
 ### API endpoints

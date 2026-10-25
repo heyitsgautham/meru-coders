@@ -8,7 +8,8 @@ from flask import Blueprint, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.api.helpers import allowed_file
-from backend.api.validation import text_payload
+from backend.api.schemas import TTSRequest
+from backend.api.validation import parse_body
 from backend.config import settings
 
 # Import edge-tts for text-to-speech functionality
@@ -76,21 +77,16 @@ def generate_tts():
             }
         ), 503
 
-    text_payload()
+    body = parse_body(TTSRequest)
     try:
-        data = request.get_json()
-
-        if not data or 'text' not in data:
-            return jsonify({'success': False, 'error': 'Missing required field: text'}), 400
-
-        text = data['text'].strip()
+        text = body.text.strip()
         if not text:
             return jsonify({'success': False, 'error': 'Text cannot be empty'}), 400
 
         logger.info(f"TTS request received - text length: {len(text)} chars")
 
         # Voice selection
-        voice_type = data.get('voice', 'male')
+        voice_type = body.voice
         logger.info(f"TTS voice requested: {voice_type}")
 
         # Generate unique filename

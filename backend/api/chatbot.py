@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from google.genai import types
 
 from backend.api.chatbot_ai import (
@@ -22,7 +22,8 @@ from backend.api.chatbot_ai import (
 from backend.api.chatbot_format import format_meter_response
 from backend.api.chatbot_meter import analyze_meter_agentic, detect_meter_intent
 from backend.api.chatbot_personas import PERSONAS
-from backend.api.validation import text_payload
+from backend.api.schemas import AnalyzeMeterRequest, ChatRequest
+from backend.api.validation import parse_body
 
 logger = logging.getLogger(__name__)
 
@@ -56,14 +57,13 @@ def chat():
         "audio": "base64-encoded-audio" (optional)
     }
     """
-    text_payload("message")
+    body = parse_body(ChatRequest)
     try:
-        data = request.json
-        message = data.get('message', '')
-        conversation_id = data.get('conversation_id', f"conv_{datetime.now().timestamp()}")
-        persona = data.get('persona', 'default')
-        image_data = data.get('image')
-        audio_data = data.get('audio')
+        message = body.message
+        conversation_id = body.conversation_id or f"conv_{datetime.now().timestamp()}"
+        persona = body.persona
+        image_data = body.image
+        audio_data = body.audio
 
         # Log incoming request for debugging
         logger.info(
@@ -621,12 +621,11 @@ def analyze_meter():
     Specialized endpoint for meter analysis with chatbot context
     Combines chandas identification with AI explanation
     """
-    text_payload()
+    body = parse_body(AnalyzeMeterRequest)
     try:
-        data = request.json
-        text = data.get('text', '')
-        conversation_id = data.get('conversation_id', f"conv_{datetime.now().timestamp()}")
-        persona = data.get('persona', 'default')
+        text = body.text
+        conversation_id = body.conversation_id or f"conv_{datetime.now().timestamp()}"
+        persona = body.persona
 
         if not text:
             return jsonify({'success': False, 'error': 'Text is required'}), 400

@@ -12,6 +12,9 @@ import jwt
 from flask import Blueprint, current_app, jsonify, request
 from supabase import Client
 
+from backend.api.schemas import CredentialsRequest
+from backend.api.validation import parse_body
+
 from .middleware import get_current_user
 from .utils import ADMIN_USERNAME, check_admin_credentials, create_user_profile, get_user_profile
 
@@ -64,10 +67,10 @@ def signup():
     Register a new user with username and password.
     Password is securely hashed using bcrypt.
     """
+    credentials = parse_body(CredentialsRequest)
     try:
-        data = request.get_json(silent=True) or {}
-        username = data.get('username', '').strip()
-        password = data.get('password', '')
+        username = credentials.username.strip()
+        password = credentials.password
 
         if not username or not password:
             return jsonify(
@@ -169,10 +172,10 @@ def login():
     Login with username and password.
     Verifies password hash with bcrypt.
     """
+    credentials = parse_body(CredentialsRequest)
     try:
-        data = request.get_json(silent=True) or {}
-        username = data.get('username', '').strip()
-        password = data.get('password', '')
+        username = credentials.username.strip()
+        password = credentials.password
 
         if not username or not password:
             return jsonify(
@@ -245,10 +248,10 @@ def admin_login():
     Admin login with the ADMIN_USERNAME and ADMIN_PASSWORD environment credentials.
     Returns a local JWT (no email) to avoid Supabase email validation issues.
     """
+    credentials = parse_body(CredentialsRequest)
     try:
-        data = request.get_json(silent=True) or {}
-        username = data.get('username', '').strip()
-        password = data.get('password', '')
+        username = credentials.username.strip()
+        password = credentials.password
 
         # Verify admin credentials
         if not check_admin_credentials(username, password):

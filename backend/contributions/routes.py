@@ -5,6 +5,8 @@ Handles user submissions of verses and meter definitions
 
 from flask import Blueprint, jsonify, request
 
+from ..api.schemas import ContributionRequest, ReviewRequest
+from ..api.validation import parse_body
 from ..auth.middleware import require_admin, require_auth
 from ..models.contribution import ContributionModel
 
@@ -26,23 +28,12 @@ def _user_id(user):
 @require_auth
 def submit_contribution(current_user):
     """Submit a new contribution (verse or meter definition)"""
+    contribution = parse_body(ContributionRequest)
     try:
         from flask import current_app
 
-        data = request.get_json()
-
-        # Validate required fields
-        if not data or 'contribution_type' not in data or 'data' not in data:
-            return jsonify({'success': False, 'error': 'Missing required fields: contribution_type and data'}), 400
-
-        contribution_type = data['contribution_type']
-        contribution_data = data['data']
-
-        # Validate contribution type
-        if contribution_type not in ['verse', 'meter_definition']:
-            return jsonify(
-                {'success': False, 'error': 'Invalid contribution_type. Must be "verse" or "meter_definition"'}
-            ), 400
+        contribution_type = contribution.contribution_type
+        contribution_data = contribution.data
 
         # Extract user ID safely
         user_id = _user_id(current_user)
@@ -116,11 +107,9 @@ def get_pending_contributions(current_user):
 @require_admin
 def approve_contribution(current_user, contribution_id):
     """Approve a contribution (Admin only)"""
+    # A bare POST without a body approves with no notes.
+    review_notes = parse_body(ReviewRequest, optional=True).review_notes
     try:
-        # Allow empty bodies from simple POSTs by suppressing strict content-type checks
-        data = request.get_json(silent=True) or {}
-        review_notes = data.get('review_notes', '')
-
         result = contribution_model.approve_contribution(
             contribution_id=contribution_id, admin_id=_user_id(current_user), review_notes=review_notes
         )
@@ -136,11 +125,8 @@ def approve_contribution(current_user, contribution_id):
 @require_admin
 def reject_contribution(current_user, contribution_id):
     """Reject a contribution (Admin only)"""
+    review_notes = parse_body(ReviewRequest, optional=True).review_notes
     try:
-        # Allow empty bodies from simple POSTs by suppressing strict content-type checks
-        data = request.get_json(silent=True) or {}
-        review_notes = data.get('review_notes', '')
-
         result = contribution_model.reject_contribution(
             contribution_id=contribution_id, admin_id=_user_id(current_user), review_notes=review_notes
         )
