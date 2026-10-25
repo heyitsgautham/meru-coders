@@ -59,3 +59,16 @@ def test_short_fragment_matches_short_meters_only(chanda):
     assert result["found"] is True
     assert "कन्या (kanyā) [10.0]" in result["display_chanda_primary"]
     assert "अनुष्टुभ्" not in result["display_chanda_primary"]
+
+
+def test_display_fields_split_by_confidence(chanda):
+    matches = [("अनुष्टुभ्", ("1", "2")), ("गायत्री", ("1",)), ("उष्णिक्", ("1",))]
+    confidence = {"अनुष्टुभ्": (10.0, "exact_pattern"), "गायत्री": (7.5, "pada"), "उष्णिक्": (4.0, "syllables")}
+
+    full, primary, alternate, alternate_count, hidden_count = chanda._display_chanda_fields(matches, confidence)
+
+    assert primary == "अनुष्टुभ् (पाद 1-2) (anuṣṭubh) [10.0]"
+    assert alternate.startswith("गायत्री")
+    assert "उष्णिक्" not in primary + alternate
+    assert full.count(" / ") == 2
+    assert (alternate_count, hidden_count) == (1, 1)

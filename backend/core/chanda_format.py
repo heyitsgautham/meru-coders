@@ -5,6 +5,9 @@ Mixed into backend.core.chanda.Chanda; methods rely on its other mixins through 
 
 from collections import Counter, defaultdict
 
+from indic_transliteration import sanscript
+from indic_transliteration.sanscript import transliterate
+
 
 class ResultFormatMixin:
     ###########################################################################
@@ -227,3 +230,79 @@ class ResultFormatMixin:
         )
 
         return "\n".join(output)
+
+    def _display_chanda_fields(self, chanda, confidence_map):
+        """
+        Build identify_line's display strings from its matches.
+
+        A meter is primary when its confidence is at least 80% of the best
+        one and alternate when it is at least 7.0; every match also goes in
+        the full list. Returns (display_chanda, display_chanda_primary,
+        display_chanda_alternate, alternate_count, hidden_count).
+        """
+        # Format chanda for display, handling both tuple and string formats
+        display_chanda_parts = []
+        display_chanda_primary_parts = []  # High-confidence matches (exact pattern matches)
+        display_chanda_alternate_parts = []  # Medium-confidence matches
+
+        # Find maximum confidence to calculate thresholds
+        max_confidence = max((conf for meter, (conf, _) in confidence_map.items()), default=0)
+
+        # Primary threshold: 80% of max confidence (for exact matches)
+        # This ensures exact matches (10.0) show as primary, but not syllable-only matches (5.0)
+        confidence_threshold_primary = max_confidence * 0.8
+
+        # Alternate threshold: Only show if confidence is at least 7.0 (higher than syllable-only)
+        # This filters out the hundreds of syllable-count-only matches
+        confidence_threshold_alternate = 7.0
+
+        for c in chanda:
+            if isinstance(c, (tuple, list)) and len(c) >= 2:
+                formatted = self.format_chanda_pada(c[0], c[1])
+                meter_name = c[0]
+            elif isinstance(c, (tuple, list)) and len(c) == 1:
+                formatted = self.format_chanda_pada(c[0], ('',))
+                meter_name = c[0]
+            else:
+                formatted = str(c)
+                meter_name = c
+
+            if formatted:  # Only add non-None, non-empty strings
+                meter_confidence = confidence_map.get(meter_name, (0, ''))[0]
+
+                # Add IAST transliteration if meter name is in Devanagari
+                meter_display = formatted
+                if meter_name and any(ord(ch) > 127 for ch in meter_name):
+                    # Transliterate to IAST
+                    iast_name = transliterate(meter_name, sanscript.DEVANAGARI, sanscript.IAST)
+                    # Only add if it's different (not already in IAST)
+                    if iast_name and iast_name != meter_name:
+                        meter_display = f"{formatted} ({iast_name})"
+
+                # Categorize by confidence
+                if meter_confidence >= confidence_threshold_primary:
+                    # Primary display: high-confidence with scores (exact pattern matches)
+                    formatted_with_conf = f"{meter_display} [{meter_confidence:.1f}]"
+                    display_chanda_primary_parts.append(formatted_with_conf)
+                elif meter_confidence >= confidence_threshold_alternate:
+                    # Alternate display: medium-confidence (pada matches, vedic, etc.)
+                    display_chanda_alternate_parts.append(meter_display)
+
+                # Always add to full list (for backwards compatibility)
+                display_chanda_parts.append(formatted)
+
+        display_chanda = ' / '.join(display_chanda_parts)
+        display_chanda_primary = ' | '.join(display_chanda_primary_parts)
+        display_chanda_alternate = ' / '.join(display_chanda_alternate_parts)
+        display_chanda_alternate_count = len(display_chanda_alternate_parts)
+        display_chanda_hidden_count = (
+            len(display_chanda_parts) - len(display_chanda_primary_parts) - len(display_chanda_alternate_parts)
+        )
+
+        return (
+            display_chanda,
+            display_chanda_primary,
+            display_chanda_alternate,
+            display_chanda_alternate_count,
+            display_chanda_hidden_count,
+        )
