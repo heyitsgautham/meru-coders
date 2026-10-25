@@ -10,7 +10,8 @@ uv sync                      # backend virtualenv from uv.lock, with the dev too
 cd frontend && npm ci        # frontend packages from package-lock.json
 ```
 
-Copy `backend/.env.example` to `backend/.env` and `frontend/.env.example` to `frontend/.env` only for the features you need.
+Copy `.env.example` to `.env` and `frontend/.env.example` to `frontend/.env` only for the features you need.
+A new environment variable goes into one of those two example files in the same commit, or `test_env_example.py` fails.
 Never commit either `.env` file, service account JSON, or any key.
 CI runs gitleaks on every push and fails on a committed secret.
 

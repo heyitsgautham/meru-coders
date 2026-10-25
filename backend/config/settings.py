@@ -2,9 +2,10 @@
 Application settings.
 
 Every value that differs between machines comes from an environment
-variable. Copy backend/.env.example to backend/.env for local development;
-python-dotenv loads it here without overriding variables already set in the
-process environment.
+variable. Copy .env.example at the repository root to .env for local
+development; python-dotenv loads it here without overriding variables already
+set in the process environment. backend/.env is still read after it, for
+checkouts set up before the file moved to the root.
 """
 
 import os
@@ -14,6 +15,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
+REPO_ROOT = BACKEND_DIR.parent
+load_dotenv(REPO_ROOT / ".env")
 load_dotenv(BACKEND_DIR / ".env")
 
 

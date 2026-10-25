@@ -17,3 +17,6 @@ docs
 outputs
 # backend/.env stays in the context: scripts/deploy.sh sets only DEBUG,
 # LOG_LEVEL and CORS_ORIGINS on Cloud Run, so the image carries the rest.
+
+# Local secrets never enter the build context; compose passes .env at runtime.
+.env

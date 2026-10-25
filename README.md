@@ -58,7 +58,7 @@ cd meru-coders
 
 # Backend: creates .venv from uv.lock, then serves http://localhost:5000
 uv sync
-cp backend/.env.example backend/.env    # optional, every variable has a default
+cp .env.example .env                    # optional, every variable has a default
 uv run python backend/run.py
 
 # Frontend, in a second terminal: serves http://localhost:8080
@@ -100,7 +100,7 @@ docker compose up --build
 
 This builds both images from the repository root and starts the backend on port 5000 and the nginx-served frontend on port 8080.
 The frontend waits for the backend's `/health` check.
-The backend reads `backend/.env` when it exists.
+Compose passes the root `.env` to the backend container when it exists.
 
 ## Running tests
 
@@ -998,8 +998,9 @@ The other harnesses cover the Rigveda, Rāmāyaṇa, WSC 2023 and Meghadūta set
 
 ## Configuration
 
-`backend/config/settings.py` reads every setting from the environment and loads `backend/.env` when it exists.
-`backend/.env.example` lists every variable the backend reads, and `frontend/.env.example` lists the three the frontend reads.
+`backend/config/settings.py` reads every setting from the environment and loads the root `.env` when it exists, then `backend/.env` for older checkouts.
+`.env.example` at the root lists every variable the backend reads, and `frontend/.env.example` lists the three the frontend reads.
+`backend/tests/test_env_example.py` fails when the code reads a variable that neither file lists.
 Nothing is required to run meter identification.
 
 | Variable | Used for | Default |
