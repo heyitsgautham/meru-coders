@@ -3294,3 +3294,33 @@ html, body {
     font-size: 16px !important;
   }
 }
+
+/* Split view: two result columns that share the row and shrink with it.
+   min-width: 0 lets a column get narrower than its tables, which then
+   scroll inside the column instead of pushing the second card off-screen. */
+.split-results {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.split-results__col {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.split-results .results-card {
+  padding: 1.5rem;
+}
+
+/* Below 1280px the two cards are too narrow for the pada tables; stack them. */
+@media (max-width: 1279px) {
+  .split-results {
+    flex-direction: column;
+  }
+
+  /* A zero flex-basis would collapse the stacked columns to no height. */
+  .split-results__col {
+    flex: none;
+  }
+}

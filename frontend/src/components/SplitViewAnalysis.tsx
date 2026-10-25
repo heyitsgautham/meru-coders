@@ -242,9 +242,9 @@ export function SplitViewAnalysis({ initialTextLeft = "", initialTextRight = "" 
       {/* Results Display - Side by side */}
       {(resultLeft || resultRight) && (
         <div ref={resultsRef} style={{ width: '1600px', maxWidth: '95%', margin: '40px auto 0 auto' }}>
-          <div className="flex gap-6">
+          <div className="split-results">
             {/* Left Result */}
-            <div className="flex-1">
+            <div className="split-results__col">
               {resultLeft ? (
                 <div>
                   <h3 className="text-xl font-bold text-[var(--color-text-main)] mb-4 text-center">
@@ -265,7 +265,7 @@ export function SplitViewAnalysis({ initialTextLeft = "", initialTextRight = "" 
             </div>
 
             {/* Right Result */}
-            <div className="flex-1">
+            <div className="split-results__col">
               {resultRight ? (
                 <div>
                   <h3 className="text-xl font-bold text-[var(--color-text-main)] mb-4 text-center">
