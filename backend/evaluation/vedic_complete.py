@@ -7,7 +7,7 @@ Test Vedic accuracy using ChandaModal with VEDIC mode on COMPLETE verses only.
 import importlib.util
 import os
 
-from backend.core.chanda_modal import ChandaModal
+from backend.experimental.chanda_modal import ChandaModal
 
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

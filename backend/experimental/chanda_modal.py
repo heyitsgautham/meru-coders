@@ -14,7 +14,7 @@ Author: Meru Coders Team (SIH 2025)
 import os
 
 # Import the base Chanda class
-from .chanda import Chanda
+from backend.core.chanda import Chanda
 
 
 class ChandaModal(Chanda):

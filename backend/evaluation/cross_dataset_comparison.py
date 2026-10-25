@@ -322,7 +322,7 @@ def evaluate_with_chanda_iitk(data, data_path, label=""):
 
 def evaluate_with_enhanced_chanda(data, data_path):
     """Evaluate using enhanced_chanda.py with our meter database"""
-    from backend.core.enhanced_chanda import EnhancedChanda
+    from backend.experimental.enhanced_chanda import EnhancedChanda
 
     c = EnhancedChanda(str(data_path))
 

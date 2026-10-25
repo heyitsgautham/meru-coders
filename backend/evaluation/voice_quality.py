@@ -32,7 +32,7 @@ def show_installation_guide():
 
 def generate_test_samples():
     """Generate test audio samples to evaluate voice quality"""
-    from backend.utils.sanskrit_tts import SanskritTTS
+    from backend.experimental.sanskrit_tts import SanskritTTS
 
     print("\n" + "=" * 70)
     print("GENERATING SANSKRIT TTS TEST SAMPLES")

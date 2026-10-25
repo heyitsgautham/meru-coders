@@ -6,16 +6,11 @@ Combines ICU-based syllabization with our existing pattern matching logic
 """
 
 import functools
-import os
-
-# Import our existing Chanda class structure
-import sys
 
 import regex
 from indic_transliteration import sanscript
 
-sys.path.insert(0, os.path.dirname(__file__))
-from chanda import Chanda
+from backend.core.chanda import Chanda
 
 MAX_CACHE = 1024
 

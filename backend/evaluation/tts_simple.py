@@ -17,7 +17,7 @@ def test_basic_import():
 def test_initialization():
     """Test basic initialization"""
     try:
-        from backend.utils.sanskrit_tts import SanskritTTS
+        from backend.experimental.sanskrit_tts import SanskritTTS
 
         # This should fail gracefully without dependencies
         try:
@@ -36,7 +36,7 @@ def test_initialization():
 def test_api_mode_check():
     """Test API mode requirements"""
     try:
-        from backend.utils.sanskrit_tts import SanskritTTS
+        from backend.experimental.sanskrit_tts import SanskritTTS
 
         try:
             SanskritTTS(mode="api")

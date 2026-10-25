@@ -518,7 +518,7 @@ def main():
 
     # Model 3: Enhanced implementation with Chandovallari rules
     try:
-        from backend.core.enhanced_chanda import EnhancedChanda
+        from backend.experimental.enhanced_chanda import EnhancedChanda
 
         models['enhanced_chanda.py'] = EnhancedChanda(data_path)
         print("✓ Loaded enhanced_chanda.py (Chandovallari rules)")

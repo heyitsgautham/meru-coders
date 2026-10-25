@@ -9,7 +9,7 @@ import os
 import time
 
 from backend.core.chanda import Chanda
-from backend.core.chanda_hybrid import ChandaHybrid
+from backend.experimental.chanda_hybrid import ChandaHybrid
 from reference.alternative_implementations.chanda_icu import ChandaICU
 
 # Test cases from test_all_fixes.py

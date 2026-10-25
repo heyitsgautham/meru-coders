@@ -35,6 +35,7 @@ meru-coders/
 │   ├── ocr/                    Google Cloud Vision and Tesseract OCR
 │   ├── utils/                  file processing, pada splitting, TTS, upload cleanup
 │   ├── pipeline/               dataset checks, accuracy benchmarks, Rigveda ground-truth build
+│   ├── experimental/           alternative engines and the local TTS model that evaluation/ compares; not served
 │   ├── config/settings.py      every setting, read from environment variables
 │   ├── data/                   meter definition CSVs and the ChromaDB index
 │   ├── source/                 verse corpora behind the dataset browser and verse search
