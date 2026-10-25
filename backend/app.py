@@ -208,7 +208,15 @@ def create_app():
             },
         }
 
-    # Initialize background scheduler for upload cleanup
+    # Background job that deletes old uploads; CLEANUP_ENABLED=false turns it off.
+    app.scheduler = _start_cleanup_scheduler(app) if settings.CLEANUP_ENABLED else None
+
+    app.logger.info("Flask REST API application initialized successfully")
+    return app
+
+
+def _start_cleanup_scheduler(app):
+    """Start the interval job that deletes old uploads, or return None if it cannot start."""
     app.logger.info("Initializing upload cleanup scheduler...")
     try:
         from backend.utils.cleanup import scheduled_cleanup_job
@@ -223,24 +231,19 @@ def create_app():
             replace_existing=True,
         )
         scheduler.start()
-        app.scheduler = scheduler
-
-        # Register shutdown handler
-        def _stop_scheduler():
-            # Tests and reloaders may already have stopped it.
-            if scheduler.running:
-                scheduler.shutdown(wait=False)
-
-        atexit.register(_stop_scheduler)
-
-        app.logger.info(
-            f"Upload cleanup scheduler started "
-            f"(interval: {settings.CLEANUP_INTERVAL_MINUTES}min, "
-            f"max file age: {settings.FILE_MAX_AGE_MINUTES}min)"
-        )
     except Exception as e:
         app.logger.warning(f"Failed to initialize cleanup scheduler: {e}")
-        app.scheduler = None
+        return None
 
-    app.logger.info("Flask REST API application initialized successfully")
-    return app
+    def _stop_scheduler():
+        # Tests and reloaders may already have stopped it.
+        if scheduler.running:
+            scheduler.shutdown(wait=False)
+
+    atexit.register(_stop_scheduler)
+    app.logger.info(
+        f"Upload cleanup scheduler started "
+        f"(interval: {settings.CLEANUP_INTERVAL_MINUTES}min, "
+        f"max file age: {settings.FILE_MAX_AGE_MINUTES}min)"
+    )
+    return scheduler

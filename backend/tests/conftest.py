@@ -1,6 +1,12 @@
 """Shared fixtures for the backend test suite."""
 
-import pytest
+import os
+
+# No background cleanup thread in tests: every create_app() call would start one,
+# and its exit hook would log after pytest has closed the output streams.
+os.environ.setdefault("CLEANUP_ENABLED", "false")
+
+import pytest  # noqa: E402
 
 from backend.config import settings
 from backend.core.chanda import Chanda

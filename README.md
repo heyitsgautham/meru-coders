@@ -1040,7 +1040,7 @@ Nothing is required to run meter identification.
 | `HF_TOKEN` | Sanskrit TTS model in API mode | unset |
 | `INDIC_ASR_URL` | voice transcription service | unset, voice input answers 503 |
 | `SYLLABIZATION_METHOD` | `auto`, `icu` or `sanskrit_text` | `auto` |
-| `CLEANUP_INTERVAL_MINUTES`, `FILE_MAX_AGE_MINUTES` | upload cleanup job | `60`, `60` |
+| `CLEANUP_ENABLED`, `CLEANUP_INTERVAL_MINUTES`, `FILE_MAX_AGE_MINUTES` | upload cleanup job; the test suite sets `CLEANUP_ENABLED=false` | `true`, `60`, `60` |
 | `VITE_API_URL` | frontend API base | `http://localhost:5000/api` on localhost |
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Google sign-in in the browser | unset, sign-in disabled |
 

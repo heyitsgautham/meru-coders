@@ -100,6 +100,8 @@ class Settings:
     INDIC_ASR_URL = os.environ.get("INDIC_ASR_URL", "")
 
     # Upload cleanup: how often the job runs and how old a file must be to go
+    # The test suite turns the background cleanup job off; see backend/tests/conftest.py.
+    CLEANUP_ENABLED = _env_bool("CLEANUP_ENABLED", True)
     CLEANUP_INTERVAL_MINUTES = _env_int("CLEANUP_INTERVAL_MINUTES", 60)
     FILE_MAX_AGE_MINUTES = _env_int("FILE_MAX_AGE_MINUTES", 60)
 
