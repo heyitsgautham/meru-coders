@@ -1167,7 +1167,7 @@ label {
   display: block;
 }
 
-textarea, input[type="text"], input[type="search"] {
+textarea, input[type="text"]:not([data-leading-icon]), input[type="search"]:not([data-leading-icon]) {
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 16px !important;

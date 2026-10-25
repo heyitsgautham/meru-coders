@@ -259,6 +259,7 @@ export function DatasetsView() {
                 <Search size={14} style={styles.chandasSearchIconInline} />
                 <input
                   type="text"
+                  data-leading-icon
                   placeholder="Search chandas..."
                   value={chandasSearch}
                   onChange={(e) => {

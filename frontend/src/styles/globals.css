@@ -151,8 +151,8 @@ label {
 }
 
 textarea,
-input[type="text"],
-input[type="search"] {
+input[type="text"]:not([data-leading-icon]),
+input[type="search"]:not([data-leading-icon]) {
   padding-left: 16px !important;
   padding-right: 16px !important;
   padding-top: 12px;
