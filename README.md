@@ -13,7 +13,7 @@ A comprehensive AI-powered platform for identifying, analyzing, and learning San
 | **Accuracy** | 94.6% whole-verse and 99.3% first-line on a 147-verse benchmark ([details](#accuracy-evaluation)) |
 | **Database** | 1,920+ meters across all categories (largest digital collection) |
 | **AI Features** | Multi-modal chatbot, RAG-powered knowledge base, voice interaction |
-| **Input Modes** | Text, Image (OCR), Audio (STT), File upload (PDF/DOCX/TXT) |
+| **Input Modes** | Text, Image (OCR), Audio (STT), File upload (DOCX/TXT) |
 | **Special Features** | Daṇḍaka detection, Community platform, Interactive LG Lab, TTS with voice selection |
 | **Architecture** | Modern REST API + React SPA with real-time WebSocket support |
 | **Testing** | Offline pytest and vitest suites in CI, plus corpus evaluation harnesses |
@@ -200,7 +200,7 @@ All routes sit under `/api` except `/health`.
 
 #### **Mode 4: File Upload**
 - Batch processing of text files (TXT)
-- Document parsing (PDF, DOCX)
+- Document parsing (DOCX); the PDF extractor exists but `FileProcessor.ALLOWED_EXTENSIONS` keeps PDF uploads off
 - Multi-verse analysis with line-by-line results
 - Download results as JSON/CSV
 - **Endpoint:** `POST /api/identify/file`

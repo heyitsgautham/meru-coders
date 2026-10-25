@@ -213,3 +213,26 @@ def run_all_tests():
 if __name__ == "__main__":
     success = run_all_tests()
     sys.exit(0 if success else 1)
+
+
+def test_rejecting_a_pdf_names_only_the_accepted_formats(tmp_path):
+    """PDF upload is switched off in FileProcessor.ALLOWED_EXTENSIONS, so the message must not offer it."""
+    processor = get_processor()
+    pdf = tmp_path / "gita.pdf"
+    pdf.write_bytes(b"%PDF-1.4 minimal")
+    is_valid, error = processor.validate_file(pdf)
+    assert not is_valid
+    assert error == "Unsupported file type '.pdf'. Allowed: DOCX, TXT"
+    assert processor.allowed_formats() == "DOCX, TXT"
+
+
+def test_file_extract_route_reports_the_accepted_formats(client):
+    import io
+
+    resp = client.post(
+        "/api/file/extract",
+        data={"file": (io.BytesIO(b"%PDF-1.4 minimal"), "gita.pdf")},
+        content_type="multipart/form-data",
+    )
+    assert resp.status_code == 400
+    assert resp.get_json()["error"] == "Unsupported file type '.pdf'. Allowed: DOCX, TXT"

@@ -82,9 +82,13 @@ class FileChecks:
         # Check extension
         ext = self.get_file_extension(filepath.name)
         if ext not in self.ALLOWED_EXTENSIONS:
-            return False, f"Unsupported file type '.{ext}'. Allowed: PDF, DOCX, TXT"
+            return False, f"Unsupported file type '.{ext}'. Allowed: {self.allowed_formats()}"
 
         return True, None
+
+    def allowed_formats(self) -> str:
+        """The accepted formats as users name them, for example 'DOCX, TXT'."""
+        return ', '.join(sorted({'TXT' if ext == 'text' else ext.upper() for ext in self.ALLOWED_EXTENSIONS}))
 
     def validate_sanskrit_content(self, text: str) -> Tuple[bool, Optional[str]]:
         """
