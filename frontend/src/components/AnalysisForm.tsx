@@ -186,7 +186,7 @@ export function AnalysisForm({ initialText = "", initialMode, onTextChange, auto
               <DocumentTab
                 input={documentInput}
                 identifying={textLoading}
-                onIdentify={() => identifyExtracted(documentInput.extractedText, "auto")}
+                onIdentify={() => identifyExtracted(documentInput.extractedText, identificationMode)}
               />
             )}
             {activeTab === "voice" && (

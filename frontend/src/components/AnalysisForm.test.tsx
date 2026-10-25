@@ -225,6 +225,21 @@ describe('AnalysisForm file tab', () => {
     expect(mocked.identifyFromText).toHaveBeenCalledWith(VERSE, 'verse', '', 'auto');
   });
 
+  it('identifies extracted document text in the mode picked on the text tab', async () => {
+    localStorage.setItem('chanda_activeTab', 'text');
+    mocked.extractTextFromFile.mockResolvedValue({ success: true, text: VERSE } as never);
+    const user = userEvent.setup();
+    render(<AnalysisForm />);
+
+    await user.click(screen.getByRole('button', { name: 'Vedic Mode' }));
+    await user.click(screen.getByRole('button', { name: 'File Upload' }));
+    await upload(fileInput('.docx,.txt,.text'), new File([VERSE], 'rv.txt'));
+    await user.click(await screen.findByRole('button', { name: 'Extract Text' }));
+    await user.click(await screen.findByRole('button', { name: 'Identify Chandas' }));
+
+    await waitFor(() => expect(mocked.identifyFromText).toHaveBeenCalledWith(VERSE, 'verse', '', 'vedic'));
+  });
+
   it('shows why extraction failed', async () => {
     mocked.extractTextFromFile.mockRejectedValue(new Error('Could not read the document'));
     vi.spyOn(console, 'error').mockImplementation(() => {});
