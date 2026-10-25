@@ -8,6 +8,7 @@ from flask import Blueprint, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.api.helpers import allowed_file
+from backend.api.validation import text_payload
 from backend.config import settings
 
 # Import edge-tts for text-to-speech functionality
@@ -75,6 +76,7 @@ def generate_tts():
             }
         ), 503
 
+    text_payload()
     try:
         data = request.get_json()
 

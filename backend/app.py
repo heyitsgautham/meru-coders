@@ -161,8 +161,10 @@ def create_app():
 
     # Register API routes
     from backend.api import register_routes
+    from backend.api.validation import RequestValidationError, handle_validation_error
 
     register_routes(app)
+    app.register_error_handler(RequestValidationError, handle_validation_error)
 
     # Health check endpoint
     @app.route('/health', methods=['GET'])

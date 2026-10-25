@@ -8,6 +8,7 @@ from flask import Blueprint, current_app, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file
+from backend.api.validation import text_payload
 from backend.api.verse_search import CACHE_CLOSE_MATCH_THRESHOLD, find_cached_verse_match
 from backend.config import settings
 from backend.core.ai_validator import validate_shloka_input
@@ -40,6 +41,7 @@ def identify_text():
     Returns:
         JSON with identified meters and analysis results
     """
+    text_payload()
     try:
         data = request.get_json()
 
@@ -250,6 +252,7 @@ def identify_dandaka():
     Returns:
         JSON with dandaka and rajashyamala analysis results
     """
+    text_payload()
     try:
         from backend.core.dandaka_detector import analyze_dandaka_mode
 

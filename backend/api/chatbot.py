@@ -18,6 +18,8 @@ from flask import Blueprint, jsonify, request
 from google import genai
 from google.genai import types
 
+from backend.api.validation import text_payload
+
 # Try to import Google Cloud Speech (optional dependency)
 try:
     from google.cloud import speech_v1 as gcp_speech
@@ -973,6 +975,7 @@ def chat():
         "audio": "base64-encoded-audio" (optional)
     }
     """
+    text_payload("message")
     try:
         data = request.json
         message = data.get('message', '')
@@ -1537,6 +1540,7 @@ def analyze_meter():
     Specialized endpoint for meter analysis with chatbot context
     Combines chandas identification with AI explanation
     """
+    text_payload()
     try:
         data = request.json
         text = data.get('text', '')

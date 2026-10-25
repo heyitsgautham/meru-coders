@@ -9,6 +9,7 @@ from flask import Blueprint, jsonify, request
 from backend.api.datasets import load_dataset_catalog
 from backend.api.helpers import SOURCE_DIR
 from backend.api.text_matching import calculate_similarity, normalize_sanskrit_text
+from backend.api.validation import text_payload
 from backend.config import settings
 
 logger = logging.getLogger(__name__)
@@ -165,6 +166,7 @@ def search_sloka():
     Returns:
         JSON with matching slokas sorted by similarity
     """
+    text_payload()
     try:
         # Build index if not already done
         build_sloka_search_index()
@@ -267,6 +269,7 @@ def validate_sloka():
         - highlighted_text: User's text with error positions marked
         - differences: List of actual differences (not cascading)
     """
+    text_payload()
     try:
         import difflib
 
