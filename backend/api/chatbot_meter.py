@@ -156,11 +156,9 @@ def analyze_meter_agentic(text: str) -> Dict[str, Any]:
     with clear pada-by-pada L-G pattern display.
     """
     try:
-        from backend.config.settings import Settings
-        from backend.core.chanda import Chanda
+        from backend.core.engine import get_engine
 
-        settings = Settings()
-        chanda = Chanda(data_path=str(settings.DATA_DIR))
+        chanda = get_engine()
 
         # Check if text has multiple lines (split by newlines OR danda separators)
         # Sanskrit verses often use । (single danda) to separate padas/lines

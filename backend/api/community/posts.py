@@ -3,6 +3,7 @@
 from flask import current_app, jsonify, request
 
 from ...auth.middleware import get_current_user, require_auth
+from ...core.engine import get_engine
 from . import community_bp, community_model
 
 # ==================== POSTS ====================
@@ -78,11 +79,7 @@ def create_post(current_user):
         meter_analysis = None
         if sanskrit_text and analyze_meter:
             try:
-                from ...config import settings
-                from ...core import Chanda
-
-                chanda = Chanda(data_path=str(settings.DATA_DIR))
-                analysis_result = chanda.identify_line(sanskrit_text)
+                analysis_result = get_engine().identify_line(sanskrit_text)
 
                 if analysis_result.get('found'):
                     meter_analysis = {
@@ -367,11 +364,7 @@ def update_post(current_user, post_id):
         meter_analysis = None
         if sanskrit_text and analyze_meter:
             try:
-                from ...config import settings
-                from ...core import Chanda
-
-                chanda = Chanda(data_path=str(settings.DATA_DIR))
-                analysis_result = chanda.identify_line(sanskrit_text)
+                analysis_result = get_engine().identify_line(sanskrit_text)
                 if analysis_result and analysis_result.get('found'):
                     meter_analysis = {
                         'found': True,

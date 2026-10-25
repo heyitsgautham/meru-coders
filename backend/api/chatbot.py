@@ -632,12 +632,9 @@ def analyze_meter():
 
         # First, analyze the meter using the core chanda module
         # Import here to avoid circular dependencies
-        from backend.config.settings import Settings
-        from backend.core.chanda import Chanda
+        from backend.core.engine import get_engine
 
-        settings = Settings()
-        chanda = Chanda(data_path=str(settings.DATA_DIR))
-        meter_result = chanda.identify_line(text)
+        meter_result = get_engine().identify_line(text)
 
         # Then, ask the AI to explain the result
         genai_client = get_gemini_client()
