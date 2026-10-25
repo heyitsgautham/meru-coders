@@ -12,7 +12,7 @@ Key Features:
 - Lexicon-based candidate scoring
 
 Usage:
-    from sandhi_rules import gen_candidates
+    from backend.core.sandhi_rules import gen_candidates
 
     line = "कर्मण्येवाधिकारस्ते"
     candidates = gen_candidates(line, k=5, lexicon_path="data/sandhi_lexicon.txt")

@@ -1395,7 +1395,7 @@ class Chanda(
             >>> print(result['display_chanda'])
         """
         try:
-            from sandhi_rules import gen_candidates
+            from .sandhi_rules import gen_candidates
         except ImportError:
             # Fallback to regular identification if sandhi_rules not available
             result = self.identify_line(line, fuzzy=fuzzy, k=k_meters)
