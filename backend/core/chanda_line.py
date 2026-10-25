@@ -5,16 +5,11 @@ Mixed into backend.core.chanda.Chanda.
 
 from indic_transliteration import sanscript
 
-from .chanda_constants import (
-    CONFIDENCE_VEDIC_CLASSICAL_MAP,
-    VEDIC_MAPPINGS_AVAILABLE,
-    get_classical_equivalents,
-    normalize_vedic_meter,
-)
+from .chanda_line_fallbacks import LineFallbackMixin
 from .confidence_reasons import build_confidence_reasons, get_primary_confidence_reason
 
 
-class LineIdentificationMixin:
+class LineIdentificationMixin(LineFallbackMixin):
     # ----------------------------------------------------------------------- #
 
     def identify_line(self, line, fuzzy=False, k=10):
@@ -271,211 +266,17 @@ class LineIdentificationMixin:
                     chanda.insert(0, vedic_tuple)
             found = True
         else:
-            # TIER 2: No exact matches - use multi-level heuristics
-            multi_level_matches = self.match_with_confidence(lg_str, fuzzy=fuzzy, max_fuzzy=k)
-
-            # Separate by match type - prioritize better heuristics
-            pada_matches = []  # Pada-level structural matches
-            syllable_matches = []  # Pure syllable count matches
-            fuzzy_matches = []  # Fuzzy Levenshtein matches
-
-            for match_item, confidence, match_type in multi_level_matches:
-                if isinstance(match_item, tuple):
-                    meter_name = match_item[0]
-                    meter_tuple = match_item
-                else:
-                    meter_name = match_item
-                    meter_tuple = (match_item, ('',))
-
-                if match_type in ['pada_sama', 'pada_vishama']:
-                    pada_matches.append((meter_tuple, confidence, match_type))
-                elif match_type in ['vedic_syllable', 'syllable_count']:
-                    syllable_matches.append((meter_tuple, confidence, match_type))
-                elif match_type == 'fuzzy':
-                    fuzzy_matches.append((meter_tuple, confidence, match_type))
-
-            # Build chanda list with proper priority (pada > syllable > fuzzy)
-            # But DON'T add syllable matches if we have pada matches
-            if pada_matches:
-                for meter_tuple, conf, mtype in pada_matches:
-                    meter_name = meter_tuple[0] if isinstance(meter_tuple, tuple) else meter_tuple
-                    if meter_name not in confidence_map:
-                        confidence_map[meter_name] = (conf, mtype)
-                        if meter_tuple not in chanda:
-                            chanda.append(meter_tuple)
-                found = True
-            elif syllable_matches:
-                # Only use top 3 syllable matches to avoid flooding
-                for meter_tuple, conf, mtype in syllable_matches[:3]:
-                    meter_name = meter_tuple[0] if isinstance(meter_tuple, tuple) else meter_tuple
-                    if meter_name not in confidence_map:
-                        confidence_map[meter_name] = (conf, mtype)
-                        if meter_tuple not in chanda:
-                            chanda.append(meter_tuple)
-                found = True
-            elif fuzzy_matches:
-                for meter_tuple, conf, mtype in fuzzy_matches:
-                    meter_name = meter_tuple[0] if isinstance(meter_tuple, tuple) else meter_tuple
-                    if meter_name not in confidence_map:
-                        confidence_map[meter_name] = (conf, mtype)
-                        if meter_tuple not in chanda:
-                            chanda.append(meter_tuple)
-                found = True
-
-            # =====================================================================
-            # VEDIC-CLASSICAL MAPPING ENRICHMENT (SIH 2025)
-            # Apply empirical mappings to boost confidence for Vedic text predictions
-            # E.g., If predicted "ऋषभगजविलसित" for a Vedic verse, and it matches
-            # "चतुष्पदा भुरिग्जगती" → "ऋषभगजविलसित" mapping (46/47 times), boost it
-            # =====================================================================
-            if VEDIC_MAPPINGS_AVAILABLE and vedic_priority_meter and confidence_map:
-                classical_equivalents = get_classical_equivalents(vedic_priority_meter)
-                if classical_equivalents:
-                    for equiv_name in classical_equivalents[:3]:  # Top 3 mappings
-                        # Check if this equivalent is already in our predictions
-                        for meter_name in list(confidence_map.keys()):
-                            normalized_pred = normalize_vedic_meter(meter_name)
-                            normalized_equiv = normalize_vedic_meter(equiv_name)
-
-                            if normalized_pred == normalized_equiv:
-                                # Boost confidence for empirically validated mapping
-                                current_conf, current_type = confidence_map[meter_name]
-                                if current_conf < CONFIDENCE_VEDIC_CLASSICAL_MAP:
-                                    confidence_map[meter_name] = (
-                                        CONFIDENCE_VEDIC_CLASSICAL_MAP,
-                                        f'vedic_classical_map_{current_type}',
-                                    )
-            # =====================================================================
-
-            # =====================================================================
-            # FUZZY PATTERN MATCHING (INTERMEDIATE FALLBACK)
-            # When exact matching fails (confidence < 5.0), try fuzzy matching
-            # to catch variant patterns (e.g., Sragdhara with 1 L-G difference)
-            # This runs BEFORE Vedic range fallback to preserve pattern-based matches
-            # =====================================================================
-            max_existing_confidence = max((conf for conf, _ in confidence_map.values()), default=0)
-            has_classical_fuzzy_match = False  # Track if we found a classical meter via fuzzy
-
-            if max_existing_confidence < 5.0 and not fuzzy:
-                # Try fuzzy matching to find close pattern matches
-                fuzzy_matches = self.match_with_confidence(lg_str, fuzzy=True, max_fuzzy=k)
-
-                # List of Vedic meter names (which should use Vedic range fallback instead)
-                vedic_meter_names = {
-                    'गायत्री',
-                    'gāyatrī',
-                    'gayatri',
-                    'Gāyatrī',
-                    'त्रिष्टुभ्',
-                    'triṣṭubh',
-                    'tristubh',
-                    'Triṣṭubh',
-                    'जगती',
-                    'jagatī',
-                    'jagati',
-                    'Jagatī',
-                    'अनुष्टुभ्',
-                    'anuṣṭubh',
-                    'anustubh',
-                    'Anuṣṭubh',
-                    'उष्णिक्',
-                    'uṣṇik',
-                    'usnik',
-                    'बृहती',
-                    'bṛhatī',
-                    'brhati',
-                    'पङ्क्ति',
-                    'paṅkti',
-                    'pankti',
-                    'प्रगाथ',
-                    'pragātha',
-                    'pragatha',
-                    'विराट्',
-                    'virāṭ',
-                    'virat',
-                }
-
-                for meter_tuple, confidence, match_type in fuzzy_matches:
-                    meter_name = meter_tuple[0]
-                    # Only consider fuzzy matches with reasonable confidence (>3.0)
-                    # and that are actual pattern matches (not syllable-count-only)
-                    if confidence >= 3.0 and match_type in ['fuzzy', 'exact']:
-                        if meter_name not in confidence_map or confidence > confidence_map[meter_name][0]:
-                            confidence_map[meter_name] = (confidence, f'fuzzy_fallback_{match_type}')
-                            if meter_tuple not in chanda:
-                                chanda.append(meter_tuple)
-                            found = True
-
-                            # Track if this is a non-Vedic (classical) meter
-                            if meter_name.lower() not in {m.lower() for m in vedic_meter_names}:
-                                has_classical_fuzzy_match = True
-
-                # Re-evaluate max confidence after fuzzy matching
-                max_existing_confidence = max((conf for conf, _ in confidence_map.values()), default=0)
-
-            # =====================================================================
-            # VEDIC METER RANGE MATCHING (FINAL FALLBACK)
-            # Only applies when NO high-confidence matches were found
-            # AND we haven't found a classical meter via fuzzy matching
-            # (Classical meters like Sragdhara should not be overridden by Vedic ranges)
-            # Handles real-world Rigveda verses with ±1-3 syllable variance
-            # E.g., Triṣṭubh peaks at 43 but has many 41-42 syllable verses
-            # =====================================================================
-            # Skip Vedic fallback if we found a classical meter via fuzzy matching
-            # (e.g., Sragdhara variant should not be overridden by Gāyatrī range)
-            needs_vedic_fallback = (
-                max_existing_confidence < 5.0
-                and syllable_count not in vedic_syllable_counts
-                and not has_classical_fuzzy_match
+            found = self._heuristic_line_matches(
+                lg_str,
+                fuzzy,
+                k,
+                syllable_count,
+                vedic_syllable_counts,
+                vedic_priority_meter,
+                chanda,
+                confidence_map,
+                found,
             )
-
-            if needs_vedic_fallback:
-                # Priority weights for major vs rare meters (higher = more common)
-                METER_FREQUENCY_WEIGHT = {
-                    'त्रिष्टुभ्': 100,  # 3727 verses in Rigveda
-                    'गायत्री': 100,  # 2171 verses
-                    'जगती': 100,  # 1070 verses
-                    'अनुष्टुभ्': 100,  # 656 verses
-                    'उष्णिक्': 80,  # 448 verses
-                    'बृहती': 70,  # 269 verses
-                    'पङ्क्ति': 70,  # 204 verses
-                    # Rare/composite meters - lower priority
-                    'प्रगाथ': 50,  # Composite
-                    'विराट्': 30,  # Rare
-                    'ज्योतिस्': 20,  # Rare, requires refrain
-                    'महापङ्क्ति': 20,  # Rare, requires refrain
-                    'ककुभ्': 30,  # 3-pada structure
-                    'द्विपदा त्रिष्टुभ्': 30,
-                }
-
-                # Check if syllable count falls within any Vedic meter range
-                vedic_range_matches = []
-                for meter_name, (low, high) in self.VEDIC_METER_RANGES.items():
-                    if low <= syllable_count <= high:
-                        # Skip Jyotis and Mahāpaṅkti unless there's evidence of refrain
-                        if meter_name in ['ज्योतिस्', 'महापङ्क्ति']:
-                            continue
-
-                        peak = self.VEDIC_METER_PEAKS.get(meter_name, (low + high) // 2)
-                        diff = abs(syllable_count - peak)
-                        freq_weight = METER_FREQUENCY_WEIGHT.get(meter_name, 10)
-                        # Score combines closeness to peak AND frequency weight
-                        score = freq_weight - diff * 10  # 10 penalty per syllable diff
-                        vedic_range_matches.append((meter_name, diff, peak, score))
-
-                if vedic_range_matches:
-                    # Sort by combined score (highest first)
-                    vedic_range_matches.sort(key=lambda x: -x[3])
-                    best_match = vedic_range_matches[0]
-                    vedic_priority_meter = best_match[0]
-                    # Confidence based on distance from peak
-                    vedic_priority_confidence = max(7.0, 11.0 - best_match[1] * 0.5)
-
-                    vedic_tuple = (vedic_priority_meter, ('',))
-                    confidence_map[vedic_priority_meter] = (vedic_priority_confidence, 'vedic_range_fallback')
-                    chanda.insert(0, vedic_tuple)
-                    found = True
-            # =====================================================================
 
         # Sort chanda by confidence (highest first), preserving database order for ties
         chanda_with_confidence = [
