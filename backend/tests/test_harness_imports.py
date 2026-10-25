@@ -30,12 +30,10 @@ def module_file(module: str) -> Path | None:
     return base if base.is_dir() else None
 
 
-def defined_names(path: Path) -> set[str]:
-    """Names bound at module level: functions, classes, assignments and imports."""
+def bound_names(statements) -> set[str]:
+    """Names bound by module-level statements, looking inside if and try blocks."""
     names: set[str] = set()
-    if path.is_dir():
-        return names
-    for node in ast.parse(path.read_text(encoding="utf-8")).body:
+    for node in statements:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             names.add(node.name)
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -43,11 +41,19 @@ def defined_names(path: Path) -> set[str]:
             names.update(t.id for target in targets for t in ast.walk(target) if isinstance(t, ast.Name))
         elif isinstance(node, (ast.Import, ast.ImportFrom)):
             names.update((alias.asname or alias.name).split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.If):
+            names |= bound_names(node.body) | bound_names(node.orelse)
         elif isinstance(node, ast.Try):
-            for inner in node.body:
-                if isinstance(inner, (ast.Import, ast.ImportFrom)):
-                    names.update((alias.asname or alias.name).split(".")[0] for alias in inner.names)
+            handlers = [stmt for handler in node.handlers for stmt in handler.body]
+            names |= bound_names(node.body + handlers + node.orelse + node.finalbody)
     return names
+
+
+def defined_names(path: Path) -> set[str]:
+    """Names a module defines at top level; empty for a namespace package directory."""
+    if path.is_dir():
+        return set()
+    return bound_names(ast.parse(path.read_text(encoding="utf-8")).body)
 
 
 def first_party_imports(path: Path):
@@ -87,3 +93,32 @@ def test_harnesses_no_longer_edit_sys_path_to_reach_the_backend():
                 if not (external or entry_point):
                     offenders.append(f"{path.relative_to(REPO_ROOT)}:{node.lineno}")
     assert not offenders, offenders
+
+
+def relative_imports(path: Path):
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.ImportFrom) and node.level > 0:
+            yield node
+
+
+@pytest.mark.parametrize(
+    "path",
+    sorted((REPO_ROOT / "backend").rglob("*.py")),
+    ids=lambda p: str(p.relative_to(REPO_ROOT)),
+)
+def test_relative_imports_resolve(path):
+    """A relative import inside a function only fails when that function runs, so check them all here."""
+    problems = []
+    package = path.parent.relative_to(REPO_ROOT).parts
+    for node in relative_imports(path):
+        base = package[: len(package) - (node.level - 1)]
+        module = ".".join(base + tuple(node.module.split("."))) if node.module else ".".join(base)
+        target = module_file(module)
+        if target is None:
+            problems.append(f"line {node.lineno}: no module {module}")
+            continue
+        available = defined_names(target)
+        for alias in node.names:
+            if alias.name not in available and module_file(f"{module}.{alias.name}") is None:
+                problems.append(f"line {node.lineno}: {module} has no {alias.name}")
+    assert not problems, "\n".join(problems)
