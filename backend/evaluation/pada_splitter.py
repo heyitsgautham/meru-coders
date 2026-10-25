@@ -3,8 +3,8 @@
 """
 Test suite for Pada Splitter
 
-Run with: python -m pytest tests/test_pada_splitter.py -v
-Or directly: python tests/test_pada_splitter.py
+Run with: python -m pytest backend/evaluation/pada_splitter.py -v
+Or directly: python backend/evaluation/pada_splitter.py
 """
 
 import os

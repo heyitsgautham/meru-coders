@@ -16,11 +16,11 @@ Key Metrics:
 - Overall: Combined accuracy across both datasets
 
 Usage:
-    python tests/test_autodetect_accuracy.py              # Quick test (sample)
-    python tests/test_autodetect_accuracy.py --full       # Full dataset test
-    python tests/test_autodetect_accuracy.py --rigveda    # Rigveda only
-    python tests/test_autodetect_accuracy.py --csv        # CSV only
-    python tests/test_autodetect_accuracy.py -v           # Verbose mode
+    python backend/evaluation/autodetect_accuracy.py              # Quick test (sample)
+    python backend/evaluation/autodetect_accuracy.py --full       # Full dataset test
+    python backend/evaluation/autodetect_accuracy.py --rigveda    # Rigveda only
+    python backend/evaluation/autodetect_accuracy.py --csv        # CSV only
+    python backend/evaluation/autodetect_accuracy.py -v           # Verbose mode
 
 Author: Meru Coders Team (SIH 2025)
 """

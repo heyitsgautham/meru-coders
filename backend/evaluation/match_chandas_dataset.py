@@ -19,11 +19,11 @@ Test Levels:
 3. VERSE-LEVEL ACCURACY: Check if holistic verse analysis (verse=True) matches
 
 Usage:
-    python tests/test_match_chandas_dataset.py          # Run first-line accuracy (fastest)
-    python tests/test_match_chandas_dataset.py -v       # Verbose mode (show mismatches)
-    python tests/test_match_chandas_dataset.py --all    # Run all three accuracy types
-    python tests/test_match_chandas_dataset.py --verse  # Run verse-level only
-    python tests/test_match_chandas_dataset.py --all -v # Full analysis with details
+    python backend/evaluation/match_chandas_dataset.py          # Run first-line accuracy (fastest)
+    python backend/evaluation/match_chandas_dataset.py -v       # Verbose mode (show mismatches)
+    python backend/evaluation/match_chandas_dataset.py --all    # Run all three accuracy types
+    python backend/evaluation/match_chandas_dataset.py --verse  # Run verse-level only
+    python backend/evaluation/match_chandas_dataset.py --all -v # Full analysis with details
 """
 
 import argparse

@@ -10,10 +10,10 @@ Test Strategy:
 5. Performance benchmarking
 
 Usage:
-    python tests/test_ramayana_validation.py              # Quick test (1000 samples)
-    python tests/test_ramayana_validation.py --full       # Full dataset (23,402 verses)
-    python tests/test_ramayana_validation.py --kanda 1    # Test specific Kanda
-    python tests/test_ramayana_validation.py --stats      # Generate statistics only
+    python backend/evaluation/ramayana_validation.py              # Quick test (1000 samples)
+    python backend/evaluation/ramayana_validation.py --full       # Full dataset (23,402 verses)
+    python backend/evaluation/ramayana_validation.py --kanda 1    # Test specific Kanda
+    python backend/evaluation/ramayana_validation.py --stats      # Generate statistics only
 """
 
 import json

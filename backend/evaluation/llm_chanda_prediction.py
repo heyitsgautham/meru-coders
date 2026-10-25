@@ -9,10 +9,10 @@ from verses and compares the predictions against expected results.
 Tests the hypothesis: Can an LLM correctly identify Sanskrit prosodic meters?
 
 Usage:
-    python tests/test_llm_chanda_prediction.py           # Run with default settings
-    python tests/test_llm_chanda_prediction.py -n 20    # Test 20 verses
-    python tests/test_llm_chanda_prediction.py -v       # Verbose mode
-    python tests/test_llm_chanda_prediction.py --all    # Test all verses in dataset
+    python backend/evaluation/llm_chanda_prediction.py           # Run with default settings
+    python backend/evaluation/llm_chanda_prediction.py -n 20    # Test 20 verses
+    python backend/evaluation/llm_chanda_prediction.py -v       # Verbose mode
+    python backend/evaluation/llm_chanda_prediction.py --all    # Test all verses in dataset
 """
 
 import argparse

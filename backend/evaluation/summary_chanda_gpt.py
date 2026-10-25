@@ -230,7 +230,7 @@ Results:
 Test Artifacts:
   • Full test report: backend/tests/CHANDA_GPT_TEST_REPORT.md
   • Test runner: backend/tests/run_gpt_tests.py
-  • Adapter: backend/tests/test_chanda_gpt_adapter.py
+  • Adapter: backend/evaluation/chanda_gpt_adapter.py
 
 Commands to Reproduce:
   PYTHONPATH=. python tests/run_gpt_tests.py --limit 100 -v

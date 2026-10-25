@@ -16,12 +16,12 @@ Test Datasets:
 
 Run with:
     cd /path/to/meru-coders
-    PYTHONPATH=backend pytest backend/tests/test_definitive_comparison.py -v -s
+    PYTHONPATH=backend pytest backend/evaluation/definitive_comparison.py -v -s
 
 Or directly:
     cd /path/to/meru-coders
     source backend/.venv/bin/activate
-    python backend/tests/test_definitive_comparison.py
+    python backend/evaluation/definitive_comparison.py
 
 Expected Results (as of Nov 2025):
 ==================================

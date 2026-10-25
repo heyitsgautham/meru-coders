@@ -16,7 +16,7 @@ from core.chanda_modal import ChandaModal
 
 # Direct import to avoid ultralytics conflict
 spec = importlib.util.spec_from_file_location(
-    "rigveda_authentic", os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
+    "rigveda_authentic", os.path.join(backend_dir, "evaluation", "data", "rigveda_authentic.py")
 )
 rigveda_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rigveda_module)

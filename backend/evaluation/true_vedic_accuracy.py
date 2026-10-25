@@ -10,7 +10,7 @@ Unlike previous tests that only checked COVERAGE (do we have the meter name?),
 this test checks PREDICTION ACCURACY (does our model correctly identify the meter?).
 
 Usage:
-    cd backend && python tests/test_true_vedic_accuracy.py
+    cd backend && python backend/evaluation/true_vedic_accuracy.py
 """
 
 import os
@@ -26,7 +26,7 @@ import importlib.util
 from core.chanda import Chanda
 
 spec = importlib.util.spec_from_file_location(
-    "rigveda_authentic", os.path.join(backend_dir, "tests", "data", "rigveda_authentic.py")
+    "rigveda_authentic", os.path.join(backend_dir, "evaluation", "data", "rigveda_authentic.py")
 )
 rigveda_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(rigveda_module)

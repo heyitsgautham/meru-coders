@@ -11,9 +11,9 @@ with THREE levels of accuracy measurement:
 3. VERSE-LEVEL ACCURACY: Check if holistic verse analysis (verse=True) matches
 
 Usage:
-    python tests/test_csv_accuracy.py          # Run with summary only
-    python tests/test_csv_accuracy.py -v       # Verbose mode (show all mismatches)
-    python tests/test_csv_accuracy.py --all    # Run all analysis types
+    python backend/evaluation/csv_accuracy.py          # Run with summary only
+    python backend/evaluation/csv_accuracy.py -v       # Verbose mode (show all mismatches)
+    python backend/evaluation/csv_accuracy.py --all    # Run all analysis types
 """
 
 import csv
