@@ -72,4 +72,9 @@ describe('LandingPage', () => {
     fireEvent.mouseOut(card);
     expect(card.style.transform).toBe('translateY(0)');
   });
+
+  it('paints the L-G Laboratory call-out with its peach gradient', () => {
+    renderAt();
+    expect(screen.getByTestId('lg-lab-highlight').style.background).toContain('linear-gradient');
+  });
 });

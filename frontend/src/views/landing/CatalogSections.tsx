@@ -27,11 +27,11 @@ const FOUR_COLUMNS = {
 } as const;
 
 /** Call-out that links to the L-G Laboratory. */
-function LGLabHighlight({ onOpen }: { onOpen: () => void }) {
+export function LGLabHighlight({ onOpen }: { onOpen: () => void }) {
   return (
-    <div style={{
+    <div data-testid="lg-lab-highlight" style={{
       marginTop: '48px',
-      backgroundColor: 'linear-gradient(135deg, #fff3e6 0%, #ffe8cc 100%)',
+      background: 'linear-gradient(135deg, #fff3e6 0%, #ffe8cc 100%)',
       padding: '40px',
       borderRadius: '16px',
       border: '2px solid #ffd699',
