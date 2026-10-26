@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getAPIURL } from '../services/api';
+import { exchangeOAuthSession, logInAsAdmin, logInWithPassword, signUpWithPassword } from '../services/auth';
+import type { AuthResponse } from '../services/auth';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 const redactToken = (token?: string | null) =>
@@ -96,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const handleAuthResponse = (data: any): AppUser => {
+  const handleAuthResponse = (data: AuthResponse): AppUser => {
     const appUser: AppUser = {
       id: data.user?.id || '',
       username: data.user?.username || data.user?.email?.split('@')[0] || '',
@@ -117,22 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return appUser;
   };
 
-  const postJson = async (endpoint: string, payload: Record<string, any>) => {
-    const res = await fetch(`${getAPIURL()}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok || data.success === false) {
-      throw new Error(data.message || data.error || 'Request failed');
-    }
-    return data;
-  };
-
   const signUp = async (username: string, password: string): Promise<AuthResult> => {
     try {
-      const data = await postJson('/auth/signup', { username, password });
+      const data = await signUpWithPassword(username, password);
       handleAuthResponse(data);
       return { error: null };
     } catch (error) {
@@ -143,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (username: string, password: string): Promise<AuthResult> => {
     try {
-      const data = await postJson('/auth/login', { username, password });
+      const data = await logInWithPassword(username, password);
       handleAuthResponse(data);
       return { error: null };
     } catch (error) {
@@ -154,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInAdmin = async (username: string, password: string): Promise<AuthResult> => {
     try {
-      const data = await postJson('/auth/admin-login', { username, password });
+      const data = await logInAsAdmin(username, password);
       handleAuthResponse({ ...data, user: { ...data.user, is_admin: true } });
       return { error: null };
     } catch (error) {
@@ -215,7 +204,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refreshToken: redactToken(refreshToken),
         apiBase: getAPIURL(),
       });
-      const data = await postJson('/auth/oauth/exchange', { access_token: accessToken, refresh_token: refreshToken });
+      const data = await exchangeOAuthSession(accessToken, refreshToken);
       handleAuthResponse(data);
       return { error: null };
     } catch (error) {

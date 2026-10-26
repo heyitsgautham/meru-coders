@@ -67,8 +67,7 @@ src/
 └── test/                   Vitest setup and recorded API responses
 ```
 
-Most components get data through hooks and services.
-`ContributionForm`, `AdminPanel` and `AuthContext` still call `fetch` themselves.
+Components and contexts reach the network only through `services/`; none of them calls `fetch` directly.
 
 ## Styling
 
