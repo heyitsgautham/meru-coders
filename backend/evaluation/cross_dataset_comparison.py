@@ -9,7 +9,7 @@ This script compares the effect of different meter databases on identification a
 3. enhanced_chanda.py + OUR curated 1920 meter dataset
 4. chanda.py (our backend/core) + OUR curated 1920 meter dataset
 
-All tested against: page 1-47 chanda list - Sheet1.csv (109 verses)
+All tested against: page 1-47 chanda list - complete.csv (264 verses)
 
 Goal: Measure the improvement from our curated dataset vs original IITK dataset.
 """
@@ -21,6 +21,8 @@ from pathlib import Path
 
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import transliterate
+
+from backend.pipeline.benchmarks import CLASSICAL_BENCHMARK
 
 BACKEND_PATH = Path(__file__).parent.parent
 
@@ -194,8 +196,8 @@ def meters_match(expected, predicted, allow_family=False):
 
 
 def load_our_dataset():
-    """Load our dataset (page 1-47 chanda list - Sheet1.csv)"""
-    csv_path = BACKEND_PATH / 'data' / 'page 1-47 chanda list - Sheet1.csv'
+    """Load the classical benchmark list."""
+    csv_path = BACKEND_PATH / 'data' / CLASSICAL_BENCHMARK
 
     data = []
     with open(csv_path, 'r', encoding='utf-8') as f:
@@ -422,7 +424,7 @@ def main():
     print("""
 Comparing different implementations and datasets:
 
-Test Data: page 1-47 chanda list - Sheet1.csv (109 verses)
+Test Data: page 1-47 chanda list - complete.csv (264 verses)
 
 Configurations:
 1. chanda_iitk.py + ORIGINAL IITK dataset (baseline - original system)

@@ -8,7 +8,7 @@ Compares three implementations:
 2. chanda_iitk.py (original IIT-K implementation)
 3. enhanced_chanda.py (new implementation with Chandovallari rules)
 
-Uses test data from: page 1-47 chanda list - Sheet1.csv
+Uses test data from: page 1-47 chanda list - complete.csv
 """
 
 import csv
@@ -16,6 +16,8 @@ import os
 import re
 import unicodedata
 from collections import Counter, defaultdict
+
+from backend.pipeline.benchmarks import CLASSICAL_BENCHMARK
 
 try:
     from indic_transliteration import sanscript
@@ -477,7 +479,7 @@ def main():
     print("=" * 80)
 
     # Load test data
-    test_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'page 1-47 chanda list - Sheet1.csv')
+    test_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', CLASSICAL_BENCHMARK)
 
     if not os.path.exists(test_data_path):
         print(f"ERROR: Test data not found at {test_data_path}")

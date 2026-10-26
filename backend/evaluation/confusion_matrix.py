@@ -4,7 +4,7 @@
 Confusion Matrix Evaluation for Chandojñānam Model
 
 This script evaluates the meter identification model against the
-"page 1-47 chanda list - Sheet1.csv" dataset containing 100+ unique shlokas
+classical benchmark list, "page 1-47 chanda list - complete.csv", of 264 shlokas
 with labeled chandas. It generates:
 1. Overall accuracy metrics (Top-1 and Top-3)
 2. Per-meter precision, recall, and F1 scores
@@ -22,6 +22,7 @@ import sys
 from collections import Counter, defaultdict
 
 from backend.core.chanda import Chanda
+from backend.pipeline.benchmarks import CLASSICAL_BENCHMARK
 
 # Optional visualization imports
 try:
@@ -678,7 +679,7 @@ def main():
     """Main evaluation function."""
 
     # Path to test data
-    test_csv = os.path.join(DATA_PATH, 'page 1-47 chanda list - Sheet1.csv')
+    test_csv = os.path.join(DATA_PATH, CLASSICAL_BENCHMARK)
 
     if not os.path.exists(test_csv):
         print(f"❌ Test data not found: {test_csv}")
