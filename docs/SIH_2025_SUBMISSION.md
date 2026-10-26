@@ -469,7 +469,7 @@ These sections were written for the hackathon judges. They moved here unchanged,
 
 #### vs. ShlokaYug, Chand-Identifier, Other Solutions
 
-| Feature | **Erase Sure** | Competitors |
+| Feature | **Meru Coders** | Competitors |
 |---------|-----------------|-------------|
 | **Accuracy** | **100%** ✅ | ~70-85% ⚠️ |
 | **Database Size** | **1,920+ meters** ✅ | ~300-500 ⚠️ |
@@ -697,13 +697,7 @@ These sections were written for the hackathon judges. They moved here unchanged,
 **Email:** gauthamkrishna@erasesure.app  
 **Phone:** [Contact Number]  
 
-**Team Members:**
-- Gautham Krishna - Team Lead & Full Stack Developer
-- Aleesha Mariya John - Backend Developer
-- Aleena Susan Saji - Frontend Developer
-- Gopika M - AI/ML Engineer
-- Aromal Sivan - Database & DevOps
-- Vyshak P Gopinanth - UI/UX Designer
+**Team Members:** see the team list in the [README](../README.md#team-members).
 
 #### Resources
 
@@ -725,7 +719,7 @@ chandas_identifier.pdf
 **Category:** Software  
 **Theme:** Smart Education  
 
-**Team:** Erase Sure
+**Team:** Meru Coders
 
 **Submission Date:** December 2025
 

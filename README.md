@@ -1,6 +1,6 @@
 # Meru Coders - AI-Powered Sanskrit Meter Identification System
 
-**SIH 2025 Grand Finale | Problem Statement #25158 | Team: Erase Sure**
+**SIH 2025 Grand Finale | Problem Statement #25158 | Team: Meru Coders**
 
 A comprehensive AI-powered platform for identifying, analyzing, and learning Sanskrit meters (Chandas). Combines 2,500-year-old traditional knowledge from Pingala's Chandas Shastra with modern AI/ML technologies.
 
@@ -742,7 +742,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, checks and 
 
 This project is developed for Smart India Hackathon 2025.
 
-**Copyright © 2025 Erase Sure Team**
+**Copyright © 2025 Meru Coders**
 
 ---
 
@@ -774,7 +774,7 @@ This project is developed for Smart India Hackathon 2025.
 
 ## Team members
 
-### Erase Sure Team
+### Meru Coders
 
 1. **Gautham Krishna** - Team Lead & Full Stack Developer
 2. **Kishore B** - Backend Developer
