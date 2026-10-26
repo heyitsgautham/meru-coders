@@ -1,0 +1,484 @@
+{
+ "ai_validation": {
+  "confidence": 0.8,
+  "skipped": false,
+  "text_type": "verse",
+  "validated": false
+ },
+ "cache_info": {
+  "cached_chandas": "",
+  "hit": false,
+  "similarity": 0.0,
+  "source_dataset": ""
+ },
+ "input": {
+  "enable_sandhi": false,
+  "identification_mode": "auto",
+  "output_scheme": null,
+  "text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥",
+  "text_mode": "verse"
+ },
+ "result": {
+  "effective_mode": "vedic",
+  "line": [
+   {
+    "line": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
+    "result": {
+     "chanda": [
+      [
+       "अनुष्टुभ्",
+       [
+        "1",
+        "2"
+       ]
+      ],
+      [
+       "अनुष्टुभ्",
+       [
+        "3",
+        "4"
+       ]
+      ]
+     ],
+     "confidence_reasons": {
+      "अनुष्टुभ्": {
+       "confidence": 10.0,
+       "level": "very_high",
+       "match_type": "exact_pattern",
+       "reason": "The L-G (laghu-guru) pattern \"GGGGLGGGLLGGLGLG\" exactly matches the meter \"अनुष्टुभ्\" in the database.",
+       "technical_details": {
+        "base_match_type": "exact_pattern",
+        "base_score": 10.0,
+        "description": "Direct pattern match in CHANDA dictionary",
+        "match_type_raw": "exact_pattern",
+        "num_padas": 4,
+        "pattern": "GGGGLGGGLLGGLGLG",
+        "pattern_length": 16,
+        "syllable_count": 16
+       }
+      }
+     },
+     "confidence_scores": {
+      "अनुष्टुभ्": [
+       10.0,
+       "exact_pattern"
+      ]
+     },
+     "display_chanda": "अनुष्टुभ् (पाद 1-2) / अनुष्टुभ् (पाद 3-4)",
+     "display_chanda_alternate": "",
+     "display_chanda_alternate_count": 0,
+     "display_chanda_hidden_count": 0,
+     "display_chanda_primary": "अनुष्टुभ् (पाद 1-2) (anuṣṭubh) [10.0] | अनुष्टुभ् (पाद 3-4) (anuṣṭubh) [10.0]",
+     "display_gana": "मरतयजग",
+     "display_jaati": "अष्टिः",
+     "display_length": "16",
+     "display_lg": [
+      "ग",
+      "ग",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ग",
+      "ल",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ल",
+      "ग"
+     ],
+     "display_line": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
+     "display_matra": "27",
+     "display_scheme": null,
+     "display_syllables": [
+      "ध",
+      "र्म",
+      "क्षे",
+      "त्रे",
+      "कु",
+      "रु",
+      "क्षे",
+      "त्रे",
+      "स",
+      "म",
+      "वे",
+      "ता",
+      "यु",
+      "यु",
+      "त्स",
+      "वः"
+     ],
+     "found": true,
+     "fuzzy": [],
+     "gana": "मरतयजग",
+     "is_padya": true,
+     "jaati": [
+      "अष्टिः"
+     ],
+     "length": 16,
+     "lg": [
+      "ग",
+      "ग",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ग",
+      "ल",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ल",
+      "ग"
+     ],
+     "matra": 27,
+     "meter_info": {
+      "expected_matras": 3,
+      "expected_pattern": "----लग--",
+      "expected_syllables": 8,
+      "gana_notation": "----लग--",
+      "meter_type": "sama",
+      "name": "अनुष्टुभ्",
+      "padas": {
+       "1": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "2": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "3": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "4": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       }
+      },
+      "yati": ""
+     },
+     "padya_confidence": 0.95,
+     "padya_reason": "उच्च विश्वास के साथ छन्द मिला (High confidence - exact pattern match)",
+     "pattern_validation": {
+      "actual_pattern": "GGGGLGGGLLGGLGLG",
+      "expected_pattern": "----LG------LG--",
+      "is_valid": true,
+      "match_percentage": 100.0,
+      "mismatches": []
+     },
+     "primary_confidence_reason": {
+      "confidence": 10.0,
+      "level": "very_high",
+      "match_type": "exact_pattern",
+      "reason": "The L-G (laghu-guru) pattern \"GGGGLGGGLLGGLGLG\" exactly matches the meter \"अनुष्टुभ्\" in the database.",
+      "technical_details": {
+       "base_match_type": "exact_pattern",
+       "base_score": 10.0,
+       "description": "Direct pattern match in CHANDA dictionary",
+       "match_type_raw": "exact_pattern",
+       "num_padas": 4,
+       "pattern": "GGGGLGGGLLGGLGLG",
+       "pattern_length": 16,
+       "syllable_count": 16
+      }
+     },
+     "prose_message": null,
+     "syllables": [
+      "ध",
+      "र्म",
+      "क्षे",
+      "त्रे",
+      "कु",
+      "रु",
+      "क्षे",
+      "त्रे",
+      "स",
+      "म",
+      "वे",
+      "ता",
+      "यु",
+      "यु",
+      "त्स",
+      "वः"
+     ]
+    }
+   },
+   {
+    "line": "मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय",
+    "result": {
+     "chanda": [
+      [
+       "अनुष्टुभ्",
+       [
+        "1",
+        "2"
+       ]
+      ],
+      [
+       "अनुष्टुभ्",
+       [
+        "3",
+        "4"
+       ]
+      ]
+     ],
+     "confidence_reasons": {
+      "अनुष्टुभ्": {
+       "confidence": 10.0,
+       "level": "very_high",
+       "match_type": "exact_pattern",
+       "reason": "The L-G (laghu-guru) pattern \"GLGGLGGLLLGLLGLL\" exactly matches the meter \"अनुष्टुभ्\" in the database.",
+       "technical_details": {
+        "base_match_type": "exact_pattern",
+        "base_score": 10.0,
+        "description": "Direct pattern match in CHANDA dictionary",
+        "match_type_raw": "exact_pattern",
+        "num_padas": 4,
+        "pattern": "GLGGLGGLLLGLLGLL",
+        "pattern_length": 16,
+        "syllable_count": 16
+       }
+      }
+     },
+     "confidence_scores": {
+      "अनुष्टुभ्": [
+       10.0,
+       "exact_pattern"
+      ]
+     },
+     "display_chanda": "अनुष्टुभ् (पाद 1-2) / अनुष्टुभ् (पाद 3-4)",
+     "display_chanda_alternate": "",
+     "display_chanda_alternate_count": 0,
+     "display_chanda_hidden_count": 0,
+     "display_chanda_primary": "अनुष्टुभ् (पाद 1-2) (anuṣṭubh) [10.0] | अनुष्टुभ् (पाद 3-4) (anuṣṭubh) [10.0]",
+     "display_gana": "ररभजजल",
+     "display_jaati": "अष्टिः",
+     "display_length": "16",
+     "display_lg": [
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ल",
+      "ल",
+      "ग",
+      "ल",
+      "ल",
+      "ग",
+      "ल",
+      "ल"
+     ],
+     "display_line": "मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय",
+     "display_matra": "23",
+     "display_scheme": null,
+     "display_syllables": [
+      "मा",
+      "म",
+      "काः",
+      "पा",
+      "ण्ड",
+      "वा",
+      "श्चै",
+      "व",
+      "कि",
+      "म",
+      "कु",
+      "र्व",
+      "त",
+      "स",
+      "ञ्ज",
+      "य"
+     ],
+     "found": true,
+     "fuzzy": [],
+     "gana": "ररभजजल",
+     "is_padya": true,
+     "jaati": [
+      "अष्टिः"
+     ],
+     "length": 16,
+     "lg": [
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ग",
+      "ग",
+      "ल",
+      "ल",
+      "ल",
+      "ग",
+      "ल",
+      "ल",
+      "ग",
+      "ल",
+      "ल"
+     ],
+     "matra": 23,
+     "meter_info": {
+      "expected_matras": 3,
+      "expected_pattern": "----लग--",
+      "expected_syllables": 8,
+      "gana_notation": "----लग--",
+      "meter_type": "sama",
+      "name": "अनुष्टुभ्",
+      "padas": {
+       "1": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "2": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "3": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       },
+       "4": {
+        "gana": "ललगलगलगल",
+        "matras": 12,
+        "pattern": "ललगलगलगल",
+        "syllables": 8
+       }
+      },
+      "yati": ""
+     },
+     "padya_confidence": 0.95,
+     "padya_reason": "उच्च विश्वास के साथ छन्द मिला (High confidence - exact pattern match)",
+     "pattern_validation": {
+      "actual_pattern": "GLGGLGGLLLGLLGLL",
+      "expected_pattern": "----LG------LG--",
+      "is_valid": true,
+      "match_percentage": 100.0,
+      "mismatches": []
+     },
+     "primary_confidence_reason": {
+      "confidence": 10.0,
+      "level": "very_high",
+      "match_type": "exact_pattern",
+      "reason": "The L-G (laghu-guru) pattern \"GLGGLGGLLLGLLGLL\" exactly matches the meter \"अनुष्टुभ्\" in the database.",
+      "technical_details": {
+       "base_match_type": "exact_pattern",
+       "base_score": 10.0,
+       "description": "Direct pattern match in CHANDA dictionary",
+       "match_type_raw": "exact_pattern",
+       "num_padas": 4,
+       "pattern": "GLGGLGGLLLGLLGLL",
+       "pattern_length": 16,
+       "syllable_count": 16
+      }
+     },
+     "prose_message": null,
+     "syllables": [
+      "मा",
+      "म",
+      "काः",
+      "पा",
+      "ण्ड",
+      "वा",
+      "श्चै",
+      "व",
+      "कि",
+      "म",
+      "कु",
+      "र्व",
+      "त",
+      "स",
+      "ञ्ज",
+      "य"
+     ]
+    }
+   }
+  ],
+  "pragatha": null,
+  "verse": [
+   {
+    "chanda": [
+     [
+      "अनुष्टुभ्"
+     ],
+     2.0
+    ],
+    "lines": [
+     0,
+     1
+    ],
+    "scheme": "devanagari",
+    "scores": [
+     [
+      "अनुष्टुभ्",
+      2.0
+     ]
+    ]
+   }
+  ]
+ },
+ "result_path": "result_6d480555f18c2dc759edc916c7746aa3_1_1.json",
+ "success": true,
+ "summary": {
+  "count": {
+   "fuzzy_line": 0,
+   "fuzzy_verse": 0,
+   "line": 2,
+   "match_line": 2,
+   "match_verse": 1,
+   "mismatch_syllable": 0,
+   "verse": 1
+  },
+  "line": {
+   "fuzzy": {},
+   "match": {
+    "chanda": {
+     " अनुष्टुभ् (पाद 3-4)": 2,
+     "अनुष्टुभ् (पाद 1-2) ": 2
+    },
+    "gana": {
+     "मरतयजग": 1,
+     "ररभजजल": 1
+    }
+   }
+  },
+  "verse": {
+   "chanda": {
+    "अनुष्टुभ्": 1
+   }
+  }
+ },
+ "summary_formatted": "Verse Statistics\n----------------\n   1. अनुष्टुभ्: 1\n\nLine Statistics\n---------------\n-- Exact Match\n   1. अनुष्टुभ् (पाद 1-2) : 2\n   2.  अनुष्टुभ् (पाद 3-4): 2\n\nCounts\n------\n* Total Lines: 2\n  - Exact Match: 2\n  - Fuzzy Match: 0\n* Total Verses: 1\n  - Exact Match: 1\n  - Fuzzy Match: 0\n* Total Syllables Mismatched: 0",
+ "timing": {
+  "ai_skipped": false,
+  "ai_validation_ms": 0.13,
+  "cache_hit": false,
+  "cache_lookup_ms": 170.37,
+  "rule_engine_ms": 6.37,
+  "total_ms": 176.92
+ }
+}
