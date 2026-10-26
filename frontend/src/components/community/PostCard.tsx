@@ -369,7 +369,7 @@ export function PostCard({ post, onPostDeleted, onPostUpdated }: PostCardProps) 
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700"
+              data-variant="destructive"
             >
               {isDeleting ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
