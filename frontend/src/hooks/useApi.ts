@@ -331,14 +331,13 @@ export function useExtractFile() {
         throw new Error(response.error || 'File extraction failed');
       }
     } catch (err) {
-      if (err instanceof Error && !error) {
-        setError(err.message);
-      }
+      // A rejected response already set this message; a network failure sets it here.
+      setError(err instanceof Error ? err.message : 'File extraction failed');
       throw err;
     } finally {
       setLoading(false);
     }
-  }, [error]);
+  }, []);
 
   const reset = useCallback(() => {
     setText(null);

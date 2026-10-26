@@ -153,6 +153,21 @@ describe('extraction hooks', () => {
   });
 });
 
+describe('useExtractFile after a failure', () => {
+  it('shows the second of two failures in a row', async () => {
+    const { result } = renderHook(() => useExtractFile());
+    mocked.extractTextFromFile.mockRejectedValueOnce(new Error('first failure'));
+    await act(async () => {
+      await expect(result.current.extract(new File(['x'], 'a.txt'))).rejects.toThrow();
+    });
+    mocked.extractTextFromFile.mockRejectedValueOnce(new Error('second failure'));
+    await act(async () => {
+      await expect(result.current.extract(new File(['x'], 'a.txt'))).rejects.toThrow();
+    });
+    expect(result.current.error).toBe('second failure');
+  });
+});
+
 describe('useTTS', () => {
   it('exposes the audio URL', async () => {
     mocked.generateTTS.mockResolvedValue({ success: true, audio_url: 'http://x/a.mp3' });
