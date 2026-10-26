@@ -26,3 +26,15 @@ describe('results header on tablets and phones', () => {
     expect(css).toMatch(/\.results-header a \{[^}]*flex: 1/);
   });
 });
+
+describe('phone layouts', () => {
+  it('lets the community search shrink instead of running off a 375px screen', () => {
+    const css = read('src/styles/community.css');
+    const phone = css.slice(css.lastIndexOf('@media (max-width: 640px)'));
+    expect(phone).toMatch(/\.search-bar-container \{[^}]*width: auto;[^}]*min-width: 0;/);
+  });
+
+  it('keeps the profile avatar round when the greeting wraps', () => {
+    expect(read('src/styles/profile-admin.css')).toMatch(/\.avatar-circle \{\s*flex-shrink: 0;/);
+  });
+});
