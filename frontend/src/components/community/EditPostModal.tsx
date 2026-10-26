@@ -126,7 +126,8 @@ export function EditPostModal({ post, isOpen, onClose, onPostUpdated }: EditPost
 
       const result = await updatePost(post.id, {
         content: content.trim(),
-        sanskrit_text: sanskritText.trim() || undefined,
+        // An empty string tells the server to remove the verse; leaving the field out keeps the old one.
+        sanskrit_text: sanskritText.trim(),
         analyze_meter: analyzeMeter,
         ...(newImageUrl !== undefined && { image_url: newImageUrl }),
       });

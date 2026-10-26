@@ -9,6 +9,25 @@ from . import community_bp, community_model
 # ==================== POSTS ====================
 
 
+def _meter_analysis(sanskrit_text):
+    """The meter summary a post card shows, in one shape for new and edited posts."""
+    try:
+        analysis_result = get_engine().identify_line(sanskrit_text)
+    except Exception as e:
+        current_app.logger.warning(f"Meter analysis failed: {e}")
+        return {'found': False, 'error': str(e)}
+    if not analysis_result.get('found'):
+        return {'found': False}
+    return {
+        'meter_name': analysis_result.get('display_chanda_primary', ''),
+        'lg_pattern': ''.join(analysis_result.get('display_lg', [])),
+        'syllable_count': analysis_result.get('display_length', 0),
+        'matra_count': analysis_result.get('display_matra', 0),
+        'gana_pattern': analysis_result.get('display_gana', ''),
+        'found': True,
+    }
+
+
 @community_bp.route('/posts', methods=['GET'])
 def get_posts():
     """
@@ -76,25 +95,7 @@ def create_post(current_user):
         analyze_meter = data.get('analyze_meter', True)
 
         # Analyze meter if Sanskrit text is provided
-        meter_analysis = None
-        if sanskrit_text and analyze_meter:
-            try:
-                analysis_result = get_engine().identify_line(sanskrit_text)
-
-                if analysis_result.get('found'):
-                    meter_analysis = {
-                        'meter_name': analysis_result.get('display_chanda_primary', ''),
-                        'lg_pattern': ''.join(analysis_result.get('display_lg', [])),
-                        'syllable_count': analysis_result.get('display_length', 0),
-                        'matra_count': analysis_result.get('display_matra', 0),
-                        'gana_pattern': analysis_result.get('display_gana', ''),
-                        'found': True,
-                    }
-                else:
-                    meter_analysis = {'found': False}
-            except Exception as e:
-                current_app.logger.warning(f"Meter analysis failed: {e}")
-                meter_analysis = {'found': False, 'error': str(e)}
+        meter_analysis = _meter_analysis(sanskrit_text) if sanskrit_text and analyze_meter else None
 
         # Get user ID
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
@@ -360,20 +361,11 @@ def update_post(current_user, post_id):
             update_image = True
             image_url = data.get('image_url')  # Can be URL string or None to remove
 
-        # Re-analyze meter if Sanskrit text changed
+        # A sent verse replaces the old one and its meter; an empty one removes both.
         meter_analysis = None
-        if sanskrit_text and analyze_meter:
-            try:
-                analysis_result = get_engine().identify_line(sanskrit_text)
-                if analysis_result and analysis_result.get('found'):
-                    meter_analysis = {
-                        'found': True,
-                        'meter_name': analysis_result.get('display_chanda_primary', ''),
-                        'syllables': analysis_result.get('display_length', 0),
-                        'pattern': ''.join(analysis_result.get('display_lg', [])),
-                    }
-            except Exception as e:
-                current_app.logger.warning(f"Meter analysis failed: {e}")
+        if sanskrit_text is not None:
+            sanskrit_text = sanskrit_text.strip()
+            meter_analysis = _meter_analysis(sanskrit_text) if sanskrit_text and analyze_meter else {'found': False}
 
         result = community_model.update_post(
             post_id=post_id,

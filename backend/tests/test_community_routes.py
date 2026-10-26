@@ -21,6 +21,7 @@ def model(monkeypatch):
         "get_post_by_id",
         "is_bookmarked",
         "create_post",
+        "update_post",
         "delete_post",
         "toggle_like",
         "get_comments",
@@ -88,6 +89,44 @@ def test_creating_a_post_with_a_verse_attaches_its_meter(app, client, model):
     assert kwargs["meter_analysis"]["found"] is True
     assert "अनुष्टुभ्" in kwargs["meter_analysis"]["meter_name"]
     assert str(kwargs["meter_analysis"]["syllable_count"]) == "16"
+
+
+def _edit(app, client, **body):
+    resp = client.put("/api/community/posts/p1", json={"content": "Gita 1.1", **body}, headers=auth(app))
+    assert resp.status_code == 200
+    return resp
+
+
+def test_editing_the_verse_stores_its_meter_in_the_shape_the_feed_reads(app, client, model):
+    _edit(app, client, sanskrit_text="धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः")
+    kwargs = model["update_post"].call_args.kwargs
+    created = client.post(
+        "/api/community/posts",
+        json={"content": "Gita 1.1", "sanskrit_text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"},
+        headers=auth(app),
+    )
+    assert created.status_code == 201
+    assert kwargs["meter_analysis"] == model["create_post"].call_args.kwargs["meter_analysis"]
+    assert str(kwargs["meter_analysis"]["syllable_count"]) == "16"
+
+
+def test_editing_to_an_unmetered_verse_drops_the_old_meter(app, client, model):
+    _edit(app, client, sanskrit_text="क")
+    assert model["update_post"].call_args.kwargs["meter_analysis"] == {"found": False}
+
+
+def test_clearing_the_verse_removes_it_and_its_meter(app, client, model):
+    _edit(app, client, sanskrit_text="  ")
+    kwargs = model["update_post"].call_args.kwargs
+    assert kwargs["sanskrit_text"] == ""
+    assert kwargs["meter_analysis"] == {"found": False}
+
+
+def test_an_edit_without_the_verse_field_leaves_it_alone(app, client, model):
+    _edit(app, client)
+    kwargs = model["update_post"].call_args.kwargs
+    assert kwargs["sanskrit_text"] is None
+    assert kwargs["meter_analysis"] is None
 
 
 def test_a_failed_model_call_is_a_400(app, client, model):
