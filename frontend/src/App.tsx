@@ -14,7 +14,6 @@ import FloatingChatbot from "./components/chat/FloatingChatbot";
 import { CommunityPage, PostView, UserProfile } from "./components/community";
 import { ModerationPanel } from "./components/community/ModerationPanel";
 import LGLab from "./pages/LGLab";
-import LGLabTest from "./pages/LGLabTest";
 
 export default function App() {
   return (
@@ -49,7 +48,6 @@ export default function App() {
             
             {/* Educational Routes */}
             <Route path="/lg-lab" element={<LGLab />} />
-            <Route path="/lg-lab-test" element={<LGLabTest />} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
