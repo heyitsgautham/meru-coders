@@ -9,8 +9,8 @@ import { UpcomingView } from "../components/UpcomingView";
 import { DatasetsView } from "../components/DatasetsView";
 import { MandalaBackground } from "../components/MandalaBackground";
 import type { ViewType } from "../types/api";
+import { STORAGE_KEY_VIEW } from "../hooks/useOpenAppView";
 
-const STORAGE_KEY_VIEW = 'chanda_currentView';
 
 export default function MainApp() {
   const navigate = useNavigate();

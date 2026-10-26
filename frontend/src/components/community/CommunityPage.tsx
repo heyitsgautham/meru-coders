@@ -4,10 +4,10 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Header } from '../Header';
+import { useOpenAppView } from '../../hooks/useOpenAppView';
 import { CreatePost } from './CreatePost';
 import { PostFeed } from './PostFeed';
 import { PostCard } from './PostCard';
@@ -15,14 +15,10 @@ import { SearchBar } from './SearchBar';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { getTrendingPosts, getBookmarkedPosts } from '../../services/community';
 import type { Post, FeedFilter } from '../../types/community';
-import type { ViewType } from '../../types/api';
 import { useAuth } from '../../contexts/AuthContext';
 import '../../styles/community.css';
 
-const STORAGE_KEY_VIEW = 'chanda_currentView';
-
 export function CommunityPage() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState<FeedFilter>('all');
   const [feedKey, setFeedKey] = useState(0);
@@ -35,17 +31,7 @@ export function CommunityPage() {
     setFeedKey(prev => prev + 1);
   }, []);
 
-  // Handle navigation to main app with selected view
-  const handleViewChange = useCallback((view: ViewType) => {
-    if (view === 'community') {
-      // Already on community page, do nothing
-      return;
-    }
-    // Save the view to localStorage so MainApp picks it up
-    localStorage.setItem(STORAGE_KEY_VIEW, view);
-    // Navigate to main app
-    navigate('/app');
-  }, [navigate]);
+  const handleViewChange = useOpenAppView();
 
   // Load trending posts when tab changes
   useEffect(() => {

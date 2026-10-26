@@ -5,7 +5,7 @@ import { LogOut, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-r
 import { useEffect, useState } from 'react';
 import * as api from '../services/api';
 import { Header } from './Header';
-import type { ViewType } from '../types/api';
+import { useOpenAppView } from '../hooks/useOpenAppView';
 import '../styles/profile-admin.css';
 
 export default function Profile() {
@@ -13,7 +13,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [contributions, setContributions] = useState<any[]>([]);
   const [contributionsLoading, setContributionsLoading] = useState(false);
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const openView = useOpenAppView();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -67,13 +67,7 @@ export default function Profile() {
 
   return (
     <>
-      <Header 
-        currentView={currentView}
-        onViewChange={(view) => {
-          setCurrentView(view);
-          navigate('/app');
-        }}
-      />
+      <Header currentView={null} onViewChange={openView} />
 
       <div className="profile-admin-page">
       <div className="page-shell">

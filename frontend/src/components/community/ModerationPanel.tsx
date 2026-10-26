@@ -19,6 +19,7 @@ import {
   User
 } from 'lucide-react';
 import { Header } from '../Header';
+import { useOpenAppView } from '../../hooks/useOpenAppView';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import {
@@ -40,7 +41,6 @@ import {
   type ModerationStats
 } from '../../services/community';
 import { formatRelativeTime } from '../../services/community';
-import type { ViewType } from '../../types/api';
 import '../../styles/moderation.css';
 
 type ReportStatus = 'pending' | 'resolved' | 'dismissed' | 'all';
@@ -102,9 +102,7 @@ export function ModerationPanel() {
     }
   };
 
-  const handleViewChange = (_view: ViewType) => {
-    navigate('/app');
-  };
+  const handleViewChange = useOpenAppView();
 
   const confirmAction = (report: Report, action: ReportAction) => {
     setPendingAction({ report, action });
@@ -168,7 +166,7 @@ export function ModerationPanel() {
   if (loading) {
     return (
       <div className="moderation-page">
-        <Header currentView="home" onViewChange={handleViewChange} />
+        <Header currentView={null} onViewChange={handleViewChange} />
         <div className="moderation-loading">
           <Loader2 className="animate-spin" size={32} />
           <p>Loading moderation panel...</p>
@@ -179,7 +177,7 @@ export function ModerationPanel() {
 
   return (
     <div className="moderation-page">
-      <Header currentView="home" onViewChange={handleViewChange} />
+      <Header currentView={null} onViewChange={handleViewChange} />
 
       <div className="moderation-container">
         <div className="moderation-header">

@@ -3,17 +3,15 @@
  * Displays a single post by ID (for permalink sharing)
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Header } from '../Header';
+import { useOpenAppView } from '../../hooks/useOpenAppView';
 import { PostCard } from './PostCard';
 import type { Post } from '../../types/community';
-import type { ViewType } from '../../types/api';
 import { getPost } from '../../services/community';
 import '../../styles/community.css';
-
-const STORAGE_KEY_VIEW = 'chanda_currentView';
 
 export function PostView() {
   const { postId } = useParams<{ postId: string }>();
@@ -50,15 +48,7 @@ export function PostView() {
     fetchPost();
   }, [postId]);
 
-  // Handle navigation to main app with selected view
-  const handleViewChange = useCallback((view: ViewType) => {
-    if (view === 'community') {
-      navigate('/community');
-      return;
-    }
-    localStorage.setItem(STORAGE_KEY_VIEW, view);
-    navigate('/app');
-  }, [navigate]);
+  const handleViewChange = useOpenAppView();
 
   const handleBack = () => {
     navigate('/community');

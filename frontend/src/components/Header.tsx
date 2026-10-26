@@ -1,10 +1,11 @@
 import { Home, User, LogIn, Users, Gamepad2, Atom } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import type { ViewType } from "../types/api";
 
 interface HeaderProps {
-  currentView: ViewType;
+  /** null on pages outside MainApp's views, such as the profile and admin pages */
+  currentView: ViewType | null;
   onViewChange: (view: ViewType) => void;
   onGoToLanding?: () => void;
 }
@@ -12,6 +13,8 @@ interface HeaderProps {
 export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps) {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const onAccountPage = pathname.startsWith('/profile') || pathname.startsWith('/admin');
   
   const navItems: { name: string; view: ViewType }[] = [
     { name: 'Home', view: 'home' },
@@ -121,7 +124,7 @@ export function Header({ currentView, onViewChange, onGoToLanding }: HeaderProps
             {user ? (
               <button
                 onClick={handleProfileClick}
-                className="nav-link flex items-center gap-1"
+                className={`nav-link flex items-center gap-1 ${onAccountPage ? 'active' : ''}`}
               >
                 <User className="w-4 h-4" />
                 <span className="nav-link-text">{isAdmin ? 'Admin' : 'Profile'}</span>

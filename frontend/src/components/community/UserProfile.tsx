@@ -3,10 +3,11 @@
  * View a user's profile with their posts, followers, and following
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2, Calendar, MoreHorizontal, Flag, Ban } from 'lucide-react';
 import { Header } from '../Header';
+import { useOpenAppView } from '../../hooks/useOpenAppView';
 import { PostCard } from './PostCard';
 import {
   DropdownMenu,
@@ -23,10 +24,7 @@ import {
   reportContent,
 } from '../../services/community';
 import type { UserProfile as UserProfileType, Post } from '../../types/community';
-import type { ViewType } from '../../types/api';
 import '../../styles/community.css';
-
-const STORAGE_KEY_VIEW = 'chanda_currentView';
 
 export function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
@@ -94,14 +92,7 @@ export function UserProfile() {
     }
   }, [userId, loading, profile]);
 
-  const handleViewChange = useCallback((view: ViewType) => {
-    if (view === 'community') {
-      navigate('/community');
-      return;
-    }
-    localStorage.setItem(STORAGE_KEY_VIEW, view);
-    navigate('/app');
-  }, [navigate]);
+  const handleViewChange = useOpenAppView();
 
   const handleBack = () => {
     navigate('/community');

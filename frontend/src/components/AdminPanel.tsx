@@ -5,7 +5,7 @@ import { approveContribution, getPendingContributions, rejectContribution } from
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Header } from './Header';
-import type { ViewType } from '../types/api';
+import { useOpenAppView } from '../hooks/useOpenAppView';
 import { 
   Table,
   TableBody,
@@ -44,7 +44,7 @@ export default function AdminPanel() {
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [viewing, setViewing] = useState<Contribution | null>(null);
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const openView = useOpenAppView();
 
   const previewText = (text?: string, max = 80) => {
     void text; // Mark as intentionally unused for future use
@@ -128,13 +128,7 @@ export default function AdminPanel() {
 
   return (
     <>
-      <Header 
-        currentView={currentView}
-        onViewChange={(view) => {
-          setCurrentView(view);
-          navigate('/app');
-        }}
-      />
+      <Header currentView={null} onViewChange={openView} />
 
       <div className="profile-admin-page">
         <div className="page-shell">
