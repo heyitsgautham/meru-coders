@@ -2,7 +2,11 @@
 
 import asyncio
 import logging
+import re
+import shutil
+import tempfile
 import uuid
+from pathlib import Path
 
 from flask import Blueprint, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
@@ -53,6 +57,10 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('speech', __name__)
+
+
+# Names generate_tts gives its output: the only files /tts/audio/ will serve.
+TTS_FILENAME = re.compile(r'tts_[0-9a-f]{32}\.mp3')
 
 
 @bp.route(f'{settings.API_PREFIX}/tts/generate', methods=['POST'])
@@ -247,7 +255,8 @@ def serve_tts_audio(filename):
     try:
         audio_path = settings.AUDIO_DIR / filename
 
-        if not audio_path.exists():
+        # Only audio this API generated; nothing else in the directory is public.
+        if not TTS_FILENAME.fullmatch(filename) or not audio_path.exists():
             return jsonify({'success': False, 'error': 'Audio file not found'}), 404
 
         # Check if download is requested
@@ -293,6 +302,10 @@ def audio_transcribe():
 
     ALLOWED_AUDIO_EXTENSIONS = {'wav', 'mp3', 'webm', 'ogg', 'm4a', 'flac'}
 
+    # Each upload gets a private directory that is removed on every exit path. Saving under the
+    # client's filename in AUDIO_DIR let two "recording.wav" uploads overwrite each other, and
+    # left recordings downloadable from /tts/audio/ whenever an early return skipped the cleanup.
+    workdir = None
     try:
         # Handle multipart form data
         if 'audio_file' not in request.files:
@@ -306,7 +319,8 @@ def audio_transcribe():
             return jsonify({'success': False, 'error': f'Invalid file type. Allowed: {ALLOWED_AUDIO_EXTENSIONS}'}), 400
 
         filename = secure_filename(file.filename)
-        filepath = settings.AUDIO_DIR / filename
+        workdir = Path(tempfile.mkdtemp(prefix='asr_'))
+        filepath = workdir / filename
         file.save(filepath)
 
         logger.info(f"Audio transcription requested for: {filename}")
@@ -318,7 +332,7 @@ def audio_transcribe():
 
         if file_ext in ('webm', 'ogg', 'm4a'):
             # Convert to WAV using ffmpeg
-            converted_filepath = settings.AUDIO_DIR / f"{filename.rsplit('.', 1)[0]}.wav"
+            converted_filepath = workdir / 'converted.wav'
             logger.info(f"Converting {file_ext.upper()} to WAV: {converted_filepath}")
 
             try:
@@ -460,18 +474,10 @@ def audio_transcribe():
             return jsonify(
                 {'success': False, 'error': 'Could not connect to transcription service. Please try again later.'}
             ), 503
-        finally:
-            # Clean up uploaded and converted files
-            try:
-                filepath.unlink()
-            except Exception:
-                pass
-            if converted_filepath:
-                try:
-                    converted_filepath.unlink()
-                except Exception:
-                    pass
 
     except Exception as e:
         logger.exception(f"Error in audio_transcribe: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        if workdir:
+            shutil.rmtree(workdir, ignore_errors=True)
