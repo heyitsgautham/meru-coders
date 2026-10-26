@@ -6,7 +6,7 @@ A comprehensive AI-powered platform for identifying, analyzing, and learning San
 
 ---
 
-## 🎯 Quick Summary
+## Quick summary
 
 | Feature | Achievement |
 |---------|-------------|
@@ -180,9 +180,9 @@ All routes sit under `/api` except `/health`.
 
 ---
 
-## 🎯 Core Features
+## Core features
 
-### 1. 🎯 Multi-Mode Meter Identification
+### 1. Multi-mode meter identification
 
 #### **Mode 1: Text Input**
 - Direct Sanskrit text input in Devanagari, IAST, SLP1, or other schemes
@@ -211,7 +211,7 @@ All routes sit under `/api` except `/health`.
 - Download results as JSON/CSV
 - **Endpoint:** `POST /api/identify/file`
 
-#### **Mode 5: Daṇḍaka/Rājaśyāmalā Identification** ⭐ **NEW**
+#### **Mode 5: Daṇḍaka/Rājaśyāmalā Identification** **NEW**
 - Special mode for unmetrical long-form verses
 - Akṣara counting with virāma rules
 - Classification: Saṃkīrṇa, Madhyama, Prabandha, Ati-daṇḍakam
@@ -219,11 +219,11 @@ All routes sit under `/api` except `/health`.
 - Confidence scoring with keyword matching
 - **Endpoint:** `POST /api/identify/dandaka`
 
-### 2. 🤖 AI-Powered Multi-Modal Chatbot
+### 2. AI chatbot with text, image and voice input
 
 **Revolutionary conversational interface for Sanskrit prosody learning!**
 
-#### Features:
+#### Features
 - **Multi-Modal Input:**
   - 💬 Text messages (ask questions about meters, rules, examples)
   - 🎤 Voice messages (speak Sanskrit verses or questions)
@@ -256,16 +256,17 @@ All routes sit under `/api` except `/health`.
   - WebSocket support for live responses
   - Character-by-character streaming for natural feel
   
-- **Powered by:** Google Gemini 2.0 Flash Experimental with 6 API keys for load balancing
+- **Powered by:** Google Gemini 2.5 Flash, rotating across up to six API keys (`GEMINI_API_KEY_1` to `_6`)
 
 **Endpoints:**
-- `POST /api/chatbot/chat` - Text-based chat
-- `POST /api/chatbot/chat/voice` - Voice message handling
-- `POST /api/chatbot/chat/image` - Image message handling
-- `GET /api/chatbot/history` - Retrieve conversation history
-- `DELETE /api/chatbot/history` - Clear conversation history
+- `POST /api/chatbot/chat` - Chat; an audio or image attachment travels in the same request
+- `POST /api/chatbot/analyze-meter` - Identify the meter of a verse from the chat
+- `GET /api/chatbot/history/{conversation_id}` - Retrieve a conversation
+- `GET /api/chatbot/conversations` - List conversations
+- `DELETE /api/chatbot/clear/{conversation_id}` - Clear a conversation
+- `GET /api/chatbot/personas` - List the available personas
 
-### 3. 🗣️ Text-to-Speech with Voice Selection
+### 3. Text-to-speech with voice selection
 
 **Multi-tier TTS system with male/female voice options**
 
@@ -289,18 +290,18 @@ All routes sit under `/api` except `/health`.
    - Reliable but no voice selection
    - Always uses default female voice
 
-#### Features:
+#### Features
 - User can select male or female voice
 - Automatic fallback if preferred engine unavailable
 - Audio preview before identification
 - Download generated audio files
 - **Endpoint:** `POST /api/tts/generate`
 
-### 4. 👥 Community Platform (Twitter-like)
+### 4. Community platform
 
 **Social learning platform for Sanskrit enthusiasts!**
 
-#### Features:
+#### Features
 - **Posts & Discussions:**
   - Create posts with Sanskrit verses, questions, insights
   - Image uploads (5MB max, PNG/JPG/GIF/WebP)
@@ -332,11 +333,11 @@ All routes sit under `/api` except `/health`.
 
 **Endpoints:** 15+ endpoints under `/api/community/*`
 
-### 5. 🤝 Crowd-Sourced Contributions
+### 5. Crowd-sourced contributions
 
 **Enable the community to expand the database!**
 
-#### Features:
+#### Features
 - **Submit New Verses:**
   - Users can submit verses with suggested meters
   - Admin review and approval workflow
@@ -355,14 +356,15 @@ All routes sit under `/api` except `/health`.
 **Endpoints:**
 - `POST /api/contributions/submit` - Submit contribution
 - `GET /api/contributions/my-contributions` - View your submissions
-- `GET /api/contributions/pending` - Admin: pending review
-- `PUT /api/contributions/approve` - Admin: approve contribution
+- `GET /api/contributions/approved` - Approved contributions shown in the dataset browser
+- `GET /api/contributions/admin/pending` - Admin: pending review
+- `POST /api/contributions/admin/approve/{id}`, `/admin/reject/{id}` - Admin: approve or reject
 
-### 6. 🔐 Authentication & Authorization
+### 6. Authentication and authorization
 
 **Secure user management with OAuth support**
 
-#### Features:
+#### Features
 - **Username/Password Auth:**
   - Secure signup with bcrypt password hashing
   - JWT-based session management
@@ -387,15 +389,15 @@ All routes sit under `/api` except `/health`.
 - `POST /api/auth/signup` - Register new user
 - `POST /api/auth/login` - Login
 - `POST /api/auth/logout` - Logout
-- `GET /api/auth/me` - Get current user
-- `POST /api/auth/refresh` - Refresh token
-- OAuth callback handlers
+- `GET /api/auth/profile` - Get current user
+- `POST /api/auth/admin-login` - Admin login
+- `POST /api/auth/oauth/start`, `/oauth/exchange` - Google sign-in through Supabase; the client refreshes the Supabase session itself
 
-### 7. 🧪 Interactive LG Lab
+### 7. Interactive L-G Lab
 
 **Explore the mathematical beauty of Laghu-Guru patterns!**
 
-#### Modules:
+#### Modules
 
 1. **Breath Pattern Simulator**
    - Visualize L-G patterns as breathing rhythms
@@ -424,7 +426,7 @@ All routes sit under `/api` except `/health`.
 
 **Access:** `/lg-lab` page in frontend
 
-### 8. 🎮 Chandas Game (Separate App)
+### 8. Chandas game (separate app)
 
 **Gamified learning platform for mastering meters!**
 
@@ -435,11 +437,11 @@ The game lives in a separate repository and is not part of this one; `GAME_INTEG
 - Leaderboards
 - Built with FastAPI backend + React frontend
 
-### 9. 📊 Dataset Management
+### 9. Dataset management
 
 **Comprehensive meter database with search and export**
 
-#### Features:
+#### Features
 - View all meter definitions with pagination
 - Search by name, L-G pattern, syllable count
 - Filter by category (Sama, Vishama, Vedic, etc.)
@@ -448,14 +450,13 @@ The game lives in a separate repository and is not part of this one; `GAME_INTEG
 
 **Endpoints:**
 - `GET /api/datasets` - List all datasets
-- `GET /api/datasets/{id}` - Get specific meter details
-- `GET /api/datasets/search` - Search meters
+- `GET /api/datasets/{id}` - One dataset's entries, paged and filterable
 
-### 10. 🔍 Shloka Validation & Search
+### 10. Shloka validation and search
 
 **AI-powered verse validation and scripture search**
 
-#### Features:
+#### Features
 - **Shloka Checker:**
   - Validates if input is a proper Sanskrit verse
   - Detects prose, random text, mixed content
@@ -474,9 +475,9 @@ The game lives in a separate repository and is not part of this one; `GAME_INTEG
 
 ---
 
-## 🏗️ Technical Architecture
+## Technical architecture
 
-### Backend Stack
+### Backend stack
 
 ```python
 # Core Technologies
@@ -491,7 +492,7 @@ langchain 0.1.0+          # RAG framework
 langchain-google-genai    # Gemini embeddings
 sentence-transformers     # Multilingual embeddings (768-dim)
 
-# Authentication & Database  
+# Authentication & Database
 supabase 2.25.0           # Backend-as-a-Service
 PyJWT 2.8.0+              # JWT tokens
 bcrypt 4.0.1+             # Password hashing
@@ -521,7 +522,7 @@ APScheduler 3.10.0        # Job scheduling
 eventlet 0.35.0           # Async I/O
 ```
 
-### Frontend Stack
+### Frontend stack
 
 ```json
 // Core Framework
@@ -553,7 +554,7 @@ eventlet 0.35.0           # Async I/O
 "class-variance-authority" // Component variants
 ```
 
-### Database Schema (Supabase PostgreSQL)
+### Database schema (Supabase PostgreSQL)
 
 ```sql
 -- Users table
@@ -607,7 +608,7 @@ user_profiles (
 )
 ```
 
-### Vector Database (ChromaDB)
+### Vector database (ChromaDB)
 
 ```python
 # RAG System - 2,844 Documents
@@ -627,91 +628,6 @@ top_k: 5 documents
 min_relevance_score: 0.6
 max_context_length: 3,000 characters
 ```
-
-### API Endpoints Summary
-
-```
-Core Identification (5 endpoints)
-├─ POST /api/identify/text        # Text input
-├─ POST /api/identify/image       # Image OCR
-├─ POST /api/identify/file        # File upload
-├─ POST /api/identify/dandaka     # Daṇḍaka mode
-└─ POST /api/file/extract         # Document extraction
-
-Chatbot (6 endpoints)
-├─ POST /api/chatbot/chat         # Text chat
-├─ POST /api/chatbot/chat/voice   # Voice message
-├─ POST /api/chatbot/chat/image   # Image message
-├─ GET  /api/chatbot/history      # Get history
-├─ DELETE /api/chatbot/history    # Clear history
-└─ WebSocket: /socket.io          # Real-time streaming
-
-TTS & Audio (3 endpoints)
-├─ POST /api/tts/generate         # Generate speech
-├─ GET  /api/tts/audio/<file>     # Serve audio
-└─ POST /api/audio/transcribe     # Speech-to-text
-
-Community (15 endpoints)
-├─ POST /api/community/posts      # Create post
-├─ GET  /api/community/posts      # List posts
-├─ POST /api/community/like       # Like/unlike
-├─ POST /api/community/comment    # Add comment
-├─ ... (profile, follow, search, etc.)
-
-Contributions (5 endpoints)
-├─ POST /api/contributions/submit           # Submit
-├─ GET  /api/contributions/my-contributions # View yours
-├─ GET  /api/contributions/pending          # Admin: review
-├─ PUT  /api/contributions/approve          # Admin: approve
-└─ DELETE /api/contributions/<id>           # Delete
-
-Authentication (6 endpoints)
-├─ POST /api/auth/signup          # Register
-├─ POST /api/auth/login           # Login
-├─ POST /api/auth/logout          # Logout
-├─ GET  /api/auth/me              # Current user
-├─ POST /api/auth/refresh         # Refresh token
-└─ OAuth callbacks                # Google, GitHub
-
-Datasets & Search (5 endpoints)
-├─ GET  /api/datasets             # List datasets
-├─ GET  /api/datasets/<id>        # Get meter details
-├─ POST /api/sloka/search         # Search verses
-├─ POST /api/sloka/validate       # Validate shloka
-└─ GET  /api/examples             # Example verses
-
-OCR & Utilities (3 endpoints)
-├─ POST /api/ocr/extract          # Direct OCR
-├─ GET  /api/schemes              # Transliteration schemes
-└─ GET  /api/download/<file>      # Download results
-```
-
-### Performance Metrics
-
-```
-Identification Speed:
-├─ Average: 45ms per verse
-├─ Peak: 120ms (complex pada splitting)
-└─ Batch: 30 verses/second
-
-Database Queries:
-├─ Meter lookup: <5ms
-├─ RAG retrieval: <100ms
-└─ Vector search: <80ms
-
-Memory Usage:
-├─ Backend: ~500MB (idle)
-├─ RAG loaded: ~2GB
-├─ Frontend: ~150MB
-└─ Total: ~2.5GB
-
-Concurrency:
-├─ Supported: 1000+ concurrent users
-├─ WebSocket: 500+ active connections
-└─ Rate limit: 100 req/min per user
-```
-
----
 
 ## Accuracy evaluation
 
@@ -766,262 +682,17 @@ The other harnesses cover the Rigveda, Rāmāyaṇa, WSC 2023 and Meghadūta set
 
 ---
 
-## 🏆 Competitive Advantage
+## Documentation index
 
-### vs. ShlokaYug, Chand-Identifier, Other Solutions
-
-| Feature | **Erase Sure** | Competitors |
-|---------|-----------------|-------------|
-| **Accuracy** | **100%** ✅ | ~70-85% ⚠️ |
-| **Database Size** | **1,920+ meters** ✅ | ~300-500 ⚠️ |
-| **AI Features** | **Multi-modal chatbot + RAG** ✅ | None ❌ |
-| **Input Modes** | **4 modes (Text/Image/Audio/File)** ✅ | 1-2 modes ⚠️ |
-| **Special Features** | **Daṇḍaka detection** ✅ | None ❌ |
-| **Community Platform** | **Full social features** ✅ | None ❌ |
-| **TTS** | **Multi-engine with voice selection** ✅ | Basic/None ⚠️ |
-| **Authentication** | **OAuth + Username/Password** ✅ | None/Basic ⚠️ |
-| **Test Coverage** | **85+ test files** ✅ | 0-3 ❌ |
-| **Documentation** | **20+ files** ✅ | 0-2 ❌ |
-| **Architecture** | **Modern REST API + React SPA** ✅ | Monolithic ❌ |
-| **WebSocket** | **Real-time notifications** ✅ | None ❌ |
-| **RAG System** | **2,844 documents** ✅ | None ❌ |
-| **Gamification** | **Separate game app** ✅ | None ❌ |
-| **Word Boundaries** | **Preserved** ✅ | Broken ❌ |
-| **Mobile Ready** | **Responsive design** ✅ | Limited ⚠️ |
-
-**Overall Advantage:** ~65% more features + 100% accuracy
-
----
-
-## 🔬 Technical Innovations
-
-### 1. **Multi-Modal AI Chatbot with Agentic Capabilities**
-   - **Unique Feature:** Only Sanskrit prosody system with autonomous meter identification
-   - Detects verses in conversation and automatically analyzes them
-   - Supports text, voice, and image inputs in a unified interface
-   - RAG-powered responses with source citations
-
-### 2. **Daṇḍaka/Rājaśyāmalā Detection**
-   - **Unique Feature:** Only system that handles unmetrical long-form verses
-   - Traditional akṣara counting with virāma rules
-   - Semantic analysis for tantric hymn identification
-   - 4 classification categories with confidence scoring
-
-### 3. **Community-Driven Knowledge Base**
-   - **Unique Feature:** Crowd-sourced meter contributions
-   - User submissions with admin review workflow
-   - Gamification with badges and leaderboards
-   - Twitter-like social platform for Sanskrit enthusiasts
-
-### 4. **RAG-Powered Knowledge Grounding**
-   - **Innovation:** First prosody system with vector database
-   - 2,844 documents embedded and searchable
-   - Reduces AI hallucinations by 60-80%
-   - Provides verifiable source citations
-
-### 5. **Word Boundary Preservation**
-   - **Critical Innovation:** Prevents incorrect syllable merging
-   - Fixes visarga+consonant issue across word boundaries
-   - Example: "रामः रक्षति" correctly analyzed as separate words
-   - **Not implemented in any competitor solution**
-
-### 6. **7-Level Confidence Scoring**
-   - Exact pattern match (10.0)
-   - Vedic-Classical mapping (9.8)
-   - Regex pattern (9.0)
-   - Pada-level exact (9.0)
-   - Pada-level similar (7.5)
-   - Syllable count (4.0-6.0)
-   - Fuzzy match (1.0-4.0)
-
-### 7. **Interactive LG Lab**
-   - **Educational Innovation:** Visualize Laghu-Guru patterns
-   - Connects prosody to breath, music, mathematics, nature
-   - Fibonacci sequences and Pingala's binary numbers
-   - Makes ancient knowledge accessible to modern learners
-
-### 8. **Multi-Tier TTS with Voice Selection**
-   - 4 fallback engines for reliability
-   - Male/female voice options
-   - Handles Sanskrit pronunciation accurately
-   - Works online and offline
-
----
-
-## 📚 Documentation Index
-
-### For Judges & Reviewers
-
-**Start Here:**
-1. 📄 This `README.md`
-   - Complete feature overview
-   - Technical architecture
-   - Quick start guide
-
-### Reference Documentation
-
-2. 📄 `docs/chandas_rules.md`
-   - Complete prosody rules
-   - L-G pattern definitions
-   - Mātrā calculations
-
-3. 📄 `docs/meter.md`
-   - Meter classification systems
-   - Family relationships
-   - Pattern variations
-
-### Additional Resources
-
-4. 📄 `GAME_INTEGRATION_SUMMARY.md`
-   - How the separate Chandas game plugs into the dev scripts
-
----
-
-## 🎓 For SIH 2025 Judges
-
-### Evaluation Checklist
-
-#### ✅ Accuracy & Performance
-- [x] **7 of 8** cases pass in the core regression set (`backend/evaluation/all_fixes.py`)
-- [x] **99.3% accuracy** on first-line identification (146/147 verses)
-- [x] **94.6% accuracy** on verse-level analysis (139/147 verses)
-- [x] **45ms average** identification speed
-- [x] Validated against authentic Vedic and Classical texts
-
-#### ✅ Features & Innovation
-- [x] **5 input modes:** Text, Image, Audio, File, Daṇḍaka
-- [x] **Multi-modal AI chatbot** with agentic capabilities
-- [x] **RAG system** with 2,844 documents
-- [x] **Community platform** with social features
-- [x] **TTS with voice selection** (4 engines)
-- [x] **Authentication** with OAuth support
-- [x] **Real-time features** via WebSocket
-- [x] **Interactive learning** via LG Lab
-- [x] **Gamification** via separate game app
-
-#### ✅ Database & Coverage
-- [x] **1,920+ meters** across all categories
-- [x] **Vedic meters** (28 meters, 7 major families)
-- [x] **Classical meters** (1,700+ meters)
-- [x] **Mātrā meters** (9 validated)
-- [x] **Jāti meters** (multiple)
-- [x] **Daṇḍaka classification** (4 types)
-
-#### ✅ Code Quality
-- [x] **85+ test files** with comprehensive coverage
-- [x] **Modern architecture** (REST API + React SPA)
-- [x] **Type safety** (TypeScript frontend)
-- [x] **Security** (JWT, bcrypt, rate limiting)
-- [x] **Scalability** (WebSocket, caching, async)
-- [x] **Code documentation** (inline comments, docstrings)
-
-#### ✅ Documentation
-- [x] **20+ documentation files**
-- [x] **Executive summary** for judges
-- [x] **Technical architecture** docs
-- [x] **API documentation** with examples
-- [x] **Setup guides** for quick start
-- [x] **Feature documentation** for all modules
-
-#### ✅ Competitive Advantage
-- [x] **65% more features** than competitors
-- [x] **100% accuracy** vs ~70-85% for competitors
-- [x] **4x larger database** than competitors
-- [x] **Only system** with multi-modal AI chatbot
-- [x] **Only system** with RAG-powered responses
-- [x] **Only system** with community platform
-- [x] **Only system** with Daṇḍaka detection
-
-### Live Demo Scenarios
-
-**Scenario 1: Basic Meter Identification** (2 min)
-```
-1. Navigate to main app
-2. Enter: "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"
-3. Show instant Anushtubh identification
-4. Display L-G pattern, gana pattern, syllable count
-5. Generate TTS with voice selection
-```
-
-**Scenario 2: Multi-Modal AI Chatbot** (3 min)
-```
-1. Open chatbot
-2. Ask: "What is Vasantatilaka meter?"
-3. Show RAG-powered response with source citation
-4. Send voice message with Sanskrit verse
-5. Upload image of verse for automatic identification
-6. Demonstrate agentic meter identification
-```
-
-**Scenario 3: OCR from Image** (2 min)
-```
-1. Navigate to Image tab
-2. Upload image of Sanskrit text
-3. Show OCR extraction
-4. Automatic meter identification
-5. Display results with confidence scores
-```
-
-**Scenario 4: Daṇḍaka Detection** (2 min)
-```
-1. Navigate to Daṇḍaka mode
-2. Enter long-form verse (Rājaśyāmalā Stotram)
-3. Show akṣara counting
-4. Display classification (Saṃkīrṇa/Madhyama/etc.)
-5. Show semantic analysis for Rājaśyāmalā detection
-```
-
-**Scenario 5: Community Features** (2 min)
-```
-1. Navigate to Community
-2. Show user posts with Sanskrit verses
-3. Demonstrate like/comment features
-4. Show contribution submission
-5. Display admin moderation panel
-```
-
-**Scenario 6: Interactive Learning** (2 min)
-```
-1. Navigate to LG Lab
-2. Show Breath Pattern Simulator
-3. Demonstrate Fibonacci Visualizer
-4. Connect meters to natural rhythms
-5. Show educational value
-```
-
-### Key Talking Points
-
-1. **Problem Solved:**
-   - "Identifies Sanskrit meters with 100% accuracy"
-   - "Largest digital chandas database (1,920+ meters)"
-   - "First system to combine traditional knowledge with modern AI"
-
-2. **Innovation:**
-   - "Only Sanskrit prosody system with multi-modal AI chatbot"
-   - "RAG-powered responses reduce hallucinations by 60-80%"
-   - "Supports 5 input modes including OCR and speech"
-
-3. **Educational Impact:**
-   - "Makes ancient knowledge accessible to modern learners"
-   - "Interactive visualizations connect prosody to music, math, nature"
-   - "Gamified learning platform for skill development"
-
-4. **Community Building:**
-   - "Twitter-like platform for Sanskrit enthusiasts"
-   - "Crowd-sourced contributions to expand database"
-   - "Real-time collaboration and knowledge sharing"
-
-5. **Technical Excellence:**
-   - "Modern REST API + React SPA architecture"
-   - "85+ test files ensure reliability"
-   - "Production-ready with 1000+ concurrent user support"
-
-6. **Preservation of IKS:**
-   - "Digitizes 2,500-year-old knowledge from Pingala's Chandas Shastra"
-   - "Validates against authentic Vedic and Classical texts"
-   - "Promotes Indian Knowledge Systems through technology"
-
----
+| Document | What it covers |
+|---|---|
+| [`frontend/README.md`](frontend/README.md) | The React client: configuration, layout, styling and tests |
+| [`docs/data-pipeline.md`](docs/data-pipeline.md) | Where the meter tables and corpora come from, and the checks CI runs on them |
+| [`backend/evaluation/README.md`](backend/evaluation/README.md) | The accuracy harnesses and how to run them |
+| [`docs/chandas_rules.md`](docs/chandas_rules.md) | Prosody rules, L-G patterns and mātrā counting |
+| [`docs/meter.md`](docs/meter.md) | Meter classes, families and pattern variants |
+| [`docs/SIH_2025_SUBMISSION.md`](docs/SIH_2025_SUBMISSION.md) | The Smart India Hackathon 2025 submission, with the judges' checklist, demo script and comparison that used to sit in this README |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Development workflow, checks and commit format |
 
 ## Configuration
 
@@ -1062,36 +733,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, checks and 
 
 ---
 
-## 📞 Support & Contact
-
-### For SIH 2025 Judges
-
-**Team Lead:** Gautham Krishna  
-**Email:** gauthamkrishna@erasesure.app  
-**Phone:** [Contact Number]  
-
-**Team Members:**
-- Gautham Krishna - Team Lead & Full Stack Developer
-- Aleesha Mariya John - Backend Developer
-- Aleena Susan Saji - Frontend Developer
-- Gopika M - AI/ML Engineer
-- Aromal Sivan - Database & DevOps
-- Vyshak P Gopinanth - UI/UX Designer
-
-### Resources
-
-**GitHub Repository:**  
-https://github.com/Erase-Sure/meru-coders
-
-**Live Demo:**  
-https://chandas-frontend-mz54akd7ra-uc.a.run.app
-
-**Presentation Slides:**  
-chandas_identifier.pdf
-
----
-
-## 📄 License
+## License
 
 This project is developed for Smart India Hackathon 2025.
 
@@ -1099,25 +741,25 @@ This project is developed for Smart India Hackathon 2025.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-### Inspiration & Foundation
+### Inspiration and foundation
 - **Acharya Pingala** - For Chandas Shastra (500-200 BCE)
 - **Halayudha** - For commentary on Pingala's work (10th century)
 - **AICTE IKS Division** - For promoting Indian Knowledge Systems
 
-### Technical References
+### Technical references
 - **GRETIL Corpus** - Sanskrit text repository
 - **Sanskrit Heritage Site** - Linguistic resources
 
-### Open Source Libraries
+### Open source libraries
 - Flask, React, Supabase - Core frameworks
 - Google Generative AI - Gemini models
 - LangChain - RAG framework
 - Tesseract OCR - Text recognition
 - And all other dependencies listed in requirements.txt
 
-### Special Thanks
+### Special thanks
 - SIH 2025 organizing committee
 - AICTE mentors and coordinators
 - Sanskrit scholars who validated our work
@@ -1125,34 +767,7 @@ This project is developed for Smart India Hackathon 2025.
 
 ---
 
-## 🏆 SIH 2025 Grand Finale
-
-**Problem Statement ID:** 25158  
-**Title:** Chandas Identifier  
-**Organization:** AICTE  
-**Department:** Indian Knowledge Systems (IKS)  
-**Category:** Software  
-**Theme:** Smart Education  
-
-**Team:** Erase Sure
-
-**Submission Date:** December 2025
-
----
-
-**Built with ❤️ for preserving and promoting Indian Knowledge Systems**
-
-**Smart India Hackathon 2025 Grand Finale** 🏆
-
-**#SIH2025 #IndianKnowledgeSystems #SanskritProsody #AIForEducation**
-
----
-
-*"Preserving 2,500 years of prosodic wisdom through modern technology"*
-
----
-
-## 👥 Team Members
+## Team members
 
 ### Erase Sure Team
 

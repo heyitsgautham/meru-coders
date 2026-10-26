@@ -458,3 +458,285 @@ Open source project for Sanskrit text analysis and Indian Knowledge Systems pres
 **Built with ❤️ for preserving and promoting Indian Knowledge Systems**
 
 **Smart India Hackathon 2025 Grand Finale**
+
+---
+
+## Pitch material moved from the README
+
+These sections were written for the hackathon judges. They moved here unchanged, so the README covers running and changing the code. Figures, links and contact details are as they stood at the hackathon.
+
+### 🏆 Competitive Advantage
+
+#### vs. ShlokaYug, Chand-Identifier, Other Solutions
+
+| Feature | **Erase Sure** | Competitors |
+|---------|-----------------|-------------|
+| **Accuracy** | **100%** ✅ | ~70-85% ⚠️ |
+| **Database Size** | **1,920+ meters** ✅ | ~300-500 ⚠️ |
+| **AI Features** | **Multi-modal chatbot + RAG** ✅ | None ❌ |
+| **Input Modes** | **4 modes (Text/Image/Audio/File)** ✅ | 1-2 modes ⚠️ |
+| **Special Features** | **Daṇḍaka detection** ✅ | None ❌ |
+| **Community Platform** | **Full social features** ✅ | None ❌ |
+| **TTS** | **Multi-engine with voice selection** ✅ | Basic/None ⚠️ |
+| **Authentication** | **OAuth + Username/Password** ✅ | None/Basic ⚠️ |
+| **Test Coverage** | **85+ test files** ✅ | 0-3 ❌ |
+| **Documentation** | **20+ files** ✅ | 0-2 ❌ |
+| **Architecture** | **Modern REST API + React SPA** ✅ | Monolithic ❌ |
+| **WebSocket** | **Real-time notifications** ✅ | None ❌ |
+| **RAG System** | **2,844 documents** ✅ | None ❌ |
+| **Gamification** | **Separate game app** ✅ | None ❌ |
+| **Word Boundaries** | **Preserved** ✅ | Broken ❌ |
+| **Mobile Ready** | **Responsive design** ✅ | Limited ⚠️ |
+
+**Overall Advantage:** ~65% more features + 100% accuracy
+
+---
+
+### 🔬 Technical Innovations
+
+#### 1. **Multi-Modal AI Chatbot with Agentic Capabilities**
+   - **Unique Feature:** Only Sanskrit prosody system with autonomous meter identification
+   - Detects verses in conversation and automatically analyzes them
+   - Supports text, voice, and image inputs in a unified interface
+   - RAG-powered responses with source citations
+
+#### 2. **Daṇḍaka/Rājaśyāmalā Detection**
+   - **Unique Feature:** Only system that handles unmetrical long-form verses
+   - Traditional akṣara counting with virāma rules
+   - Semantic analysis for tantric hymn identification
+   - 4 classification categories with confidence scoring
+
+#### 3. **Community-Driven Knowledge Base**
+   - **Unique Feature:** Crowd-sourced meter contributions
+   - User submissions with admin review workflow
+   - Gamification with badges and leaderboards
+   - Twitter-like social platform for Sanskrit enthusiasts
+
+#### 4. **RAG-Powered Knowledge Grounding**
+   - **Innovation:** First prosody system with vector database
+   - 2,844 documents embedded and searchable
+   - Reduces AI hallucinations by 60-80%
+   - Provides verifiable source citations
+
+#### 5. **Word Boundary Preservation**
+   - **Critical Innovation:** Prevents incorrect syllable merging
+   - Fixes visarga+consonant issue across word boundaries
+   - Example: "रामः रक्षति" correctly analyzed as separate words
+   - **Not implemented in any competitor solution**
+
+#### 6. **7-Level Confidence Scoring**
+   - Exact pattern match (10.0)
+   - Vedic-Classical mapping (9.8)
+   - Regex pattern (9.0)
+   - Pada-level exact (9.0)
+   - Pada-level similar (7.5)
+   - Syllable count (4.0-6.0)
+   - Fuzzy match (1.0-4.0)
+
+#### 7. **Interactive LG Lab**
+   - **Educational Innovation:** Visualize Laghu-Guru patterns
+   - Connects prosody to breath, music, mathematics, nature
+   - Fibonacci sequences and Pingala's binary numbers
+   - Makes ancient knowledge accessible to modern learners
+
+#### 8. **Multi-Tier TTS with Voice Selection**
+   - 4 fallback engines for reliability
+   - Male/female voice options
+   - Handles Sanskrit pronunciation accurately
+   - Works online and offline
+
+### 🎓 For SIH 2025 Judges
+
+#### Evaluation Checklist
+
+##### ✅ Accuracy & Performance
+- [x] **7 of 8** cases pass in the core regression set (`backend/evaluation/all_fixes.py`)
+- [x] **99.3% accuracy** on first-line identification (146/147 verses)
+- [x] **94.6% accuracy** on verse-level analysis (139/147 verses)
+- [x] **45ms average** identification speed
+- [x] Validated against authentic Vedic and Classical texts
+
+##### ✅ Features & Innovation
+- [x] **5 input modes:** Text, Image, Audio, File, Daṇḍaka
+- [x] **Multi-modal AI chatbot** with agentic capabilities
+- [x] **RAG system** with 2,844 documents
+- [x] **Community platform** with social features
+- [x] **TTS with voice selection** (4 engines)
+- [x] **Authentication** with OAuth support
+- [x] **Real-time features** via WebSocket
+- [x] **Interactive learning** via LG Lab
+- [x] **Gamification** via separate game app
+
+##### ✅ Database & Coverage
+- [x] **1,920+ meters** across all categories
+- [x] **Vedic meters** (28 meters, 7 major families)
+- [x] **Classical meters** (1,700+ meters)
+- [x] **Mātrā meters** (9 validated)
+- [x] **Jāti meters** (multiple)
+- [x] **Daṇḍaka classification** (4 types)
+
+##### ✅ Code Quality
+- [x] **85+ test files** with comprehensive coverage
+- [x] **Modern architecture** (REST API + React SPA)
+- [x] **Type safety** (TypeScript frontend)
+- [x] **Security** (JWT, bcrypt, rate limiting)
+- [x] **Scalability** (WebSocket, caching, async)
+- [x] **Code documentation** (inline comments, docstrings)
+
+##### ✅ Documentation
+- [x] **20+ documentation files**
+- [x] **Executive summary** for judges
+- [x] **Technical architecture** docs
+- [x] **API documentation** with examples
+- [x] **Setup guides** for quick start
+- [x] **Feature documentation** for all modules
+
+##### ✅ Competitive Advantage
+- [x] **65% more features** than competitors
+- [x] **100% accuracy** vs ~70-85% for competitors
+- [x] **4x larger database** than competitors
+- [x] **Only system** with multi-modal AI chatbot
+- [x] **Only system** with RAG-powered responses
+- [x] **Only system** with community platform
+- [x] **Only system** with Daṇḍaka detection
+
+#### Live Demo Scenarios
+
+**Scenario 1: Basic Meter Identification** (2 min)
+```
+1. Navigate to main app
+2. Enter: "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः"
+3. Show instant Anushtubh identification
+4. Display L-G pattern, gana pattern, syllable count
+5. Generate TTS with voice selection
+```
+
+**Scenario 2: Multi-Modal AI Chatbot** (3 min)
+```
+1. Open chatbot
+2. Ask: "What is Vasantatilaka meter?"
+3. Show RAG-powered response with source citation
+4. Send voice message with Sanskrit verse
+5. Upload image of verse for automatic identification
+6. Demonstrate agentic meter identification
+```
+
+**Scenario 3: OCR from Image** (2 min)
+```
+1. Navigate to Image tab
+2. Upload image of Sanskrit text
+3. Show OCR extraction
+4. Automatic meter identification
+5. Display results with confidence scores
+```
+
+**Scenario 4: Daṇḍaka Detection** (2 min)
+```
+1. Navigate to Daṇḍaka mode
+2. Enter long-form verse (Rājaśyāmalā Stotram)
+3. Show akṣara counting
+4. Display classification (Saṃkīrṇa/Madhyama/etc.)
+5. Show semantic analysis for Rājaśyāmalā detection
+```
+
+**Scenario 5: Community Features** (2 min)
+```
+1. Navigate to Community
+2. Show user posts with Sanskrit verses
+3. Demonstrate like/comment features
+4. Show contribution submission
+5. Display admin moderation panel
+```
+
+**Scenario 6: Interactive Learning** (2 min)
+```
+1. Navigate to LG Lab
+2. Show Breath Pattern Simulator
+3. Demonstrate Fibonacci Visualizer
+4. Connect meters to natural rhythms
+5. Show educational value
+```
+
+#### Key Talking Points
+
+1. **Problem Solved:**
+   - "Identifies Sanskrit meters with 100% accuracy"
+   - "Largest digital chandas database (1,920+ meters)"
+   - "First system to combine traditional knowledge with modern AI"
+
+2. **Innovation:**
+   - "Only Sanskrit prosody system with multi-modal AI chatbot"
+   - "RAG-powered responses reduce hallucinations by 60-80%"
+   - "Supports 5 input modes including OCR and speech"
+
+3. **Educational Impact:**
+   - "Makes ancient knowledge accessible to modern learners"
+   - "Interactive visualizations connect prosody to music, math, nature"
+   - "Gamified learning platform for skill development"
+
+4. **Community Building:**
+   - "Twitter-like platform for Sanskrit enthusiasts"
+   - "Crowd-sourced contributions to expand database"
+   - "Real-time collaboration and knowledge sharing"
+
+5. **Technical Excellence:**
+   - "Modern REST API + React SPA architecture"
+   - "85+ test files ensure reliability"
+   - "Production-ready with 1000+ concurrent user support"
+
+6. **Preservation of IKS:**
+   - "Digitizes 2,500-year-old knowledge from Pingala's Chandas Shastra"
+   - "Validates against authentic Vedic and Classical texts"
+   - "Promotes Indian Knowledge Systems through technology"
+
+### 📞 Support & Contact
+
+#### For SIH 2025 Judges
+
+**Team Lead:** Gautham Krishna  
+**Email:** gauthamkrishna@erasesure.app  
+**Phone:** [Contact Number]  
+
+**Team Members:**
+- Gautham Krishna - Team Lead & Full Stack Developer
+- Aleesha Mariya John - Backend Developer
+- Aleena Susan Saji - Frontend Developer
+- Gopika M - AI/ML Engineer
+- Aromal Sivan - Database & DevOps
+- Vyshak P Gopinanth - UI/UX Designer
+
+#### Resources
+
+**GitHub Repository:**  
+https://github.com/Erase-Sure/meru-coders
+
+**Live Demo:**  
+https://chandas-frontend-mz54akd7ra-uc.a.run.app
+
+**Presentation Slides:**  
+chandas_identifier.pdf
+
+### 🏆 SIH 2025 Grand Finale
+
+**Problem Statement ID:** 25158  
+**Title:** Chandas Identifier  
+**Organization:** AICTE  
+**Department:** Indian Knowledge Systems (IKS)  
+**Category:** Software  
+**Theme:** Smart Education  
+
+**Team:** Erase Sure
+
+**Submission Date:** December 2025
+
+---
+
+**Built with ❤️ for preserving and promoting Indian Knowledge Systems**
+
+**Smart India Hackathon 2025 Grand Finale** 🏆
+
+**#SIH2025 #IndianKnowledgeSystems #SanskritProsody #AIForEducation**
+
+---
+
+*"Preserving 2,500 years of prosodic wisdom through modern technology"*
