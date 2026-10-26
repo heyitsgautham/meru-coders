@@ -102,7 +102,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         type="button"
         className="auth-button-google"
         onClick={async () => {
-          await startOAuth('google');
+          setFormError('');
+          const { error } = await startOAuth('google');
+          if (error) setFormError(error);
         }}
         disabled={loading}
       >
