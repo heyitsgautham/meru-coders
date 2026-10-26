@@ -106,4 +106,17 @@ describe('AdminPanel', () => {
     expect(fetchMock.mock.calls.some(([url]) => url.endsWith('/api/contributions/admin/reject/c7'))).toBe(true);
     expect(window.alert).not.toHaveBeenCalled();
   });
+
+  it('says why the queue could not load', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({ success: false, error: 'Supabase is not configured.' }),
+      }),
+    );
+    renderPanel();
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not load contributions: Supabase is not configured.');
+  });
 });

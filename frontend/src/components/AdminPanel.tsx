@@ -177,7 +177,7 @@ export default function AdminPanel() {
         {error && (
           <div className="alert-bar" role="alert">
             <XCircle className="h-5 w-5" />
-            Failed to fetch contributions. Please try again.
+            Could not load contributions: {error}
           </div>
         )}
 

@@ -67,7 +67,8 @@
 }
 
 /* A card after a grid of cards keeps the same vertical rhythm as stacked cards. */
-.section-grid + .card {
+.section-grid + .card,
+.alert-bar + .card {
   margin-top: 1.25rem;
 }
 
@@ -376,6 +377,7 @@
 .button-ghost:hover { background: rgba(0, 0, 0, 0.04); }
 
 .alert-bar {
+  margin-top: 1.25rem;
   background: rgba(192, 57, 43, 0.08);
   color: #8a1f14;
   border: 1px solid rgba(192, 57, 43, 0.2);
@@ -385,6 +387,12 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 0.95rem;
+}
+
+.alert-bar > svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
 }
 
 .badge-count {
