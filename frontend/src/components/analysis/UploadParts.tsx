@@ -124,10 +124,11 @@ export function RemoveBadge({ title, onRemove }: { title: string; onRemove: () =
         e.stopPropagation();
         onRemove();
       }}
-      className="absolute -top-3 -right-3 p-2 bg-red-500 hover:bg-red-600 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+      className="remove-badge"
+      aria-label={title}
       title={title}
     >
-      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>

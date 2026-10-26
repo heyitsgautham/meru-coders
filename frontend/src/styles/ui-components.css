@@ -1,10 +1,10 @@
 /*
- * Base styles for the shadcn/ui Button and AlertDialog.
+ * Styles for components whose Tailwind classes were never compiled into index.css.
  *
- * Their Tailwind classes (bg-primary, fixed, top-[50%], ...) were never compiled into
- * index.css, so buttons rendered as bare text and the delete confirmation landed below
- * the page. These rules restore the intended look, keyed on the data-slot attributes the
- * components set.
+ * The shadcn/ui Button and AlertDialog lost theirs (bg-primary, fixed, top-[50%], ...), so
+ * buttons rendered as bare text and the delete confirmation landed below the page. These
+ * rules restore the intended look, keyed on the data-slot attributes the components set.
+ * The file-tile remove badge is styled by its own class at the end.
  *
  * Every selector sits in :where(), so it has no specificity. It beats index.css's reset
  * (* { padding: 0 }) only by loading later, while the global button typography and any
@@ -144,4 +144,30 @@
     flex-direction: row;
     justify-content: flex-end;
   }
+}
+
+/*
+ * Round red remove button pinned to the corner of a selected file's tile (RemoveBadge).
+ * A plain class, not :where(), so it beats index.css's element rules for every button.
+ * The !important padding outranks the phone-width "button { padding: 10px 16px !important }".
+ */
+.remove-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px !important;
+  border: none;
+  border-radius: 9999px;
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+.remove-badge:hover {
+  background: #dc2626;
+  transform: scale(1.1);
 }
