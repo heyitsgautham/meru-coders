@@ -694,7 +694,6 @@ These sections were written for the hackathon judges. They moved here unchanged,
 #### For SIH 2025 Judges
 
 **Team Lead:** Gautham Krishna  
-**Email:** gauthamkrishna@erasesure.app  
 **Phone:** [Contact Number]  
 
 **Team Members:** see the team list in the [README](../README.md#team-members).

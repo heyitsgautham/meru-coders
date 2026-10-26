@@ -1,6 +1,6 @@
 # Contributing
 
-Meru Coders started as the Smart India Hackathon 2025 project of team Erase Sure.
+Meru Coders started as the Smart India Hackathon 2025 project of team Meru Coders.
 This guide covers how to set up, change and check the code.
 
 ## Set up
