@@ -1,0 +1,107 @@
+{
+ "validate": {
+  "chandas": "gāyatrī",
+  "dataset_name": "Rigveda with Meters",
+  "difference_count": 0,
+  "differences": [],
+  "found": true,
+  "highlighted_segments": [
+   {
+    "isError": false,
+    "text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं"
+   }
+  ],
+  "is_valid": true,
+  "message": "Perfect match!",
+  "original_text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
+  "similarity": 1.0,
+  "similarity_percentage": 100.0,
+  "source": "GRETIL / Vedaweb",
+  "success": true,
+  "your_text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं"
+ },
+ "validate_typo": {
+  "chandas": "gāyatrī",
+  "dataset_name": "Rigveda with Meters",
+  "difference_count": 2,
+  "differences": [
+   {
+    "correct_text": "ळ",
+    "description": "'ल' should be 'ळ'",
+    "end_position": 8,
+    "position": 7,
+    "type": "replace",
+    "your_text": "ल"
+   },
+   {
+    "correct_text": "ं",
+    "description": "'म्' should be 'ं'",
+    "end_position": 19,
+    "position": 17,
+    "type": "replace",
+    "your_text": "म्"
+   }
+  ],
+  "found": true,
+  "highlighted_segments": [
+   {
+    "isError": false,
+    "text": "अग्निमी"
+   },
+   {
+    "isError": true,
+    "text": "ल"
+   },
+   {
+    "isError": false,
+    "text": "े पुरोहित"
+   },
+   {
+    "isError": true,
+    "text": "म्"
+   },
+   {
+    "isError": false,
+    "text": " यज्ञस्य देवमृत्विजं होतारं रत्नधातमं"
+   }
+  ],
+  "is_valid": false,
+  "message": "Found 2 difference(s).",
+  "original_text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
+  "similarity": 0.955,
+  "similarity_percentage": 95.5,
+  "source": "GRETIL / Vedaweb",
+  "success": true,
+  "your_text": "अग्निमीले पुरोहितम् यज्ञस्य देवमृत्विजं होतारं रत्नधातमं"
+ },
+ "search": {
+  "best_similarity": 1.0,
+  "diff_hints": [],
+  "has_exact_match": true,
+  "match_count": 2,
+  "matches": [
+   {
+    "chandas": "gāyatrī",
+    "dataset_id": "rigveda",
+    "dataset_name": "Rigveda with Meters",
+    "is_exact_match": true,
+    "original_text": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
+    "similarity": 1.0,
+    "source": "GRETIL / Vedaweb"
+   },
+   {
+    "chandas": "Gayatri",
+    "dataset_id": "chandas_vedanga",
+    "dataset_name": "Chandas as Vedanga",
+    "is_exact_match": false,
+    "original_text": "अग्निमीळे पुरोहितं यज्ञस्य\nदेवमृत्विजम्। होतारं\nरत्नधातमम्।।",
+    "similarity": 0.9464,
+    "source": "Vedanga Literature"
+   }
+  ],
+  "query": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
+  "query_normalized": "अग्निमीळे पुरोहितं यज्ञस्य देवमृत्विजं होतारं रत्नधातमं",
+  "success": true,
+  "total_slokas_indexed": 13995
+ }
+}
