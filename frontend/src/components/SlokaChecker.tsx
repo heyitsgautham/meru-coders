@@ -8,7 +8,8 @@ import { useState, useCallback, useRef, useMemo } from 'react';
 import { Search, CheckCircle, AlertCircle, Loader2, X, BookOpen, ArrowRight, Copy, Sparkles, GitCompare } from 'lucide-react';
 import * as api from '../services/api';
 import type { SlokaValidateResponse, SlokaSearchMatch } from '../types/api';
-import { SLOKA_CHECKER_CSS } from './slokaCheckerStyles';
+// Imported as a string and injected while mounted: class names such as .clear-btn also exist elsewhere.
+import SLOKA_CHECKER_CSS from '../styles/sloka-checker.css?inline';
 import { computeWordDiff } from '../utils/wordDiff';
 
 export function SlokaChecker() {
