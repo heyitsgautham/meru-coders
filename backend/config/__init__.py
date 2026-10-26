@@ -1,7 +1,8 @@
 """Configuration management."""
 
-from .settings import Settings
+# Re-export the one instance from settings.py. A second Settings() here meant modules importing
+# backend.config and backend.config.settings held different objects, so an override set on one
+# never reached the other.
+from .settings import Settings, settings
 
-settings = Settings()
-
-__all__ = ['settings']
+__all__ = ['Settings', 'settings']
