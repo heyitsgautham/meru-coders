@@ -72,8 +72,13 @@ Components and contexts reach the network only through `services/`; none of them
 ## Styling
 
 `src/index.css` is a precompiled Tailwind build, not a Tailwind source file.
-A utility class that build does not contain has no effect, so check it in `index.css` before relying on it.
+A utility class that build does not contain has no effect.
+The build's spacing utilities sit in `@layer utilities`, under the file's own unlayered `* { margin: 0; padding: 0 }` reset, so `p-4`, `mx-auto` and the rest do nothing either.
 Recompiling Tailwind restyles most screens, so it is left alone until someone redesigns on purpose.
+
+The L-G Lab is styled almost entirely with Tailwind classes, so it gets its own compiled stylesheet.
+`npm run css:lg-lab` compiles the classes its files use into `src/styles/lg-lab-utilities.css`, with every rule scoped to `:where(.lg-lab-page)` so no other page changes.
+`src/styles/lg-lab-utilities.test.ts` fails when an L-G Lab class changes and the file was not regenerated.
 
 `styles/ui-components.css` styles the shadcn Button and AlertDialog by their `data-slot`, `data-variant` and `data-size` attributes, because their Tailwind classes are among the missing ones.
 Its selectors use `:where()`, so a class passed by the caller still wins.

@@ -54,6 +54,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "css:lg-lab": "node scripts/lg-lab-utilities.mjs",
     "lint": "eslint src"
   }
 }

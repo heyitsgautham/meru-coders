@@ -6,6 +6,7 @@ import { LabFooter } from '@/components/lg-lab/page/LabFooter';
 import { LabHero } from '@/components/lg-lab/page/LabHero';
 import { LabSection, LoadingSpinner } from '@/components/lg-lab/page/LabSection';
 import { LabSummary } from '@/components/lg-lab/page/LabSummary';
+import '@/styles/lg-lab-utilities.css';
 
 // Lazy load heavy components
 const FibonacciVisualizer = lazy(() => import('@/components/lg-lab/FibonacciVisualizer'));
@@ -27,7 +28,7 @@ const LGLab: React.FC = () => {
   ];
 
   return (
-    <div style={{ 
+    <div className="lg-lab-page" style={{ 
       minHeight: '100vh', 
       backgroundColor: '#faf7f2',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
