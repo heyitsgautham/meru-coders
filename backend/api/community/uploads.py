@@ -21,6 +21,9 @@ def serve_upload(filepath):
     """
     try:
         # The filepath will be like: community/{user_id}/{filename}
+        # Only community post images; OCR, document and audio uploads share UPLOADS_DIR.
+        if not filepath.startswith('community/'):
+            return jsonify({'error': 'File not found'}), 404
         upload_dir = settings.UPLOADS_DIR
         return send_from_directory(upload_dir, filepath)
     except Exception as e:

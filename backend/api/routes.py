@@ -14,6 +14,7 @@ def register_routes(app):
     from backend.api.chatbot import chatbot_bp
     from backend.api.community import community_bp
     from backend.api.datasets import bp as datasets_bp
+    from backend.api.helpers import remove_request_uploads
     from backend.api.identify import bp as identify_bp
     from backend.api.ocr_routes import bp as ocr_bp
     from backend.api.speech import bp as speech_bp
@@ -21,6 +22,7 @@ def register_routes(app):
     from backend.auth.routes import auth_bp
     from backend.contributions.routes import contribution_bp
 
+    app.teardown_request(remove_request_uploads)
     app.register_blueprint(chatbot_bp)
     app.register_blueprint(auth_bp, url_prefix=f'{settings.API_PREFIX}/auth')
     app.register_blueprint(contribution_bp, url_prefix=f'{settings.API_PREFIX}/contributions')

@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Blueprint, current_app, jsonify, request
 from werkzeug.utils import secure_filename
 
-from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file
+from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file, request_upload_path
 from backend.config import settings
 from backend.utils.file_processor import FileProcessingError, get_processor
 
@@ -52,7 +52,7 @@ def identify_image():
                 # Decode and save
                 image_bytes = base64.b64decode(image_data)
                 filename = 'uploaded_image.png'
-                filepath = settings.PHOTOS_DIR / filename
+                filepath = request_upload_path(filename)
                 filepath.write_bytes(image_bytes)
             else:
                 return jsonify({'error': 'Missing image_data in JSON request'}), 400
@@ -69,7 +69,7 @@ def identify_image():
                 return jsonify({'error': f'Invalid file type. Allowed: {settings.ALLOWED_IMAGE_EXTENSIONS}'}), 400
 
             filename = secure_filename(file.filename)
-            filepath = settings.PHOTOS_DIR / filename
+            filepath = request_upload_path(filename)
             file.save(filepath)
 
             ocr_engine = request.form.get('ocr_engine', 'tesseract')
@@ -181,7 +181,7 @@ def ocr_extract():
             ), 400
 
         filename = secure_filename(file.filename)
-        filepath = settings.PHOTOS_DIR / filename
+        filepath = request_upload_path(filename)
         file.save(filepath)
 
         logger.info(f"OCR extraction requested for: {filename}")
@@ -252,7 +252,7 @@ def extract_file():
 
         # Save uploaded file
         filename = secure_filename(file.filename)
-        filepath = settings.TEXTS_DIR / filename
+        filepath = request_upload_path(filename)
         file.save(filepath)
 
         logger.info(f"Extracting text from file: {filename}")

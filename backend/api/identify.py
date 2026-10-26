@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Blueprint, current_app, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file
+from backend.api.helpers import ALLOWED_DOCUMENT_EXTENSIONS, allowed_file, request_upload_path
 from backend.api.schemas import DandakaRequest, IdentifyTextRequest
 from backend.api.validation import parse_body
 from backend.api.verse_search import CACHE_CLOSE_MATCH_THRESHOLD, find_cached_verse_match
@@ -300,7 +300,7 @@ def identify_file():
 
         # Save uploaded file
         filename = secure_filename(file.filename)
-        filepath = settings.TEXTS_DIR / filename
+        filepath = request_upload_path(filename)
         file.save(filepath)
 
         # Use file processor for text extraction

@@ -3,15 +3,12 @@
 import asyncio
 import logging
 import re
-import shutil
-import tempfile
 import uuid
-from pathlib import Path
 
 from flask import Blueprint, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-from backend.api.helpers import allowed_file
+from backend.api.helpers import allowed_file, request_upload_path
 from backend.api.schemas import TTSRequest
 from backend.api.validation import parse_body
 from backend.config import settings
@@ -302,10 +299,6 @@ def audio_transcribe():
 
     ALLOWED_AUDIO_EXTENSIONS = {'wav', 'mp3', 'webm', 'ogg', 'm4a', 'flac'}
 
-    # Each upload gets a private directory that is removed on every exit path. Saving under the
-    # client's filename in AUDIO_DIR let two "recording.wav" uploads overwrite each other, and
-    # left recordings downloadable from /tts/audio/ whenever an early return skipped the cleanup.
-    workdir = None
     try:
         # Handle multipart form data
         if 'audio_file' not in request.files:
@@ -319,8 +312,8 @@ def audio_transcribe():
             return jsonify({'success': False, 'error': f'Invalid file type. Allowed: {ALLOWED_AUDIO_EXTENSIONS}'}), 400
 
         filename = secure_filename(file.filename)
-        workdir = Path(tempfile.mkdtemp(prefix='asr_'))
-        filepath = workdir / filename
+        # Never AUDIO_DIR: /tts/audio/ serves that directory.
+        filepath = request_upload_path(filename)
         file.save(filepath)
 
         logger.info(f"Audio transcription requested for: {filename}")
@@ -332,7 +325,7 @@ def audio_transcribe():
 
         if file_ext in ('webm', 'ogg', 'm4a'):
             # Convert to WAV using ffmpeg
-            converted_filepath = workdir / 'converted.wav'
+            converted_filepath = filepath.with_name('converted.wav')
             logger.info(f"Converting {file_ext.upper()} to WAV: {converted_filepath}")
 
             try:
@@ -478,6 +471,3 @@ def audio_transcribe():
     except Exception as e:
         logger.exception(f"Error in audio_transcribe: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        if workdir:
-            shutil.rmtree(workdir, ignore_errors=True)
