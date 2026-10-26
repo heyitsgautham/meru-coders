@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,6 +38,8 @@ vi.mock('../../services/community', async (importOriginal) => {
 });
 
 const api = vi.mocked(community);
+
+const css = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
 function makePost(overrides: Partial<Post> = {}): Post {
   return {
@@ -331,6 +334,17 @@ describe('SearchBar', () => {
 
     await userEvent.click(screen.getByText('Meghaduta uses mandakranta'));
     expect(location()).toBe('/community/post/p3');
+  });
+
+  it('keeps its text clear of the magnifier icon', () => {
+    // Both global sheets force a 16px left padding on text inputs unless they opt out.
+    const sheets = css('../../index.css') + css('../../styles/globals.css');
+    const forced = [...sheets.matchAll(/([^{}]+)\{[^{}]*padding-left:[^;}]*!important/g)].map(m => m[1].replace(/\/\*[^]*?\*\//g, '').trim());
+    renderAt(<SearchBar />);
+    const input = screen.getByPlaceholderText('Search posts or users...');
+    expect(forced.length).toBeGreaterThan(0);
+    expect(forced.filter(selector => input.matches(selector))).toEqual([]);
+    expect(input.style.paddingLeft).toBe('44px');
   });
 
   it('says when nothing matches', async () => {

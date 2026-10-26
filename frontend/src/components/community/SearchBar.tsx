@@ -112,6 +112,7 @@ export function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
+          data-leading-icon
           style={{ paddingLeft: '44px', paddingRight: '40px' }}
         />
         {query && (
