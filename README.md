@@ -93,6 +93,7 @@ The other features switch on as you add configuration.
 | Retrieval-augmented chatbot answers | `uv sync --extra rag` and the index in `backend/data/chroma_db/` |
 | Voice input | `INDIC_ASR_URL` pointing at an IndicConformer service |
 | Admin login | `ADMIN_PASSWORD` |
+| Error reports to Sentry | `SENTRY_DSN`, plus optional `SENTRY_ENVIRONMENT` and `SENTRY_TRACES_SAMPLE_RATE` |
 
 ### Docker
 
@@ -158,6 +159,8 @@ Gemini is optional and only screens input and powers the chatbot.
 `backend/api/schemas.py` declares the JSON body of each POST route as a pydantic model, and `parse_body` in `backend/api/validation.py` validates it before the handler runs.
 A malformed body gets a 400 whose `error` names the first bad field and whose `details` lists every problem.
 Every response carries an `X-Request-ID` header that also appears on each log line, and `GET /metrics` serves Prometheus request counts and latency histograms.
+`LOG_FORMAT=json` writes one JSON object per log line.
+With `SENTRY_DSN` set, unhandled exceptions go to Sentry tagged with the same request ID, and no request bodies or cookies are sent.
 
 ### API endpoints
 

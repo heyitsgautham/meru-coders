@@ -44,6 +44,7 @@ dependencies = [
     # Chatbot
     "google-genai>=1.0.0",
     "prometheus-client>=0.20",
+    "sentry-sdk[flask]>=2.20",
 ]
 
 [project.optional-dependencies]

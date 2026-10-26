@@ -19,6 +19,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from backend.config import settings
+from backend.config.error_tracking import init_error_tracking
 from backend.config.logging_config import configure_logging, init_request_logging
 
 # Set up Google Cloud credentials BEFORE importing routes
@@ -58,6 +59,8 @@ def create_app():
 
     # Configure logging: text or JSON lines, each tagged with the request ID
     configure_logging(settings.LOG_LEVEL, settings.LOG_FORMAT)
+    if init_error_tracking(settings.SENTRY_DSN, settings.SENTRY_ENVIRONMENT, settings.SENTRY_TRACES_SAMPLE_RATE):
+        app.logger.info("Sentry error tracking enabled")
     init_request_logging(app)
 
     # Prometheus request counters and latency histograms at /metrics

@@ -78,6 +78,11 @@ class Settings:
     # "text" for humans, "json" for log collectors
     LOG_FORMAT = os.environ.get("LOG_FORMAT", "text")
 
+    # Error tracking: unset SENTRY_DSN keeps Sentry off
+    SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
+    SENTRY_ENVIRONMENT = os.environ.get("SENTRY_ENVIRONMENT", "development")
+    SENTRY_TRACES_SAMPLE_RATE = float(os.environ.get("SENTRY_TRACES_SAMPLE_RATE", "0"))
+
     # OCR configuration
     TESSERACT_LANGUAGES = ["san", "hin", "eng"]
     # Service account JSON for Google Cloud Vision OCR and Cloud TTS
