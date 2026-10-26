@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -11,8 +11,14 @@ export default function OAuthCallback() {
   const [error, setError] = useState<string | null>(null);
   const { completeOAuth } = useAuth();
   const navigate = useNavigate();
+  // completeOAuth changes identity whenever AuthProvider re-renders, which re-runs this effect.
+  // A second pass would spend the one-time code again, fail, and bounce a signed-in user to /login.
+  const started = useRef(false);
 
   useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+
     const handleOAuthCallback = async () => {
       try {
         console.info('[OAuthCallback] location', {
