@@ -4,8 +4,11 @@ import type { ReactNode } from 'react';
 import { AuthProvider, useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
 
+const flags = vi.hoisted(() => ({ supabaseConfigured: false }));
 vi.mock('../lib/supabase', () => ({
-  isSupabaseConfigured: false,
+  get isSupabaseConfigured() {
+    return flags.supabaseConfigured;
+  },
   supabase: { auth: { signInWithOAuth: vi.fn(), refreshSession: vi.fn() } },
 }));
 
@@ -26,8 +29,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  flags.supabaseConfigured = false;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+  vi.clearAllMocks();
 });
 
 async function renderAuth() {
@@ -172,6 +177,32 @@ describe('AuthProvider', () => {
       });
       expect(refreshed).toBe(false);
       expect(localStorage.getItem('refreshToken')).toBeNull();
+    });
+
+    it('renews a stored Google session when the app loads', async () => {
+      flags.supabaseConfigured = true;
+      localStorage.setItem(
+        'appUser',
+        JSON.stringify({ id: 'g1', username: 'gk', access_token: 'stale', refresh_token: 'old-refresh' }),
+      );
+      vi.mocked(supabase.auth.refreshSession).mockResolvedValue({
+        data: { session: { access_token: 'fresh', refresh_token: 'new-refresh' } },
+        error: null,
+      } as never);
+
+      const { result } = await renderAuth();
+
+      await waitFor(() => expect(result.current.user?.access_token).toBe('fresh'));
+      expect(supabase.auth.refreshSession).toHaveBeenCalledWith({ refresh_token: 'old-refresh' });
+      expect(localStorage.getItem('authToken')).toBe('fresh');
+      expect(localStorage.getItem('refreshToken')).toBe('new-refresh');
+    });
+
+    it('leaves password sessions alone on load', async () => {
+      flags.supabaseConfigured = true;
+      localStorage.setItem('appUser', JSON.stringify({ id: 'u1', username: 'gk', access_token: 'local-jwt' }));
+      await renderAuth();
+      expect(supabase.auth.refreshSession).not.toHaveBeenCalled();
     });
   });
 

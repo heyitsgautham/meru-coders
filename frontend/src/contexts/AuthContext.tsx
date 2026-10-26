@@ -51,6 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         username: parsed.username,
         isAdmin: parsed.is_admin,
       });
+      // A Google session's access token lasts an hour; renew it from the stored refresh token.
+      if (parsed.refresh_token && isSupabaseConfigured) {
+        void refreshSessionFor(parsed);
+      }
     }
     setLoading(false);
   }, []);
@@ -226,10 +230,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
   };
 
-  // Token refresh function using Supabase
-  const refreshToken = async (): Promise<boolean> => {
+  // Token refresh using Supabase. It takes the user explicitly because on mount the
+  // stored session is not in state yet.
+  const refreshSessionFor = async (current: AppUser | null): Promise<boolean> => {
     try {
-      const storedRefreshToken = localStorage.getItem('refreshToken');
+      const storedRefreshToken = current?.refresh_token || localStorage.getItem('refreshToken');
       if (!storedRefreshToken) {
         console.warn('[AuthContext] No refresh token available');
         return false;
@@ -253,9 +258,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const newAccessToken = data.session.access_token;
       const newRefreshToken = data.session.refresh_token;
 
-      if (user) {
+      if (current) {
         const updatedUser = {
-          ...user,
+          ...current,
           access_token: newAccessToken,
           refresh_token: newRefreshToken,
         };
@@ -272,15 +277,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Auto-refresh token on mount if user exists
-  useEffect(() => {
-    if (user?.access_token) {
-      // Try to refresh token on app load to ensure fresh session
-      refreshToken().catch(() => {
-        console.warn('[AuthContext] Auto-refresh failed, user may need to re-login');
-      });
-    }
-  }, []); // Only run once on mount
+  const refreshToken = () => refreshSessionFor(user);
 
   const value = {
     user,
