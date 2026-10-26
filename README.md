@@ -118,6 +118,7 @@ cd frontend
 npm run lint
 npm run typecheck
 npm test                         # vitest
+npm run test:coverage            # vitest with the coverage floor from vitest.config.ts
 npm run build
 ```
 

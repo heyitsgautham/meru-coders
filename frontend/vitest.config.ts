@@ -19,6 +19,8 @@ export default mergeConfig(
         reporter: ['text-summary', 'lcov'],
         include: ['src/**/*.{ts,tsx}'],
         exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/vite-env.d.ts', 'src/components/ui/**'],
+        // A floor a few points under the measured numbers; raise it as tests land.
+        thresholds: { lines: 57, statements: 56, functions: 54, branches: 46 },
       },
     },
   }),

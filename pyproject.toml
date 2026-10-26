@@ -89,7 +89,7 @@ omit = [
 [tool.coverage.report]
 show_missing = false
 skip_empty = true
-fail_under = 43
+fail_under = 58
 
 [tool.ruff]
 target-version = "py311"
