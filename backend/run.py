@@ -13,12 +13,14 @@ from pathlib import Path
 # Add project root to Python path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from backend.app import create_app, socketio
+from backend.app import create_app
 
 
 def main():
     """Start the Flask REST API server with WebSocket support."""
     app = create_app()
+    # create_app sets this; a module-level import of backend.app.socketio would still be None.
+    socketio = app.socketio
 
     # Get port from environment variable (Cloud Run) or default to 5000 (local dev)
     port = int(os.environ.get('PORT', 5000))
