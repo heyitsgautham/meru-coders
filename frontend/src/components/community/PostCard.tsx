@@ -319,11 +319,14 @@ export function PostCard({ post, onPostDeleted, onPostUpdated }: PostCardProps) 
             </div>
 
             {showComments && (
-              <CommentSection
-                postId={post.id}
-                onCommentAdded={handleCommentAdded}
-                onCommentDeleted={handleCommentDeleted}
-              />
+              // Clicks inside the comments belong to them, not to the card that opens the post page.
+              <div onClick={e => e.stopPropagation()}>
+                <CommentSection
+                  postId={post.id}
+                  onCommentAdded={handleCommentAdded}
+                  onCommentDeleted={handleCommentDeleted}
+                />
+              </div>
             )}
           </div>
         </div>
