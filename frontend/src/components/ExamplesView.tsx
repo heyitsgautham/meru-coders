@@ -174,8 +174,19 @@ export function ExamplesView({ onSelectExample }: ExamplesViewProps) {
       {/* Dandaka Examples Section */}
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text-main)] mb-4 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-            <span className="text-white text-sm font-bold">द</span>
+          {/* Inline styles: the gradient utilities are missing from the precompiled index.css. */}
+          <div
+            className="flex items-center justify-center"
+            style={{
+              flexShrink: 0,
+              width: '32px',
+              height: '32px',
+              borderRadius: '9999px',
+              background: 'linear-gradient(135deg, #fbbf24, #f97316, #ef4444)',
+              boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+            }}
+          >
+            <span style={{ color: '#fff', fontSize: '14px', fontWeight: 700 }}>द</span>
           </div>
           Daṇḍaka Examples
         </h2>
