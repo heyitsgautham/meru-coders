@@ -61,6 +61,16 @@
   margin-top: 1.25rem;
 }
 
+/* Cards side by side in a grid line up by their tops; the grid's gap spaces them. */
+.section-grid > .card + .card {
+  margin-top: 0;
+}
+
+/* A card after a grid of cards keeps the same vertical rhythm as stacked cards. */
+.section-grid + .card {
+  margin-top: 1.25rem;
+}
+
 .card-header {
   display: flex;
   align-items: center;
@@ -127,6 +137,12 @@
   text-align: center;
   padding: 2rem 1rem;
   color: var(--text-muted);
+}
+
+/* Lucide icons are inline SVGs, which mx-auto alone cannot centre. */
+.empty-state > svg {
+  display: block;
+  margin: 0 auto 0.75rem;
 }
 
 .empty-state .empty-title {
