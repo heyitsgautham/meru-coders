@@ -8,6 +8,8 @@ from supabase import create_client
 
 from ..config.settings import settings
 
+NOT_CONFIGURED = "Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY."
+
 
 class ContributionModel:
     """Handle user contributions and admin approval workflow"""
@@ -33,12 +35,8 @@ class ContributionModel:
         """
         try:
             if not self.supabase:
-                # Dev fallback: accept and echo success without persisting
-                return {
-                    'success': True,
-                    'contribution_id': f"local-{user_id}",
-                    'message': 'Contribution accepted (local dev fallback)',
-                }
+                # Nowhere to store it: say so instead of reporting a success that drops the contribution.
+                return {'success': False, 'error': NOT_CONFIGURED}
             contribution = {
                 'contribution_type': contribution_type,
                 'data': data,
@@ -77,7 +75,7 @@ class ContributionModel:
             if not self.supabase:
                 return {
                     'success': False,
-                    'error': 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.',
+                    'error': NOT_CONFIGURED,
                     'contributions': [],
                 }
             result = (
@@ -113,7 +111,7 @@ class ContributionModel:
         """
         try:
             if not self.supabase:
-                return {'success': True, 'message': 'Contribution approved (local dev fallback)'}
+                return {'success': False, 'error': NOT_CONFIGURED}
             # Get the contribution
             contribution = (
                 self.supabase.table('pending_contributions').select('*').eq('id', contribution_id).single().execute()
@@ -170,7 +168,7 @@ class ContributionModel:
         """
         try:
             if not self.supabase:
-                return {'success': True, 'message': 'Contribution rejected (local dev fallback)'}
+                return {'success': False, 'error': NOT_CONFIGURED}
             reviewed_by = admin_id if (self.supabase and self._valid_reviewer_id(admin_id)) else None
             result = (
                 self.supabase.table('pending_contributions')
@@ -231,7 +229,7 @@ class ContributionModel:
             if not self.supabase:
                 return {
                     'success': False,
-                    'error': 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.',
+                    'error': NOT_CONFIGURED,
                     'contributions': [],
                 }
 

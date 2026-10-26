@@ -1,53 +1,44 @@
-"""Integration test for contribution submission endpoint.
-
-Ensures the /api/contributions/submit route exists, honors auth, and returns a JSON
-payload rather than failing with 404/401. Uses a locally signed JWT so
-it works without Supabase credentials.
-"""
+"""The contribution routes without Supabase, as on a fresh clone."""
 
 import jwt
+import pytest
 
-from backend.app import create_app
 from backend.config import settings
+from backend.contributions import routes
+from backend.models.contribution import NOT_CONFIGURED
+
+VERSE = {
+    'contribution_type': 'verse',
+    'data': {'verse_text': 'धर्मक्षेत्रे कुरुक्षेत्रे', 'meter': 'Anushtubh', 'source': 'test-suite'},
+}
 
 
-def _auth_header():
-    token = jwt.encode(
-        {'sub': 'test-user', 'username': 'test-user'},
-        settings.SECRET_KEY,
-        algorithm='HS256',
-    )
+def _auth_header(**claims):
+    token = jwt.encode({'sub': 'test-user', 'username': 'test-user', **claims}, settings.SECRET_KEY, algorithm='HS256')
     return {'Authorization': f'Bearer {token}'}
 
 
-def test_submit_contribution_route_accessible():
-    app = create_app()
-    client = app.test_client()
+@pytest.fixture
+def no_storage(app, monkeypatch):
+    app.supabase = None
+    app.config['SUPABASE_CLIENT'] = None
+    monkeypatch.setattr(routes.contribution_model, 'supabase', None)
+    with app.test_client() as client:
+        yield client
 
-    payload = {
-        'contribution_type': 'verse',
-        'data': {
-            'verse_text': 'धर्मक्षेत्रे कुरुक्षेत्रे',
-            'meter': 'Anushtubh',
-            'source': 'test-suite',
-            'notes': 'integration sanity',
-        },
-    }
 
-    resp = client.post(
-        '/api/contributions/submit',
-        headers={**_auth_header(), 'Content-Type': 'application/json'},
-        json=payload,
-    )
+def test_a_submission_with_nowhere_to_go_is_refused_not_dropped(no_storage):
+    resp = no_storage.post('/api/contributions/submit', headers=_auth_header(), json=VERSE)
+    assert resp.status_code == 400
+    assert resp.get_json() == {'success': False, 'error': NOT_CONFIGURED}
 
-    body = resp.get_json()
 
-    # Route should exist and return a JSON body with a success flag
-    assert resp.status_code not in (404, 405)
-    assert body is not None
-    assert 'success' in body
+@pytest.mark.parametrize('action', ['approve', 'reject'])
+def test_a_review_with_nowhere_to_go_is_refused(no_storage, action):
+    resp = no_storage.post(f'/api/contributions/admin/{action}/c1', headers=_auth_header(is_admin=True))
+    assert resp.status_code == 400
+    assert resp.get_json()['error'] == NOT_CONFIGURED
 
-    # When Supabase is not configured we accept via dev fallback, otherwise real storage should succeed.
-    if not body.get('success'):
-        assert resp.status_code in (400, 500)
-        assert 'error' in body
+
+def test_submitting_needs_a_login(no_storage):
+    assert no_storage.post('/api/contributions/submit', json=VERSE).status_code == 401
