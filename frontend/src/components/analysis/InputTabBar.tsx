@@ -42,7 +42,7 @@ export function ModeSelector({
 }) {
   return (
     <div className="mt-8 flex flex-col items-center">
-      <div className="mode-selector inline-flex rounded-xl border-2 border-[var(--color-border-subtle)] p-1.5 bg-[#faf7f4] shadow-sm">
+      <div className="mode-choice-grid inline-flex rounded-xl border-2 border-[var(--color-border-subtle)] p-1.5 bg-[#faf7f4] shadow-sm">
         {(Object.keys(MODE_INFO) as IdentificationMode[]).map((option) => (
           <button
             key={option}

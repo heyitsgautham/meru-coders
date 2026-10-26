@@ -3327,14 +3327,14 @@ html, body {
 /* Phones: the four identification modes sit two by two. In one row each button got about 80px,
    and the inherited overflow-wrap split labels mid-word ("Classica" / "l Mode"). */
 @media (max-width: 480px) {
-  .mode-selector {
+  .mode-choice-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
     width: 100%;
   }
 
-  .mode-selector > button {
+  .mode-choice-grid > button {
     padding: 10px 8px;
     overflow-wrap: normal;
   }

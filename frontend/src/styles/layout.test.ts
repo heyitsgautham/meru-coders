@@ -43,7 +43,7 @@ describe('identification modes on phones', () => {
   it('sit two by two with whole-word labels', () => {
     const css = read('src/index.css');
     const phone = css.slice(css.lastIndexOf('@media (max-width: 480px)'));
-    expect(phone).toMatch(/\.mode-selector \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
-    expect(phone).toMatch(/\.mode-selector > button \{[^}]*overflow-wrap: normal;/);
+    expect(phone).toMatch(/\.mode-choice-grid \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
+    expect(phone).toMatch(/\.mode-choice-grid > button \{[^}]*overflow-wrap: normal;/);
   });
 });
