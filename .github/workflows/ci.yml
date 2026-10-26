@@ -59,6 +59,9 @@ jobs:
       - name: Validate meter tables and verse corpora
         # Fails on any defect not recorded in backend/pipeline/known_issues.json.
         run: uv run python -m backend.pipeline.validate
+      - name: Derived datasets match a fresh build
+        # Rebuilds rigveda_with_meters_complete.csv and pragatha_pankti_verses.csv and compares bytes.
+        run: uv run python -m backend.pipeline.build --check
       - name: Corpus accuracy
         # Accuracy floors on the 147-verse classical benchmark and the labelled Rigveda.
         run: uv run pytest -m corpus

@@ -131,7 +131,15 @@ The suite in `backend/tests/` runs without network access or API keys.
 ## Data pipeline
 
 The engine and the API read committed datasets only: meter definition CSVs in `backend/data/`, verse corpora in `backend/source/`, and a generated Rigveda ground-truth module in `backend/evaluation/data/`.
-`backend/pipeline/` checks them and builds the generated one, and the Data quality CI job runs those checks on every push.
+`backend/pipeline/` checks them and builds the generated ones, and the Data quality CI job runs those checks on every push.
+
+```bash
+uv run python -m backend.pipeline.build --check   # every derived dataset matches a fresh build
+uv run python -m backend.pipeline.build           # validate the inputs, then regenerate them
+uv run python -m backend.pipeline.validate        # schema and content checks against known_issues.json
+```
+
+`backend/tests/pipeline/test_data_quality.py` pins each dataset's schema and row count, rejects duplicate verses, and holds the meter tables' known defects to their recorded counts.
 [docs/data-pipeline.md](docs/data-pipeline.md) traces each file to its origin and its readers, lists the checks, and records the defects the meter tables still carry.
 
 ## Architecture

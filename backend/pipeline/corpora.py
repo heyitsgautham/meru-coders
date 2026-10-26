@@ -75,8 +75,21 @@ def is_compound_meter(meter: str) -> bool:
 
 
 def derive_pragatha_pankti(rows: Iterable[dict[str, str]]) -> list[dict[str, str]]:
-    """The Rigveda rows that belong in pragatha_pankti_verses.csv."""
-    return [row for row in rows if is_compound_meter(row["meter"])]
+    """The Rigveda rows of pragatha_pankti_verses.csv, in the file's order.
+
+    The Pragātha rows come first, then the Paṅkti rows. Within each group the rows sort
+    by mandala compared as text ("10" before "6"), then by sukta and rik as numbers.
+    That is how the committed file was first written; keeping it lets the build
+    reproduce the file byte for byte, and the golden snapshot samples it by position.
+    """
+    rows = list(rows)
+
+    def order(row: dict[str, str]) -> tuple[str, int, int]:
+        return row["mandala"], int(row["sukta"]), int(row["rik"])
+
+    return [
+        row for marker in COMPOUND_METER_MARKERS for row in sorted((r for r in rows if marker in r["meter"]), key=order)
+    ]
 
 
 def check_rigveda(data_dir: Path, source_dir: Path) -> list[Issue]:
@@ -86,9 +99,13 @@ def check_rigveda(data_dir: Path, source_dir: Path) -> list[Issue]:
         issues.append(Issue(RIGVEDA_SOURCE, 1, "header", "header", f"expected {RIGVEDA_COLUMNS}, found {header}"))
     issues.extend(check_rigveda_rows(RIGVEDA_SOURCE, rows))
 
-    if (data_dir / RIGVEDA_COPY).read_bytes() != (source_dir / RIGVEDA_SOURCE).read_bytes():
+    copy = data_dir / RIGVEDA_COPY
+    if not copy.exists() or copy.read_bytes() != (source_dir / RIGVEDA_SOURCE).read_bytes():
         issues.append(Issue(RIGVEDA_COPY, 0, "file", "copy_drift", f"differs from source/{RIGVEDA_SOURCE}"))
 
+    if not (data_dir / PRAGATHA_PANKTI).exists():
+        issues.append(Issue(PRAGATHA_PANKTI, 0, "file", "missing_file", "run python -m backend.pipeline.build"))
+        return issues
     _, compound = read_csv(data_dir / PRAGATHA_PANKTI)
     expected = {rik_key(row): row for row in derive_pragatha_pankti(rows)}
     actual = {rik_key(row): row for row in compound}
