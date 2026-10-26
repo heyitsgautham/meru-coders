@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getAPIURL } from '../services/api';
+import { approveContribution, getPendingContributions, rejectContribution } from '../services/api';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Header } from './Header';
@@ -64,14 +64,7 @@ export default function AdminPanel() {
   const fetchContributions = async () => {
     try {
       setLoading(true);
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${getAPIURL()}/admin/pending`, {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-      const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.message || body.error || 'Failed to load');
+      const body = await getPendingContributions<Contribution>();
       setContributions(body.contributions || []);
     } catch (err: any) {
       setError(err.message);
@@ -80,22 +73,11 @@ export default function AdminPanel() {
     }
   };
 
-  const handleApprove = async (contributionId: string, contribution: Contribution) => {
+  const handleApprove = async (contributionId: string) => {
     try {
       setActionLoading(contributionId);
       
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${getAPIURL()}/admin/approve/${contributionId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ notes: contribution.data?.notes }),
-      });
-
-      const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.message || body.error || 'Approve failed');
+      await approveContribution(contributionId);
 
       // Refresh list
       await fetchContributions();
@@ -115,18 +97,7 @@ export default function AdminPanel() {
     try {
       setActionLoading(contributionId);
       
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const res = await fetch(`${getAPIURL()}/admin/reject/${contributionId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ notes: null }),
-      });
-
-      const body = await res.json();
-      if (!res.ok || !body.success) throw new Error(body.message || body.error || 'Reject failed');
+      await rejectContribution(contributionId);
 
       // Refresh list
       await fetchContributions();
@@ -273,7 +244,7 @@ export default function AdminPanel() {
                               size="sm"
                               variant="default"
                               className="btn-accept"
-                              onClick={() => handleApprove(contrib.id, contrib)}
+                              onClick={() => handleApprove(contrib.id)}
                               disabled={actionLoading === contrib.id}
                             >
                               {actionLoading === contrib.id ? (
@@ -364,7 +335,7 @@ export default function AdminPanel() {
               <Button
                 variant="default"
                 className="bg-[#2f9e44] hover:bg-[#258a39] text-white"
-                onClick={() => handleApprove(viewing.id, viewing)}
+                onClick={() => handleApprove(viewing.id)}
                 disabled={actionLoading === viewing.id}
               >
                 {actionLoading === viewing.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="mr-1 h-4 w-4" />} Accept

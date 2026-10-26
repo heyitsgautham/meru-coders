@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { useAuth } from '../contexts/AuthContext';
-import { getAPIURL } from '../services/api';
+import { submitContribution } from '../services/api';
 import '../styles/contribute.css';
 
 export type ContributionKind = 'verse' | 'meter';
@@ -73,21 +73,7 @@ export default function ContributionForm() {
             notes,
           };
 
-      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const payload = buildContributionPayload(contributionType, contributionData);
-      const res = await fetch(`${getAPIURL()}/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const body = await res.json();
-      if (!res.ok || !body.success) {
-        throw new Error(body.message || body.error || 'Failed to submit contribution');
-      }
+      await submitContribution(buildContributionPayload(contributionType, contributionData));
 
       setSuccess(true);
       

@@ -96,7 +96,8 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       },
     });
 
-    const data = await response.json();
+    // A 404 or a proxy error page is HTML, not JSON; report the status instead of a parse error.
+    const data = await response.json().catch(() => ({ error: `Request failed (HTTP ${response.status})` }));
 
     if (!response.ok) {
       throw new Error(data.error || 'Request failed');
@@ -366,6 +367,40 @@ export function getTTSAudioURL(filename: string): string {
  */
 export async function getMyContributions(): Promise<{ success: boolean; contributions: any[]; error?: string }> {
   return request('/contributions/my-contributions');
+}
+
+// The server mounts every contribution route, the admin review queue included, under /contributions.
+type Reply = { success: boolean; error?: string; message?: string };
+
+async function contributionRequest<T extends Reply>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const data = await request<T>(`/contributions${endpoint}`, options);
+  if (!data.success) {
+    throw new Error(data.message || data.error || 'Request failed');
+  }
+  return data;
+}
+
+export function submitContribution(payload: {
+  contribution_type: 'verse' | 'meter_definition';
+  data: Record<string, unknown>;
+}): Promise<Reply> {
+  return contributionRequest('/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getPendingContributions<C>(): Promise<Reply & { contributions?: C[] }> {
+  return contributionRequest('/admin/pending');
+}
+
+export function approveContribution(contributionId: string): Promise<Reply> {
+  return contributionRequest(`/admin/approve/${encodeURIComponent(contributionId)}`, { method: 'POST' });
+}
+
+export function rejectContribution(contributionId: string): Promise<Reply> {
+  return contributionRequest(`/admin/reject/${encodeURIComponent(contributionId)}`, { method: 'POST' });
 }
 
 /**

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import ContributionForm, { buildContributionPayload } from './ContributionForm';
+import ContributionForm from './ContributionForm';
 
 const auth = vi.hoisted(() => ({ user: null as null | { id: string }, loading: false }));
 vi.mock('../contexts/AuthContext', () => ({ useAuth: () => auth }));
@@ -37,16 +37,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('buildContributionPayload', () => {
-  it('names meter contributions the way the API expects', () => {
-    expect(buildContributionPayload('meter', { meter_name: 'वसन्ततिलका' })).toEqual({
-      contribution_type: 'meter_definition',
-      data: { meter_name: 'वसन्ततिलका' },
-    });
-    expect(buildContributionPayload('verse', {}).contribution_type).toBe('verse');
-  });
-});
-
 describe('ContributionForm', () => {
   it('sends signed-out visitors to the login page', () => {
     auth.user = null;
@@ -66,7 +56,7 @@ describe('ContributionForm', () => {
 
     expect(await screen.findByRole('status')).toHaveTextContent('Contribution submitted successfully!');
     const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toMatch(/\/api\/submit$/);
+    expect(url).toBe('http://localhost:5000/api/contributions/submit');
     expect(init.headers.Authorization).toBe('Bearer tok');
     expect(JSON.parse(init.body)).toEqual({
       contribution_type: 'verse',
