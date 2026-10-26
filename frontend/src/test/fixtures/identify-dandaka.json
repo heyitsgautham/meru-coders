@@ -1,0 +1,37 @@
+{
+ "result": {
+  "dandaka": {
+   "average_density": 0.312,
+   "is_dandaka": true,
+   "total_aksaras": 32,
+   "total_viramas": 10,
+   "units": [
+    {
+     "aksara_count": 16,
+     "classification": "Saṃkīrṇa-daṇḍakam",
+     "density": 0.375,
+     "text": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः",
+     "virama_count": 6
+    },
+    {
+     "aksara_count": 16,
+     "classification": "Saṃkīrṇa-daṇḍakam",
+     "density": 0.25,
+     "text": "मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय",
+     "virama_count": 4
+    }
+   ]
+  },
+  "mode": "dandaka",
+  "rajashyamala": {
+   "confidence": 0.0,
+   "is_rajashyamala": false,
+   "matched_keywords": [],
+   "semantic_markers": [],
+   "structure_type": "unknown",
+   "title_match": false
+  },
+  "text_type": "dandaka"
+ },
+ "success": true
+}

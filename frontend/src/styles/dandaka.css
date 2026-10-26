@@ -1,0 +1,346 @@
+/* Daṇḍaka / Rājaśyāmalā results (DandakaResultsDisplay). Every class is prefixed with dandaka-. */
+
+.dandaka-results-container {
+  margin-top: 40px;
+  padding: 32px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fffbeb, #fff7ed);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+  color: #78350f;
+}
+
+/* Colour per class, shared by the banner, badges and legend dots */
+.dandaka-tone-blue { --tone-from: #3b82f6; --tone-to: #1d4ed8; --tone-soft: #dbeafe; --tone-ink: #1e40af; --tone-line: #93c5fd; }
+.dandaka-tone-green { --tone-from: #22c55e; --tone-to: #15803d; --tone-soft: #dcfce7; --tone-ink: #166534; --tone-line: #86efac; }
+.dandaka-tone-orange { --tone-from: #f97316; --tone-to: #c2410c; --tone-soft: #ffedd5; --tone-ink: #9a3412; --tone-line: #fdba74; }
+.dandaka-tone-purple { --tone-from: #a855f7; --tone-to: #7e22ce; --tone-soft: #f3e8ff; --tone-ink: #6b21a8; --tone-line: #d8b4fe; }
+.dandaka-tone-gray { --tone-from: #6b7280; --tone-to: #374151; --tone-soft: #f3f4f6; --tone-ink: #1f2937; --tone-line: #d1d5db; }
+
+.dandaka-banner {
+  margin-bottom: 32px;
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: linear-gradient(to right, var(--tone-from), var(--tone-to));
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.12);
+  color: #fff;
+  text-align: center;
+}
+
+.dandaka-banner__label {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.dandaka-banner__title {
+  margin: 0 0 6px;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.dandaka-banner__range {
+  margin: 0;
+  font-size: 1.05rem;
+  opacity: 0.9;
+}
+
+.dandaka-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.dandaka-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.dandaka-header p {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #b45309;
+}
+
+.dandaka-card {
+  padding: 28px;
+  border: 2px solid #fcd34d;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08);
+}
+
+.dandaka-card + .dandaka-card {
+  margin-top: 28px;
+}
+
+.dandaka-card--purple { border-color: #d8b4fe; }
+.dandaka-card--plain { border-color: #d1d5db; text-align: center; }
+
+.dandaka-card__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.dandaka-card__title svg {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  color: #d97706;
+}
+
+.dandaka-card--purple .dandaka-card__title svg { color: #9333ea; }
+
+.dandaka-card__title h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.dandaka-card--purple .dandaka-card__title h3 { color: #581c87; }
+
+.dandaka-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dandaka-stat {
+  padding: 18px 12px;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  background: #fffbeb;
+  text-align: center;
+}
+
+.dandaka-stat__label {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  color: #b45309;
+}
+
+.dandaka-stat__value {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #78350f;
+}
+
+.dandaka-table-wrap {
+  overflow-x: auto;
+}
+
+.dandaka-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.dandaka-table th {
+  padding: 12px 14px;
+  border-bottom: 2px solid #fcd34d;
+  background: #fef3c7;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: #78350f;
+  white-space: nowrap;
+}
+
+.dandaka-table th:first-child,
+.dandaka-table td:first-child {
+  text-align: left;
+}
+
+.dandaka-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #fde68a;
+  text-align: center;
+  color: #374151;
+}
+
+.dandaka-table tbody tr:hover {
+  background: #fffbeb;
+}
+
+.dandaka-table__unit {
+  font-size: 1.05rem;
+}
+
+.dandaka-table__count {
+  font-weight: 600;
+  color: #111827;
+}
+
+.dandaka-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--tone-line);
+  border-radius: 9999px;
+  background: var(--tone-soft);
+  color: var(--tone-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dandaka-legend {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.dandaka-legend h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.dandaka-legend h4 svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dandaka-legend__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.dandaka-legend__grid > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dandaka-dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--tone-from);
+}
+
+.dandaka-stack > * + * {
+  margin-top: 18px;
+}
+
+.dandaka-field-label {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.dandaka-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dandaka-meter__track {
+  flex: 1;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: #e5e7eb;
+}
+
+.dandaka-meter__fill {
+  height: 100%;
+  background: linear-gradient(to right, #c084fc, #9333ea);
+  transition: width 0.5s;
+}
+
+.dandaka-meter__value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #581c87;
+}
+
+.dandaka-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+  background: #faf5ff;
+  color: #6b21a8;
+  font-weight: 500;
+}
+
+.dandaka-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dandaka-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+}
+
+.dandaka-chip--match { background: #dcfce7; color: #166534; font-weight: 600; }
+.dandaka-chip--purple { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+.dandaka-chip--amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+
+.dandaka-note {
+  padding: 16px 18px;
+  border-left: 4px solid #fbbf24;
+  border-radius: 4px;
+  background: #fffbeb;
+}
+
+.dandaka-note p,
+.dandaka-unclassified {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #78350f;
+}
+
+.dandaka-unclassified {
+  color: #4b5563;
+}
+
+@media (max-width: 640px) {
+  .dandaka-results-container {
+    padding: 16px;
+  }
+
+  .dandaka-banner__title {
+    font-size: 1.6rem;
+  }
+
+  .dandaka-card {
+    padding: 18px;
+  }
+
+  .dandaka-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .dandaka-legend__grid {
+    grid-template-columns: 1fr;
+  }
+}
