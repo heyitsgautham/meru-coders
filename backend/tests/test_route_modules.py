@@ -132,3 +132,21 @@ class TestOcrRoutes:
         resp = client.post("/api/file/extract", data=data, content_type="multipart/form-data")
         assert resp.status_code == 200
         assert GITA_LINE in resp.get_json()["text"]
+
+
+class TestResultDownload:
+    def test_identify_returns_a_downloadable_json_result(self, client):
+        body = client.post("/api/identify/text", json={"text": GITA_LINE, "text_mode": "verse"}).get_json()
+        assert body["result_path"].startswith("result_") and body["result_path"].endswith(".json")
+        download = client.get(f"/api/download/{body['result_path']}")
+        assert download.status_code == 200
+        assert "line" in download.get_json()
+
+    def test_downloadable_result_accepts_every_path_shape(self):
+        from pathlib import Path
+
+        from backend.api.identify import downloadable_result
+
+        assert downloadable_result({"json": "r.json", "txt": "r.txt"}) == "r.json"
+        assert downloadable_result(Path("/tmp/r.json")) == "r.json"
+        assert downloadable_result(None) is None

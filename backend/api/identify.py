@@ -20,6 +20,15 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('identify', __name__)
 
 
+def downloadable_result(paths):
+    """File name /download serves for an analysis: the saved JSON result, or None if nothing was saved."""
+    if isinstance(paths, dict):
+        return paths.get('json')
+    if isinstance(paths, Path):
+        return paths.name
+    return paths or None
+
+
 @bp.route(f'{settings.API_PREFIX}/identify/text', methods=['POST'])
 def identify_text():
     """
@@ -176,12 +185,7 @@ def identify_text():
         summary_formatted = current_app.chanda.format_summary(summary)
 
         # Handle result path
-        result_path = None
-        if result.get('path'):
-            if isinstance(result['path'], Path):
-                result_path = result['path'].name
-            else:
-                result_path = str(result['path'])
+        result_path = downloadable_result(result.get('path'))
 
         # Log timing summary
         if timing_info['cache_hit']:
@@ -342,12 +346,7 @@ def identify_file():
         summary_formatted = current_app.chanda.format_summary(summary)
 
         # Handle result path
-        result_path = None
-        if result.get('path'):
-            if isinstance(result['path'], Path):
-                result_path = result['path'].name
-            else:
-                result_path = str(result['path'])
+        result_path = downloadable_result(result.get('path'))
 
         return jsonify(
             {
