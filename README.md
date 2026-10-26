@@ -70,6 +70,7 @@ npm run dev
 ```
 
 Without uv, `pip install -r backend/requirements.txt` installs the same pinned versions; that file is exported from `uv.lock`.
+[`frontend/README.md`](frontend/README.md) covers the client's configuration, layout, styling and tests.
 
 Check that the API answers:
 
