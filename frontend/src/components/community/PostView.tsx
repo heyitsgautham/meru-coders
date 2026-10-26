@@ -114,6 +114,7 @@ export function PostView() {
               <PostCard 
                 post={post} 
                 onPostUpdated={handlePostUpdated}
+                onPostDeleted={handleBack}
               />
             </div>
           )}
