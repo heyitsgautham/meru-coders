@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { countPatterns, patternsOfMatras } from './lgPatterns';
 
 interface Pattern {
   pattern: string;
@@ -11,49 +12,10 @@ const FibonacciVisualizer: React.FC = () => {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
   const [fibSequence, setFibSequence] = useState<number[]>([]);
 
-  // Generate all possible L-G patterns for a given length
-  const generatePatterns = (n: number): Pattern[] => {
-    if (n === 0) return [{ pattern: '', length: 0 }];
-    if (n === 1) return [{ pattern: 'L', length: 1 }, { pattern: 'G', length: 2 }];
-    
-    const result: Pattern[] = [];
-    const prev1 = generatePatterns(n - 1);
-    const prev2 = generatePatterns(n - 2);
-    
-    // Add L to all patterns of length n-1
-    prev1.forEach(p => {
-      if (p.length < n) {
-        result.push({ pattern: p.pattern + 'L', length: p.length + 1 });
-      }
-    });
-    
-    // Add G to all patterns of length n-2
-    prev2.forEach(p => {
-      if (p.length < n) {
-        result.push({ pattern: p.pattern + 'G', length: p.length + 2 });
-      }
-    });
-    
-    // Filter patterns that exactly match the target length
-    return result.filter(p => p.length === n);
-  };
-
-  // Calculate Fibonacci sequence up to n
-  const calculateFibonacci = (n: number): number[] => {
-    if (n <= 0) return [];
-    if (n === 1) return [2];
-    
-    const fib = [2, 3]; // Start with F(1)=2, F(2)=3 for L-G patterns
-    for (let i = 2; i < n; i++) {
-      fib.push(fib[i - 1] + fib[i - 2]);
-    }
-    return fib.slice(0, n);
-  };
-
   useEffect(() => {
-    const generated = generatePatterns(selectedLength);
-    setPatterns(generated);
-    setFibSequence(calculateFibonacci(8));
+    setPatterns(patternsOfMatras(selectedLength).map((pattern) => ({ pattern, length: selectedLength })));
+    // Patterns for 1 to 8 mātrās
+    setFibSequence(Array.from({ length: 8 }, (_, i) => countPatterns(i + 1)));
   }, [selectedLength]);
 
   return (
@@ -63,7 +25,7 @@ const FibonacciVisualizer: React.FC = () => {
         
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select chandas length (syllables): {selectedLength}
+            Select length in mātrās: {selectedLength}
           </label>
           <input
             type="range"
@@ -114,22 +76,37 @@ const FibonacciVisualizer: React.FC = () => {
       </div>
 
       {/* Fibonacci Sequence Visualization */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border-2 border-green-300">
+      {/* Inline styles: the gradient, wrap and baseline utilities are not in the precompiled index.css. */}
+      <div
+        className="p-6 rounded-lg border-2"
+        style={{ background: 'linear-gradient(to right, #f0fdf4, #ecfdf5)', borderColor: '#86efac' }}
+      >
         <h3 className="font-bold text-lg mb-4">Fibonacci Sequence of L-G Combinations</h3>
-        <div className="flex flex-wrap items-end gap-3 justify-center">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'center', gap: '12px' }}>
           {fibSequence.map((num, idx) => (
             <motion.div
               key={idx}
-              initial={{ height: 0 }}
-              animate={{ height: `${Math.min(num * 8, 200)}px` }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1, type: 'spring' }}
-              className="relative"
             >
               <div
-                className="w-16 bg-gradient-to-t from-green-600 to-emerald-400 rounded-t-lg flex flex-col items-center justify-end pb-2"
-                style={{ height: `${Math.min(num * 8, 200)}px` }}
+                data-testid="fib-bar"
+                style={{
+                  width: '64px',
+                  height: `${Math.min(28 + num * 5, 200)}px`,
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'center',
+                  paddingBottom: '8px',
+                  borderRadius: '8px 8px 0 0',
+                  background: 'linear-gradient(to top, #16a34a, #34d399)',
+                  color: '#fff',
+                  fontSize: '18px',
+                  fontWeight: 700,
+                }}
               >
-                <span className="text-white font-bold text-lg">{num}</span>
+                {num}
               </div>
               <div className="text-center mt-2 text-sm font-medium text-gray-700">
                 n={idx + 1}
@@ -137,8 +114,8 @@ const FibonacciVisualizer: React.FC = () => {
             </motion.div>
           ))}
         </div>
-        <p className="text-center mt-6 text-gray-700">
-          Number of L-G patterns: <strong>2, 3, 5, 8, 13, 21, 34, 55...</strong> (Fibonacci!)
+        <p className="text-center text-gray-700" style={{ marginTop: '24px' }}>
+          Number of L-G patterns: <strong>1, 2, 3, 5, 8, 13, 21, 34...</strong> (Fibonacci!)
         </p>
       </div>
     </div>

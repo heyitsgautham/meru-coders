@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calculator, Sparkles } from 'lucide-react';
+import { countPatterns, patternsOfMatras } from './lgPatterns';
 
 interface PatternCount {
   length: number;
@@ -14,54 +15,8 @@ const CombinatoricsCalculator: React.FC = () => {
   const [patternData, setPatternData] = useState<PatternCount | null>(null);
   const [fibSequence, setFibSequence] = useState<number[]>([]);
 
-  // Generate all L-G patterns recursively (memoized)
-  const generateAllPatterns = (n: number, memo: Map<number, string[]> = new Map()): string[] => {
-    if (n === 0) return [''];
-    if (n === 1) return ['L', 'G'];
-    if (memo.has(n)) return memo.get(n)!;
-
-    const patterns: Set<string> = new Set();
-    
-    // Add L to all patterns of length n-1
-    const prev1 = generateAllPatterns(n - 1, memo);
-    prev1.forEach(p => {
-      const total = calculateMatraCount(p + 'L');
-      if (total <= n) patterns.add(p + 'L');
-    });
-    
-    // Add G to all patterns of length n-2
-    if (n >= 2) {
-      const prev2 = generateAllPatterns(n - 2, memo);
-      prev2.forEach(p => {
-        const total = calculateMatraCount(p + 'G');
-        if (total <= n) patterns.add(p + 'G');
-      });
-    }
-
-    const result = Array.from(patterns).filter(p => calculateMatraCount(p) === n);
-    memo.set(n, result);
-    return result;
-  };
-
-  // Calculate total mātrā count for a pattern
-  const calculateMatraCount = (pattern: string): number => {
-    return pattern.split('').reduce((sum, char) => sum + (char === 'G' ? 2 : 1), 0);
-  };
-
-  // Calculate Fibonacci-like sequence for L-G combinations
-  const calculateCombinations = (n: number): number => {
-    if (n === 0) return 1;
-    if (n === 1) return 2; // L or G
-    
-    const dp = [1, 2]; // F(0) = 1, F(1) = 2
-    for (let i = 2; i <= n; i++) {
-      dp[i] = dp[i - 1] + dp[i - 2];
-    }
-    return dp[n];
-  };
-
   useEffect(() => {
-    const patterns = generateAllPatterns(inputLength);
+    const patterns = patternsOfMatras(inputLength);
     const count = patterns.length;
     
     setPatternData({
@@ -73,7 +28,7 @@ const CombinatoricsCalculator: React.FC = () => {
     // Generate Fibonacci sequence for comparison
     const fib: number[] = [];
     for (let i = 0; i <= 10; i++) {
-      fib.push(calculateCombinations(i));
+      fib.push(countPatterns(i));
     }
     setFibSequence(fib);
   }, [inputLength]);
@@ -230,7 +185,7 @@ const CombinatoricsCalculator: React.FC = () => {
             <strong>F(n) = F(n-1) + F(n-2)</strong>
           </div>
           <div className="text-center text-sm text-gray-600">
-            with F(0) = 1, F(1) = 2
+            with F(0) = 1, F(1) = 1
           </div>
         </div>
         <div className="space-y-2 text-gray-700 text-sm">
