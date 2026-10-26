@@ -4,6 +4,8 @@ A malformed field gets a 400 with the field named in ``error`` and every problem
 in ``details``, instead of reaching the handler and failing there.
 """
 
+from unittest.mock import MagicMock
+
 import jwt
 import pytest
 from pydantic import ValidationError
@@ -149,11 +151,16 @@ def test_contribution_type_must_be_known(app):
     assert resp.get_json()["details"][0]["field"] == "contribution_type"
 
 
-def test_review_accepts_a_bare_post_but_not_bad_notes(app):
+def test_review_accepts_a_bare_post_but_not_bad_notes(app, monkeypatch):
+    from backend.contributions import routes
+
+    approve = MagicMock(return_value={"success": True})
+    monkeypatch.setattr(routes.contribution_model, "approve_contribution", approve)
     headers = bearer(app, sub="admin", is_admin=True)
     with app.test_client() as client:
         bare = client.post("/api/contributions/admin/approve/123", headers=headers)
         bad = client.post("/api/contributions/admin/reject/123", headers=headers, json={"review_notes": 42})
-    assert bare.status_code != 400
+    assert bare.status_code == 200
+    approve.assert_called_once_with(contribution_id="123", admin_id="admin", review_notes="")
     assert bad.status_code == 400
     assert bad.get_json()["error"] == "'review_notes' must be a string"
