@@ -57,23 +57,17 @@ class WebSocketService {
     this.token = token;
     
     // Get the API URL from environment
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // Socket.IO is served from the server root, while VITE_API_URL usually ends in /api.
+    const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api\/?$/, '');
     const wsUrl = apiUrl.replace('http://', 'ws://').replace('https://', 'wss://');
     
     try {
       // Connect using Socket.IO protocol
       this.socket = new WebSocket(`${wsUrl}/socket.io/?EIO=4&transport=websocket`);
       
+      // The transport is open, but the server only accepts us after the namespace CONNECT below.
       this.socket.onopen = () => {
-        console.log('WebSocket connection established');
-        this.connected = true;
-        this.reconnectAttempts = 0;
-        
-        // Send authentication
-        this.send('auth', { token: this.token });
-        
-        // Notify listeners
-        this.listeners.connection.forEach(cb => cb(true));
+        console.log('WebSocket transport open');
       };
 
       this.socket.onmessage = (event) => {
@@ -82,8 +76,7 @@ class WebSocketService {
 
       this.socket.onclose = () => {
         console.log('WebSocket connection closed');
-        this.connected = false;
-        this.listeners.connection.forEach(cb => cb(false));
+        this.setConnected(false);
         this.attemptReconnect();
       };
 
@@ -126,13 +119,26 @@ class WebSocketService {
       } else if (data === '2') {
         // Ping - respond with pong
         this.socket?.send('3');
+      } else if (data.startsWith('40')) {
+        // The server's connect handler accepted the token and joined us to our notification room.
+        this.reconnectAttempts = 0;
+        this.setConnected(true);
+      } else if (data.startsWith('44')) {
+        console.warn('Notification server refused the connection:', data.substring(2));
+        this.setConnected(false);
       } else if (data.startsWith('0')) {
-        // Connection established, send auth
-        this.send('auth', { token: this.token });
+        // Engine.IO open: join the default namespace, sending the token as the auth payload.
+        this.socket?.send('40' + JSON.stringify({ token: this.token }));
       }
     } catch (error) {
       console.error('Error handling WebSocket message:', error, data);
     }
+  }
+
+  private setConnected(connected: boolean): void {
+    if (this.connected === connected) return;
+    this.connected = connected;
+    this.listeners.connection.forEach(cb => cb(connected));
   }
 
   /**
