@@ -2722,15 +2722,14 @@ button:disabled {
     font-size: 18px !important;
   }
 
+  /* Download stretches across the row; the close button keeps its round icon size beside it. */
   .results-header .flex.items-center.gap-4 {
     width: 100% !important;
-    flex-direction: column !important;
     gap: 8px !important;
   }
 
-  .results-header a,
-  .results-header button {
-    width: 100% !important;
+  .results-header a {
+    flex: 1 !important;
     justify-content: center !important;
   }
 

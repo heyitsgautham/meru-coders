@@ -3,10 +3,10 @@
  * Animated popup with speech bubble
  */
 
-/* Container - Fixed position at bottom right */
+/* Container - Fixed at bottom right, above the 64px chat button (bottom: 24px) so neither covers the other */
 .pingala-speaker-container {
   position: fixed;
-  bottom: 40px;
+  bottom: 104px;
   right: 40px;
   z-index: 1000;
   display: flex;
@@ -266,7 +266,7 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .pingala-speaker-container {
-    bottom: 20px;
+    bottom: 100px;
     right: 20px;
     left: 20px;
     max-width: calc(100vw - 40px);
