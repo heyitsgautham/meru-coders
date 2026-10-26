@@ -27,6 +27,13 @@ from indic_transliteration.sanscript import transliterate
 
 CLASSICAL_BENCHMARK = "page 1-47 chanda list - complete.csv"
 CLASSICAL_VERSE_ROWS = 147
+
+# Accuracy floors: the counts the engine reaches today. tests/test_corpus_accuracy.py asserts them,
+# and csv_accuracy.py and rigveda_validation.py exit 1 below them. Raise them when the engine improves.
+CLASSICAL_FLOORS = {"first_line": 146, "every_line": 134, "lines": 485, "whole_verse": 139}
+# The published headline: 139 of 147 whole verses, 94.6% to one decimal place.
+WHOLE_VERSE_PERCENT_FLOOR = 94.6
+RIGVEDA_FLOORS = {"exact": 8067, "accepted": 9009}
 RIGVEDA_BENCHMARK = "rigveda_with_meters_complete.csv"
 
 # Classical meters with the same or a near-identical pattern, keyed by their
@@ -379,3 +386,16 @@ def score_rigveda(chanda, verses: list[LabelledVerse]) -> RigvedaScore:
         score.accepted.add(accepted, verse.ref, verse.expected, predicted)
         score.by_meter[verse.expected].add(exact, verse.ref, verse.expected, predicted)
     return score
+
+
+def missed_floors(score: ClassicalScore | RigvedaScore) -> list[str]:
+    """Every accuracy floor the score falls below, as readable lines; empty when all hold."""
+    floors = CLASSICAL_FLOORS if isinstance(score, ClassicalScore) else RIGVEDA_FLOORS
+    missed = [
+        f"{name}: {getattr(score, name).correct} of {getattr(score, name).total}, floor {floor}"
+        for name, floor in floors.items()
+        if getattr(score, name).correct < floor
+    ]
+    if isinstance(score, ClassicalScore) and round(100 * score.whole_verse.rate, 1) < WHOLE_VERSE_PERCENT_FLOOR:
+        missed.append(f"whole_verse: {100 * score.whole_verse.rate:.1f}%, floor {WHOLE_VERSE_PERCENT_FLOOR}%")
+    return missed

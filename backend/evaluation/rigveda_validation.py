@@ -19,10 +19,9 @@ import sys
 
 from backend.config import settings
 from backend.core.chanda import Chanda
-from backend.pipeline.benchmarks import RIGVEDA_BENCHMARK, load_rigveda_benchmark, score_rigveda
+from backend.pipeline.benchmarks import RIGVEDA_BENCHMARK, load_rigveda_benchmark, missed_floors, score_rigveda
 
 MISSES_SHOWN = 5
-EXACT_FLOOR = 0.8
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -55,7 +54,13 @@ def main(argv: list[str] | None = None) -> int:
             for ref, _expected, predicted in tally.misses[:MISSES_SHOWN]:
                 print(f"    RV {ref}: predicted {predicted or 'nothing'}")
 
-    return 0 if score.exact.rate >= EXACT_FLOOR else 1
+    if args.limit:
+        return 0  # the floors count the whole corpus
+    missed = missed_floors(score)
+    for line in missed:
+        print(f"BELOW FLOOR {line}")
+    print("All accuracy floors hold." if not missed else f"{len(missed)} floor(s) missed.")
+    return 1 if missed else 0
 
 
 if __name__ == "__main__":

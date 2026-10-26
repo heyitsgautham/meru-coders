@@ -662,14 +662,11 @@ uv run python -m backend.evaluation.rigveda_validation
 | Exact meter in Vedic mode | 8,067 (87.2%) |
 | Exact meter, a family member or a part of a compound meter | 9,009 (97.4%) |
 
-`backend/tests/test_corpus_accuracy.py` holds these counts as floors, and the Data quality CI job runs it with `uv run pytest -m corpus`.
+`backend/tests/test_corpus_accuracy.py` asserts these counts as floors, including 94.6% whole-verse accuracy, and the Data quality CI job runs it with `uv run pytest -m corpus`.
+Both harnesses exit 1 below the same floors, which live in `backend/pipeline/benchmarks.py`.
 
-```bash
-uv run python backend/evaluation/all_fixes.py
-```
-
-This regression set passes 7 of 8 cases.
-The Jagatī case still fails.
+`backend/tests/test_regression_verses.py` holds a small regression set: the Gāyatrī mantra, three Gita verses and two fragments.
+Its Jagatī case still fails and is marked as an expected failure.
 
 ### Meter coverage
 

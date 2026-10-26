@@ -1,10 +1,16 @@
 # Evaluation harnesses
 
 These scripts measure how well the meter engine does on real corpora, and compare it with other implementations.
-They print reports instead of asserting, and several of them call Gemini or need the IITK, GPT and ICU baselines in `reference/alternative_implementations/`.
+The accuracy figures the project publishes are asserted, not just printed.
 
-The two main reports share their benchmarks and matching rules with the test suite through `backend/pipeline/benchmarks.py`.
-`backend/tests/test_corpus_accuracy.py` asserts their figures as floors, and CI runs it in the Data quality job.
+| Figure | Asserted by | Floor |
+|---|---|---|
+| Classical benchmark, four measures | `backend/tests/test_corpus_accuracy.py`, and `csv_accuracy` exits 1 below it | 146 first lines, 134 every-line verses, 485 lines, 139 whole verses (94.6%) |
+| Rigveda, exact and accepted meter | the same test, and `rigveda_validation` exits 1 below it | 8,067 exact, 9,009 accepted |
+| Regression verses (Gāyatrī, three Gita verses, two fragments) | `backend/tests/test_regression_verses.py`, which replaced `all_fixes.py` | all pass; the Jagatī case is an expected failure |
+
+The floors live in `backend/pipeline/benchmarks.py` with the scoring rules, and CI runs the corpus tests in the Data quality job.
+The other scripts here are exploratory comparisons that print reports; several call Gemini or need the IITK, GPT and ICU baselines in `reference/alternative_implementations/`.
 
 Every harness imports the backend as a package, so run it as a module from the repository root:
 

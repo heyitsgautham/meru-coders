@@ -1,9 +1,9 @@
 """Accuracy floors on the labelled corpora; a change that loses a correctly identified verse fails here.
 
-The floors are the counts the engine reaches today. Raise them when a change
-identifies more verses. The benchmarks and the matching rules live in
-backend/pipeline/benchmarks.py; ``uv run python backend/evaluation/csv_accuracy.py``
-and ``rigveda_validation.py`` print the same figures with every miss.
+The floors are the counts the engine reaches today, kept in backend/pipeline/benchmarks.py
+next to the scoring rules. Raise them when a change identifies more verses.
+``uv run python -m backend.evaluation.csv_accuracy --all`` and ``rigveda_validation`` print the
+same figures with every miss, and exit 1 below the same floors.
 """
 
 import pytest
@@ -28,28 +28,23 @@ def rigveda(chanda):
     return benchmarks.score_rigveda(chanda, verses)
 
 
-def test_classical_first_line(classical):
-    assert classical.first_line.correct >= 146, classical.first_line.misses
+@pytest.mark.parametrize("measure", list(benchmarks.CLASSICAL_FLOORS))
+def test_classical_measures_hold_their_floors(classical, measure):
+    tally = getattr(classical, measure)
+    assert tally.correct >= benchmarks.CLASSICAL_FLOORS[measure], tally.misses
 
 
-def test_classical_every_line_of_the_verse(classical):
-    assert classical.every_line.correct >= 134, classical.every_line.misses
+def test_classical_whole_verse_accuracy_is_at_least_94_6_percent(classical):
+    """The README's headline figure: 139 of 147 verses identified as a whole."""
+    percent = round(100 * classical.whole_verse.rate, 1)
+    assert classical.whole_verse.total == 147
+    assert percent >= benchmarks.WHOLE_VERSE_PERCENT_FLOOR, classical.whole_verse.misses
 
 
-def test_classical_individual_lines(classical):
-    assert (classical.lines.correct, classical.lines.total) >= (485, 499), classical.lines.misses
-
-
-def test_classical_whole_verse(classical):
-    assert classical.whole_verse.correct >= 139, classical.whole_verse.misses
-
-
-def test_rigveda_exact_meter(rigveda):
-    assert rigveda.exact.correct >= 8067, f"{rigveda.exact.correct} of {rigveda.exact.total}"
-
-
-def test_rigveda_meter_or_family(rigveda):
-    assert rigveda.accepted.correct >= 9009, f"{rigveda.accepted.correct} of {rigveda.accepted.total}"
+@pytest.mark.parametrize("measure", list(benchmarks.RIGVEDA_FLOORS))
+def test_rigveda_measures_hold_their_floors(rigveda, measure):
+    tally = getattr(rigveda, measure)
+    assert tally.correct >= benchmarks.RIGVEDA_FLOORS[measure], f"{tally.correct} of {tally.total}"
 
 
 @pytest.mark.parametrize(("meter", "floor"), [("गायत्री", 2157), ("त्रिष्टुभ्", 3605), ("अनुष्टुभ्", 636), ("जगती", 886)])

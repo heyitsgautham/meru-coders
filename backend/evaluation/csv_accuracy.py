@@ -7,7 +7,9 @@ Prints four measures, from backend.pipeline.benchmarks.score_classical:
 3. individual lines: share of all lines whose top meter matches
 4. whole verse: the holistic verse-level meter matches
 
-backend/tests/test_corpus_accuracy.py holds the same figures as floors.
+It exits 1 when any measure falls below its floor in benchmarks.CLASSICAL_FLOORS,
+including the 94.6% whole-verse headline, so it can gate a change on its own.
+backend/tests/test_corpus_accuracy.py asserts the same floors.
 
 Usage, from the repository root:
     uv run python -m backend.evaluation.csv_accuracy          # first-line accuracy
@@ -22,7 +24,13 @@ import sys
 
 from backend.config import settings
 from backend.core.chanda import Chanda
-from backend.pipeline.benchmarks import CLASSICAL_VERSE_ROWS, Tally, load_classical_benchmark, score_classical
+from backend.pipeline.benchmarks import (
+    CLASSICAL_VERSE_ROWS,
+    Tally,
+    load_classical_benchmark,
+    missed_floors,
+    score_classical,
+)
 
 MISSES_SHOWN = 5
 
@@ -59,7 +67,11 @@ def main(argv: list[str] | None = None) -> int:
         report("INDIVIDUAL LINES", score.lines, args.verbose, unit="lines")
         report("WHOLE VERSE (holistic analysis)", score.whole_verse, args.verbose)
 
-    return 0 if score.first_line.rate >= 0.9 else 1
+    missed = missed_floors(score)
+    for line in missed:
+        print(f"BELOW FLOOR {line}")
+    print("All accuracy floors hold." if not missed else f"{len(missed)} floor(s) missed.")
+    return 1 if missed else 0
 
 
 if __name__ == "__main__":

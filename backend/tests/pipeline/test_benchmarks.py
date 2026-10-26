@@ -141,3 +141,21 @@ def test_load_rigveda_benchmark_skips_unusable_rows_and_samples(tmp_path):
         writer.writerow({"mandala": 1, "sukta": 1, "rik": 5, "verse_text": "ई", "meter": "jagatī"})
     assert [v.ref for v in bm.load_rigveda_benchmark(tmp_path)] == ["1.1.1", "1.1.4", "1.1.5"]
     assert [v.ref for v in bm.load_rigveda_benchmark(tmp_path, every=2)] == ["1.1.1", "1.1.5"]
+
+
+def _tally(correct, total):
+    from backend.pipeline.benchmarks import Tally
+
+    return Tally(correct=correct, total=total)
+
+
+def test_missed_floors_names_each_measure_below_its_floor():
+    from backend.pipeline.benchmarks import ClassicalScore, RigvedaScore, missed_floors
+
+    holding = ClassicalScore(_tally(146, 147), _tally(134, 147), _tally(485, 499), _tally(139, 147))
+    assert missed_floors(holding) == []
+
+    slipping = ClassicalScore(_tally(146, 147), _tally(134, 147), _tally(485, 499), _tally(138, 147))
+    assert missed_floors(slipping) == ["whole_verse: 138 of 147, floor 139", "whole_verse: 93.9%, floor 94.6%"]
+
+    assert missed_floors(RigvedaScore(_tally(8066, 9247), _tally(9009, 9247))) == ["exact: 8066 of 9247, floor 8067"]
