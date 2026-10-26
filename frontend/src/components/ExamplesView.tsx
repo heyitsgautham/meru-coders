@@ -39,7 +39,7 @@ function ExampleCard({ example, onClick, isDandaka = false }: { example: Example
         )}
       </div>
       <span className="text-sm font-semibold text-orange-500 group-hover:text-orange-600 flex items-center gap-2 transition-colors">
-        Analyze this dandaka
+        {isDandaka ? 'Analyze this dandaka' : 'Analyze this verse'}
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </span>
     </div>
