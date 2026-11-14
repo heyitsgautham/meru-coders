@@ -4,9 +4,9 @@ aiohappyeyeballs==2.7.1
 aiohttp==3.14.5
 aiohttp-retry==2.9.1
 aiosignal==1.4.0
-annotated-doc==0.0.5
+annotated-doc==0.0.6
 annotated-types==0.8.0
-anyio==4.15.1
+anyio==4.16.0
 apscheduler==3.11.3
 attrs==26.1.0
 backports-functools-lru-cache==2.0.0
@@ -19,45 +19,45 @@ cffi==2.1.1 ; platform_python_implementation != 'PyPy'
 chardet==7.7.0
 charset-normalizer==3.5.2
 chromadb==1.5.9
-click==8.1.8
+click==8.5.1
 cloudpickle==3.1.2
 colorama==0.4.6 ; (os_name != 'nt' and sys_platform == 'win32') or (os_name == 'nt' and sys_platform != 'linux')
-comtypes==1.4.17 ; sys_platform == 'win32'
+comtypes==1.5.0 ; sys_platform == 'win32'
 cryptography==50.0.2
-cuda-bindings==13.4.4 ; sys_platform == 'linux'
-cuda-pathfinder==1.8.4 ; sys_platform == 'linux'
-cuda-toolkit==13.0.3.0 ; sys_platform == 'linux'
+cuda-bindings==13.5.0 ; sys_platform == 'linux'
+cuda-pathfinder==1.8.6 ; sys_platform == 'linux'
+cuda-toolkit==13.5.0 ; sys_platform == 'linux'
 deprecated==1.3.1 ; python_full_version < '3.12'
 deprecated==3.0.0 ; python_full_version >= '3.12'
 deprecation==2.1.0
 distro==1.9.0
-dnspython==2.9.0
+dnspython==2.9.2
 durationpy==0.11
 edge-tts==7.3.1
 eventlet==0.41.3
-filelock==4.2.4
+filelock==4.2.10
 filetype==1.2.0
 flask==3.1.3
 flask-cors==6.0.5
 flask-limiter==4.1.1
-flask-socketio==5.7.0
+flask-socketio==5.7.2
 flatbuffers==25.12.19
 frozenlist==1.8.0
 fsspec==2026.9.0
-google-api-core==2.43.0
-google-auth==2.62.0
+google-api-core==2.44.0
+google-auth==2.62.2
 google-cloud-speech==2.41.0
 google-cloud-texttospeech==2.38.0
 google-cloud-vision==3.16.0
 google-genai==2.33.0
 googleapis-common-protos==1.76.0
 greenlet==3.5.6
-grpcio==1.84.1
-grpcio-status==1.84.1
+grpcio==1.85.1
+grpcio-status==1.85.1
 gtts==2.5.4
 h11==0.16.0
 h2==4.4.1
-hf-xet==1.7.0 ; platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
+hf-xet==1.8.0 ; platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
 hpack==4.2.0
 httpcore==1.0.9
 httpcore2==2.16.0 ; sys_platform != 'emscripten'
@@ -74,87 +74,87 @@ indic-transliteration==2.3.82
 itsdangerous==2.2.0
 jinja2==3.1.6
 joblib==1.6.0
-jsonpatch==1.36
-jsonpointer==3.4
+jsonpatch==1.46
+jsonpointer==3.11
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
-kubernetes==37.0.1
-langchain==1.4.7
+kubernetes==37.0.2
+langchain==1.4.10
 langchain-classic==1.0.8
 langchain-community==0.4.2
-langchain-core==1.7.0
-langchain-google-genai==4.4.2
-langchain-protocol==0.0.20
+langchain-core==1.7.7
+langchain-google-genai==4.4.3
+langchain-protocol==0.0.21
 langchain-text-splitters==1.1.3
-langgraph==1.2.17
-langgraph-checkpoint==4.3.0
+langgraph==1.2.20
+langgraph-checkpoint==4.3.1
 langgraph-prebuilt==1.1.1
-langgraph-sdk==0.4.9
-langsmith==0.14.12
+langgraph-sdk==0.4.14
+langsmith==0.14.17
 levenshtein==0.27.5
 limits==5.8.0
 lxml==6.1.3
-markdown-it-py==4.2.0
+markdown-it-py==4.3.0
 markupsafe==3.0.4
 mdurl==0.1.2
 mmh3==5.3.1
-mpmath==1.3.0
-multidict==7.2.0
-narwhals==2.27.1
+mpmath==1.4.1
+multidict==7.2.1
+narwhals==2.28.0
 networkx==3.6.1 ; python_full_version < '3.12'
 networkx==3.7 ; python_full_version >= '3.12'
 numpy==2.4.6 ; python_full_version < '3.12'
 numpy==2.5.4 ; python_full_version >= '3.12'
-nvidia-cublas==13.1.1.3 ; sys_platform == 'linux'
-nvidia-cuda-cupti==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cuda-nvrtc==13.0.88 ; sys_platform == 'linux'
-nvidia-cuda-runtime==13.0.96 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cudnn-cu13==9.24.0.43 ; sys_platform == 'linux'
-nvidia-cufft==12.0.0.61 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cufile==1.15.1.6 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-curand==10.4.0.35 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cusolver==12.0.4.66 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cusparse==12.6.3.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-cusparselt-cu13==0.8.1 ; sys_platform == 'linux'
-nvidia-nccl-cu13==2.30.7 ; sys_platform == 'linux'
-nvidia-nvjitlink==13.4.92 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-nvidia-nvshmem-cu13==3.4.5 ; sys_platform == 'linux'
-nvidia-nvtx==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
-oauthlib==4.0.0
-onnxruntime==1.31.0
-opentelemetry-api==1.45.1
+nvidia-cublas==13.10.0.20 ; sys_platform == 'linux'
+nvidia-cuda-cupti==13.5.25 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cuda-nvrtc==13.5.37 ; sys_platform == 'linux'
+nvidia-cuda-runtime==13.5.37 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cudnn-cu13==9.28.1.4 ; sys_platform == 'linux'
+nvidia-cufft==12.5.0.14 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cufile==1.20.0.107 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-curand==10.4.5.25 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cusolver==12.4.1.2 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cusparse==12.9.4.2 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-cusparselt-cu13==0.10.0 ; sys_platform == 'linux'
+nvidia-nccl-cu13==2.32.6 ; sys_platform == 'linux'
+nvidia-nvjitlink==13.5.37 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+nvidia-nvshmem-cu13==3.8.0 ; sys_platform == 'linux'
+nvidia-nvtx==13.5.25 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+oauthlib==4.0.1
+onnxruntime==1.31.1
+opentelemetry-api==1.45.2
 opentelemetry-exporter-otlp-common==0.66b1
-opentelemetry-exporter-otlp-proto-common==1.45.1
-opentelemetry-exporter-otlp-proto-grpc==1.45.1
-opentelemetry-proto==1.45.1
-opentelemetry-sdk==1.45.1
+opentelemetry-exporter-otlp-proto-common==1.45.2
+opentelemetry-exporter-otlp-proto-grpc==1.45.2
+opentelemetry-proto==1.45.2
+opentelemetry-sdk==1.45.2
 opentelemetry-semantic-conventions==0.66b1
 ordered-set==4.1.0
 orjson==3.13.0
-ormsgpack==1.13.0
+ormsgpack==1.13.1
 overrides==7.7.0
 packaging==26.3
 pdfminer-six==20260107
 pdfplumber==0.11.10
 pillow==13.0.0
-postgrest==2.33.0
+postgrest==2.34.1
 prometheus-client==0.26.0
 propcache==0.5.4
 proto-plus==1.29.0
 protobuf==7.36.2
 psutil==7.2.2
-pyasn1==0.6.4
+pyasn1==0.6.5
 pyasn1-modules==0.4.2
 pybase64==1.5.1
 pycparser==3.12 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
-pydantic==2.14.1
-pydantic-core==2.50.1
-pydantic-settings==2.16.1
+pydantic==2.14.3
+pydantic-core==2.50.4
+pydantic-settings==2.16.2
 pygments==2.21.0
 pyjwt==2.15.1
-pymupdf==2.0
-pymupdf-layout==2.0
-pymupdf4llm==2.0
+pymupdf==2.1
+pymupdf-layout==2.1
+pymupdf4llm==2.1
 pyobjc==12.2.2 ; sys_platform == 'darwin'
 pyobjc-core==12.2.2 ; sys_platform == 'darwin'
 pyobjc-framework-accessibility==12.2.2 ; platform_release >= '20.0' and sys_platform == 'darwin'
@@ -317,7 +317,7 @@ pyobjc-framework-videotoolbox==12.2.2 ; platform_release >= '12.0' and sys_platf
 pyobjc-framework-virtualization==12.2.2 ; platform_release >= '20.0' and sys_platform == 'darwin'
 pyobjc-framework-vision==12.2.2 ; platform_release >= '17.0' and sys_platform == 'darwin'
 pyobjc-framework-webkit==12.2.2 ; sys_platform == 'darwin'
-pypdfium2==5.14.0
+pypdfium2==5.15.2
 pypika==0.51.1
 pypiwin32==223 ; sys_platform == 'win32'
 pyproject-hooks==1.3.3
@@ -325,7 +325,7 @@ pytesseract==0.3.13
 python-dateutil==3.0.0
 python-docx==1.2.0
 python-dotenv==1.2.4
-python-engineio==4.14.0
+python-engineio==4.15.1
 python-levenshtein==0.27.5
 python-magic==0.4.27
 python-socketio==5.17.0
@@ -333,9 +333,9 @@ pyttsx3==2.99
 pywin32==312 ; sys_platform == 'win32'
 pyyaml==6.0.3
 rapidfuzz==3.14.6
-realtime==2.33.0
+realtime==2.34.1
 referencing==0.37.0
-regex==2026.9.29
+regex==2026.11.9
 requests==2.34.2
 requests-oauthlib==2.0.0
 requests-toolbelt==1.0.0
@@ -348,34 +348,34 @@ scikit-learn==1.9.1
 scipy==1.17.1 ; python_full_version < '3.12'
 scipy==1.18.1 ; python_full_version >= '3.12'
 sentence-transformers==6.2.0
-sentry-sdk==2.73.0
+sentry-sdk==2.74.0
 setuptools==84.2.1
 shellingham==1.5.4
 simple-websocket==1.1.0
 six==1.17.0
 sniffio==1.3.1
-sqlalchemy==2.1.6
-storage3==2.33.0
-strenum==0.4.15
-supabase==2.33.0
-supabase-auth==2.33.0
-supabase-functions==2.33.0
+sqlalchemy==2.1.8
+storage3==2.34.1
+strenum==0.5.0
+supabase==2.34.1
+supabase-auth==2.34.1
+supabase-functions==2.34.1
 sympy==1.14.0
 tabulate==0.10.0
-tenacity==9.1.4
-threadpoolctl==3.7.0
+tenacity==9.2.1
+threadpoolctl==3.8.0
 tiktoken==0.14.0
 tokenizers==0.23.3
 toml==0.10.2
-torch==2.14.1
+torch==2.15.0
 tqdm==4.70.1
-transformers==5.17.0
-triton==3.8.0 ; sys_platform == 'linux'
+transformers==5.22.2
+triton==3.9.0 ; sys_platform == 'linux'
 truststore==0.10.5 ; sys_platform != 'emscripten'
-typer==0.27.3
+typer==0.29.0
 typing-extensions==4.16.0
-typing-inspection==0.4.4
-tzdata==2026.5
+typing-inspection==0.4.5
+tzdata==2026.6
 tzlocal==5.4.5
 urllib3==2.8.0
 uuid-utils==0.18.0
@@ -385,8 +385,8 @@ watchfiles==1.3.0
 websocket-client==1.9.2
 websockets==15.0.1
 werkzeug==3.1.9
-wrapt==2.5.1
+wrapt==2.5.2
 wsproto==1.3.2
-xxhash==4.0.2
+xxhash==4.1.0
 yarl==1.25.1
 zstandard==0.25.0
